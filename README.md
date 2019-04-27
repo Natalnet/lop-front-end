@@ -14,7 +14,7 @@ Você também verá quaisquer erros de lint no console.
 
 Atualmente só existem poucas rotas de testes que são
 
-`/` => Mostra uma tela de login.
-`/sistema/aluno`=> Mostra página base do sistema.
-`*` => Qualquer outra rota mostra página de erro 404.
+`/` => Mostra uma tela de login.<br>
+`/sistema/aluno`=> Mostra página base do sistema.<br>
+`*` => Qualquer outra rota mostra página de erro 404.<br>
 
