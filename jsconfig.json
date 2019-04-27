@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "allowSyntheticDefaultImports": false,
+    "baseUrl": "./",
+    "paths": {
+      "components/*": ["src/components/*"],
+      "config/*": ["src/config/*"],
+      "screens/*": ["src/screens/*"],
+      "util/*": ["src/util/*"],
+      "routes/*": ["src/routes/*"],
+      "stores/*": ["src/stores/*"],
+      "actions/*": ["src/actions/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"],
+  "module": "commonjs"
+}
