@@ -4,7 +4,11 @@
 <img width="250px" src="https://github.com/Natalnet/lop-front-end/blob/master/public/assets/images/logo.png?raw=true"/>
 </p>
 
-### `yarn start` ou `npm start`
+### `yarn install`
+
+Esse comando irá instalar todas as dependências do projeto.
+
+### `yarn start`
 <hr>
 Executa o aplicativo no modo de desenvolvimento. Abra <a target="_blank" href="http://localhost:3000">http://localhost:3000</a> para ver no seu navegador. A página será recarregada se você fizer edições. Você também verá quaisquer erros de lint no console.
 
