@@ -7,9 +7,13 @@
 
 import React, { Component } from "react";
 
-import {Link} from 'react-router-dom';
-
 import TemplateSistema from "components/templates/sistema.template";
+
+import Card from "components/ui/card/card.component";
+
+import CardHead from "components/ui/card/cardHead.component";
+
+import CardBody from "components/ui/card/cardBody.component";
 
 export default class HomeAlunoScreen extends Component {
   componentDidMount() {
@@ -19,7 +23,70 @@ export default class HomeAlunoScreen extends Component {
   render() {
     return (
       <TemplateSistema>
-        
+        <Card>
+          <CardHead>
+            Exemplo de card
+          </CardHead>
+          <CardBody>
+            Body do card
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHead>
+            Exemplo de card
+          </CardHead>
+          <CardBody>
+            Body do card
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHead>
+            Exemplo de card
+          </CardHead>
+          <CardBody>
+            Body do card
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHead>
+            Exemplo de card
+          </CardHead>
+          <CardBody>
+            Body do card
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHead>
+            Exemplo de card
+          </CardHead>
+          <CardBody>
+            Body do card
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHead>
+            Exemplo de card
+          </CardHead>
+          <CardBody>
+            Body do card
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHead>
+            Exemplo de card
+          </CardHead>
+          <CardBody>
+            Body do card
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHead>
+            Exemplo de card
+          </CardHead>
+          <CardBody>
+            Body do card
+          </CardBody>
+        </Card>
       </TemplateSistema>
     );
   }
