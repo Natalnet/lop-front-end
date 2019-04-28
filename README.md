@@ -5,7 +5,7 @@
 </p>
 
 ### `yarn install`
-
+<hr>
 Esse comando irá instalar todas as dependências do projeto.
 
 ### `yarn start`
