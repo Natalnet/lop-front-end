@@ -35,17 +35,26 @@ export default class TemplateSistema extends Component {
           error.response.status === 404
         ) {
           const { erros } = error.response.data;
-
-          let text = erros.map(erro => {
-            return `${erro.msg}`.replace(".", "");
-          });
-
-          Swal.fire({
-            type: "error",
-            title: `Erro ${error.response.status}`,
-            text: text,
-            confirmButtonText: "Voltar para o sistema"
-          });
+          if(erros !== undefined){
+            let text = erros.map(erro => {
+              return `${erro.msg}`.replace(".", "");
+            });
+  
+            Swal.fire({
+              type: "error",
+              title: `Erro ${error.response.status}`,
+              text: text,
+              confirmButtonText: "Voltar para o sistema"
+            });
+          } else{
+            Swal.fire({
+              type: "error",
+              title: `Erro ${error.response.status}`,
+              text: 'Erro ao processar requisição.',
+              confirmButtonText: "Voltar para o sistema"
+            });
+          }
+          
         } else {
           return Promise.reject(error);
         }

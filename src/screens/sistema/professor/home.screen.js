@@ -17,11 +17,28 @@ import CardHead from "components/ui/card/cardHead.component";
 
 import CardBody from "components/ui/card/cardBody.component";
 
+import axios from "axios";
+
 
 export default class HomeAlunoScreen extends Component {
-  componentDidMount() {
-    document.title = "Sistema Professor - Plataforma LOP";
+  constructor(){
+    super();
+    this.state = {
+      alunos: []
+    };
   }
+  async componentDidMount() {
+    document.title = "Sistema Professor - Plataforma LOP";
+    await this.populateAlunos();
+  }
+
+  populateAlunos = async () => {
+    const request = await axios.get('https://pokeapi.co/api/v2/pokemon/ditto/');
+    if(request !== undefined){
+      const data = request.data;
+      console.log(data);
+    }
+  };
 
   render() {
     return (
