@@ -7,7 +7,7 @@
 
 import React, { Component } from "react";
 
-export default class tableResponsive extends Component {
+export default class TableResponsive extends Component {
   render() {
     return (
       <div className="table-responsive">
@@ -15,41 +15,29 @@ export default class tableResponsive extends Component {
       <table className="table card-table table-vcenter text-nowrap datatable">
         <thead>
           <tr>
-            <th className="w-1">No.</th>
-            <th>Invoice Subject</th>
-            <th>Client</th>
-            <th>VAT No.</th>
-            <th>Created</th>
-            <th>Status</th>
-            <th>Price</th>
-            <th></th>
-            <th></th>
+            <th className="w-1">Matrícula </th>
+            <th>Nome </th>
+            <th>LX-QX</th>
+            <th>LX-QX</th>
+            <th>LX-QX</th>
+            <th>LX-QX</th>
+            <th>LX-QX</th>
+            <th>LX-QX</th>
+            <th>LX-QX</th>
           </tr>
         </thead>
 
         <tbody>
           <tr>
             <td><span className="text-muted">001401</span></td>
-            <td><a href="invoice.html" className="text-inherit">Design Works</a></td>
-            <td>
-              Carlson Limited
-            </td>
-            <td>
-              87956621
-            </td>
-            <td>
-              15 Dec 2017
-            </td>
-            <td>
-              <span className="status-icon bg-success"></span> Paid
-            </td>
-            <td>$887</td>
-            <td className="text-right">
-               
-            </td>
-            <td>
-               
-            </td>
+            <td> Orivaldo Santana </td>
+            <td> Ok </td>
+            <td> Ok </td>
+            <td> Ok </td>
+            <td> Ok </td>
+            <td> - </td>
+            <td> Ok </td>
+            <td> Ok </td>
           </tr>
           
 
