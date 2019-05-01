@@ -8,11 +8,14 @@ import erros from "routes/erros.routes.js";
 
 import aluno from "routes/aluno.routes";
 
+import professor from "routes/professor.routes";
+
 const routes = (
   <BrowserRouter>
     <Switch>
       {autenticacao}
       {aluno}
+      {professor}
       {erros}
     </Switch>
   </BrowserRouter>
