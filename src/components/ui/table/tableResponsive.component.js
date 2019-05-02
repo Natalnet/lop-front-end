@@ -8,9 +8,6 @@
 import React, { Component } from "react";
 
 export default class TableResponsive extends Component {
-  state = {
-
-  }; 
 
 
   render() {
