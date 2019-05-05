@@ -8,6 +8,8 @@
 import React, { Component } from "react";
 
 export default class TableResponsive extends Component {
+
+
   render() {
     return (
       <div className="table-responsive">
