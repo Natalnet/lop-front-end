@@ -36,7 +36,7 @@ export default class TemplateSistema extends Component {
 
   componentDidMount() {
     document.title = "Template de login";
-    const perfilUsuario = this.gerPerfilUsuario();
+    const perfilUsuario = this.getPerfilUsuario();
     const state = this.state;
     state.perfil = perfilUsuario;
     this.setState({...state});
@@ -79,7 +79,7 @@ export default class TemplateSistema extends Component {
     });
   };
 
-  gerPerfilUsuario = () => {
+  getPerfilUsuario = () => {
     const perfilDaUrl = window.location.pathname.slice(1);
     
     const arraySistemaPermisssao = perfilDaUrl.split('/');
