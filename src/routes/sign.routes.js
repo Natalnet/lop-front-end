@@ -1,4 +1,4 @@
-import SignScreen from 'screens/autenticacao/sign.screen';
+import SignScreen from 'screens/autenticacao/registro.screen';
 
 import exportRoutes from 'util/routes/exportRoutes.util';
 

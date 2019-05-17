@@ -1,0 +1,59 @@
+{
+  "instituicoes": [
+    {
+      "nome": "UFRN-ECT",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59078970",
+      "numero": "3000",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Natal",
+      "bairro": "Lagoa Nova",
+      "id": 1
+    },
+    {
+      "nome": "LLL",
+      "logradouro": "Rua Novo Oriente",
+      "cep": "59147140",
+      "numero": "",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Parnamirim",
+      "bairro": "Vida Nova",
+      "id": 2
+    },
+    {
+      "nome": "asdasdsas",
+      "logradouro": "Rua Novo Oriente",
+      "cep": "59147140",
+      "numero": "",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Parnamirim",
+      "bairro": "Vida Nova",
+      "id": 3
+    }
+  ],
+  "users": [],
+  "auth": [
+    {
+      "username": "plaayZone",
+      "email": "plaayzone@gmail.com",
+      "password": "123456",
+      "id": 1
+    },
+    {
+      "username": "plaayZone",
+      "email": "plaayzone@gmail.com",
+      "password": "123456",
+      "id": 2
+    },
+    {
+      "email": "plaayzone@gmail.com",
+      "password": "123456",
+      "id": 3
+    }
+  ],
+  "cursos": [],
+  "disciplinas": []
+}
