@@ -1,19 +1,18 @@
 /*
- * @Author: Marcus Dantas
- * @Date: 2019-01-27 12:11:20
- * @Last Modified by: Marcus Dantas
- * @Last Modified time: 2019-02-11 02:49:17
+ * @Author: Hemerson Rafael
+ * @Date: 2019-05-03 16:35:20
+ *
  */
 
 import React, { Component } from "react";
 
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default class LoginScreen extends Component {
   componentDidMount() {
-    document.title = "Realizar login - Plataforma LOP";
+    document.title = "Realizar Cadastro - Plataforma LOP";
   }
 
   render() {
@@ -28,7 +27,23 @@ export default class LoginScreen extends Component {
 				src="/assets/images/logo.png"
 				/>
 			</div>
-            <div className="card-title">Faça login na sua conta</div>
+            <div className="card-title">Faça o seu cadastro</div>
+            <div className="form-group">
+              <label className="form-label">Nome</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Digite seu nome"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Matrícula</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Digite sua matrícula"
+              />
+            </div>
             <div className="form-group">
               <label className="form-label">Endereço de e-mail</label>
               <input
@@ -40,9 +55,6 @@ export default class LoginScreen extends Component {
             <div className="form-group">
               <label className="form-label">
                 Senha
-                <Link to="/autenticacao/recuperar-senha" className="float-right small">
-                  Esqueci a senha
-                </Link>
               </label>
               <input
                 type="password"
@@ -51,23 +63,29 @@ export default class LoginScreen extends Component {
               />
             </div>
             <div className="form-group">
-              <label className="custom-control custom-checkbox">
-                <input type="checkbox" className="custom-control-input" />
-                <span className="custom-control-label">Lembrar-me</span>
+              <label className="form-label">
+                Senha
               </label>
+              <input
+                type="password"
+                className="form-control"
+                placeholder="**********"
+              />
             </div>
+            
             <div className="form-footer">
               <button type="submit" className="btn btn-primary btn-block">
-                Entrar
+                Cadastrar
               </button>
             </div>
           </div>
         </form>
         <div className="text-center text-muted">
-          Não tem conta? <Link to="/autenticacao/cadastro"> cadastre-se</Link>
+          Já tem conta? <Link to="/"> Login</Link>
         </div>
         <br />
       </TemplateAutenticacao>
+
     );
   }
 }
