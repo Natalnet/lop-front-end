@@ -6,6 +6,7 @@
 
 import React, { Component } from "react";
 
+//import api from "../../util/api"
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 
 import { Link, Redirect } from "react-router-dom";
@@ -49,8 +50,13 @@ export default class LoginScreen extends Component {
           "Content-type": "application/json"
         })
       };
-
-      fetch("http://localhost:3001/auth/register", requestInfo)
+      /*api.post("/auth/register", {
+        name: this.state.name,
+        email: this.state.email,
+        password: this.state.password,
+        enrollment: this.state.enrollment
+      })*/
+      fetch("http://192.168.0.22:3001/auth/register", requestInfo)
         .then(response => {
           if (response.ok) {
             return console.log(response.text());

@@ -9724,6 +9724,11 @@ stringify-object@^3.2.2:
     is-obj "^1.0.1"
     is-regexp "^1.0.0"
 
+stringquery@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/stringquery/-/stringquery-1.0.8.tgz#abe561dc5e2e2308558d8b890768f3098594e6e6"
+  integrity sha512-KqKh5OwkldIrG6TRAlOU02EIdvjC2A4LAGVvVyoDXRRTl0224naoKMRBf+uzPFdXE2+rcHVh2NKTznbsn+AzFw==
+
 strip-ansi@5.0.0, strip-ansi@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-5.0.0.tgz#f78f68b5d0866c20b2c9b8c61b5298508dc8756f"

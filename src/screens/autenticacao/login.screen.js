@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+//import api from "../../util/api"
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 
 import { Link, Redirect } from "react-router-dom";
@@ -7,7 +8,8 @@ export default class LoginScreen extends Component {
     redirect: false,
     msg: "",
     email: "",
-    passwd: ""
+    passwd: "",
+    profile: "aluno"
   };
   login = event => {
     event.preventDefault();
@@ -21,23 +23,27 @@ export default class LoginScreen extends Component {
         "Content-type": "application/json"
       })
     };
-    fetch("http://localhost:3001/auth/authenticate", requestInfo)
+    fetch("http://192.168.0.22:3001/auth/authenticate", requestInfo)
       .then(response => {
         if (response.ok) {
-          return console.log(response.text())
+          return response.json();
         } else {
           throw new Error("Invalid email or password");
         }
       })
-      .then(token => {
-        localStorage.setItem("auth-token", token);
-        this.setState({ redirect: true });
+      .then(data => {
+        localStorage.setItem("auth-token", data.token);
+        localStorage.setItem("user.profile", data.user.profile);
+        localStorage.setItem("user.name", data.user.name);
+        localStorage.setItem("user.email", data.user.email);
+        localStorage.setItem("user.enrollment", data.user.enrollment);
+        this.setState({ redirect: true, profile: data.user.profile });
       })
       .catch(err => {
         this.setState({ msg: "Erro: usuário ou senha inválidos." });
         localStorage.removeItem("auth-token");
       });
-  }
+  };
   componentDidMount() {
     document.title = "Realizar login - Plataforma LOP";
   }
@@ -49,7 +55,13 @@ export default class LoginScreen extends Component {
   };
   render() {
     if (this.state.redirect) {
-      return <Redirect to="/sistema/aluno" />;
+      if (this.state.profile === "Aluno") {
+        return <Redirect to="/sistema/aluno" />;
+      } else if (this.state.profile === "Professor") {
+        return <Redirect to="/sistema/professor" />;
+      } else if (this.state.profile === "Administrador") {
+        return <Redirect to="/sistema/administrador/instituicoes" />;
+      }
     }
     return (
       <TemplateAutenticacao>

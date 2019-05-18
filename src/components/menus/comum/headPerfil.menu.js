@@ -7,10 +7,13 @@
 
 import React, { Component } from "react";
 
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export default class HeadPefilMenu extends Component {
   render() {
+    let profile = localStorage.getItem("user.profile");
+    let matricula = localStorage.getItem("user.enrollment");
+    let nome = localStorage.getItem("user.name");
     return (
       <div className="d-flex">
         <a className="header-brand" href="/dashboard">
@@ -35,9 +38,9 @@ export default class HeadPefilMenu extends Component {
                 }}
               />
               <span className="ml-2 d-none d-lg-block">
-                <span className="text-default">Victor Hermes Alves de Souza</span>
+                <span className="text-default">{nome}</span>
                 <small className="text-muted d-block mt-1">
-                  Aluno - 20180125640
+                  {profile} - {matricula}
                 </small>
               </span>
             </Link>
