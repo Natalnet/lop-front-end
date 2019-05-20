@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import List from "../List";
 import Swal from "sweetalert2";
+import api from "../../../services/api";
 //http://localhost:3001/instituicoes?nome_like=^L pode ser usado para search
 export default class pagInstituição extends Component {
   state = {
     nome: "",
     logradouro: "",
-    cep: "59078970",
+    cep: "",
     numero: "",
     complemento: "",
     uf: "",
@@ -22,44 +23,35 @@ export default class pagInstituição extends Component {
   componentDidMount() {
     this.getInstituicoes();
   }
-  getInstituicoes = () => {
-    let dbfile = "http://localhost:3001/instituicoes";
-    fetch(dbfile)
-      .then(res => res.json())
-      .then(data => {
-        data.map(inst => {
-          return this.setState({
-            items: [
-              ...this.state.items,
-              inst.nome + ", " + inst.localidade + ", " + inst.uf
-            ]
-          });
-        });
-      })
-      .catch(e => console.log(e));
+  getInstituicoes = async () => {
+    const { data } = await api.get("/instituicoes");
+
+    data.map(inst => {
+      return this.setState({
+        items: [
+          ...this.state.items,
+          inst.nome + ", " + inst.localidade + ", " + inst.uf
+        ]
+      });
+    });
   };
   onSubmit = event => {
     event.preventDefault();
     if (this.state.nome.length > 0) {
       const requestInfo = {
-        method: "POST",
-        body: JSON.stringify({
-          nome: this.state.nome,
-          logradouro: this.state.logradouro,
-          cep: this.state.cep,
-          numero: this.state.numero,
-          complemento: this.state.complemento,
-          uf: this.state.uf,
-          localidade: this.state.localidade,
-          bairro: this.state.bairro
-        }),
-        headers: new Headers({
-          "Content-type": "application/json"
-        })
+        nome: this.state.nome,
+        logradouro: this.state.logradouro,
+        cep: this.state.cep,
+        numero: this.state.numero,
+        complemento: this.state.complemento,
+        uf: this.state.uf,
+        localidade: this.state.localidade,
+        bairro: this.state.bairro
       };
-      fetch("http://localhost:3001/instituicoes/", requestInfo)
+      api
+        .post("/instituicoes", requestInfo)
         .then(response => {
-          if (response.ok) {
+          if (response) {
             Swal.fire({
               type: "success",
               title: `Instituição cadastrada`,
@@ -124,7 +116,7 @@ export default class pagInstituição extends Component {
     this.setState({ search: e.target.value.substr(0, 20) });
   };
   editInst = () => {};
-  searchWithCep = () => {
+  searchWithCep = async () => {
     if (this.state.cep.length !== 8) {
       Swal.fire({
         type: "error",
@@ -134,29 +126,25 @@ export default class pagInstituição extends Component {
       });
       return;
     }
-    fetch(`https://viacep.com.br/ws/${this.state.cep}/json`, {
-      method: "GET"
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.erro === true) {
-          Swal.fire({
-            type: "error",
-            title: `Error no cep: ${this.state.cep}`,
-            text: "CEP não encontrado",
-            confirmButtonText: "Voltar para o sistema"
-          });
-          return;
-        }
-        this.setState({
-          logradouro: data.logradouro,
-          numero: data.complemento,
-          bairro: data.bairro,
-          uf: data.uf,
-          localidade: data.localidade
-        });
-      })
-      .catch(e => console.log(e));
+    const { data } = await api.get(
+      `https://viacep.com.br/ws/${this.state.cep}/json`
+    );
+    if (data.erro === true) {
+      Swal.fire({
+        type: "error",
+        title: `Error no cep: ${this.state.cep}`,
+        text: "CEP não encontrado",
+        confirmButtonText: "Voltar para o sistema"
+      });
+      return;
+    }
+    this.setState({
+      logradouro: data.logradouro,
+      numero: data.complemento,
+      bairro: data.bairro,
+      uf: data.uf,
+      localidade: data.localidade
+    });
   };
   render() {
     return (

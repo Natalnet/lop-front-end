@@ -32,6 +32,28 @@
       "localidade": "Parnamirim",
       "bairro": "Vida Nova",
       "id": 3
+    },
+    {
+      "nome": "mauricio",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59078970",
+      "numero": "3000",
+      "complemento": "2",
+      "uf": "RN",
+      "localidade": "Natal",
+      "bairro": "Lagoa Nova",
+      "id": 4
+    },
+    {
+      "nome": "adasd",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59078970",
+      "numero": "3000",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Natal",
+      "bairro": "Lagoa Nova",
+      "id": 5
     }
   ],
   "users": [],
