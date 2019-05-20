@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Swal from "sweetalert2";
 import List from "../List";
 import api from "../../../services/api";
 
@@ -12,6 +13,7 @@ export default class pagCursos extends Component {
 
   componentDidMount() {
     this.getInstituicoes();
+    this.getCursos();
   }
 
   handleSubmit = async e => {
@@ -21,22 +23,43 @@ export default class pagCursos extends Component {
   onSubmit = event => {
     event.preventDefault();
 
-    /*const requestInfo = {
-          method: "POST",
-          body: JSON.stringify({
-            nome: this.state.nome,
-            codigo: this.state.codigo    
-          }),
-          headers: new Headers({
-            "Content-type": "application/json"
-          })
-        };*/
-    this.setState({
-      nome: "",
-      inst: "",
-      items: [...this.state.items, this.state.nome + ", " + this.state.inst]
-      //Disciplina, codigo
-    });
+    if (this.state.nome.length > 0) {
+      const requestInfo = {
+        nome: this.state.nome,
+        instituicao: this.state.inst
+      };
+      api
+        .post("/cursos", requestInfo)
+        .then(response => {
+          if (response) {
+            Swal.fire({
+              type: "success",
+              title: `Curso cadastrado`,
+              confirmButtonText: "Voltar para o sistema"
+            });
+            this.setState({
+              items: [
+                ...this.state.items,
+                this.state.nome + ", " + this.state.inst
+              ]
+            });
+          }
+        })
+        .catch(err => {
+          Swal.fire({
+            type: "error",
+            title: `Error ao cadastrar curso`,
+            text: `error: ${err}`,
+            confirmButtonText: "Voltar para o sistema"
+          });
+        });
+    } else {
+      Swal.fire({
+        type: "error",
+        title: `Campo curso vazio`,
+        confirmButtonText: "Voltar para o sistema"
+      });
+    }
   };
 
   handleNameChange = e => {
@@ -50,8 +73,18 @@ export default class pagCursos extends Component {
   getInstituicoes = async () => {
     const { data } = await api.get("/instituicoes");
 
-    this.setState({
+    return this.setState({
       instituicoes: [...data]
+    });
+  };
+
+  getCursos = async () => {
+    const { data } = await api.get("/cursos");
+
+    data.map(curso => {
+      return this.setState({
+        items: [...this.state.items, curso.nome + ", " + curso.instituicao]
+      });
     });
   };
 
@@ -82,9 +115,11 @@ export default class pagCursos extends Component {
               value={this.state.inst}
               onChange={this.handleInstChange}
             >
-              <option selected>Selecione a instituição...</option>
-              {instituicoes.map(inst => (
-                <option value={inst.nome}>{inst.nome}</option>
+              <option defaultValue>Selecione a instituição...</option>
+              {instituicoes.map((inst, index) => (
+                <option key={index} value={inst.nome}>
+                  {inst.nome}
+                </option>
               ))}
             </select>
           </div>

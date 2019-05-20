@@ -76,6 +76,22 @@
       "id": 3
     }
   ],
-  "cursos": [],
+  "cursos": [
+    {
+      "nome": "cet",
+      "instituicao": "UFRN-ECT",
+      "id": 1
+    },
+    {
+      "nome": "adm",
+      "instituicao": "LLL",
+      "id": 2
+    },
+    {
+      "nome": "adm",
+      "instituicao": "LLL",
+      "id": 3
+    }
+  ],
   "disciplinas": []
 }
