@@ -6,15 +6,16 @@
 
 import React, { Component } from "react";
 
-//import api from "../../util/api"
 import TemplateAutenticacao from "components/templates/autenticacao.template";
+
+import api from "../../services/api";
 
 import { Link, Redirect } from "react-router-dom";
 
 export default class LoginScreen extends Component {
   state = {
     redirect: false,
-    nome: "",
+    name: "",
     enrollment: "",
     email: "",
     password: "",
@@ -25,7 +26,7 @@ export default class LoginScreen extends Component {
     event.preventDefault();
     var regex = /^([a-zA-Z0-9_.+-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 
-    if (this.state.nome === "") {
+    if (this.state.name === "") {
       this.setState({ msg: "Informe seu nome completo" });
     } else if (this.state.enrollment === "") {
       this.setState({ msg: "Informe sua matrícula" });
@@ -39,31 +40,22 @@ export default class LoginScreen extends Component {
       this.setState({ msg: "A senha e confirmação de senha não correspondem" });
     } else {
       const requestInfo = {
-        method: "POST",
-        body: JSON.stringify({
-          name: this.state.name,
-          email: this.state.email,
-          password: this.state.password,
-          enrollment: this.state.enrollment
-        }),
-        headers: new Headers({
-          "Content-type": "application/json"
-        })
+        name: this.state.name,
+        email: this.state.email,
+        password: this.state.password,
+        enrollment: this.state.enrollment
       };
-      
-      fetch("http://192.168.0.22:3001/auth/register", requestInfo)
+      api
+        .post("/auth/register", requestInfo)
         .then(response => {
-          if (response.ok) {
-            return console.log(response.text());
+          if (response) {
+            return this.setState({
+              msg: "",
+              redirect: true
+            });
           } else {
             throw new Error("Failed to register");
           }
-        })
-        .then(msg => {
-          return this.setState({
-            msg: "",
-            redirect: true
-          });
         })
         .catch(err => {
           this.setState({ msg: "Erro: matrícula ou email indispnível" });
@@ -74,7 +66,7 @@ export default class LoginScreen extends Component {
     document.title = "Realizar Cadastro - Plataforma LOP";
   }
   handleNomeChange = e => {
-    this.setState({ nome: e.target.value });
+    this.setState({ name: e.target.value });
   };
   handleEnrollmentChange = e => {
     this.setState({ enrollment: e.target.value });
@@ -111,7 +103,7 @@ export default class LoginScreen extends Component {
                 type="text"
                 className="form-control"
                 placeholder="Digite seu nome"
-                value={this.state.nome}
+                value={this.state.name}
                 onChange={this.handleNomeChange}
               />
             </div>

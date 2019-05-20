@@ -4,6 +4,8 @@ import TemplateAutenticacao from "components/templates/autenticacao.template";
 
 import { Redirect } from "react-router-dom";
 
+import api from "../../services/api";
+
 //import queryString from "querystring"
 
 export default class resetScreen extends Component {
@@ -17,43 +19,41 @@ export default class resetScreen extends Component {
     e.preventDefault();
 
     if (this.state.password === "") {
-      this.setState({ msg: "Informe a nova senha" ,error:true});
+      this.setState({ msg: "Informe a nova senha", error: true });
     } else if (this.state.confirmpassword === "") {
-      this.setState({ msg: "Informe a confirmação da nova senha" ,error:true});
+      this.setState({
+        msg: "Informe a confirmação da nova senha",
+        error: true
+      });
     } else if (this.state.password !== this.state.confirmpassword) {
       this.setState({
-        msg: "A nova senha e sua confirmação não correspondem", error:true
+        msg: "A nova senha e sua confirmação não correspondem",
+        error: true
       });
     } else {
       const requestInfo = {
-        method: "POST",
-        body: JSON.stringify({
-          password: this.state.password
-        }),
-        headers: new Headers({
-          "Content-type": "application/json"
-        })
+        password: this.state.password
       };
-
-      fetch("http://localhost:3001/auth/resetpassword", requestInfo)
+      api
+        .post("/auth/resetpassword", requestInfo)
         .then(response => {
-          if (response.ok) {
+          if (response) {
+            this.resetpasswordform.reset();
+            this.setState({
+              showmodal: true,
+              msg: "",
+              error: false
+            });
             return <Redirect to="/" />;
           } else {
-            throw new Error("Failed to register");
+            throw new Error("Failed to update password");
           }
         })
-        .then(msg => {
-          this.resetpasswordform.reset();
-          this.setState({
-            showmodal: true,
-            msg: "",
-            error:false
-          });
-
-        })
         .catch(err => {
-          this.setState({ msg: "Erro: o link usado expirou ou é inválido." ,error:true});
+          this.setState({
+            msg: "Erro: o link usado expirou ou é inválido.",
+            error: true
+          });
         });
     }
   };

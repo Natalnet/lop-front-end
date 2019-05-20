@@ -2,6 +2,8 @@ import React, { Component } from "react";
 //import api from "../../util/api"
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 
+import api from "../../services/api";
+
 import { Link, Redirect } from "react-router-dom";
 export default class LoginScreen extends Component {
   state = {
@@ -14,35 +16,23 @@ export default class LoginScreen extends Component {
   login = event => {
     event.preventDefault();
     const requestInfo = {
-      method: "POST",
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.passwd
-      }),
-      headers: new Headers({
-        "Content-type": "application/json"
-      })
+      email: this.state.email,
+      password: this.state.passwd
     };
-    fetch("http://localhost:3001/auth/authenticate", requestInfo)
+    api
+      .post("/auth/authenticate", requestInfo)
       .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
+        if (response) {
+          localStorage.setItem("auth-token", response.data.token);
+          localStorage.setItem("user.profile", response.data.user.profile);
+          localStorage.setItem("user.name", response.data.user.name);
+          localStorage.setItem("user.email", response.data.user.email);
+          localStorage.setItem("user.enrollment", response.data.user.enrollment);
+          this.setState({ redirect: true, profile: response.data.user.profile });;
+        }else{
           throw new Error("Invalid email or password");
         }
       })
-      .then(data => {
-        localStorage.setItem("auth-token", data.token);
-        localStorage.setItem("user.profile", data.user.profile);
-        localStorage.setItem("user.name", data.user.name);
-        localStorage.setItem("user.email", data.user.email);
-        localStorage.setItem("user.enrollment", data.user.enrollment);
-        this.setState({ redirect: true, profile: data.user.profile });
-      })
-      .catch(err => {
-        this.setState({ msg: "Erro: usuário ou senha inválidos." });
-        localStorage.removeItem("auth-token");
-      });
   };
   componentDidMount() {
     document.title = "Realizar login - Plataforma LOP";
