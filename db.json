@@ -93,5 +93,18 @@
       "id": 3
     }
   ],
-  "disciplinas": []
+  "disciplinas": [
+    {
+      "nome": "lop",
+      "codigo": "2324",
+      "curso": "",
+      "id": 1
+    },
+    {
+      "nome": "ass",
+      "codigo": "asda",
+      "curso": "",
+      "id": 2
+    }
+  ]
 }
