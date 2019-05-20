@@ -10,14 +10,10 @@ import aluno from "routes/aluno.routes";
 
 import administrador from "routes/administrador.routes";
 
-import sign from "routes/sign.routes";
-
-
 const routes = (
   <BrowserRouter>
     <Switch>
       {autenticacao}
-      {sign}
       {aluno}
       {administrador}
       {erros}
