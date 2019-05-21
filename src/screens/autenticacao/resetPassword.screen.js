@@ -101,7 +101,6 @@ export default class resetScreen extends Component {
                 onChange={this.handleConfirmPasswordChange}
               />
             </div>
-
             <div className="form-footer">
               <button type="submit" className="btn btn-primary btn-block">
                 Enviar

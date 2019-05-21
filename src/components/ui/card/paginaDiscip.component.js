@@ -8,9 +8,35 @@ export default class pagDisciplinas extends Component {
     nome: "",
     codigo: "",
     curso: "",
+    cursos: [],
     items: []
   };
 
+  getCursos = async () => {
+    const { data } = await api.get("/cursos");
+
+    return this.setState({
+      cursos: [...data]
+    });
+  };
+
+  getDisciplinas = async () => {
+    const { data } = await api.get("/disciplinas");
+
+    data.map(disciplina => {
+      return this.setState({
+        items: [
+          ...this.state.items,
+          disciplina.nome + ", " + disciplina.curso + " - " + disciplina.codigo
+        ]
+      });
+    });
+  };
+
+  componentDidMount() {
+    this.getCursos();
+    this.getDisciplinas();
+  }
   handleSubmit = async e => {
     e.preventDefault();
   };
@@ -36,7 +62,11 @@ export default class pagDisciplinas extends Component {
             this.setState({
               items: [
                 ...this.state.items,
-                this.state.nome + ", " + this.state.codigo
+                this.state.nome +
+                  ", " +
+                  this.state.curso +
+                  " - " +
+                  this.state.codigo
               ]
             });
           }
@@ -63,24 +93,6 @@ export default class pagDisciplinas extends Component {
           confirmButtonText: "Voltar para o sistema"
         });
       }
-
-      /*const requestInfo = {
-          method: "POST",
-          body: JSON.stringify({
-            nome: this.state.nome,
-            codigo: this.state.codigo    
-          }),
-          headers: new Headers({
-            "Content-type": "application/json"
-          })
-        };
-        this.setState({
-          items: [
-            ...this.state.items,
-            this.state.nome + ", " + this.state.codigo 
-          ]
-          //Disciplina, codigo
-        });*/
     }
   };
 
@@ -91,8 +103,11 @@ export default class pagDisciplinas extends Component {
   handleCodigoChange = e => {
     this.setState({ codigo: e.target.value });
   };
-
+  handleCursoChange = e => {
+    this.setState({ curso: e.target.value });
+  };
   render() {
+    const { cursos } = this.state;
     return (
       <div className="container-fluid form-control">
         <form className="row" onSubmit={this.onSubmit}>
@@ -123,11 +138,19 @@ export default class pagDisciplinas extends Component {
           </div>
 
           <div className="col-md-6">
-            <select className="custom-select" id="" style={{ marginTop: 20 }}>
-              <option defaultValue>Selecione o Curso...</option>
-              <option value="1">Ciencia e Tecnologia</option>
-              <option value="2">Engenharia da ....</option>
-              <option value="3">Tecnologia da Informação</option>
+            <select
+              className="custom-select"
+              id=""
+              style={{ marginTop: 20 }}
+              value={this.state.curso}
+              onChange={this.handleCursoChange}
+            >
+              <option defaultValue>Selecione o curso...</option>
+              {cursos.map((curso, index) => (
+                <option key={index} value={curso.nome}>
+                  {curso.nome}
+                </option>
+              ))}
             </select>
           </div>
 

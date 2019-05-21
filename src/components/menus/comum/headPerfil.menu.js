@@ -49,7 +49,11 @@ export default class HeadPefilMenu extends Component {
                 <i className="dropdown-icon fe fe-user" /> Perfil
               </Link>
               <div className="dropdown-divider" />
-              <Link className="dropdown-item" to="/dashboard/sair">
+              <Link
+                className="dropdown-item"
+                to="/"
+                onClick={() => localStorage.clear()}
+              >
                 <i className="dropdown-icon fe fe-log-out" /> Sair
               </Link>
             </div>

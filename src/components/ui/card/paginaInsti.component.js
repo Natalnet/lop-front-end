@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import List from "../List";
 import Swal from "sweetalert2";
 import api from "../../../services/api";
-//http://localhost:3001/instituicoes?nome_like=^L pode ser usado para search
+
 export default class pagInstituição extends Component {
   state = {
     nome: "",
@@ -117,7 +117,7 @@ export default class pagInstituição extends Component {
   };
   editInst = () => {};
   searchWithCep = async () => {
-    if (this.state.cep.length !== 8) {
+    if (this.state.cep.replace("-","").length !== 8) {
       Swal.fire({
         type: "error",
         title: `Error no cep: ${this.state.cep}`,

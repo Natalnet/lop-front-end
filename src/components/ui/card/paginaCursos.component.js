@@ -101,7 +101,7 @@ export default class pagCursos extends Component {
               type="text"
               className="form-control"
               id="inputNomeDisc"
-              placeholder="Digite o Nome do curso. ex: Linguagem de programação"
+              placeholder="Digite o Nome do curso. ex: C&T"
               value={this.state.nome}
               onChange={this.handleNameChange}
             />
