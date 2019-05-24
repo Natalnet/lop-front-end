@@ -15,7 +15,7 @@ export default class pagInstituição extends Component {
     bairro: "",
     msg: "",
     items: [],
-    search: []
+    filtro: []
   };
   handleSubmit = async e => {
     e.preventDefault();
@@ -29,6 +29,10 @@ export default class pagInstituição extends Component {
     data.map(inst => {
       return this.setState({
         items: [
+          ...this.state.items,
+          inst.nome + ", " + inst.localidade + ", " + inst.uf
+        ],
+        filtro: [
           ...this.state.items,
           inst.nome + ", " + inst.localidade + ", " + inst.uf
         ]
@@ -59,6 +63,14 @@ export default class pagInstituição extends Component {
             });
             this.setState({
               items: [
+                ...this.state.items,
+                this.state.nome +
+                  ", " +
+                  this.state.localidade +
+                  ", " +
+                  this.state.uf
+              ],
+              filtro: [
                 ...this.state.items,
                 this.state.nome +
                   ", " +
@@ -115,9 +127,26 @@ export default class pagInstituição extends Component {
   handleSearchChange = e => {
     this.setState({ search: e.target.value.substr(0, 20) });
   };
+  filtrar = e => {
+    let ListaOriginal = [];
+    let ListaNova = [];
+    if (e.target.value !== "") {
+      ListaOriginal = this.state.items;
+      ListaNova = ListaOriginal.filter(item => {
+        const lc = item.toLowerCase();
+        const filter = e.target.value.toLowerCase();
+        return lc.includes(filter);
+      });
+    } else {
+      ListaNova = this.state.items;
+    }
+    this.setState({
+      filtro: ListaNova
+    });
+  };
   editInst = () => {};
   searchWithCep = async () => {
-    if (this.state.cep.replace("-","").length !== 8) {
+    if (this.state.cep.replace("-", "").length !== 8) {
       Swal.fire({
         type: "error",
         title: `Error no cep: ${this.state.cep}`,
@@ -258,20 +287,12 @@ export default class pagInstituição extends Component {
           <button type="submit" className="btn btn-primary mb-3 btn-sm">
             Incluir
           </button>
-          <div className="input-group">
-            <input
-              className="form-control py-2 mt-2 mb-2"
-              type="search"
-              placeholder="Natal"
-              onChange={this.handleSearchChange}
-            />
-            <span className="input-group-append mt-2 mb-2">
-              <button className="btn btn-outline-secondary" type="button">
-                <i className="fa fa-search" />
-              </button>
-            </span>
-          </div>
-          <List items={this.state.items} edit={this.editInst} />
+          <hr/>
+          <List
+            items={this.state.filtro}
+            edit={this.editInst}
+            change={this.filtrar}
+          />
         </form>
       </div>
     );

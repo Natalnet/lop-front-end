@@ -9,7 +9,8 @@ export default class pagUsuarios extends Component {
     instituicao: "",
     e_mail: "",
     funcao: "",
-    items: []
+    items: [],
+    filtro:[]
   };
 
   render() {

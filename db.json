@@ -21,6 +21,72 @@
       "localidade": "Natal",
       "bairro": "Candelária",
       "id": 2
+    },
+    {
+      "nome": "Teste",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59078970",
+      "numero": "3000",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Natal",
+      "bairro": "Lagoa Nova",
+      "id": 3
+    },
+    {
+      "nome": "teste2",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59078970",
+      "numero": "3000",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Natal",
+      "bairro": "Lagoa Nova",
+      "id": 4
+    },
+    {
+      "nome": "tasdhjasdnas",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59078970",
+      "numero": "3000",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Natal",
+      "bairro": "Lagoa Nova",
+      "id": 5
+    },
+    {
+      "nome": "tanajura",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59078970",
+      "numero": "3000",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Natal",
+      "bairro": "Lagoa Nova",
+      "id": 6
+    },
+    {
+      "nome": "abelha",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59078970",
+      "numero": "3000",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Natal",
+      "bairro": "Lagoa Nova",
+      "id": 7
+    },
+    {
+      "nome": "victor",
+      "logradouro": "Rua Novo Oriente",
+      "cep": "59147140",
+      "numero": "",
+      "complemento": "",
+      "uf": "RN",
+      "localidade": "Parnamirim",
+      "bairro": "Vida Nova",
+      "id": 8
     }
   ],
   "users": [],
@@ -29,6 +95,11 @@
       "nome": "C&T",
       "instituicao": "UFRN-ECT",
       "id": 1
+    },
+    {
+      "nome": "HDNASKJ",
+      "instituicao": "UFRN-ECT",
+      "id": 2
     }
   ],
   "disciplinas": [
@@ -37,6 +108,12 @@
       "codigo": "ECT2203",
       "curso": "C&T",
       "id": 1
+    },
+    {
+      "nome": "KDAS",
+      "codigo": "512",
+      "curso": "HDNASKJ",
+      "id": 2
     }
   ]
 }

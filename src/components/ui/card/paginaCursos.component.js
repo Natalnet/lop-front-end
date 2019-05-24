@@ -8,7 +8,8 @@ export default class pagCursos extends Component {
     nome: "",
     inst: "",
     instituicoes: [],
-    items: []
+    items: [],
+    filtro: []
   };
 
   componentDidMount() {
@@ -41,6 +42,10 @@ export default class pagCursos extends Component {
               items: [
                 ...this.state.items,
                 this.state.nome + ", " + this.state.inst
+              ],
+              filtro: [
+                ...this.state.items,
+                this.state.nome + ", " + this.state.inst
               ]
             });
           }
@@ -69,7 +74,23 @@ export default class pagCursos extends Component {
   handleInstChange = e => {
     this.setState({ inst: e.target.value });
   };
-
+  filtrar = e => {
+    let ListaOriginal = [];
+    let ListaNova = [];
+    if (e.target.value !== "") {
+      ListaOriginal = this.state.items;
+      ListaNova = ListaOriginal.filter(item => {
+        const lc = item.toLowerCase();
+        const filter = e.target.value.toLowerCase();
+        return lc.includes(filter);
+      });
+    } else {
+      ListaNova = this.state.items;
+    }
+    this.setState({
+      filtro: ListaNova
+    });
+  };
   getInstituicoes = async () => {
     const { data } = await api.get("/instituicoes");
 
@@ -83,7 +104,8 @@ export default class pagCursos extends Component {
 
     data.map(curso => {
       return this.setState({
-        items: [...this.state.items, curso.nome + ", " + curso.instituicao]
+        items: [...this.state.items, curso.nome + ", " + curso.instituicao],
+        filtro: [...this.state.items, curso.nome + ", " + curso.instituicao]
       });
     });
   };
@@ -133,23 +155,8 @@ export default class pagCursos extends Component {
           </button>
         </form>
 
-        <br />
         <hr />
-        <br />
-
-        <div className="input-group">
-          <input
-            className="form-control py-2 mt-2 mb-2"
-            type="search"
-            placeholder="Disciplina"
-          />
-          <span className="input-group-append mt-2 mb-2">
-            <button className="btn btn-outline-secondary" type="button">
-              <i className="fa fa-search" />
-            </button>
-          </span>
-        </div>
-        <List items={this.state.items} />
+        <List items={this.state.filtro} change={this.filtrar} />
       </div>
     );
   }
