@@ -11,6 +11,7 @@ export default class TableResponsive extends Component {
 
 
   render() {
+    console.log(this.props.children); 
     return (
       <div className="table-responsive">
 
@@ -19,13 +20,7 @@ export default class TableResponsive extends Component {
           <tr>
             <th className="w-1">Matrícula </th>
             <th>Nome </th>
-            <th>LX-QX</th>
-            <th>LX-QX</th>
-            <th>LX-QX</th>
-            <th>LX-QX</th>
-            <th>LX-QX</th>
-            <th>LX-QX</th>
-            <th>LX-QX</th>
+            {this.props.children.questoes.map( q => (<th>{q}</th>) ) }
           </tr>
         </thead>
 
