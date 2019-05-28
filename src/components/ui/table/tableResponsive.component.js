@@ -1,8 +1,6 @@
 /*
- * @Author: Marcus Dantas
+ * @Author: Orivaldo
  * @Date: 2019-01-27 12:11:20
- * @Last Modified by: Marcus Dantas
- * @Last Modified time: 2019-02-03 22:00:20
  */
 
 import React, { Component } from "react";
@@ -11,7 +9,11 @@ export default class TableResponsive extends Component {
 
 
   render() {
-    console.log(this.props.children); 
+    let teste = this.props.children.data[0]; 
+    console.log( teste );
+    /*for(var k in teste) {
+      console.log( teste[k].nome);
+    }*/
     return (
       <div className="table-responsive">
 
@@ -20,22 +22,21 @@ export default class TableResponsive extends Component {
           <tr>
             <th className="w-1">Matrícula </th>
             <th>Nome </th>
-            {this.props.children.questoes.map( q => (<th>{q}</th>) ) }
+            <th>Acerto (%) </th>
+            {this.props.children.questoes.map( q => (<th key={q}>{q}</th>) ) }
           </tr>
         </thead>
 
         <tbody>
-          <tr>
-            <td><span className="text-muted">001401</span></td>
-            <td> Orivaldo Santana </td>
-            <td> Ok </td>
-            <td> Ok </td>
-            <td> Ok </td>
-            <td> Ok </td>
-            <td> - </td>
-            <td> Ok </td>
-            <td> Ok </td>
+        {this.props.children.alunos.map(q => 
+          <tr key={q.nome}>
+            <td ><span className="text-muted"> {q.matricula} </span></td>
+            <td> {q.nome} </td>
+            <td> {q.acerto} </td>
+             {q.questoes.map(qr =>(<td> {qr} </td>) )} 
           </tr>
+          
+        )} 
           
 
         </tbody>

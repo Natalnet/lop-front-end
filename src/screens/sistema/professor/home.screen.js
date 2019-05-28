@@ -24,7 +24,10 @@ export default class HomeAlunoScreen extends Component {
   constructor(){
     super();
     this.state = {
-      alunos: []
+      data: {},   
+      turma: "", 
+      alunos: [],
+      questoes: ['L1-Q05', 'L1-Q09', 'L1-Q10', 'L1-Q11', 'L1-Q12', 'L2-Q07',  'L2-Q10', 'L2-Q11', 'L2-Q12',  'L2-Q13', 'L4-Q02',  'L3-Q05', 'L3-Q06', 'L3-Q08', 'L3-Q12']
     };
   }
   async componentDidMount() {
@@ -33,10 +36,47 @@ export default class HomeAlunoScreen extends Component {
   }
 
   populateAlunos = async () => {
-    const request = await axios.get('https://pokeapi.co/api/v2/pokemon/ditto/');
+    const request = await axios.get('http://localhost:3005/turma?nome=01D');
     if(request !== undefined){
       const data = request.data;
-      console.log(data);
+      console.log(data[0]);
+      let cont = 0; 
+      let nomeTurma = ""; 
+      let alunos = []; 
+      let questoes = []; 
+       
+      for(var k in data[0]) {
+        if (cont === 0) {
+          console.log("Turma: "+data[0][k])
+          nomeTurma = data[0][k]; 
+        }
+        else {
+          console.log( data[0][k]);
+          alunos[cont-1] = data[0][k]; 
+          if (cont === 1){
+            questoes = data[0][k].questoes; 
+          }
+          let novoVetorQuestoes = [];
+          let contJ = 0;
+          let acerto = 0; 
+          for (var c in data[0][k].questoes) {
+            novoVetorQuestoes[contJ] = data[0][k].questoes[c];
+            if(novoVetorQuestoes[contJ] === "OK" )
+              acerto++; 
+            contJ++; 
+          }
+          data[0][k].questoes = novoVetorQuestoes; 
+          data[0][k].acerto = parseInt((acerto/contJ)*100); 
+        }
+        cont++; 
+      }
+      let vetorQuestoes = []; 
+      cont = 0; 
+      for (var q in questoes ){
+        vetorQuestoes[cont] = q; 
+        cont++; 
+      }
+      this.setState({data: data, turma: nomeTurma, alunos: alunos, questoes: vetorQuestoes })
     }
   };
 
@@ -46,11 +86,11 @@ export default class HomeAlunoScreen extends Component {
 
         <Card>
           <CardHead>
-            Notas dos Alunos - Laboratório 
+            Notas Turma {this.state.turma} - Laboratório Unidade I
           </CardHead>
           <CardBody>
             <TableResponsive>
-
+              { this.state }
             </TableResponsive>
         </CardBody>
         </Card>
