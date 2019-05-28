@@ -11,7 +11,7 @@ import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
 
-export default class MenuAluno extends Component {
+export default class MenuProfessor extends Component {
   render() {
     return (
       <div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
@@ -20,21 +20,21 @@ export default class MenuAluno extends Component {
             <div className="col-lg order-lg-first">
               <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                 <li className="nav-item">
-                  <Link to="/sistema/aluno" className="nav-link">
+                  <Link to="/sistema/professor" className="nav-link">
                     <i className="fe fe-home" />
                     Início
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/aluno/atividades" className="nav-link">
+                  <Link to="/sistema/professor/relatorio" className="nav-link">
                     <i className="fe fe-bar-chart" />
-                    Atividades
+                    Relatório
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/aluno/avisos" className="nav-link">
+                  <Link to="/sistema/professor/gestao-de-atividades" className="nav-link">
                     <i className="fe fe-briefcase" />
-                    Avisos
+                    Gestão de atividades
                   </Link>
                 </li>
               </ul>

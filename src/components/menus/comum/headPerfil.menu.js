@@ -15,6 +15,7 @@ export default class HeadPefilMenu extends Component {
       <div className="d-flex">
         <a className="header-brand" href="/dashboard">
           <img
+            style={{marginLeft:'-0.7em'}}
             src="/assets/images/lop.svg"
             className="header-brand-img"
             alt="lop logo"
