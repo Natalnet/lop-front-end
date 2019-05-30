@@ -7,7 +7,7 @@
 
 import React, { Component } from "react";
 
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export default class HeadPefilMenu extends Component {
   render() {
@@ -15,7 +15,7 @@ export default class HeadPefilMenu extends Component {
       <div className="d-flex">
         <a className="header-brand" href="/dashboard">
           <img
-            style={{marginLeft:'-0.7em'}}
+            style={{ marginLeft: "-0.7em" }}
             src="/assets/images/lop.svg"
             className="header-brand-img"
             alt="lop logo"
@@ -32,13 +32,15 @@ export default class HeadPefilMenu extends Component {
                 className="avatar"
                 style={{
                   backgroundImage:
-                    "url(https://avatars1.githubusercontent.com/u/18246968?s=400&u=7a4633dba51fd94c701fc25219afb33123159471&v=4"
+                    "url(https://avatars1.githubusercontent.com/u/32372238?s=460&v=4"
                 }}
               />
               <span className="ml-2 d-none d-lg-block">
-                <span className="text-default">Marcus Paulo Soares Dantas</span>
+                <span className="text-default">
+                  Victor Hermes Alves de Souza
+                </span>
                 <small className="text-muted d-block mt-1">
-                  Aluno - 20190001014
+                  Professor - 20190001014
                 </small>
               </span>
             </Link>
