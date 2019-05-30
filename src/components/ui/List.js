@@ -27,7 +27,7 @@ export default class List extends Component {
               <button
                 type="button"
                 className="btn border-0 rounded fa fa-wrench btn-outline-secondary"
-                onClick={this.props.edit}
+                onClick={() => this.props.edit(index + 1)}
               />
             </li>
           ))}

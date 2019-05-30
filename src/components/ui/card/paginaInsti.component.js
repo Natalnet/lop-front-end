@@ -15,7 +15,9 @@ export default class pagInstituição extends Component {
     bairro: "",
     msg: "",
     items: [],
-    filtro: []
+    filtro: [],
+    editItem: false,
+    id: null
   };
   handleSubmit = async e => {
     e.preventDefault();
@@ -41,60 +43,141 @@ export default class pagInstituição extends Component {
   };
   onSubmit = event => {
     event.preventDefault();
-    if (this.state.nome.length > 0) {
-      const requestInfo = {
-        nome: this.state.nome,
-        logradouro: this.state.logradouro,
-        cep: this.state.cep,
-        numero: this.state.numero,
-        complemento: this.state.complemento,
-        uf: this.state.uf,
-        localidade: this.state.localidade,
-        bairro: this.state.bairro
-      };
-      api
-        .post("/instituicoes", requestInfo)
-        .then(response => {
-          if (response) {
+
+    if (this.state.editItem) {
+      if (this.state.nome.length > 0) {
+        const requestInfo = {
+          nome: this.state.nome,
+          logradouro: this.state.logradouro,
+          cep: this.state.cep,
+          numero: this.state.numero,
+          complemento: this.state.complemento,
+          uf: this.state.uf,
+          localidade: this.state.localidade,
+          bairro: this.state.bairro
+        };
+        const { id } = this.state;
+        api
+          .put(`/instituicoes/${id}`, requestInfo)
+          .then(response => {
+            if (response) {
+              Swal.fire({
+                type: "success",
+                title: `Instituição editada com sucesso`,
+                confirmButtonText: "Voltar para o sistema"
+              });
+              this.setState({
+                nome: "",
+                logradouro: "",
+                cep: "",
+                numero: "",
+                complemento: "",
+                uf: "",
+                localidade: "",
+                bairro: "",
+                msg: "",
+                items: [],
+                filtro: [],
+                editItem: false,
+                id: null,
+                items: [],
+                filtro: [
+                  ...this.state.items,
+                  this.state.nome +
+                    ", " +
+                    this.state.localidade +
+                    ", " +
+                    this.state.uf
+                ],
+                editItem: false
+              });
+              this.getInstituicoes();
+            }
+          })
+          .catch(err => {
             Swal.fire({
-              type: "success",
-              title: `Instituição cadastrada`,
+              type: "error",
+              title: `Error ao editar instituição`,
+              text: `error: ${err}`,
               confirmButtonText: "Voltar para o sistema"
             });
-            this.setState({
-              items: [
-                ...this.state.items,
-                this.state.nome +
-                  ", " +
-                  this.state.localidade +
-                  ", " +
-                  this.state.uf
-              ],
-              filtro: [
-                ...this.state.items,
-                this.state.nome +
-                  ", " +
-                  this.state.localidade +
-                  ", " +
-                  this.state.uf
-              ]
-            });
-          }
-        })
-        .catch(err => {
-          Swal.fire({
-            type: "error",
-            title: `Error ao cadastrar instituição`,
-            text: `error: ${err}`,
-            confirmButtonText: "Voltar para o sistema"
           });
+      } else {
+        Swal.fire({
+          type: "error",
+          title: `Campo instituição vazio`,
+          confirmButtonText: "Voltar para o sistema"
         });
+      }
     } else {
-      Swal.fire({
-        type: "error",
-        title: `Campo instituição vazio`,
-        confirmButtonText: "Voltar para o sistema"
-      });
+      if (this.state.nome.length > 0) {
+        const requestInfo = {
+          nome: this.state.nome,
+          logradouro: this.state.logradouro,
+          cep: this.state.cep,
+          numero: this.state.numero,
+          complemento: this.state.complemento,
+          uf: this.state.uf,
+          localidade: this.state.localidade,
+          bairro: this.state.bairro
+        };
+        api
+          .post("/instituicoes", requestInfo)
+          .then(response => {
+            if (response) {
+              Swal.fire({
+                type: "success",
+                title: `Instituição cadastrada`,
+                confirmButtonText: "Voltar para o sistema"
+              });
+              this.setState({
+                nome: "",
+                logradouro: "",
+                cep: "",
+                numero: "",
+                complemento: "",
+                uf: "",
+                localidade: "",
+                bairro: "",
+                msg: "",
+                items: [],
+                filtro: [],
+                editItem: false,
+                id: null,
+                items: [
+                  ...this.state.items,
+                  this.state.nome +
+                    ", " +
+                    this.state.localidade +
+                    ", " +
+                    this.state.uf
+                ],
+                filtro: [
+                  ...this.state.items,
+                  this.state.nome +
+                    ", " +
+                    this.state.localidade +
+                    ", " +
+                    this.state.uf
+                ]
+              });
+            }
+          })
+          .catch(err => {
+            Swal.fire({
+              type: "error",
+              title: `Error ao cadastrar instituição`,
+              text: `error: ${err}`,
+              confirmButtonText: "Voltar para o sistema"
+            });
+          });
+      } else {
+        Swal.fire({
+          type: "error",
+          title: `Campo instituição vazio`,
+          confirmButtonText: "Voltar para o sistema"
+        });
+      }
     }
   };
   handleNameChange = e => {
@@ -144,7 +227,24 @@ export default class pagInstituição extends Component {
       filtro: ListaNova
     });
   };
-  editInst = () => {};
+  editInst = async id => {
+    const { data } = await api.get(`/instituicoes`);
+
+    const inst = data.filter(item => item.id === id);
+
+    this.setState({
+      nome: inst[0].nome,
+      logradouro: inst[0].logradouro,
+      cep: inst[0].cep,
+      numero: inst[0].numero,
+      complemento: inst[0].complemento,
+      uf: inst[0].uf,
+      localidade: inst[0].localidade,
+      bairro: inst[0].bairro,
+      id: id,
+      editItem: true
+    });
+  };
   searchWithCep = async () => {
     if (this.state.cep.replace("-", "").length !== 8) {
       Swal.fire({
@@ -284,10 +384,16 @@ export default class pagInstituição extends Component {
               />
             </div>
           </div>
-          <button type="submit" className="btn btn-primary mb-3 btn-sm">
-            Incluir
-          </button>
-          <hr/>
+          {this.state.editItem ? (
+            <button type="submit" className="btn btn-primary mb-3 btn-sm">
+              Alterar
+            </button>
+          ) : (
+            <button type="submit" className="btn btn-primary mb-3 btn-sm">
+              Salvar
+            </button>
+          )}
+          <hr />
           <List
             items={this.state.filtro}
             edit={this.editInst}

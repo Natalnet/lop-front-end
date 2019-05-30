@@ -7,6 +7,8 @@ export default class pagCursos extends Component {
   state = {
     nome: "",
     inst: "",
+    id: null,
+    editItem: false,
     instituicoes: [],
     items: [],
     filtro: []
@@ -24,46 +26,97 @@ export default class pagCursos extends Component {
   onSubmit = event => {
     event.preventDefault();
 
-    if (this.state.nome.length > 0) {
-      const requestInfo = {
-        nome: this.state.nome,
-        instituicao: this.state.inst
-      };
-      api
-        .post("/cursos", requestInfo)
-        .then(response => {
-          if (response) {
+    if (this.state.editItem) {
+      if (this.state.nome.length > 0) {
+        const requestInfo = {
+          nome: this.state.nome,
+          instituicao: this.state.inst
+        };
+        const { id } = this.state;
+        api
+          .put(`/cursos/${id}`, requestInfo)
+          .then(response => {
+            if (response) {
+              Swal.fire({
+                type: "success",
+                title: `Curso cadastrado`,
+                confirmButtonText: "Voltar para o sistema"
+              });
+              this.setState({
+                nome: "",
+                inst: "",
+                id: null,
+                editItem: false,
+                items: [],
+                filtro: [
+                  ...this.state.items,
+                  this.state.nome + ", " + this.state.inst
+                ]
+              });
+              this.getCursos();
+            }
+          })
+          .catch(err => {
             Swal.fire({
-              type: "success",
-              title: `Curso cadastrado`,
+              type: "error",
+              title: `Error ao cadastrar curso`,
+              text: `error: ${err}`,
               confirmButtonText: "Voltar para o sistema"
             });
-            this.setState({
-              items: [
-                ...this.state.items,
-                this.state.nome + ", " + this.state.inst
-              ],
-              filtro: [
-                ...this.state.items,
-                this.state.nome + ", " + this.state.inst
-              ]
-            });
-          }
-        })
-        .catch(err => {
-          Swal.fire({
-            type: "error",
-            title: `Error ao cadastrar curso`,
-            text: `error: ${err}`,
-            confirmButtonText: "Voltar para o sistema"
           });
+      } else {
+        Swal.fire({
+          type: "error",
+          title: `Campo curso vazio`,
+          confirmButtonText: "Voltar para o sistema"
         });
+      }
     } else {
-      Swal.fire({
-        type: "error",
-        title: `Campo curso vazio`,
-        confirmButtonText: "Voltar para o sistema"
-      });
+      if (this.state.nome.length > 0) {
+        const requestInfo = {
+          nome: this.state.nome,
+          instituicao: this.state.inst
+        };
+        api
+          .post("/cursos", requestInfo)
+          .then(response => {
+            if (response) {
+              Swal.fire({
+                type: "success",
+                title: `Curso cadastrado`,
+                confirmButtonText: "Voltar para o sistema"
+              });
+              this.setState({
+                nome: "",
+                inst: "",
+                id: null,
+                editItem: false,
+                items: [
+                  ...this.state.items,
+                  this.state.nome + ", " + this.state.inst
+                ],
+                filtro: [
+                  ...this.state.items,
+                  this.state.nome + ", " + this.state.inst
+                ]
+              });
+            }
+          })
+          .catch(err => {
+            Swal.fire({
+              type: "error",
+              title: `Error ao cadastrar curso`,
+              text: `error: ${err}`,
+              confirmButtonText: "Voltar para o sistema"
+            });
+          });
+      } else {
+        Swal.fire({
+          type: "error",
+          title: `Campo curso vazio`,
+          confirmButtonText: "Voltar para o sistema"
+        });
+      }
     }
   };
 
@@ -110,6 +163,19 @@ export default class pagCursos extends Component {
     });
   };
 
+  editCurso = async id => {
+    const { data } = await api.get(`/cursos`);
+
+    const curso = data.filter(item => item.id === id);
+
+    this.setState({
+      nome: curso[0].nome,
+      inst: curso[0].instituicao,
+      id: id,
+      editItem: true
+    });
+  };
+
   render() {
     const { instituicoes } = this.state;
 
@@ -145,18 +211,41 @@ export default class pagCursos extends Component {
               ))}
             </select>
           </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary mb-3 btn-sm"
-            style={{ marginTop: 20, height: 40, width: 70, marginLeft: "10px" }}
-          >
-            Incluir
-          </button>
+          {this.state.editItem ? (
+            <button
+              type="submit"
+              className="btn btn-primary mb-3 btn-sm"
+              style={{
+                marginTop: 20,
+                height: 40,
+                width: 70,
+                marginLeft: "10px"
+              }}
+            >
+              Alterar
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="btn btn-primary mb-3 btn-sm"
+              style={{
+                marginTop: 20,
+                height: 40,
+                width: 70,
+                marginLeft: "10px"
+              }}
+            >
+              Salvar
+            </button>
+          )}
         </form>
 
         <hr />
-        <List items={this.state.filtro} change={this.filtrar} />
+        <List
+          items={this.state.filtro}
+          change={this.filtrar}
+          edit={this.editCurso}
+        />
       </div>
     );
   }

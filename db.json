@@ -1,10 +1,10 @@
 {
   "instituicoes": [
     {
-      "nome": "UFRN-ECT",
+      "nome": "UFRN",
       "logradouro": "Avenida Senador Salgado Filho",
-      "cep": "59078970",
-      "numero": "3000",
+      "cep": "59075-000",
+      "numero": "de 1900 a 2860 - lado par",
       "complemento": "",
       "uf": "RN",
       "localidade": "Natal",
@@ -12,108 +12,86 @@
       "id": 1
     },
     {
-      "nome": "UFRN-CB",
-      "logradouro": "Travessa Senador Salgado Filho",
-      "cep": "59064741",
-      "numero": "",
+      "nome": "UNP",
+      "logradouro": "Avenida Senador Salgado Filho",
+      "cep": "59056-000",
+      "numero": "de 1561/1562 a 1847/1848",
       "complemento": "",
       "uf": "RN",
       "localidade": "Natal",
-      "bairro": "Candelária",
+      "bairro": "Lagoa Nova",
       "id": 2
     },
     {
-      "nome": "Teste",
-      "logradouro": "Avenida Senador Salgado Filho",
-      "cep": "59078970",
-      "numero": "3000",
-      "complemento": "",
-      "uf": "RN",
-      "localidade": "Natal",
-      "bairro": "Lagoa Nova",
-      "id": 3
-    },
-    {
-      "nome": "teste2",
-      "logradouro": "Avenida Senador Salgado Filho",
-      "cep": "59078970",
-      "numero": "3000",
-      "complemento": "",
-      "uf": "RN",
-      "localidade": "Natal",
-      "bairro": "Lagoa Nova",
-      "id": 4
-    },
-    {
-      "nome": "tasdhjasdnas",
-      "logradouro": "Avenida Senador Salgado Filho",
-      "cep": "59078970",
-      "numero": "3000",
-      "complemento": "",
-      "uf": "RN",
-      "localidade": "Natal",
-      "bairro": "Lagoa Nova",
-      "id": 5
-    },
-    {
-      "nome": "tanajura",
-      "logradouro": "Avenida Senador Salgado Filho",
-      "cep": "59078970",
-      "numero": "3000",
-      "complemento": "",
-      "uf": "RN",
-      "localidade": "Natal",
-      "bairro": "Lagoa Nova",
-      "id": 6
-    },
-    {
-      "nome": "abelha",
-      "logradouro": "Avenida Senador Salgado Filho",
-      "cep": "59078970",
-      "numero": "3000",
-      "complemento": "",
-      "uf": "RN",
-      "localidade": "Natal",
-      "bairro": "Lagoa Nova",
-      "id": 7
-    },
-    {
-      "nome": "victor",
-      "logradouro": "Rua Novo Oriente",
-      "cep": "59147140",
+      "nome": "Faculdade Maurício de Nassau",
+      "logradouro": "Rua Pedro Bezerra Filho",
+      "cep": "59141-175",
       "numero": "",
       "complemento": "",
       "uf": "RN",
       "localidade": "Parnamirim",
-      "bairro": "Vida Nova",
-      "id": 8
+      "bairro": "Santos Reis",
+      "id": 3
     }
   ],
   "users": [],
   "cursos": [
     {
-      "nome": "C&T",
-      "instituicao": "UFRN-ECT",
+      "nome": "Ciências & Tecnologia",
+      "instituicao": "UFRN",
       "id": 1
     },
     {
-      "nome": "HDNASKJ",
-      "instituicao": "UFRN-ECT",
+      "nome": "Administração",
+      "instituicao": "UFRN",
       "id": 2
+    },
+    {
+      "nome": "Engenharia Civil",
+      "instituicao": "UNP",
+      "id": 3
+    },
+    {
+      "nome": "Farmácia",
+      "instituicao": "Faculdade Maurício de Nassau",
+      "id": 4
+    },
+    {
+      "nome": "Engenharia de Computação",
+      "instituicao": "UFRN",
+      "id": 5
     }
   ],
   "disciplinas": [
     {
       "nome": "Lógica de Programação",
       "codigo": "ECT2203",
-      "curso": "C&T",
+      "curso": "Ciências & Tecnologia",
       "id": 1
     },
     {
-      "nome": "KDAS",
-      "codigo": "512",
-      "curso": "HDNASKJ",
+      "nome": "Linguagem de Programação",
+      "codigo": "ECT2303",
+      "curso": "Ciências & Tecnologia",
       "id": 2
+    },
+    {
+      "nome": "Circuitos Digitais",
+      "codigo": "DCA0102",
+      "curso": "Engenharia de Computação",
+      "id": 3
+    },
+    {
+      "nome": "Vacina I",
+      "codigo": "FARM012",
+      "curso": "Farmácia",
+      "id": 4
+    },
+    {
+      "nome": "Resistência dos Materiais",
+      "codigo": "DEC2015",
+      "curso": "Engenharia Civil",
+      "id": 5
     }
   ]
 }
