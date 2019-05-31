@@ -27,15 +27,15 @@ export default class HomeAlunoScreen extends Component {
       questoes: []
     };
   }
-  componentDidUpdate(prevProps) {
+  async componentDidMount(){
+    await this.populateAlunos()
+  }
+  /*componentDidUpdate(prevProps) {
     if (prevProps.turma !== this.props.turma) {
       this.populateAlunos();
-    }
-  }
+    }*/
   populateAlunos = async () => {
-    const request = await axios.get(
-      "http://localhost:3005/turma?nome=" + this.props.turma
-    );
+    const request = await axios.get("http://localhost:3005/turma?nome=01B");
     if (request !== undefined) {
       const data = request.data;
       let cont = 0;
@@ -83,7 +83,7 @@ export default class HomeAlunoScreen extends Component {
     return (
       <Card>
         <CardHead>
-          Notas Turma {this.props.turma} - Laboratório Unidade I
+          Notas Turma {this.state.turma} - Laboratório Unidade I
         </CardHead>
         <CardBody>
           <TableResponsive>{this.state}</TableResponsive>

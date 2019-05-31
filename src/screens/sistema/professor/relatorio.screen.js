@@ -3,52 +3,73 @@ import React, { Component } from "react";
 import axios from "axios";
 import Relatorio from "../../../components/ui/relatorio.component";
 import TemplateSistema from "components/templates/sistema.template";
+import Button from "components/ui/button.component";
+import SelectOption from "components/ui/selectOption.component";
 
+var buttonH = "2.5rem";
+var buttonW = "7rem";
 export default class RelatorioScreen extends Component {
   state = {
-    turma: "",
-    turmas: []
+    lista: "",
+    listas: []
   };
 
-  componentDidMount() {
-    document.title = "Sistema Professor - Plataforma LOP";
-    this.getTurmas();
+  async componentDidMount(){
+    document.title="Relatorios"
+    await this.getListas();
   }
-  handleTurmaChange = e => {
-    this.setState({ turma: e.target.value });
-  };
-  getTurmas = async () => {
-    const { data } = await axios.get("http://localhost:3005/turmas");
+  async getListas(){
+    const request = await axios.get("http://localhost:3005/listas");
+    if(request !== undefined){
 
-    return this.setState({
-      turmas: [...data]
-    });
+    }
+  }
+  handleListaChange = e => {
+    this.setState({ lista: e.target.value });
   };
   render() {
-    const { turmas } = this.state;
+    const { listas } = this.state;
     return (
       <TemplateSistema>
         <div className="container-fluid form-control">
           <form className="row">
-            <div className="col-md-6">
-              <select
-                className="custom-select"
-                id=""
-                style={{ marginTop: 20 }}
-                value={this.state.turma}
-                onChange={this.handleTurmaChange}
-              >
-                <option defaultValue>Selecione a turma...</option>
-                {turmas.map((turma, index) => (
-                  <option key={index} value={turma}>
-                    {turma}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SelectOption
+              classEstilo={"col-md-3"}
+              defaultValue={"Selecione a lista..."}
+              select={this.state.lista}
+              handleChange={this.handleListaChange}
+              arrayMap={listas}
+            />
+            <Button
+              defaultValue={"Add"}
+              classEstilo={"btn btn-primary btn-sm"}
+              estilo={{
+                marginBottom: 5,
+                height: buttonH,
+                width: buttonW
+              }}
+            />
+            <Button
+              defaultValue={"Consultar"}
+              classEstilo={"btn btn-primary btn-sm"}
+              estilo={{
+                marginBottom: 5,
+                height: buttonH,
+                width: buttonW
+              }}
+            />
+            <Button
+              defaultValue={"Limpar"}
+              classEstilo={"btn btn-primary btn-sm"}
+              estilo={{
+                marginBottom: 5,
+                height: buttonH,
+                width: buttonW
+              }}
+            />
           </form>
           <br />
-          <Relatorio turma={this.state.turma} />
+          <Relatorio />
         </div>
       </TemplateSistema>
     );
