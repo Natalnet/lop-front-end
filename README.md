@@ -48,7 +48,16 @@ Atualmente só existem poucas rotas de testes que são:
         <sub><b>Hemerson Rafael </b></sub>
       </a><br />
       <a href="https://github.com/Natalnet/lop-front-end/commits?author=HemersonRafael" title="Code">💻</a>
-    </td> 
+    </td>
+    <td align="center">
+      <a href="https://github.com/VictorHAS">
+        <img src="https://avatars1.githubusercontent.com/u/32372238?s=460&v=4" width="100px;" alt="Hemerson Rafael"/>
+        <br />
+        <sub><b>Victor Hermes </b></sub>
+      </a><br />
+      <a href="https://github.com/Natalnet/lop-front-end/commits?author=VictorHAS" title="Code">💻</a>
+    </td>
+
   </tr>
 </table>
 
