@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Swal from "sweetalert2";
 import List from "../List";
-import api from "../../../services/api";
+import api from "../../../services/jsonApi";
 
 export default class pagDisciplinas extends Component {
   state = {
@@ -193,14 +193,8 @@ export default class pagDisciplinas extends Component {
       filtro: ListaNova
     });
   };
-  handleNameChange = e => {
-    this.setState({ nome: e.target.value });
-  };
-  handleCodigoChange = e => {
-    this.setState({ codigo: e.target.value });
-  };
-  handleCursoChange = e => {
-    this.setState({ curso: e.target.value });
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   editDisciplina = async id => {
@@ -228,10 +222,10 @@ export default class pagDisciplinas extends Component {
             <input
               type="text"
               className="form-control"
-              id="inputNomeDisc"
+              name="nome"
               placeholder="Digite o Nome da disciplina. ex: Linguagem de programação"
               value={this.state.nome}
-              onChange={this.handleNameChange}
+              onChange={this.handleChange}
             />
           </div>
 
@@ -241,10 +235,10 @@ export default class pagDisciplinas extends Component {
             <input
               type="text"
               className="form-control"
-              id="inputCodigoDisc"
+              name="codigo"
               placeholder="Digite o Código da disciplina. ex: 1234567"
               value={this.state.codigo}
-              onChange={this.handleCodigoChange}
+              onChange={this.handleChange}
             />
           </div>
 
@@ -252,9 +246,10 @@ export default class pagDisciplinas extends Component {
             <select
               className="custom-select"
               id=""
+              name="curso"
               style={{ marginTop: 20 }}
               value={this.state.curso}
-              onChange={this.handleCursoChange}
+              onChange={this.handleChange}
             >
               <option defaultValue>Selecione o curso...</option>
               {cursos.map((curso, index) => (

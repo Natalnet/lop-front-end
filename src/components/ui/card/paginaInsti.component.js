@@ -1,19 +1,19 @@
 import React, { Component } from "react";
 import List from "../List";
 import Swal from "sweetalert2";
-import api from "../../../services/api";
+import api from "../../../services/jsonApi";
 
 export default class pagInstituição extends Component {
   state = {
-    nome: "",
-    logradouro: "",
-    cep: "",
-    numero: "",
-    complemento: "",
-    uf: "",
-    localidade: "",
-    bairro: "",
-    msg: "",
+    nome: '',
+    logradouro: '',
+    cep: '',
+    numero: '',
+    complemento: '',
+    uf: '',
+    localidade: '',
+    bairro: '',
+    msg: '',
     items: [],
     filtro: [],
     editItem: false,
@@ -77,10 +77,8 @@ export default class pagInstituição extends Component {
                 bairro: "",
                 msg: "",
                 items: [],
-                filtro: [],
                 editItem: false,
                 id: null,
-                items: [],
                 filtro: [
                   ...this.state.items,
                   this.state.nome +
@@ -89,7 +87,6 @@ export default class pagInstituição extends Component {
                     ", " +
                     this.state.uf
                 ],
-                editItem: false
               });
               this.getInstituicoes();
             }
@@ -140,8 +137,6 @@ export default class pagInstituição extends Component {
                 localidade: "",
                 bairro: "",
                 msg: "",
-                items: [],
-                filtro: [],
                 editItem: false,
                 id: null,
                 items: [
@@ -180,35 +175,8 @@ export default class pagInstituição extends Component {
       }
     }
   };
-  handleNameChange = e => {
-    this.setState({ nome: e.target.value });
-  };
-  handleCepChange = e => {
-    this.setState({ cep: e.target.value });
-  };
-  handleLogradouroChange = e => {
-    this.setState({ logradouro: e.target.value });
-  };
-  handleBairroChange = e => {
-    this.setState({ bairro: e.target.value });
-  };
-  handleNumeroChange = e => {
-    this.setState({ numero: e.target.value });
-  };
-  handleComplementoChange = e => {
-    this.setState({ complemento: e.target.value });
-  };
-  handleCidadeChange = e => {
-    this.setState({ cidade: e.target.value });
-  };
-  handleLocalidadeChange = e => {
-    this.setState({ localidade: e.target.value });
-  };
-  handleUfChange = e => {
-    this.setState({ uf: e.target.value });
-  };
-  handleSearchChange = e => {
-    this.setState({ search: e.target.value.substr(0, 20) });
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
   };
   filtrar = e => {
     let ListaOriginal = [];
@@ -284,10 +252,10 @@ export default class pagInstituição extends Component {
             <input
               type="text"
               className="form-control"
-              id="inputNome"
+              name="nome"
               placeholder="Nome da Instituição Ex: UFRN "
+              onChange={this.handleChange}
               value={this.state.nome}
-              onChange={this.handleNameChange}
             />
           </div>
           <div className="row">
@@ -297,10 +265,10 @@ export default class pagInstituição extends Component {
                 <input
                   type="text"
                   className="form-control"
-                  id="inputEndereco"
                   placeholder="Ex: 59078-970"
+                  name="cep"
                   value={this.state.cep}
-                  onChange={this.handleCepChange}
+                  onChange={this.handleChange}
                 />
                 <span className="input-group-append">
                   <button
@@ -320,10 +288,10 @@ export default class pagInstituição extends Component {
               <input
                 type="text"
                 className="form-control"
-                id="inputEndereco"
+                name="logradouro"
                 placeholder="Ex: Av Senador Salgado Filho"
                 value={this.state.logradouro}
-                onChange={this.handleLogradouroChange}
+                onChange={this.handleChange}
               />
             </div>
             <div className="form-group col-sm-2">
@@ -331,10 +299,10 @@ export default class pagInstituição extends Component {
               <input
                 type="text"
                 className="form-control"
-                id="inputEndereco"
+                name="numero"
                 placeholder="Ex: 3000 ou s/n"
                 value={this.state.numero}
-                onChange={this.handleNumeroChange}
+                onChange={this.handleChange}
               />
             </div>
             <div className="form-group col-5">
@@ -342,10 +310,10 @@ export default class pagInstituição extends Component {
               <input
                 type="text"
                 className="form-control"
-                id="inputEndereco"
+                name="complemento"
                 placeholder=""
                 value={this.state.complemento}
-                onChange={this.handleComplementoChange}
+                onChange={this.handleChange}
               />
             </div>
           </div>
@@ -355,10 +323,10 @@ export default class pagInstituição extends Component {
               <input
                 type="text"
                 className="form-control"
-                id="inputEndereco"
+                name="bairro"
                 placeholder="Ex: Lagoa Nova"
                 value={this.state.bairro}
-                onChange={this.handleBairroChange}
+                onChange={this.handleChange}
               />
             </div>
             <div className="form-group col-5">
@@ -366,10 +334,10 @@ export default class pagInstituição extends Component {
               <input
                 type="text"
                 className="form-control"
-                id="inputEndereco"
+                name="localidade"
                 placeholder="Ex: Natal"
                 value={this.state.localidade}
-                onChange={this.handleLocalidadeChange}
+                onChange={this.handleChange}
               />
             </div>
             <div className="form-group col-sm-2">
@@ -377,10 +345,10 @@ export default class pagInstituição extends Component {
               <input
                 type="text"
                 className="form-control"
-                id="inputEndereco"
+                name="uf"
                 placeholder="Ex: RN"
                 value={this.state.uf}
-                onChange={this.handleUfChange}
+                onChange={this.handleChange}
               />
             </div>
           </div>

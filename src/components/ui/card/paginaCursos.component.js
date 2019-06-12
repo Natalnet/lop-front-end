@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Swal from "sweetalert2";
 import List from "../List";
-import api from "../../../services/api";
+import api from "../../../services/jsonApi";
 
 export default class pagCursos extends Component {
   state = {
@@ -120,12 +120,8 @@ export default class pagCursos extends Component {
     }
   };
 
-  handleNameChange = e => {
-    this.setState({ nome: e.target.value });
-  };
-
-  handleInstChange = e => {
-    this.setState({ inst: e.target.value });
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
   };
   filtrar = e => {
     let ListaOriginal = [];
@@ -188,10 +184,10 @@ export default class pagCursos extends Component {
             <input
               type="text"
               className="form-control"
-              id="inputNomeDisc"
+              name="nome"
               placeholder="Digite o Nome do curso. ex: C&T"
               value={this.state.nome}
-              onChange={this.handleNameChange}
+              onChange={this.handleChange}
             />
           </div>
 
@@ -199,9 +195,10 @@ export default class pagCursos extends Component {
             <select
               className="custom-select"
               id=""
+              name="inst"
               style={{ marginTop: 20 }}
               value={this.state.inst}
-              onChange={this.handleInstChange}
+              onChange={this.handleChange}
             >
               <option defaultValue>Selecione a instituição...</option>
               {instituicoes.map((inst, index) => (
