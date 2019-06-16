@@ -49,7 +49,14 @@ export default class LoginScreen extends Component {
         .post("/auth/register", requestInfo)
         .then(response => {
           if (response) {
-            return this.setState({
+            localStorage.setItem("user.profile", "Aluno");
+            localStorage.setItem("user.name", this.state.name);
+            localStorage.setItem("user.email", this.state.email);
+            localStorage.setItem(
+              "user.enrollment",
+              this.state.enrollment
+            );
+            this.setState({
               msg: "",
               redirect: true
             });
