@@ -3,26 +3,27 @@ import InstituicaoScreen from "screens/sistema/administracao/instituicoes.screen
 import UsuariosScreen from "screens/sistema/administracao/usuarios.screen";
 import DisciplinasScreen from "screens/sistema/administracao/disciplinas.screen";
 import CursosScreen from "screens/sistema/administracao/cursos.screen";
-/*{
-  path: "/sistema/administracao/",
-  component: HomeAdministracaoScreen
-}*/
+
 const routes = [
   {
     path: "/sistema/administrador/instituicoes",
-    component: InstituicaoScreen
+    component: InstituicaoScreen,
+    private: true
   },
   {
     path: "/sistema/administrador/usuarios",
-    component: UsuariosScreen
+    component: UsuariosScreen,
+    private: true
   },
   {
     path: "/sistema/administrador/disciplinas",
-    component: DisciplinasScreen
+    component: DisciplinasScreen,
+    private: true
   },
   {
     path: "/sistema/administrador/cursos",
-    component: CursosScreen
+    component: CursosScreen,
+    private: true
   }
 ];
 

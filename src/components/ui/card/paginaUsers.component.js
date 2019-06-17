@@ -10,27 +10,12 @@ export default class pagUsuarios extends Component {
     e_mail: "",
     funcao: "",
     items: [],
-    filtro:[]
+    filtro: []
   };
 
   render() {
     return (
       <div className="container-fluid form-control">
-        <div className="input-group">
-          <input
-            className="form-control py-2 mt-2 mb-2"
-            type="search"
-            placeholder="Disciplina"
-          />
-          <span className="input-group-append mt-2 mb-2">
-            <button className="btn btn-outline-secondary" type="button">
-              <i className="fa fa-search" />
-            </button>
-          </span>
-        </div>
-
-        <hr />
-
         <table className="table">
           <thead>
             <tr>
