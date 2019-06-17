@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-//import api from "../../util/api"
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 
 import api from "../../services/api";

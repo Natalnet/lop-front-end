@@ -9,7 +9,7 @@ import React, { Component } from "react";
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 
 import { Link } from "react-router-dom";
-// resposta do back ao enviar email na rota: autenticacao/recuperar-senha?token={token}
+import {logoLOP} from "../../components/ui/logoLOP.component"
 export default class recoverScreen extends Component {
   state = {
     email: "",
@@ -65,13 +65,7 @@ export default class recoverScreen extends Component {
       <TemplateAutenticacao>
         <form className="card" onSubmit={this.send}>
           <div className="card-body p-6">
-            <div style={{ textAlign: "center" }}>
-              <img
-                className="h-9"
-                alt="Logo sistema"
-                src="/assets/images/logo.png"
-              />
-            </div>
+            <logoLOP to="/"/>
             <div className="card-title">Recuperação de senha</div>
             <div className="form-group">
               <span
