@@ -4,7 +4,8 @@ import HomeAlunoScreen from "screens/sistema/aluno/home.screen";
 const routes = [
   {
     path: "/sistema/aluno",
-    component: HomeAlunoScreen
+    component: HomeAlunoScreen,
+    private: true
   }
 ];
 

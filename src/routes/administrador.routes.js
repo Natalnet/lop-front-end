@@ -7,19 +7,23 @@ import CursosScreen from "screens/sistema/administracao/cursos.screen";
 const routes = [
   {
     path: "/sistema/administrador/instituicoes",
-    component: InstituicaoScreen
+    component: InstituicaoScreen,
+    private: true
   },
   {
     path: "/sistema/administrador/usuarios",
-    component: UsuariosScreen
+    component: UsuariosScreen,
+    private: true
   },
   {
     path: "/sistema/administrador/disciplinas",
-    component: DisciplinasScreen
+    component: DisciplinasScreen,
+    private: true
   },
   {
     path: "/sistema/administrador/cursos",
-    component: CursosScreen
+    component: CursosScreen,
+    private: true
   }
 ];
 
