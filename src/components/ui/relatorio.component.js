@@ -27,15 +27,13 @@ export default class HomeAlunoScreen extends Component {
       questoes: []
     };
   }
-  async componentDidMount(){
-    await this.populateAlunos()
-  }
-  /*componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     if (prevProps.turma !== this.props.turma) {
       this.populateAlunos();
-    }*/
+    }
+  }
   populateAlunos = async () => {
-    const request = await axios.get("http://localhost:3005/turma?nome=01B");
+    const request = await axios.get(`http://localhost:3005/turma?nome=${this.props.turma}`);
     if (request !== undefined) {
       const data = request.data;
       let cont = 0;

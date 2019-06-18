@@ -10,35 +10,37 @@ var buttonH = "2.5rem";
 var buttonW = "7rem";
 export default class RelatorioScreen extends Component {
   state = {
-    lista: "",
-    listas: []
+    turma: "",
+    turmas: []
   };
 
-  async componentDidMount(){
-    document.title="Relatorios"
-    await this.getListas();
+  async componentDidMount() {
+    document.title = "Relatorios";
+    await this.getTurmas();
   }
-  async getListas(){
-    const request = await axios.get("http://localhost:3005/listas");
-    if(request !== undefined){
-
+  async getTurmas() {
+    const { data } = await axios.get("http://localhost:3005/turmas");
+    if (data !== undefined) {
+      data.map(tms => {
+        return this.setState({ turmas: [...this.state.turmas,tms] });
+      });
     }
   }
-  handleListaChange = e => {
-    this.setState({ lista: e.target.value });
+  handleTurmasChange = e => {
+    this.setState({ turma: e.target.value });
   };
   render() {
-    const { listas } = this.state;
+    const { turmas } = this.state;
     return (
       <TemplateSistema>
         <div className="container-fluid form-control">
           <form className="row">
             <SelectOption
               classEstilo={"col-md-3"}
-              defaultValue={"Selecione a lista..."}
-              select={this.state.lista}
-              handleChange={this.handleListaChange}
-              arrayMap={listas}
+              defaultValue={"Selecione a turma..."}
+              select={this.state.turma}
+              handleChange={this.handleTurmasChange}
+              arrayMap={turmas}
             />
             <Button
               defaultValue={"Add"}
@@ -69,7 +71,7 @@ export default class RelatorioScreen extends Component {
             />
           </form>
           <br />
-          <Relatorio />
+          <Relatorio turma={this.state.turma}/>
         </div>
       </TemplateSistema>
     );
