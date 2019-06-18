@@ -5,7 +5,7 @@ import TemplateAutenticacao from "components/templates/autenticacao.template";
 import { Redirect } from "react-router-dom";
 
 import api from "../../services/api";
-
+import LogoLOP from "components/ui/logoLOP.component";
 //import queryString from "querystring"
 
 export default class resetScreen extends Component {
@@ -68,13 +68,7 @@ export default class resetScreen extends Component {
       <TemplateAutenticacao>
         <form className="card" onSubmit={this.send}>
           <div className="card-body p-6">
-            <div style={{ textAlign: "center" }}>
-              <img
-                className="h-9"
-                alt="Logo sistema"
-                src="/assets/images/logo.png"
-              />
-            </div>
+            <LogoLOP/>
             <div className="card-title">Restauração de Senha</div>
             <span
               className={"alert-" + (this.state.error ? "danger" : "success")}

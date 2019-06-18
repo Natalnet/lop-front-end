@@ -12,6 +12,8 @@ import api from "../../services/api";
 
 import { Link, Redirect } from "react-router-dom";
 
+import LogoLOP from "components/ui/logoLOP.component";
+
 export default class LoginScreen extends Component {
   state = {
     redirect: false,
@@ -95,13 +97,7 @@ export default class LoginScreen extends Component {
       <TemplateAutenticacao>
         <form className="card" onSubmit={this.register}>
           <div className="card-body p-6">
-            <div style={{ textAlign: "center" }}>
-              <img
-                className="h-9"
-                alt="Logo sistema"
-                src="/assets/images/logo.png"
-              />
-            </div>
+            <LogoLOP/>
             <span className="alert-danger">{this.state.msg}</span>
             <div className="card-title">Faça o seu cadastro</div>
             <div className="form-group">

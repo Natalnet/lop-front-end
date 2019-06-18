@@ -9,7 +9,8 @@ import React, { Component } from "react";
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 
 import { Link } from "react-router-dom";
-import {logoLOP} from "../../components/ui/logoLOP.component"
+import LogoLOP from "components/ui/logoLOP.component";
+
 export default class recoverScreen extends Component {
   state = {
     email: "",
@@ -65,7 +66,7 @@ export default class recoverScreen extends Component {
       <TemplateAutenticacao>
         <form className="card" onSubmit={this.send}>
           <div className="card-body p-6">
-            <logoLOP to="/"/>
+            <LogoLOP/>
             <div className="card-title">Recuperação de senha</div>
             <div className="form-group">
               <span
