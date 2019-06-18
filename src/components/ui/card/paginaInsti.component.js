@@ -5,15 +5,15 @@ import api from "../../../services/jsonApi";
 
 export default class pagInstituição extends Component {
   state = {
-    nome: '',
-    logradouro: '',
-    cep: '',
-    numero: '',
-    complemento: '',
-    uf: '',
-    localidade: '',
-    bairro: '',
-    msg: '',
+    nome: "",
+    logradouro: "",
+    cep: "",
+    numero: "",
+    complemento: "",
+    uf: "",
+    localidade: "",
+    bairro: "",
+    msg: "",
     items: [],
     filtro: [],
     editItem: false,
@@ -86,7 +86,7 @@ export default class pagInstituição extends Component {
                     this.state.localidade +
                     ", " +
                     this.state.uf
-                ],
+                ]
               });
               this.getInstituicoes();
             }
@@ -247,19 +247,21 @@ export default class pagInstituição extends Component {
     return (
       <div className="container form-control">
         <form onSubmit={this.onSubmit}>
-          <div className="form-group">
-            <label htmlFor="inputNome">Nome</label>
-            <input
-              type="text"
-              className="form-control"
-              name="nome"
-              placeholder="Nome da Instituição Ex: UFRN "
-              onChange={this.handleChange}
-              value={this.state.nome}
-            />
+          <div className="row">
+            <div className="form-group col-sm-5">
+              <label htmlFor="inputNome">Nome</label>
+              <input
+                type="text"
+                className="form-control"
+                name="nome"
+                placeholder="Nome da Instituição Ex: UFRN "
+                onChange={this.handleChange}
+                value={this.state.nome}
+              />
+            </div>
           </div>
           <div className="row">
-            <div className="form-group col-5">
+            <div className="form-group col-sm-5">
               <label htmlFor="inputEndereco">CEP</label>
               <div className="input-group">
                 <input
@@ -283,7 +285,7 @@ export default class pagInstituição extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="form-group col-5">
+            <div className="form-group col-sm-5">
               <label htmlFor="inputEndereco">Logradouro</label>
               <input
                 type="text"
@@ -305,7 +307,7 @@ export default class pagInstituição extends Component {
                 onChange={this.handleChange}
               />
             </div>
-            <div className="form-group col-5">
+            <div className="form-group col-sm-5">
               <label htmlFor="inputEndereco">Complemento</label>
               <input
                 type="text"

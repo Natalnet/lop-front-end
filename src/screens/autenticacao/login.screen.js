@@ -12,7 +12,7 @@ export default class LoginScreen extends Component {
     msg: "",
     email: "",
     passwd: "",
-    profile: "aluno"
+    profile: "ALUNO"
   };
   login = event => {
     event.preventDefault();
@@ -50,7 +50,7 @@ export default class LoginScreen extends Component {
         return <Redirect to="/sistema/aluno" />;
       } else if (this.state.profile === "PROFESSOR") {
         return <Redirect to="/sistema/professor" />;
-      } else if (this.state.profile === "Administrador") {
+      } else if (this.state.profile === "ADMINISTRADOR") {
         return <Redirect to="/sistema/administrador/instituicoes" />;
       }
     }

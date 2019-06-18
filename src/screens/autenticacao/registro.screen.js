@@ -52,6 +52,7 @@ export default class LoginScreen extends Component {
         .then(response => {
           if (response) {
             localStorage.setItem("user.profile", "ALUNO");
+            localStorage.setItem("auth-token", response.data.token);
             localStorage.setItem("user.name", this.state.name);
             localStorage.setItem("user.email", this.state.email);
             localStorage.setItem(
