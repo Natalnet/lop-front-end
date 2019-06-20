@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import api from "../../../services/api";
+import ListUsers from "../ListUsers";
+import Swal from "sweetalert2";
+
 export default class pagUsuarios extends Component {
   state = {
     matricula: "",
@@ -15,7 +18,32 @@ export default class pagUsuarios extends Component {
   componentDidMount() {
     this.getUsers();
   }
-
+  handleOption = async (index, e) => {
+    await this.setState({ funcao: e.target.value });
+    const id = this.state.users[index].id;
+    const nome = this.state.users[index].nome
+    const token = localStorage.getItem("auth-token");
+    const requestInfo = {
+      profile: this.state.funcao
+    };
+    api.put(`/admin/users/${id}/update`, requestInfo, {
+      headers: { authorization: "Bearer " + token }
+    }).then(()=>{
+      Swal.fire({
+        type: "success",
+        title: `Função alterada`,
+        text:`${nome} agora é um ${this.state.funcao}`,
+        confirmButtonText: "Voltar para o sistema"
+      });
+    }).catch(err=>{
+      Swal.fire({
+        type: "error",
+        title: `Algo de errado aconteceu`,
+        text:`${err}`,
+        confirmButtonText: "Voltar para o sistema"
+      });
+    });
+  };
   getUsers = async () => {
     const token = localStorage.getItem("auth-token");
     const { data } = await api.get("/admin/users", {
@@ -32,7 +60,8 @@ export default class pagUsuarios extends Component {
             curso: "C&T",
             instituicao: "UFRN",
             e_mail: user.email,
-            funcao: user.profile
+            funcao: user.profile,
+            id: user._id
           }
         ]
       });
@@ -61,11 +90,39 @@ export default class pagUsuarios extends Component {
                 <td>{user.instituicao}</td>
                 <td>{user.e_mail}</td>
                 <td>
-                  <select className="custom-select py-0 w-auto form-control-sm">
-                    <option defaultValue>{user.funcao}</option>
-                    <option defaultValue>PROFESSOR</option>
-                    <option defaultValue>ADMINISTRADOR</option>
-                  </select>
+                  {(() => {
+                    if (user.funcao === "ALUNO") {
+                      return (
+                        <ListUsers
+                          def1={user.funcao}
+                          def2="PROFESSOR"
+                          def3="ADMINISTRADOR"
+                          value={this.state.funcao}
+                          changeOption={e => this.handleOption(index, e)}
+                        />
+                      );
+                    } else if (user.funcao === "ADMINISTRADOR") {
+                      return (
+                        <ListUsers
+                          def1={user.funcao}
+                          def2="PROFESSOR"
+                          def3="ALUNO"
+                          value={this.state.funcao}
+                          changeOption={e => this.handleOption(index, e)}
+                        />
+                      );
+                    } else if (user.funcao === "PROFESSOR") {
+                      return (
+                        <ListUsers
+                          def1={user.funcao}
+                          def2="ALUNO"
+                          def3="ADMINISTRADOR"
+                          value={this.state.funcao}
+                          changeOption={e => this.handleOption(index, e)}
+                        />
+                      );
+                    }
+                  })()}
                 </td>
               </tr>
             ))}
