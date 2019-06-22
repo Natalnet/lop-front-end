@@ -6,10 +6,10 @@ import { Redirect } from "react-router-dom";
 
 import api from "../../services/api";
 import LogoLOP from "components/ui/logoLOP.component";
-//import queryString from "querystring"
 
 export default class resetScreen extends Component {
   state = {
+    redirect: false,
     msg: "",
     password: "",
     confirmpassword: "",
@@ -34,22 +34,20 @@ export default class resetScreen extends Component {
       const requestInfo = {
         password: this.state.password
       };
+
+      const key = window.location.search;
       api
-        .post("/auth/resetpassword", requestInfo)
+        .put("/auth/resetpassword" + key, requestInfo)
         .then(response => {
           if (response) {
-            this.resetpasswordform.reset();
             this.setState({
-              showmodal: true,
+              redirect: true,
               msg: "",
               error: false
             });
-            return <Redirect to="/" />;
-          } else {
-            throw new Error("Failed to update password");
           }
         })
-        .catch(err => {
+        .catch(() => {
           this.setState({
             msg: "Erro: o link usado expirou ou é inválido.",
             error: true
@@ -57,18 +55,22 @@ export default class resetScreen extends Component {
         });
     }
   };
-  handlePasswordChange = e => {
-    this.setState({ password: e.target.value });
+  handleChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
   };
-  handleConfirmPasswordChange = e => {
-    this.setState({ confirmpassword: e.target.value });
-  };
+
   render() {
+    if (window.location.search.length<45) {
+      return <Redirect to="/" />;
+    }
+    if (this.state.redirect) {
+      return <Redirect to="/" />;
+    }
     return (
       <TemplateAutenticacao>
         <form className="card" onSubmit={this.send}>
           <div className="card-body p-6">
-            <LogoLOP/>
+            <LogoLOP />
             <div className="card-title">Restauração de Senha</div>
             <span
               className={"alert-" + (this.state.error ? "danger" : "success")}
@@ -79,20 +81,22 @@ export default class resetScreen extends Component {
               <label className="form-label">Digite sua nova senha</label>
               <input
                 type="password"
+                name="password"
                 className="form-control"
-                placeholder="**********"
+                placeholder="****"
                 value={this.state.password}
-                onChange={this.handlePasswordChange}
+                onChange={this.handleChange}
               />
             </div>
             <div className="form-group">
               <label className="form-label">Confirme sua senha</label>
               <input
                 type="password"
+                name="confirmpassword"
                 className="form-control"
-                placeholder="**********"
+                placeholder="****"
                 value={this.state.confirmpassword}
-                onChange={this.handleConfirmPasswordChange}
+                onChange={this.handleChange}
               />
             </div>
             <div className="form-footer">
