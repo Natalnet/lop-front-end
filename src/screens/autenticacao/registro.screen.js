@@ -3,7 +3,6 @@
  * @Date: 2019-05-03 16:35:20
  *
  */
-
 import React, { Component } from "react";
 
 import TemplateAutenticacao from "components/templates/autenticacao.template";
@@ -12,6 +11,7 @@ import api from "../../services/api";
 
 import { Link, Redirect } from "react-router-dom";
 
+import Swal from "sweetalert2";
 import LogoLOP from "components/ui/logoLOP.component";
 
 export default class LoginScreen extends Component {
@@ -51,24 +51,24 @@ export default class LoginScreen extends Component {
         .post("/auth/register", requestInfo)
         .then(response => {
           if (response) {
-            localStorage.setItem("user.profile", "ALUNO");
-            localStorage.setItem("auth-token", response.data.token);
-            localStorage.setItem("user.name", this.state.name);
-            localStorage.setItem("user.email", this.state.email);
-            localStorage.setItem(
-              "user.enrollment",
-              this.state.enrollment
-            );
-            this.setState({
-              msg: "",
-              redirect: true
+            Swal.fire({
+              type: "success",
+              title: `Confirme seu registro`,
+              text: `Um email foi enviado para ${
+                this.state.email
+              }, use-o para confirmar seu cadastro na plataforma`,
+              confirmButtonText: "Voltar para pagina de login"
+            }).then(result => {
+              if (result.value) {
+               return this.setState({redirect:true});
+              }
             });
           } else {
             throw new Error("Failed to register");
           }
         })
         .catch(err => {
-          this.setState({ msg: "Erro: matrícula ou email indispnível" });
+          this.setState({ msg: "Erro: matrícula ou email indisponível" });
         });
     }
   };
@@ -91,14 +91,14 @@ export default class LoginScreen extends Component {
     this.setState({ confirm_password: e.target.value });
   };
   render() {
-    if (this.state.redirect) {
-      return <Redirect to="/sistema/aluno" />;
+    if(this.state.redirect){
+      return <Redirect to="/"/>
     }
     return (
       <TemplateAutenticacao>
         <form className="card" onSubmit={this.register}>
           <div className="card-body p-6">
-            <LogoLOP/>
+            <LogoLOP />
             <span className="alert-danger">{this.state.msg}</span>
             <div className="card-title">Faça o seu cadastro</div>
             <div className="form-group">

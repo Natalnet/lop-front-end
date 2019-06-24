@@ -41,39 +41,6 @@ export default class MenuAdministrador extends Component {
                     Usuários
                   </Link>
                 </li>
-                <li className="nav-item">
-                  <Link
-                    to="/sistema/administrador/instituicoes"
-                    className="nav-link"
-                    data-toggle="pill"
-                    aria-selected="false"
-                  >
-                    <i className="fe fe-briefcase" />
-                    Instituições
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    to="/sistema/administrador/disciplinas"
-                    className="nav-link"
-                    data-toggle="pill"
-                    aria-selected="false"
-                  >
-                    <i className="fe fe-briefcase" />
-                    Disciplinas
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    to="/sistema/administrador/cursos"
-                    className="nav-link"
-                    data-toggle="pill"
-                    aria-selected="false"
-                  >
-                    <i className="fe fe-briefcase" />
-                    Cursos
-                  </Link>
-                </li>
               </ul>
             </div>
           </div>

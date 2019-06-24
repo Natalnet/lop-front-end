@@ -1,7 +1,8 @@
 import LoginScreen from "screens/autenticacao/login.screen";
 import SignScreen from "screens/autenticacao/registro.screen";
-import recoverScreen from "screens/autenticacao/recoverPassword.screen";
-import resetScreen from "screens/autenticacao/resetPassword.screen";
+import ConfirmRegisterScreen from "screens/autenticacao/confirmRegister.screen";
+import RecoverScreen from "screens/autenticacao/recoverPassword.screen";
+import ResetScreen from "screens/autenticacao/resetPassword.screen";
 
 import exportRoutes from "util/routes/exportRoutes.util";
 
@@ -17,13 +18,18 @@ const routes = [
     private: false
   },
   {
+    path: "/autenticacao/confirmar-cadastro",
+    component: ConfirmRegisterScreen,
+    private: false
+  },
+  {
     path: "/autenticacao/recuperar-senha",
-    component: recoverScreen,
+    component: RecoverScreen,
     private: false
   },
   {
     path: "/autenticacao/resetar-senha",
-    component: resetScreen,
+    component: ResetScreen,
     private: false
   }
 ];

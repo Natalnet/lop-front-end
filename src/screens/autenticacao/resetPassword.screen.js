@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 
 import TemplateAutenticacao from "components/templates/autenticacao.template";
+import Error404 from "screens/erros/error404.screen";
 
 import { Redirect } from "react-router-dom";
+
+import Swal from "sweetalert2";
 
 import api from "../../services/api";
 import LogoLOP from "components/ui/logoLOP.component";
@@ -10,6 +13,7 @@ import LogoLOP from "components/ui/logoLOP.component";
 export default class resetScreen extends Component {
   state = {
     redirect: false,
+    redirectLogin: false,
     msg: "",
     password: "",
     confirmpassword: "",
@@ -40,17 +44,36 @@ export default class resetScreen extends Component {
         .put("/auth/resetpassword" + key, requestInfo)
         .then(response => {
           if (response) {
-            this.setState({
-              redirect: true,
-              msg: "",
-              error: false
+            localStorage.setItem("auth-token", response.data.token);
+            localStorage.setItem("user.profile", response.data.user.profile);
+            localStorage.setItem("user.name", response.data.user.name);
+            localStorage.setItem("user.email", response.data.user.email);
+            localStorage.setItem(
+              "user.enrollment",
+              response.data.user.enrollment
+            );
+            Swal.fire({
+              type: "success",
+              title: `Congratulations`,
+              text: `Senha alterada com sucesso.`,
+              confirmButtonText: "Acessar o sistema"
+            }).then(result => {
+              if (result.value) {
+                return this.setState({ redirect: true });
+              }
             });
           }
         })
-        .catch(() => {
-          this.setState({
-            msg: "Erro: o link usado expirou ou é inválido.",
-            error: true
+        .catch(err => {
+          Swal.fire({
+            type: "error",
+            title: `Ops...`,
+            text: `Erro: o link usado expirou ou é inválido.`,
+            confirmButtonText: "Voltar para tela de login"
+          }).then(result => {
+            if (result.value) {
+              return this.setState({ redirectLogin: true });
+            }
           });
         });
     }
@@ -60,11 +83,14 @@ export default class resetScreen extends Component {
   };
 
   render() {
-    if (window.location.search.length<45) {
+    if (window.location.search.length < 45) {
+      return <Error404 />;
+    }
+    if (this.state.redirectLogin) {
       return <Redirect to="/" />;
     }
     if (this.state.redirect) {
-      return <Redirect to="/" />;
+      return <Redirect to="/sistema/aluno" />;
     }
     return (
       <TemplateAutenticacao>
