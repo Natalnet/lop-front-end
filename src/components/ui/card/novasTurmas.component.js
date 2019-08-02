@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-//import api from "";
 
-//import Swal from "sweetalert2";
+import api from "../../../services/api";
+
+import Swal from "sweetalert2";
 
 const botao = {
     marginTop: '10px',
@@ -43,7 +44,7 @@ export default class novasTurmas extends Component {
                 professor: this.state.professor
             };
 
-            /*api
+            api
                 .post("/professor/store", requestInfo)
                 .then(response => {
                 if (response) {
@@ -60,7 +61,7 @@ export default class novasTurmas extends Component {
                 })
                 .catch(err => {
                 this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });
-                });*/
+                });
         }
 
 
