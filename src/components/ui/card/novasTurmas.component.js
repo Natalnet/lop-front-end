@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+//import api from "";
+
+//import Swal from "sweetalert2";
 
 const botao = {
     marginTop: '10px',
@@ -30,7 +33,35 @@ export default class novasTurmas extends Component {
           this.setState({ msg: "Informe o semestre da turma" });
         } else if (this.state.professor === "") {
           this.setState({ msg: "Selecione os professores" });
-        } 
+        } else{
+            const requestInfo = {
+                name: this.state.name,
+                curso: this.state.curso,
+                semestre: this.state.semestre,
+                descricao: this.state.descricao,
+                estado: this.state.estado,
+                professor: this.state.professor
+            };
+
+            /*api
+                .post("/professor/store", requestInfo)
+                .then(response => {
+                if (response) {
+                    Swal.fire({
+                    type: "success",
+                    }).then(result => {
+                    if (result.value) {
+                    return this.setState({redirect:true});
+                    }
+                    });
+                } else {
+                    throw new Error("Failed to register");
+                }
+                })
+                .catch(err => {
+                this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });
+                });*/
+        }
 
 
 
@@ -61,7 +92,7 @@ export default class novasTurmas extends Component {
     render() {
         return (
             <div className="container-fluid">
-                <form onSubmit={this.register}>
+                <form onSubmit={this.cadastro}>
                     <div className="row">
                         <div className="form-group form-control col-12">
                             <div className="align-self-center">
@@ -69,6 +100,7 @@ export default class novasTurmas extends Component {
                             </div>    
 
                             <span className="alert-danger">{this.state.msg}</span>
+                            <br></br>
 
                             <label htmlFor="">Nome: </label>
                             <input 
