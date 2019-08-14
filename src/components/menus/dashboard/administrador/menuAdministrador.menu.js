@@ -20,27 +20,25 @@ export default class MenuAdministrador extends Component {
             <div className="col-lg order-lg-first">
               <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                 <li className="nav-item">
-                  <Link to="/sistema/administrador" className="nav-link">
+                  <Link
+                    to="/sistema/administrador"
+                    className="nav-link"
+                    data-toggle="pill"
+                    aria-selected="false"
+                  >
                     <i className="fe fe-home" />
                     Início
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/administrador/usuarios" className="nav-link">
+                  <Link
+                    to="/sistema/administrador/usuarios"
+                    className="nav-link"
+                    data-toggle="pill"
+                    aria-selected="false"
+                  >
                     <i className="fe fe-bar-chart" />
                     Usuários
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/sistema/administrador/instituicoes" className="nav-link">
-                    <i className="fe fe-briefcase" />
-                    Instituições
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/sistema/administrador/disciplinas" className="nav-link">
-                    <i className="fe fe-briefcase" />
-                    Disciplinas
                   </Link>
                 </li>
               </ul>

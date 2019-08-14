@@ -1,6 +1,6 @@
 import React from "react";
 
-import { BrowserRouter, Switch} from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 
 import autenticacao from "routes/autenticacao.routes";
 
@@ -10,12 +10,15 @@ import aluno from "routes/aluno.routes";
 
 import turmas from "routes/turmas.routes";
 
+import administrador from "routes/administrador.routes";
+
 const routes = (
   <BrowserRouter>
     <Switch>
       {autenticacao}
       {aluno}
       {turmas}
+      {administrador}
       {erros}
     </Switch>
   </BrowserRouter>

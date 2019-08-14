@@ -1,10 +1,3 @@
-/*
- * @Author: Marcus Dantas
- * @Date: 2019-01-27 12:11:20
- * @Last Modified by: Marcus Dantas
- * @Last Modified time: 2019-02-03 22:00:20
- */
-
 import React, { Component } from "react";
 
 import Swal from "sweetalert2";
@@ -14,29 +7,19 @@ import axios from "axios";
 import ErrorBoundary from "screens/erros/errorBoundary.screen";
 
 import HeadPefilMenu from "components/menus/comum/headPerfil.menu";
-
-import { perfis } from "config/enums/perfis.enum";
+import MenuAdministrador from "components/menus/dashboard/administrador/menuAdministrador.menu";
 
 export default class TemplateSistema extends Component {
   constructor(props) {
     super(props);
     this.state = {
       erros: [],
-      keyErros: 0,
-      perfil: perfis.ALUNO
+      keyErros: 0
     };
   }
-
   componentDidMount() {
     document.title = "Template de login";
-    const perfilUsuario = this.getPerfilUsuario();
-    const state = this.state;
-    state.perfil = perfilUsuario;
-    this.setState({ ...state });
-    this.handleAxiosErros();
-  }
 
-  handleAxiosErros = () => {
     axios.interceptors.response.use(null, error => {
       if (error.response !== undefined) {
         if (
@@ -61,17 +44,7 @@ export default class TemplateSistema extends Component {
         }
       }
     });
-  };
-
-  getPerfilUsuario = () => {
-    const perfilDaUrl = window.location.pathname.slice(1);
-
-    const arraySistemaPermisssao = perfilDaUrl.split("/");
-
-    return arraySistemaPermisssao[0] === "sistema"
-      ? arraySistemaPermisssao[1]
-      : perfis.ALUNO;
-  };
+  }
 
   render() {
     return (
@@ -83,13 +56,9 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-            <div className="my-3 my-md-5">
-              <div className="container">
-                <div className="page-header">
-                  <h1 className="page-title"> </h1>
-                </div>
-                {this.props.children}
-              </div>
+            <MenuAdministrador />
+            <div className="my-3 my-md-5 ">
+              <div className="container">{this.props.children}</div>
             </div>
           </div>
           <footer className="footer">

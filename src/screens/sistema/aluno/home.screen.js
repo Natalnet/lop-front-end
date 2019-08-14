@@ -24,68 +24,36 @@ export default class HomeAlunoScreen extends Component {
     return (
       <TemplateSistema>
         <Card>
-          <CardHead>
-            Exemplo de card
-          </CardHead>
-          <CardBody>
-            Body do card
-          </CardBody>
+          <CardHead>Exemplo de card</CardHead>
+          <CardBody>Body do card</CardBody>
         </Card>
         <Card>
-          <CardHead>
-            Exemplo de card
-          </CardHead>
-          <CardBody>
-            Body do card
-          </CardBody>
+          <CardHead>Exemplo de card</CardHead>
+          <CardBody>Body do card</CardBody>
         </Card>
         <Card>
-          <CardHead>
-            Exemplo de card
-          </CardHead>
-          <CardBody>
-            Body do card
-          </CardBody>
+          <CardHead>Exemplo de card</CardHead>
+          <CardBody>Body do card</CardBody>
         </Card>
         <Card>
-          <CardHead>
-            Exemplo de card
-          </CardHead>
-          <CardBody>
-            Body do card
-          </CardBody>
+          <CardHead>Exemplo de card</CardHead>
+          <CardBody>Body do card</CardBody>
         </Card>
         <Card>
-          <CardHead>
-            Exemplo de card
-          </CardHead>
-          <CardBody>
-            Body do card
-          </CardBody>
+          <CardHead>Exemplo de card</CardHead>
+          <CardBody>Body do card</CardBody>
         </Card>
         <Card>
-          <CardHead>
-            Exemplo de card
-          </CardHead>
-          <CardBody>
-            Body do card
-          </CardBody>
+          <CardHead>Exemplo de card</CardHead>
+          <CardBody>Body do card</CardBody>
         </Card>
         <Card>
-          <CardHead>
-            Exemplo de card
-          </CardHead>
-          <CardBody>
-            Body do card
-          </CardBody>
+          <CardHead>Exemplo de card</CardHead>
+          <CardBody>Body do card</CardBody>
         </Card>
         <Card>
-          <CardHead>
-            Exemplo de card
-          </CardHead>
-          <CardBody>
-            Body do card
-          </CardBody>
+          <CardHead>Exemplo de card</CardHead>
+          <CardBody>Body do card</CardBody>
         </Card>
       </TemplateSistema>
     );
