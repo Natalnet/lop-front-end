@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-
 import api from "../../../services/api";
-
 import Swal from "sweetalert2";
+import { Redirect } from 'react-router-dom'
 
 const botao = {
     marginTop: '10px',
@@ -11,16 +10,27 @@ const botao = {
 const titulo = {
     alignItems: 'center'
 };
+const selecionar = {
+    textAling: 'left',
+    width: "100%",
+    height: "100%",
+    border: "0px"
+}
+const selecionar2 = {
+    padding: "0px",
+}
 
 export default class novasTurmas extends Component {
+
     state = {
         redirect: false,
         name: "",
-        curso: "",
+        ano: "",
         semestre: "",
         descricao: "",
         estado: "",
-        professor: ""
+        professor: [],
+        items: []
     };
 
     cadastro = event => {
@@ -28,16 +38,14 @@ export default class novasTurmas extends Component {
 
         if (this.state.name === "") {
           this.setState({ msg: "Informe o nome da turma" });
-        } else if (this.state.curso === "") {
-          this.setState({ msg: "Informe o curso" });
-        } else if (this.state.semestre === "" || this.state.semestre >= 12 || this.state.semestre <= 0 ) {
-          this.setState({ msg: "Informe o semestre da turma" });
+        } else if (this.state.ano === "" || this.state.ano > 2020 || this.state.ano < 2010 ) {
+          this.setState({ msg: "Informe o ano" });
         } else if (this.state.professor === "") {
           this.setState({ msg: "Selecione os professores" });
         } else{
             const requestInfo = {
                 name: this.state.name,
-                curso: this.state.curso,
+                ano: this.state.year,
                 semestre: this.state.semestre,
                 descricao: this.state.descricao,
                 estado: this.state.estado,
@@ -45,7 +53,7 @@ export default class novasTurmas extends Component {
             };
 
             api
-                .post("/professor/store", requestInfo)
+                .post("/professor/classes", requestInfo)
                 .then(response => {
                 if (response) {
                     Swal.fire({
@@ -63,19 +71,41 @@ export default class novasTurmas extends Component {
                 this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });
                 });
         }
-
-
-
     };
 
+    renderRedirect = () => {
+        if (this.state.redirect) {
+          return <Redirect to='/sistema/turmas' />
+        }
+      }
+
     componentDidMount() {
+        this.getProfessores();
         document.title = "Realizar Cadastro de turmas - Plataforma LOP";
     }
+
+    getProfessores = () => {
+        let dbfile = "http://localhost:3001/professor";
+        fetch(dbfile)
+            .then(res => res.json())
+            .then(data => {
+                data.map(user => {
+                return this.setState({
+                    items: [
+                    ...this.state.items,
+                    user.name
+                    ]
+                });
+                });
+            })
+            .catch(e => console.log(e));
+    };
+
     handleNomeChange = e => {
     this.setState({ name: e.target.value });
     };
-    handleCursoChange = e => {
-    this.setState({ curso: e.target.value });
+    handleAnoChange = e => {
+    this.setState({ ano: e.target.value });
     };
     handleSemestreChange = e => {
     this.setState({ semestre: e.target.value });
@@ -87,7 +117,13 @@ export default class novasTurmas extends Component {
     this.setState({ estado: e.target.value });
     };
     handleProfessorChange = e => {
-    this.setState({ professor: e.target.value });
+        this.setState({
+            professor: [
+                ...this.state.professor,
+                this.state.user
+                ]
+        });
+        console.log(this.state.professor);
     };
 
     render() {
@@ -112,23 +148,31 @@ export default class novasTurmas extends Component {
                                 onChange={this.handleNomeChange}
                             />
 
-                            <label  htmlFor="">Curso: </label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="ex.: Ciências e tecnologia"
-                                value={this.state.curso}
-                                onChange={this.handleCursoChange}
-                            />
+                            <div className="row">
+                                <div className="col-6">
+                                    <label  htmlFor="">Ano: </label>
+                                    <input 
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="ex.: 2019"
+                                        value={this.state.ano}
+                                        onChange={this.handleAnoChange}
+                                    />
+                                </div>
 
-                            <label  htmlFor="">Semestre: </label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Ex.: 2º Semestre"
-                                value={this.state.semestre}
-                                onChange={this.handleSemestreChange}
-                            />
+                                <div className="col-6">
+                                    <label htmlFor="exampleFormControlSelect1">semestre: </label>
+                                    <select 
+                                        className="form-control" 
+                                        id="exampleFormControlSelect1" 
+                                        value={this.state.semestre} 
+                                        onChange={this.handleSemestreChange}
+                                    >
+                                        <option>1ºSemestre</option>
+                                        <option>2ºSemestre</option>
+                                    </select>
+                                </div>
+                            </div>
 
                             <div className="form-group">
                                 <label  htmlFor="">Descrição</label>
@@ -149,37 +193,76 @@ export default class novasTurmas extends Component {
                                 value={this.state.estado} 
                                 onChange={this.handleEstadoChange}
                             >
-                            <option>Aberta</option>
-                            <option>Fechada</option>
+                                <option>Aberta</option>
+                                <option>Fechada</option>
                             </select>
+                            
+                            <br></br>
+                            <hr></hr>
 
-                            Professores: 
-                            <div className="input-group">
-                                <span className="input-group-addon"><i className="glyphicon glyphicon-search"></i></span>
-                                <input 
-                                    name="consulta" 
-                                    placeholder="Consultar" 
-                                    type="text" 
-                                    className="form-control"
-                                    value={this.state.professor}
-                                    onChange={this.handleProfessorChange}
-                                />
-                                <button className="btn btn-outline-secondary" type="button" id="button-addon2">Pesquisar</button>
-                            </div>
-
-                            <table id="tabela" className="table table-hover">
+                            <h4>Professores Selecionados: </h4>
+                            <br></br>
+                            <table className="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Nome</th>
+                                        <th>Selecionados: </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    {this.state.professor.map((professor, index) => (
+                                        <tr key={index}>
+                                            <td>{professor}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
+                            
+                            <div>
+                                {this.renderRedirect()}
+                                <button style={botao} type="submit" className="btn btn-primary" onClick={this.cadastro} >Cadastrar</button>
+                            </div>
 
-                            <button style={botao} type="submit" className="btn btn-primary" >Cadastrar</button>
+                            <br></br>
+                            <hr></hr>
+                            <div className="input-group mb-3">
+                            <input type="text" 
+                            className="form-control" 
+                            placeholder="Recipient's username" 
+                            aria-label="Recipient's username" 
+                            aria-describedby="button-addon2"/>
+                            <div className="input-group-append">
+                                <button className="btn btn-outline-secondary" 
+                                type="button" 
+                                id="button-addon2"
+                                >Pesquisar</button>
+                            </div>
+                            </div>
+
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nome: </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {this.state.items.map((user, index) => (
+                                        <tr key={index}>
+                                            <td style={selecionar2}>
+                                                <button
+                                                style={selecionar}
+                                                className="btn btn-outline-secondary" 
+                                                type="button"
+                                                onClick={this.handleProfessorChange}
+                                                >
+                                                {user}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            
                         </div>
                     </div>
                 </form>
