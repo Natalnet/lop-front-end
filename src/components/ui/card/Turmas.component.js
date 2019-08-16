@@ -9,6 +9,10 @@ const botao = {
     border: "solid 1px"
 }
 
+const botaoV = {
+    float: "right"
+}
+
 const estilo = {
     justifyContent: 'center',
     alignItems: 'center',
@@ -29,7 +33,7 @@ export default class turmas extends Component {
     }
 
     getTurmas = () => {
-        let dbfile = "http://localhost:3001/professor/classes";
+        let dbfile = "http://localhost:3001/class";
         fetch(dbfile)
             .then(res => res.json())
             .then(data => {
@@ -37,7 +41,7 @@ export default class turmas extends Component {
                 return this.setState({
                     items: [
                     ...this.state.items,
-                    turma.name + ", " + turma.year + ", " + turma.description
+                    turma
                     ]
                 });
                 });
@@ -76,12 +80,12 @@ export default class turmas extends Component {
                 {this.state.items.map((turma, index) => (
                     <div key={index} className="col-3">
                         <div className="card">
-                            <h5 className="card-header">Nome: {turma.year}</h5>
+                            <h5 className="card-header">Nome: {turma.name}</h5>
                             <div className="card-body">
-                                <h5 className="card-title">Ano: </h5>
-                                <h5 className="card-title">Semestre: </h5>
-                                <p className="card-text">Descrição: </p>
-                                {/*<a href="#" className="btn btn-primary">Ver</a>*/}
+                                <h5 className="card-title">Ano: {turma.year}.2{turma.semester}</h5>
+                                <hr></hr>
+                                <p className="card-text">Descrição: {turma.description}</p>
+                                <a href="#" style={botaoV} className="btn btn-primary">Ver</a>
                             </div>
                         </div>
                     </div>

@@ -11,14 +11,14 @@ const titulo = {
     alignItems: 'center'
 };
 const selecionar = {
-    textAling: 'left',
+    textAling: "left",
     width: "100%",
     height: "100%",
     border: "0px"
-}
+};
 const selecionar2 = {
     padding: "0px",
-}
+};
 
 export default class novasTurmas extends Component {
 
@@ -30,7 +30,8 @@ export default class novasTurmas extends Component {
         descricao: "",
         estado: "",
         professor: [],
-        items: []
+        items: [],
+        Id_P: []
     };
 
     cadastro = event => {
@@ -45,15 +46,14 @@ export default class novasTurmas extends Component {
         } else{
             const requestInfo = {
                 name: this.state.name,
-                ano: this.state.year,
-                semestre: this.state.semestre,
-                descricao: this.state.descricao,
-                estado: this.state.estado,
-                professor: this.state.professor
+                year: this.state.ano,
+                description: this.state.descricao,
+                state: this.state.estado,
+                professores: this.state.Id_P
             };
 
             api
-                .post("/professor/classes", requestInfo)
+                .post("/class/store", requestInfo)
                 .then(response => {
                 if (response) {
                     Swal.fire({
@@ -85,7 +85,7 @@ export default class novasTurmas extends Component {
     }
 
     getProfessores = () => {
-        let dbfile = "http://localhost:3001/professor";
+        let dbfile = "http://localhost:3001/user/get/professores";
         fetch(dbfile)
             .then(res => res.json())
             .then(data => {
@@ -93,7 +93,7 @@ export default class novasTurmas extends Component {
                 return this.setState({
                     items: [
                     ...this.state.items,
-                    user.name
+                    user
                     ]
                 });
                 });
@@ -116,14 +116,19 @@ export default class novasTurmas extends Component {
     handleEstadoChange = e => {
     this.setState({ estado: e.target.value });
     };
-    handleProfessorChange = e => {
+    handleProfessorChange = user => {
         this.setState({
+
             professor: [
                 ...this.state.professor,
-                this.state.user
+                user.name
+                ],
+            Id_P: [
+                ...this.state.Id_P,
+                user._id
                 ]
         });
-        console.log(this.state.professor);
+
     };
 
     render() {
@@ -246,16 +251,16 @@ export default class novasTurmas extends Component {
                                 </thead>
 
                                 <tbody>
-                                    {this.state.items.map((user, index) => (
-                                        <tr key={index}>
+                                    {this.state.items.map((user) => (
+                                        <tr key={user._id}>
                                             <td style={selecionar2}>
                                                 <button
                                                 style={selecionar}
                                                 className="btn btn-outline-secondary" 
                                                 type="button"
-                                                onClick={this.handleProfessorChange}
+                                                onClick={()=>this.handleProfessorChange(user)}
                                                 >
-                                                {user}
+                                                {user.name}
                                                 </button>
                                             </td>
                                         </tr>
