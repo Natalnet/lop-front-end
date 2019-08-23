@@ -25,30 +25,33 @@ export default class novasTurmas extends Component {
     state = {
         redirect: false,
         name: "",
-        ano: "",
-        semestre: "",
-        descricao: "",
-        estado: "",
-        professor: [],
+        year: "",
+        semester: "",
+        description: "",
+        state: "",
+        professorsName: [],
         items: [],
         Id_P: []
     };
 
     cadastro = event => {
+        console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.Id_P)
+
         event.preventDefault();
 
         if (this.state.name === "") {
           this.setState({ msg: "Informe o nome da turma" });
-        } else if (this.state.ano === "" || this.state.ano > 2020 || this.state.ano < 2010 ) {
+        } else if (this.state.year === "" || this.state.year > 2020 || this.state.year < 2010 ) {
           this.setState({ msg: "Informe o ano" });
-        } else if (this.state.professor === "") {
+        } else if (this.state.Id_P.length === 0) {
           this.setState({ msg: "Selecione os professores" });
-        } else{
+        }else{
             const requestInfo = {
                 name: this.state.name,
-                year: this.state.ano,
-                description: this.state.descricao,
-                state: this.state.estado,
+                year: this.state.year,
+                semester: this.state.semester,
+                description: this.state.description,
+                state: this.state.state,
                 professores: this.state.Id_P
             };
 
@@ -101,26 +104,26 @@ export default class novasTurmas extends Component {
             .catch(e => console.log(e));
     };
 
-    handleNomeChange = e => {
+    handleNameChange = e => {
     this.setState({ name: e.target.value });
     };
-    handleAnoChange = e => {
-    this.setState({ ano: e.target.value });
+    handleYearChange = e => {
+    this.setState({ year: e.target.value });
     };
-    handleSemestreChange = e => {
-    this.setState({ semestre: e.target.value });
+    handleSemesterChange = e => {
+    this.setState({ semester: e.target.value });
     };
-    handleDescricaoChange = e => {
-    this.setState({ descricao: e.target.value });
+    handleDescriptionChange = e => {
+    this.setState({ description: e.target.value });
     };
-    handleEstadoChange = e => {
-    this.setState({ estado: e.target.value });
+    handleStateChange = e => {
+    this.setState({ state: e.target.value });
     };
-    handleProfessorChange = user => {
+    handleProfessorsChange = user => {
         this.setState({
 
-            professor: [
-                ...this.state.professor,
+            professorsName: [
+                ...this.state.professorsName,
                 user.name
                 ],
             Id_P: [
@@ -150,7 +153,7 @@ export default class novasTurmas extends Component {
                                 className="form-control" 
                                 placeholder="Nome de turma"
                                 value={this.state.name}
-                                onChange={this.handleNomeChange}
+                                onChange={this.handleNameChange}
                             />
 
                             <div className="row">
@@ -160,8 +163,8 @@ export default class novasTurmas extends Component {
                                         type="text" 
                                         className="form-control" 
                                         placeholder="ex.: 2019"
-                                        value={this.state.ano}
-                                        onChange={this.handleAnoChange}
+                                        value={this.state.year}
+                                        onChange={this.handleYearChange}
                                     />
                                 </div>
 
@@ -170,9 +173,10 @@ export default class novasTurmas extends Component {
                                     <select 
                                         className="form-control" 
                                         id="exampleFormControlSelect1" 
-                                        value={this.state.semestre} 
-                                        onChange={this.handleSemestreChange}
+                                        value={this.state.semester} 
+                                        onChange={this.handleSemesterChange}
                                     >
+                                        <option>selecione....</option>
                                         <option>1ºSemestre</option>
                                         <option>2ºSemestre</option>
                                     </select>
@@ -185,21 +189,22 @@ export default class novasTurmas extends Component {
                                     className="form-control" 
                                     id="" 
                                     rows="5"
-                                    value={this.state.descricao}
-                                    onChange={this.handleDescricaoChange}
+                                    value={this.state.description}
+                                    onChange={this.handleDescriptionChange}
                                 >
                                 </textarea>
                             </div>
 
-                            <label htmlFor="exampleFormControlSelect1">Estado</label>
+                            <label htmlFor="exampleFormControlSelect1">Status</label>
                             <select 
                                 className="form-control" 
                                 id="exampleFormControlSelect1" 
-                                value={this.state.estado} 
-                                onChange={this.handleEstadoChange}
+                                value={this.state.state} 
+                                onChange={this.handleStateChange}
                             >
-                                <option>Aberta</option>
-                                <option>Fechada</option>
+                                <option>selecione....</option>
+                                <option>ATIVA</option>
+                                <option>DESATIVADA</option>
                             </select>
                             
                             <br></br>
@@ -214,7 +219,7 @@ export default class novasTurmas extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.state.professor.map((professor, index) => (
+                                    {this.state.professorsName.map((professor, index) => (
                                         <tr key={index}>
                                             <td>{professor}</td>
                                         </tr>
@@ -258,7 +263,7 @@ export default class novasTurmas extends Component {
                                                 style={selecionar}
                                                 className="btn btn-outline-secondary" 
                                                 type="button"
-                                                onClick={()=>this.handleProfessorChange(user)}
+                                                onClick={()=>this.handleProfessorsChange(user)}
                                                 >
                                                 {user.name}
                                                 </button>

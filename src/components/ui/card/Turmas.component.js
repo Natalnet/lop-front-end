@@ -3,9 +3,9 @@ import { Redirect } from 'react-router-dom'
 
 const botao = {
     borderRadius: "50%",
-    fontSize: "100px",
-    height: "200px",
-    width: "200px",
+    fontSize: "50px",
+    height: "100px",
+    width: "100px",
     border: "solid 1px"
 }
 
@@ -63,6 +63,20 @@ export default class turmas extends Component {
     render(){
         return (
             <div className="row">
+                {this.state.items.map((turma, index) => (
+                    <div key={index} className="col-3">
+                        <div className="card">
+                            <h5 className="card-header">Nome: {turma.name}</h5>
+                            <div className="card-body">
+                                <h5 className="">Ano: {turma.year}.2{turma.semester}</h5>
+                                <hr></hr>
+                                <p className="card-text">Descrição: {turma.description}</p>
+                                <a href="#" style={botaoV} className="btn btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
                 <div className="col-3" style={estilo}>
                     <div>
                     {this.renderRedirect()}
@@ -76,21 +90,6 @@ export default class turmas extends Component {
                         </button>
                     </div>
                 </div>
-
-                {this.state.items.map((turma, index) => (
-                    <div key={index} className="col-3">
-                        <div className="card">
-                            <h5 className="card-header">Nome: {turma.name}</h5>
-                            <div className="card-body">
-                                <h5 className="card-title">Ano: {turma.year}.2{turma.semester}</h5>
-                                <hr></hr>
-                                <p className="card-text">Descrição: {turma.description}</p>
-                                <a href="#" style={botaoV} className="btn btn-primary">Ver</a>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-
             </div>
         );
     }
