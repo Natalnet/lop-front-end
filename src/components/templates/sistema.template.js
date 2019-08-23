@@ -15,6 +15,12 @@ import ErrorBoundary from "screens/erros/errorBoundary.screen";
 
 import HeadPefilMenu from "components/menus/comum/headPerfil.menu";
 
+import MenuAluno from "components/menus/dashboard/aluno/menuAluno.menu";
+
+import MenuAdministrador from "components/menus/dashboard/administrador/menuAdministrador.menu";
+
+import MenuProfessor from "components/menus/dashboard/professor/menuProfessor.menu";
+
 import { perfis } from "config/enums/perfis.enum";
 
 export default class TemplateSistema extends Component {
@@ -45,17 +51,26 @@ export default class TemplateSistema extends Component {
           error.response.status === 404
         ) {
           const { erros } = error.response.data;
-
-          let text = erros.map(erro => {
-            return `${erro.msg}`.replace(".", "");
-          });
-
-          Swal.fire({
-            type: "error",
-            title: `Erro ${error.response.status}`,
-            text: text,
-            confirmButtonText: "Voltar para o sistema"
-          });
+          if(erros !== undefined){
+            let text = erros.map(erro => {
+              return `${erro.msg}`.replace(".", "");
+            });
+  
+            Swal.fire({
+              type: "error",
+              title: `Erro ${error.response.status}`,
+              text: text,
+              confirmButtonText: "Voltar para o sistema"
+            });
+          } else{
+            Swal.fire({
+              type: "error",
+              title: `Erro ${error.response.status}`,
+              text: 'Erro ao processar requisição.',
+              confirmButtonText: "Voltar para o sistema"
+            });
+          }
+          
         } else {
           return Promise.reject(error);
         }
@@ -65,13 +80,11 @@ export default class TemplateSistema extends Component {
 
   getPerfilUsuario = () => {
     const perfilDaUrl = window.location.pathname.slice(1);
-
-    const arraySistemaPermisssao = perfilDaUrl.split("/");
-
-    return arraySistemaPermisssao[0] === "sistema"
-      ? arraySistemaPermisssao[1]
-      : perfis.ALUNO;
-  };
+    
+    const arraySistemaPermisssao = perfilDaUrl.split('/');
+    
+    return arraySistemaPermisssao[0] === "sistema" ? arraySistemaPermisssao[1] : perfis.ALUNO;
+  }
 
   render() {
     return (
@@ -83,10 +96,11 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
+              <MenuProfessor/>
             <div className="my-3 my-md-5">
               <div className="container">
                 <div className="page-header">
-                  <h1 className="page-title"> </h1>
+                  <h1 className="page-title"></h1>
                 </div>
                 {this.props.children}
               </div>
@@ -94,9 +108,9 @@ export default class TemplateSistema extends Component {
           </div>
           <footer className="footer">
             <div className="container">
-              <div style={{ textAlign: "center" }}>
-                Plataforma LOP. Universidade Federal do Rio Grande do Norte
-                2019.
+              <div style={{textAlign:"center"}}> 
+              Plataforma LOP. Universidade Federal do Rio Grande do Norte
+                  2019.
               </div>
             </div>
           </footer>

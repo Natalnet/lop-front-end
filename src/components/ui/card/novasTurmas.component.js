@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
+import Select from 'react-select';
 
 const botao = {
     marginTop: '10px',
@@ -9,15 +10,6 @@ const botao = {
 };
 const titulo = {
     alignItems: 'center'
-};
-const selecionar = {
-    textAling: "left",
-    width: "100%",
-    height: "100%",
-    border: "0px"
-};
-const selecionar2 = {
-    padding: "0px",
 };
 
 export default class novasTurmas extends Component {
@@ -31,7 +23,9 @@ export default class novasTurmas extends Component {
         state: "",
         professorsName: [],
         items: [],
-        Id_P: []
+        Id_P: [],
+        prof: ""
+
     };
 
     cadastro = event => {
@@ -120,11 +114,18 @@ export default class novasTurmas extends Component {
     this.setState({ state: e.target.value });
     };
     handleProfessorsChange = user => {
-        this.setState({
+        
+        for (var i = this.state.items.length -1; i >=0; i--) {
+            if(user.name === this.state.items[i].name){
+                this.state.items.splice(i, 1);  
+            }
+        }
+        console.log(this.state.items)
 
+        this.setState({
             professorsName: [
                 ...this.state.professorsName,
-                user.name
+                user
                 ],
             Id_P: [
                 ...this.state.Id_P,
@@ -209,19 +210,34 @@ export default class novasTurmas extends Component {
                             
                             <br></br>
                             <hr></hr>
+                            <h3>Professores:</h3>
+
+                            <Select
+                                options={this.state.items.map(t => ({ _id: t._id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
+                                closeMenuOnSelect={true}
+                                onChange={this.handleProfessorsChange.bind(this)}                                
+                            />
+
+                            <br></br>
 
                             <h4>Professores Selecionados: </h4>
                             <br></br>
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Selecionados: </th>
+                                        <th>Nome:</th>
+                                        <th>Matricula:</th>
+                                        <th>E-mail:</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {this.state.professorsName.map((professor, index) => (
                                         <tr key={index}>
-                                            <td>{professor}</td>
+                                            <td>{professor.name}</td>
+                                            <td>{professor.enrollment}</td>
+                                            <td>{professor.email}</td>
+                                            <td></td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -231,48 +247,8 @@ export default class novasTurmas extends Component {
                                 {this.renderRedirect()}
                                 <button style={botao} type="submit" className="btn btn-primary" onClick={this.cadastro} >Cadastrar</button>
                             </div>
-
-                            <br></br>
-                            <hr></hr>
-                            <div className="input-group mb-3">
-                            <input type="text" 
-                            className="form-control" 
-                            placeholder="Recipient's username" 
-                            aria-label="Recipient's username" 
-                            aria-describedby="button-addon2"/>
-                            <div className="input-group-append">
-                                <button className="btn btn-outline-secondary" 
-                                type="button" 
-                                id="button-addon2"
-                                >Pesquisar</button>
-                            </div>
-                            </div>
-
-                            <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Nome: </th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {this.state.items.map((user) => (
-                                        <tr key={user._id}>
-                                            <td style={selecionar2}>
-                                                <button
-                                                style={selecionar}
-                                                className="btn btn-outline-secondary" 
-                                                type="button"
-                                                onClick={()=>this.handleProfessorsChange(user)}
-                                                >
-                                                {user.name}
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
                             
+
                         </div>
                     </div>
                 </form>

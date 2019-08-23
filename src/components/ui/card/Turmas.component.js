@@ -1,25 +1,14 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router-dom'
 
-const botao = {
-    borderRadius: "50%",
-    fontSize: "50px",
-    height: "100px",
-    width: "100px",
-    border: "solid 1px"
-}
+
 
 const botaoV = {
-    float: "right"
+    float: "right",
 }
 
-const estilo = {
-    justifyContent: 'center',
-    alignItems: 'center',
-    background: "0",
-    border: "0",
-    display: "flex",
-    position: "relative"
+const botao = {
+    width: "100%"
 }
 
 export default class turmas extends Component {
@@ -62,9 +51,41 @@ export default class turmas extends Component {
 
     render(){
         return (
+
             <div className="row">
+
+                <div className="col-3">
+                    <div>
+                    {this.renderRedirect()}
+                        <button 
+                            onClick={this.setRedirect}
+                            className="btn btn-primary"
+                            type="button"
+                            style={botao}
+                        >
+                            Nova Turma +
+                        </button>
+                    </div>
+                </div>
+
+                <div className="input-group mb-3 col-9">
+                    <input type="text" 
+                    className="form-control" 
+                    placeholder="Recipient's username" 
+                    aria-label="Recipient's username" 
+                    aria-describedby="button-addon2"/>
+                    <div className="input-group-append">
+                        <button className="btn btn-outline-secondary" 
+                        type="button" 
+                        id="button-addon2"
+                        >Pesquisar</button>
+                    </div>
+                </div>
+
                 {this.state.items.map((turma, index) => (
+                    
                     <div key={index} className="col-3">
+                        <br></br>
                         <div className="card">
                             <h5 className="card-header">Nome: {turma.name}</h5>
                             <div className="card-body">
@@ -77,19 +98,6 @@ export default class turmas extends Component {
                     </div>
                 ))}
 
-                <div className="col-3" style={estilo}>
-                    <div>
-                    {this.renderRedirect()}
-                        <button 
-                            onClick={this.setRedirect}
-                            className="btn btn-primary"
-                            type="button"
-                            style={botao}
-                        >
-                            +
-                        </button>
-                    </div>
-                </div>
             </div>
         );
     }

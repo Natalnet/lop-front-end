@@ -26,6 +26,24 @@ export default class MenuProfessor extends Component {
                   </Link>
                 </li>
                 <li className="nav-item">
+                  <Link to="/sistema/turmas" className="nav-link">
+                    <i className="fe fe-bar-chart" />
+                    Turmas
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/sistema/professor/exercicios" className="nav-link">
+                    <i className="fe fe-bar-chart" />
+                    Listas
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/sistema/professor/provas" className="nav-link">
+                    <i className="fe fe-bar-chart" />
+                    Provas
+                  </Link>
+                </li>
+                <li className="nav-item">
                   <Link to="/sistema/professor/relatorio" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Relatório
