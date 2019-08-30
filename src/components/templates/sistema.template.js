@@ -22,6 +22,7 @@ import MenuAdministrador from "components/menus/dashboard/administrador/menuAdmi
 import MenuProfessor from "components/menus/dashboard/professor/menuProfessor.menu";
 
 import { perfis } from "config/enums/perfis.enum";
+import turmas from "components/ui/card/Turmas.component";
 
 export default class TemplateSistema extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ export default class TemplateSistema extends Component {
     this.state = {
       erros: [],
       keyErros: 0,
-      perfil: perfis.ALUNO
+      perfil: perfis.PROFESSOR
     };
   }
 
@@ -40,6 +41,7 @@ export default class TemplateSistema extends Component {
     state.perfil = perfilUsuario;
     this.setState({ ...state });
     this.handleAxiosErros();
+    console.log(this.state.perfil)
   }
 
   handleAxiosErros = () => {

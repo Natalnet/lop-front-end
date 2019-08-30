@@ -32,9 +32,15 @@ export default class MenuProfessor extends Component {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/professor/exercicios" className="nav-link">
+                  <Link to="/sistema/professor/listas" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Listas
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/sistema/professor/exercicios" className="nav-link">
+                    <i className="fe fe-bar-chart" />
+                    Exercicios
                   </Link>
                 </li>
                 <li className="nav-item">

@@ -11,6 +11,12 @@ const botao = {
 const titulo = {
     alignItems: 'center'
 };
+const botao2 = {
+    float: 'right',
+    backgroundColor: "red",
+    borderColor: 'red',
+    color: 'white'
+};
 
 export default class novasTurmas extends Component {
 
@@ -135,6 +141,20 @@ export default class novasTurmas extends Component {
 
     };
 
+    excluir = user =>{
+        for (var i = this.state.professorsName.length -1; i >=0; i--) {
+            if(user.name === this.state.professorsName[i].name){
+                this.state.professorsName.splice(i, 1);
+            }
+        }
+        this.setState({
+            items: [
+                ...this.state.items,
+                user
+                ]
+        });
+    };
+
     render() {
         return (
             <div className="container-fluid">
@@ -178,8 +198,8 @@ export default class novasTurmas extends Component {
                                         onChange={this.handleSemesterChange}
                                     >
                                         <option>selecione....</option>
-                                        <option>1ºSemestre</option>
-                                        <option>2ºSemestre</option>
+                                        <option value="1">1ºSemestre</option>
+                                        <option value="2">2ºSemestre</option>
                                     </select>
                                 </div>
                             </div>
@@ -237,7 +257,7 @@ export default class novasTurmas extends Component {
                                             <td>{professor.name}</td>
                                             <td>{professor.enrollment}</td>
                                             <td>{professor.email}</td>
-                                            <td></td>
+                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}>Excluir</a></td>
                                         </tr>
                                     ))}
                                 </tbody>

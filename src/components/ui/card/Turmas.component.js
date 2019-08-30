@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router-dom'
 
-
+const card = {
+    maxHeight: "250px",
+    minHeight: "250px"
+}
 
 const botaoV = {
     float: "right",
@@ -9,6 +12,10 @@ const botaoV = {
 
 const botao = {
     width: "100%"
+}
+
+const estilo = {
+    paddingBottom: "25%"
 }
 
 export default class turmas extends Component {
@@ -84,14 +91,12 @@ export default class turmas extends Component {
 
                 {this.state.items.map((turma, index) => (
                     
-                    <div key={index} className="col-3">
+                    <div key={index} className="col-6">
                         <br></br>
                         <div className="card">
-                            <h5 className="card-header">Nome: {turma.name}</h5>
-                            <div className="card-body">
-                                <h5 className="">Ano: {turma.year}.2{turma.semester}</h5>
-                                <hr></hr>
-                                <p className="card-text">Descrição: {turma.description}</p>
+                            <h5 className="card-header">Nome: {turma.name} / Ano: {turma.year}</h5>
+                            <div className="card-body" style={card}>
+                                <p className="card-text" style={estilo}>Descrição: {turma.description}</p>
                                 <a href="#" style={botaoV} className="btn btn-primary">Ver</a>
                             </div>
                         </div>
