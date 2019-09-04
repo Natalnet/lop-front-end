@@ -20,43 +20,43 @@ export default class MenuProfessor extends Component {
             <div className="col-lg order-lg-first">
               <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                 <li className="nav-item">
-                  <Link to="/sistema/professor" className="nav-link">
+                  <Link to="/professor" className="nav-link">
                     <i className="fe fe-home" />
                     Início
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/turmas" className="nav-link">
+                  <Link to="/professor/turmas" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Turmas
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/professor/listas" className="nav-link">
+                  <Link to="/professor/listas" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Listas
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/professor/exercicios" className="nav-link">
+                  <Link to="/professor/exercicios" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Exercicios
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/professor/provas" className="nav-link">
+                  <Link to="/professor/provas" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Provas
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/professor/relatorio" className="nav-link">
+                  <Link to="/professor/relatorio" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Relatório
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/professor/gestao-de-atividades" className="nav-link">
+                  <Link to="/professor/gestao-de-atividades" className="nav-link">
                     <i className="fe fe-briefcase" />
                     Gestão de atividades
                   </Link>

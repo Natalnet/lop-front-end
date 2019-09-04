@@ -8,7 +8,7 @@ import erros from "routes/erros.routes.js";
 
 import aluno from "routes/aluno.routes";
 
-import turmas from "routes/turmas.routes";
+import professor from "routes/professor.routes";
 
 import administrador from "routes/administrador.routes";
 
@@ -17,7 +17,7 @@ const routes = (
     <Switch>
       {autenticacao}
       {aluno}
-      {turmas}
+      {professor}
       {administrador}
       {erros}
     </Switch>

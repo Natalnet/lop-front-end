@@ -22,7 +22,6 @@ import MenuAdministrador from "components/menus/dashboard/administrador/menuAdmi
 import MenuProfessor from "components/menus/dashboard/professor/menuProfessor.menu";
 
 import { perfis } from "config/enums/perfis.enum";
-import turmas from "components/ui/card/Turmas.component";
 
 export default class TemplateSistema extends Component {
   constructor(props) {

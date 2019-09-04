@@ -4,31 +4,31 @@ import HomeTurmasScreen from 'screens/sistema/Professor/turmas.screen';
 import HomeListasScreen from 'screens/sistema/Professor/listas.screen'
 import HomeExerciciosScreen from 'screens/sistema/Professor/exercicios.screen'
 import HomeCriarListaScreen from 'screens/sistema/Professor/criarLista.screen'
-import HomeCriarExercicioScreen from 'screens/sistema/Professor/sistemaProfessorExercicioCriar'
+import HomeCriarExercicioScreen from 'screens/sistema/Professor/criarExercicios.screen'
 
 const routes = [
     {
-        path: '/sistema/turmas/novasturmas',
+        path: '/Professor/novasturmas',
         component: HomeNovasTurmasScreen
     },
     {
-        path: '/sistema/turmas',
+        path: '/professor/turmas',
         component: HomeTurmasScreen
     },
     {
-        path: '/sistema/professor/listas',
+        path: '/professor/listas',
         component: HomeListasScreen
     },
     {
-        path: '/sistema/professor/exercicios',
+        path: '/professor/exercicios',
         component: HomeExerciciosScreen
     },
     {
-        path: '/sistema/professor/criarLista',
+        path: '/professor/criarLista',
         component: HomeCriarListaScreen
     },
     {
-        path: '/sistema/professor/criarExercicio',
+        path: '/professor/criarExercicio',
         component: HomeCriarExercicioScreen
     }
 ]
