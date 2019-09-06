@@ -19,7 +19,8 @@ const botao = {
 export default class HomeListasScreen extends Component {
     state = {
         redirect: false,
-        items: []
+        items: [],
+        perfil: localStorage.getItem("user.profile")
     }
 
     componentDidMount() {
@@ -37,7 +38,7 @@ export default class HomeListasScreen extends Component {
 
     render() {
         if(this.state.perfil!=="PROFESSOR"){
-            return <Redirect to="/*" />;
+            return <Redirect to="/401" />;
         }
         return (
         <TemplateSistema>

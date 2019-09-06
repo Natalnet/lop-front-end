@@ -6,11 +6,12 @@ import api from '../../../services/api'
 export default class CriarListaScreen extends Component {
     state = {
         redirect: false,
-        items: []
+        items: [],
+        perfil: localStorage.getItem("user.profile")
     };
 
     componentDidMount() {
-        this.getExercicios();
+        this.getExercicio();
     }
 
     async getExercicio(){
@@ -33,7 +34,7 @@ export default class CriarListaScreen extends Component {
 
     render() {
         if(this.state.perfil!=="PROFESSOR"){
-            return <Redirect to="/*" />;
+            return <Redirect to="/401" />;
         }
         return (
         <TemplateSistema>

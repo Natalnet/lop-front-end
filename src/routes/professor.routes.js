@@ -5,7 +5,7 @@ import ListasScreen from 'screens/sistema/Professor/listas.screen'
 import ExerciciosScreen from 'screens/sistema/Professor/exercicios.screen'
 import CriarListaScreen from 'screens/sistema/Professor/criarLista.screen'
 import CriarExercicioScreen from 'screens/sistema/Professor/criarExercicios.screen'
-
+import Erro401 from '../screens/erros/error401.screen';
 
 const routes = [
     {
@@ -37,6 +37,10 @@ const routes = [
         path: '/professor/criarExercicio',
         component: CriarExercicioScreen,
         private: true
+    },
+    {
+        path: '/401',
+        component: Erro401
     }
 ]
 

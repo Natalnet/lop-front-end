@@ -31,7 +31,8 @@ export default class NovasTurmasScreen extends Component {
         professorsName: [],
         items: [],
         Id_P: [],
-        prof: ""
+        prof: "",
+        perfil: localStorage.getItem("user.profile")
 
     };
 
@@ -164,7 +165,7 @@ export default class NovasTurmasScreen extends Component {
 
     render() {
         if(this.state.perfil!=="PROFESSOR"){
-            return <Redirect to="/*" />;
+            return <Redirect to="/401" />;
         }
         return (
         <TemplateSistema>

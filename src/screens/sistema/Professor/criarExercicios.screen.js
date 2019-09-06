@@ -38,7 +38,8 @@ export default class Editor extends Component {
       inputs:'',
       outputs:'',
       percentualAcerto:'',
-      redirect:''
+      redirect:'',
+      perfil: localStorage.getItem("user.profile")
     }
   }
 
@@ -238,7 +239,7 @@ export default class Editor extends Component {
 
   render() {
     if(this.state.perfil!=="PROFESSOR"){
-      return <Redirect to="/*" />;
+      return <Redirect to="/401" />;
     }
     const {percentualAcerto,response,redirect,msgSavedSucess,savingQuestion,msgSavedFailed ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
     const { language,theme,content,contentRes } = this.state;

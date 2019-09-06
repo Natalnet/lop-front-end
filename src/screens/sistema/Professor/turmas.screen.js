@@ -55,7 +55,7 @@ export default class TurmasScreen extends Component {
 
     render() {
         if(this.state.perfil!=="PROFESSOR"){
-            return <Redirect to="/*" />;
+            return <Redirect to="/401" />;
         }
         return (
         <TemplateSistema>
