@@ -89,21 +89,14 @@ export default class NovasTurmasScreen extends Component {
         document.title = "Realizar Cadastro de turmas - Plataforma LOP";
     }
 
-    getProfessores = () => {
-        let dbfile = "http://localhost:3001/user/get/professores";
-        fetch(dbfile)
-            .then(res => res.json())
-            .then(data => {
-                data.map(user => {
-                return this.setState({
-                    items: [
-                    ...this.state.items,
-                    user
-                    ]
-                });
-                });
-            })
-            .catch(e => console.log(e));
+    async getProfessores(){
+        try{
+            const response = await api.get('/user/get/professores')
+            this.setState({items:response.data})
+        }catch(err){
+            console.log(err)
+        
+        }
     };
 
     handleNameChange = e => {
@@ -245,8 +238,9 @@ export default class NovasTurmasScreen extends Component {
                             <h3>Professores:</h3>
 
                             <Select
+                                style={{boxShadow: "white"}}
                                 options={this.state.items.map(t => ({ _id: t._id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
-                                closeMenuOnSelect={true}
+                                closeMenuOnSelect={false}
                                 onChange={this.handleProfessorsChange.bind(this)}                                
                             />
 
@@ -274,7 +268,7 @@ export default class NovasTurmasScreen extends Component {
                                     ))}
                                 </tbody>
                             </table>
-                            
+                            <hr></hr>
                             <div>
                                 {this.renderRedirect()}
                                 <button style={botao} type="submit" className="btn btn-primary" onClick={this.cadastro} >Cadastrar</button>

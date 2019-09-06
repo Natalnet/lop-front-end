@@ -28,7 +28,7 @@ export default class TurmasScreen extends Component {
         perfil: localStorage.getItem("user.profile")
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.getTurmas();
     }
 

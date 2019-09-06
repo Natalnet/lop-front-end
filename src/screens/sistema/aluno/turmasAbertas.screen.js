@@ -30,12 +30,9 @@ export default class HomeAlunoScreen extends Component {
     }
     this.handlePage=this.handlePage.bind(this)
   }
-  componentWillMount(){
+  componentDidMount() {
     this.getInfoUser()
     this.getTurmasAbertas()
-
-  }
-  componentDidMount() {
     document.title = "Sistema Aluno - Plataforma LOP";
   }
   async getInfoUser(){
@@ -189,7 +186,6 @@ export default class HomeAlunoScreen extends Component {
                         </CardBody>
                      </Card>
                  </div>
- 
               )
              })}
 

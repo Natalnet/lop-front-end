@@ -20,25 +20,25 @@ export default class MenuAluno extends Component {
             <div className="col-lg order-lg-first">
               <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                 <li className="nav-item">
-                  <Link to="/sistema/aluno" className="nav-link">
+                  <Link to="/aluno" className="nav-link">
                     <i className="fe fe-home" />
                     Início
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/aluno/turmasAbertas" className="nav-link">
+                  <Link to="/aluno/turmasAbertas" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Turmas abertas
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/aluno/atividades" className="nav-link">
+                  <Link to="/aluno/atividades" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Atividades
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/aluno/avisos" className="nav-link">
+                  <Link to="/aluno/avisos" className="nav-link">
                     <i className="fe fe-briefcase" />
                     Avisos
                   </Link>

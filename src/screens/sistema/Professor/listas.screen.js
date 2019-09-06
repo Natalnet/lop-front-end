@@ -77,7 +77,7 @@ export default class HomeListasScreen extends Component {
                  <table style={lista} className="table table-hover">
                     <thead>
                         <tr>
-                            <th>Nome</th>
+                            <th><a className="btn">Nome</a></th>
                             <th>Data</th>
                             <th></th>
                         </tr>

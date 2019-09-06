@@ -22,10 +22,9 @@ export default class HomeAlunoScreen extends Component {
     }
     //this.handlePage=this.handlePage.bind(this)
   }
-  componentWillMount(){
-    this.getInfoUser()
-  }
+ 
   componentDidMount() {
+    this.getInfoUser()
     document.title = "Sistema Aluno - Plataforma LOP";
   }
   async getInfoUser(){
