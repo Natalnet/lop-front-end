@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import {Redirect} from 'react-router-dom'
 
 import TemplateSistema from "components/templates/sistema.template";
-
+import api from '../../../services/api'
 export default class CriarListaScreen extends Component {
     state = {
         redirect: false,
@@ -13,7 +13,7 @@ export default class CriarListaScreen extends Component {
         this.getExercicios();
     }
 
-    getExercicios = () => {
+    async getExercicio(){
         let dbfile = "http://localhost:3001/question";
         fetch(dbfile)
             .then(res => res.json())

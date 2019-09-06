@@ -85,18 +85,7 @@ export default class TemplateSistema extends Component {
     return arraySistemaPermisssao[0] === "sistema" ? arraySistemaPermisssao[1] : perfis.ALUNO;
   }
 
-  funcao = () => {
-    if(this.state.perfil === "PROFESSOR"){
-      return(<MenuProfessor/>)
-    }
-    else if(this.state.perfil === "ALUNO"){
-      return(<MenuAluno/>)
-    }
-    else if(this.state.perfil === "ADMINISTRADOR"){
-      return(<MenuAdministrador/>)
-    }
-
-  }
+  
 
   render() {
     return (
@@ -108,10 +97,9 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-              {
-                this.funcao()
-              }
-              
+            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno/>:null}
+            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor/>:null}
+            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador/>:null}
             <div className="my-3 my-md-5">
               <div className="container">
                 <div className="page-header">

@@ -30,9 +30,8 @@ export default class HomeListasScreen extends Component {
         try{
             const response = await api.get('/listQuestion')
             this.setState({items:response.data})
-        }catch(err){
-            console.log(err)
-        
+        }catch(err){        
+            console.log(err);
         }
     };
 
