@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 import TemplateSistema from "components/templates/sistema.template";
+import {Redirect} from 'react-router-dom'
 
 const lista = {
     backgroundColor:"white"
@@ -41,6 +42,9 @@ export default class HomeExerciciosScreen extends Component {
     };
 
     render() {
+        if(this.state.perfil!=="PROFESSOR"){
+            return <Redirect to="/*" />;
+        }
         return (
         <TemplateSistema>
             <div>

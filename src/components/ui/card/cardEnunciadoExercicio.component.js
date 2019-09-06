@@ -23,12 +23,12 @@ export default (props) => {
                 </div>
                 
                   <table className="table">
-                   <tbody>
+                    <tbody>
                      <tr>
                        <td><b>Exemplo de entrada</b></td>
                        <td><b>Exemplo de saída</b></td>                       
                       </tr>
-                        {results.map((res,i)=> 
+                       {results.map((res,i)=> 
                         <tr key={i}>
                           <td>
                             {res.inputs.split('').map((v,i) => {

@@ -237,6 +237,9 @@ export default class Editor extends Component {
   }
 
   render() {
+    if(this.state.perfil!=="PROFESSOR"){
+      return <Redirect to="/*" />;
+    }
     const {percentualAcerto,response,redirect,msgSavedSucess,savingQuestion,msgSavedFailed ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
     const { language,theme,content,contentRes } = this.state;
 

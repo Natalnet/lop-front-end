@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {Redirect} from 'react-router-dom'
 
 import TemplateSistema from "components/templates/sistema.template";
 
@@ -31,6 +32,9 @@ export default class CriarListaScreen extends Component {
     };
 
     render() {
+        if(this.state.perfil!=="PROFESSOR"){
+            return <Redirect to="/*" />;
+        }
         return (
         <TemplateSistema>
             <div className="container-fluid">

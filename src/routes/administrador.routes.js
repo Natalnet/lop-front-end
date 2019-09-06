@@ -3,7 +3,7 @@ import UsuariosScreen from "screens/sistema/administracao/usuarios.screen";
 
 const routes = [
   {
-    path: "/sistema/administrador/usuarios",
+    path: "/administrador/usuarios",
     component: UsuariosScreen,
     private: true
   }

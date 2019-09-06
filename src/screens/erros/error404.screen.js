@@ -10,8 +10,29 @@ import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 
 export default class Error404 extends Component {
+  state = {
+    perfil: localStorage.getItem("user.profile")
+  }
   componentDidMount() {
     document.title = "Error404 - Plataforma LOP";
+  }
+
+  retornar(){
+    if(this.state.perfil==='PROFESSOR'){
+      return(<Link className="btn btn-primary" to="/professor/turmas">
+          <i className="fe fe-arrow-left mr-2" />Voltar para o início
+      </Link>)
+    }
+    else if(this.state.perfil==='ADMINISTRADOR'){
+      return(<Link className="btn btn-primary" to="/administrador/usuarios">
+          <i className="fe fe-arrow-left mr-2" />Voltar para o início
+      </Link>)
+    }
+    else if(this.state.perfil==='ALUNO'){
+      return(<Link className="btn btn-primary" to="/aluno">
+          <i className="fe fe-arrow-left mr-2" />Voltar para o início
+      </Link>)
+    }
   }
 
   render() {
@@ -26,9 +47,7 @@ export default class Error404 extends Component {
             <p className="h4 text-muted font-weight-normal mb-7">
               Você tentou acessar uma página que não existe na plataforma LOP.
             </p>
-            <Link className="btn btn-primary" to="/">
-              <i className="fe fe-arrow-left mr-2" />Voltar para o início
-            </Link>
+            {this.retornar()}
           </div>
         </div>
       </div>

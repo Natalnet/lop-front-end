@@ -29,16 +29,12 @@ export default class TemplateSistema extends Component {
     this.state = {
       erros: [],
       keyErros: 0,
-      perfil: perfis.PROFESSOR
+      perfil: localStorage.getItem("user.profile")
     };
   }
 
   componentDidMount() {
     document.title = "Template de login";
-    const perfilUsuario = this.getPerfilUsuario();
-    const state = this.state;
-    state.perfil = perfilUsuario;
-    this.setState({ ...state });
     this.handleAxiosErros();
     console.log(this.state.perfil)
   }
@@ -80,11 +76,26 @@ export default class TemplateSistema extends Component {
   };
 
   getPerfilUsuario = () => {
+    console.log(this.state.perfil)
+
     const perfilDaUrl = window.location.pathname.slice(1);
     
     const arraySistemaPermisssao = perfilDaUrl.split('/');
     
     return arraySistemaPermisssao[0] === "sistema" ? arraySistemaPermisssao[1] : perfis.ALUNO;
+  }
+
+  funcao = () => {
+    if(this.state.perfil === "PROFESSOR"){
+      return(<MenuProfessor/>)
+    }
+    else if(this.state.perfil === "ALUNO"){
+      return(<MenuAluno/>)
+    }
+    else if(this.state.perfil === "ADMINISTRADOR"){
+      return(<MenuAdministrador/>)
+    }
+
   }
 
   render() {
@@ -97,7 +108,10 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-              <MenuProfessor/>
+              {
+                this.funcao()
+              }
+              
             <div className="my-3 my-md-5">
               <div className="container">
                 <div className="page-header">

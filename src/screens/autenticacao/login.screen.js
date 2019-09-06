@@ -47,7 +47,7 @@ export default class LoginScreen extends Component {
   render() {
     if (this.state.redirect) {
       if (this.state.profile === "ALUNO") {
-        return <Redirect to="/sistema/aluno" />;
+        return <Redirect to="/aluno" />;
       } else if (this.state.profile === "PROFESSOR") {
         return <Redirect to="/professor/turmas" />;
       } else if (this.state.profile === "ADMINISTRADOR") {
