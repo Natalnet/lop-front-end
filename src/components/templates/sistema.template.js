@@ -97,7 +97,9 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-              <MenuProfessor/>
+            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno/>:null}
+            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor/>:null}
+            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador/>:null}
             <div className="my-3 my-md-5">
               <div className="container">
                 <div className="page-header">

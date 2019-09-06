@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 import TemplateSistema from "components/templates/sistema.template";
+import api from '../../../services/api'
 
 const lista = {
     backgroundColor:"white"
@@ -19,25 +20,17 @@ export default class HomeExerciciosScreen extends Component {
         items: []
     }
 
-    componentDidMount() {
-        this.getTurmas();
+    componentWillMount() {
+        this.getExercicios();
     }
 
-    getTurmas = () => {
-        let dbfile = "http://localhost:3001/question";
-        fetch(dbfile)
-            .then(res => res.json())
-            .then(data => {
-                data.map(exercicios => {
-                return this.setState({
-                    items: [
-                    ...this.state.items,
-                    exercicios
-                    ]
-                });
-                });
-            })
-            .catch(e => console.log(e));
+    async getExercicios(){
+        try{
+            const response = await api.get('/question')
+            this.setState({items:response.data})
+        }catch(err){
+            console.log(err);
+        }
     };
 
     render() {

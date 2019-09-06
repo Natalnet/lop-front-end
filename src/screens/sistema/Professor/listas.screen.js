@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 import TemplateSistema from "components/templates/sistema.template";
+import api from '../../../services/api'
 
 const lista = {
     backgroundColor:"white"
@@ -19,25 +20,17 @@ export default class HomeListasScreen extends Component {
         items: []
     }
 
-    componentDidMount() {
-        this.getTurmas();
+    componentWillMount() {
+        this.getListas();
     }
 
-    getTurmas = () => {
-        let dbfile = "http://localhost:3001/listQuestion";
-        fetch(dbfile)
-            .then(res => res.json())
-            .then(data => {
-                data.map(lista => {
-                return this.setState({
-                    items: [
-                    ...this.state.items,
-                    lista
-                    ]
-                });
-                });
-            })
-            .catch(e => console.log(e));
+    async getListas(){
+        try{
+            const response = await api.get('/listQuestion')
+            this.setState({items:response.data})
+        }catch(err){
+            console.log(err);
+        }
     };
 
     render() {

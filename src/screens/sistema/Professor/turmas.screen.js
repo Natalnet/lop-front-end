@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Redirect } from 'react-router-dom';
 
 import TemplateSistema from "components/templates/sistema.template";
+import api from '../../../services/api'
 
 const card = {
     maxHeight: "250px",
@@ -26,25 +27,17 @@ export default class TurmasScreen extends Component {
         items: []
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.getTurmas();
     }
 
-    getTurmas = () => {
-        let dbfile = "http://localhost:3001/class";
-        fetch(dbfile)
-            .then(res => res.json())
-            .then(data => {
-                data.map(turma => {
-                return this.setState({
-                    items: [
-                    ...this.state.items,
-                    turma
-                    ]
-                });
-                });
-            })
-            .catch(e => console.log(e));
+    async getTurmas(){
+        try{
+            const response = await api.get('/class')
+            this.setState({items:response.data})
+        }catch(err){
+            console.log(err);
+        }
     };
 
     setRedirect = () => {

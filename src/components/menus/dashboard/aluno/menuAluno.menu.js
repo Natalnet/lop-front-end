@@ -26,6 +26,12 @@ export default class MenuAluno extends Component {
                   </Link>
                 </li>
                 <li className="nav-item">
+                  <Link to="/sistema/aluno/turmasAbertas" className="nav-link">
+                    <i className="fe fe-bar-chart" />
+                    Turmas abertas
+                  </Link>
+                </li>
+                <li className="nav-item">
                   <Link to="/sistema/aluno/atividades" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Atividades
