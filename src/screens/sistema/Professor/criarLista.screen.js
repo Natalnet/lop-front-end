@@ -37,7 +37,7 @@ export default class CriarListaScreen extends Component {
             return <Redirect to="/401" />;
         }
         return (
-        <TemplateSistema>
+        <TemplateSistema active='criarLista'>
             <div className="container-fluid">
                 <form>
                     <div className="row">

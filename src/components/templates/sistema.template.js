@@ -88,6 +88,8 @@ export default class TemplateSistema extends Component {
   
 
   render() {
+    console.log('props do tamplate');
+    console.log(this.props.active);
     return (
       <ErrorBoundary>
         <div className="page">
@@ -97,9 +99,9 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno/>:null}
-            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor/>:null}
-            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador/>:null}
+            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno active={this.props.active}/>:null}
+            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor active={this.props.active}/>:null}
+            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador active={this.props.active}/>:null}
             <div className="my-3 my-md-5">
               <div className="container">
                 <div className="page-header">

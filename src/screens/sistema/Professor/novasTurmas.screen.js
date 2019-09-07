@@ -161,7 +161,7 @@ export default class NovasTurmasScreen extends Component {
             return <Redirect to="/401" />;
         }
         return (
-        <TemplateSistema>
+        <TemplateSistema active='criarTurma'>
             <div className="container-fluid">
                 <form onSubmit={this.cadastro}>
                     <div className="row">
@@ -252,7 +252,7 @@ export default class NovasTurmasScreen extends Component {
                                 <thead>
                                     <tr>
                                         <th>Nome:</th>
-                                        <th>Matricula:</th>
+                                        <th>Matrícula:</th>
                                         <th>E-mail:</th>
                                         <th></th>
                                     </tr>
@@ -260,10 +260,18 @@ export default class NovasTurmasScreen extends Component {
                                 <tbody>
                                     {this.state.professorsName.map((professor, index) => (
                                         <tr key={index}>
+                                            <td className='text-center'>
+                                                <div 
+                                                    className="avatar d-block" 
+                                                    style={
+                                                        {backgroundImage: `url(${professor.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
+                                                    }
+                                                />
+                                            </td>
                                             <td>{professor.name}</td>
                                             <td>{professor.enrollment}</td>
                                             <td>{professor.email}</td>
-                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}>Excluir</a></td>
+                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fe fe-trash" /></a></td>
                                         </tr>
                                     ))}
                                 </tbody>

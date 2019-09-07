@@ -34,7 +34,7 @@ export default class HeadPefilMenu extends Component {
                 className="avatar"
                 style={{
                   backgroundImage:
-                    "url(https://avatars1.githubusercontent.com/u/32372238?s=460&v=4)"
+                    "url(https://i.ytimg.com/vi/yr3n7HXNO8A/maxresdefault.jpg)"
                 }}
               />
               <span className="ml-2 d-none d-lg-block">

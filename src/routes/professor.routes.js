@@ -1,6 +1,6 @@
 import exportRoutes from 'util/routes/exportRoutes.util';
 import NovasTurmasScreen from 'screens/sistema/Professor/novasTurmas.screen';
-import TurmasScreen from 'screens/sistema/Professor/turmas.screen';
+import HomeProfessorScreen from 'screens/sistema/Professor/HomeProfessor.screen';
 import ListasScreen from 'screens/sistema/Professor/listas.screen'
 import ExerciciosScreen from 'screens/sistema/Professor/exercicios.screen'
 import CriarListaScreen from 'screens/sistema/Professor/criarLista.screen'
@@ -9,13 +9,13 @@ import Erro401 from '../screens/erros/error401.screen';
 
 const routes = [
     {
-        path: '/Professor/novasturmas',
-        component: NovasTurmasScreen,
+        path: '/professor',
+        component: HomeProfessorScreen,
         private: true
     },
     {
-        path: '/professor/turmas',
-        component: TurmasScreen,
+        path: '/Professor/novasturmas',
+        component: NovasTurmasScreen,
         private: true
     },
     {

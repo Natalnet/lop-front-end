@@ -41,7 +41,7 @@ export default class HomeListasScreen extends Component {
             return <Redirect to="/401" />;
         }
         return (
-        <TemplateSistema>
+        <TemplateSistema active='listas'>
             <div>
                 <h1 styler={titulo}>Listas de Exercicios</h1><br></br>
                 <div className="row">

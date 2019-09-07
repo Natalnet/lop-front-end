@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 
 export default class MenuProfessor extends Component {
   render() {
+    console.log('props do menu');
+    console.log(this.props.active);
     return (
       <div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
         <div className="container">
@@ -20,45 +22,45 @@ export default class MenuProfessor extends Component {
             <div className="col-lg order-lg-first">
               <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                 <li className="nav-item">
-                  <Link to="/professor" className="nav-link">
+                  <Link to="/professor" className={`nav-link ${this.props.active==='home'?'active':''}`}>
                     <i className="fe fe-home" />
                     Início
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/professor/turmas" className="nav-link">
-                    <i className="fe fe-bar-chart" />
-                    Turmas
+                  <Link to="/professor/novasturmas" className={`nav-link ${this.props.active==='criarTurma'?'active':''}`}>
+                    <i className="fe fe-plus" /> <i className="fe fe-users" />
+                    Criar turma
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/professor/listas" className="nav-link">
-                    <i className="fe fe-bar-chart" />
+                  <Link to="/professor/listas" className={`nav-link ${this.props.active==='listas'?'active':''}`}>
+                    <i className="fe fe-file-text" />
                     Listas
                   </Link>
                 </li>
+               <li className="nav-item">
+                  <Link to="/professor/criarlista" className={`nav-link ${this.props.active==='criarLista'?'active':''}`}>
+                    <i className="fe fe-file-plus" />
+                    Criar listas
+                  </Link>
+                </li>
                 <li className="nav-item">
-                  <Link to="/professor/exercicios" className="nav-link">
-                    <i className="fe fe-bar-chart" />
+                  <Link to="/professor/exercicios" className={`nav-link ${this.props.active==='ecercicios'?'active':''}`}>
+                    <i className="fe fe-file-text" />
                     Exercicios
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/professor/provas" className="nav-link">
-                    <i className="fe fe-bar-chart" />
+                  <Link to="/professor/criarExercicio" className={`nav-link ${this.props.active==='criarExercicio'?'active':''}`}>
+                    <i className="fe fe-file-plus" />
+                    Criar exercicios
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/professor/provas" className={`nav-link ${this.props.active==='prova'?'active':''}`}>
+                    <i className="fe fe-file" />
                     Provas
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/professor/relatorio" className="nav-link">
-                    <i className="fe fe-bar-chart" />
-                    Relatório
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/professor/gestao-de-atividades" className="nav-link">
-                    <i className="fe fe-briefcase" />
-                    Gestão de atividades
                   </Link>
                 </li>
               </ul>
