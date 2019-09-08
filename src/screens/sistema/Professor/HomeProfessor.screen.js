@@ -108,7 +108,7 @@ export default class TurmasScreen extends Component {
                             type="button"
                             style={botao}
                         >
-                            Nova Turma <i className="fe fe-plus" />
+                            Nova Turma <i className="fa fa-plus-circle" />
                         </Link>
                     </div>
                 </div>
@@ -161,7 +161,7 @@ export default class TurmasScreen extends Component {
                             <br></br>
                             <Card>
                                 <CardHead>
-                                    <i className="fe fe-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
+                                    <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
                                 </CardHead>
                                 <CardBody>
                                     <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">

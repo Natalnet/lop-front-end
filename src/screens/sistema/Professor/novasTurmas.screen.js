@@ -271,7 +271,7 @@ export default class NovasTurmasScreen extends Component {
                                             <td>{professor.name}</td>
                                             <td>{professor.enrollment}</td>
                                             <td>{professor.email}</td>
-                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fe fe-trash" /></a></td>
+                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
                                         </tr>
                                     ))}
                                 </tbody>
