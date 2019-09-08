@@ -13,8 +13,6 @@ import { Link } from "react-router-dom";
 
 export default class MenuProfessor extends Component {
   render() {
-    console.log('props do menu');
-    console.log(this.props.active);
     return (
       <div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
         <div className="container">

@@ -5,6 +5,9 @@ import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
+
+
 import NavPagination from "components/ui/navs/navPagination";
 import api from '../../../services/api'
 
@@ -47,7 +50,6 @@ export default class TurmasScreen extends Component {
 
     async getMinhasTurmas(){
         const {numPageAtual,contentInputSeach} = this.state
-        console.log(contentInputSeach);
         const query = `include=${contentInputSeach}`
         try{
             this.setState({loadingTurmas:true})
@@ -61,7 +63,6 @@ export default class TurmasScreen extends Component {
         }catch(err){
             this.setState({loadingTurmas:false})
             console.log(err)
-        
         }
     };
     async handlePage(e,numPage){
@@ -161,16 +162,36 @@ export default class TurmasScreen extends Component {
                             <br></br>
                             <Card>
                                 <CardHead>
-                                    <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
+                                    <h3 className="card-title">
+                                        <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
+                                    </h3>
+                                    {/*<div className="card-options">
+                                      <label className="custom-switch m-0">
+                                        <input type="checkbox" value="1" className="custom-switch-input" checked/>
+                                        <span className="custom-switch-indicator"></span>
+                                      </label>
+                                    </div>*/}
                                 </CardHead>
                                 <CardBody>
-                                    <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
-                                        <i className="fe fe-edit" /> Editar
-                                    </Link>
-                                    <Link to={`/professor/turma/${turma._id}`} style={botaoV} className="btn btn-primary mr-2">
-                                        <i className="fe fe-corner-down-right" /> Entrar
-                                    </Link>
+                                    <span title={`${turma.students.length} participante(s)`} className="avatar avatar-cyan mr-1">
+                                        {turma.students.length}
+                                    </span>
+                                    <span title={`${0} aluno(s) online`} className="avatar avatar-teal mr-1">
+                                        0
+                                    </span>
+                                    <span title={`${turma.requestingUsers.length} solicitação(ões)`} className="avatar avatar-red mr-1">
+                                        {turma.requestingUsers.length}
+                                    </span>
                                 </CardBody>
+                                    <CardFooter>
+                                        <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
+                                            <i className="fe fe-edit" /> Editar
+                                        </Link>
+                                        <Link to={`/professor/turma/${turma._id}`} style={botaoV} className="btn btn-primary mr-2">
+                                            <i className="fe fe-corner-down-right" /> Entrar
+                                        </Link>
+                                    </CardFooter>
+                                
                             </Card>
                         </div>
                     ))

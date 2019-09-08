@@ -36,7 +36,6 @@ export default class TemplateSistema extends Component {
   componentDidMount() {
     document.title = "Template de login";
     this.handleAxiosErros();
-    console.log(this.state.perfil)
   }
 
   handleAxiosErros = () => {
@@ -88,8 +87,6 @@ export default class TemplateSistema extends Component {
   
 
   render() {
-    console.log('props do tamplate');
-    console.log(this.props.active);
     return (
       <ErrorBoundary>
         <div className="page">
