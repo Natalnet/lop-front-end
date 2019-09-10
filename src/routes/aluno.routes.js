@@ -4,7 +4,8 @@ import HomeAlunoScreen from "screens/sistema/aluno/home.screen";
 import HomeListaExercicios from "../screens/sistema/aluno/execicio.screen";
 
 
-import TurmasAbertasAlunoScreen from "screens/sistema/aluno/turmasAbertas.screen"
+import TurmasAbertasAlunoScreen from "screens/sistema/aluno/turmasAbertas.screen";
+
 const routes = [
   {
     path: "/aluno",

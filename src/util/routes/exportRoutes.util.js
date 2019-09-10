@@ -1,9 +1,11 @@
 import React from "react";
-
 import { Route } from "react-router-dom";
 import { PrivateRoutes } from "./privateRoutes.util";
 const exportRoutes = routes => {
+  const perfil = localStorage.getItem("user.profile")
+  console.log(perfil)
   const routesMap = routes.map((route, index) => {
+    console.log(route.perfil)
     if (route.private === false) {
       return (
         <Route
@@ -13,7 +15,8 @@ const exportRoutes = routes => {
           component={route.component}
         />
       );
-    } else {
+    } 
+    else if(route.private === true || route.perfil !== perfil) {
       return (
         <PrivateRoutes
           key={index}

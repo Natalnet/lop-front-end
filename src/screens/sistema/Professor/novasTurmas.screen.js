@@ -164,9 +164,7 @@ export default class NovasTurmasScreen extends Component {
     };
 
     render() {
-        if(this.state.perfil!=="PROFESSOR"){
-            return <Redirect to="/401" />;
-        }
+        
         return (
         <TemplateSistema>
             <div className="container-fluid">

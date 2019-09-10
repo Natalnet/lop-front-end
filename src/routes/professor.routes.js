@@ -7,40 +7,55 @@ import CriarListaScreen from 'screens/sistema/Professor/criarLista.screen'
 import CriarExercicioScreen from 'screens/sistema/Professor/criarExercicios.screen'
 import Erro401 from '../screens/erros/error401.screen';
 
+import TelaTurmaLista from '../screens/sistema/Professor/telaTurmaListas.screen'
+
 const routes = [
     {
         path: '/Professor/novasturmas',
         component: NovasTurmasScreen,
-        private: true
+        private: true,
+        perfil: 'PROFESSOR'
     },
     {
         path: '/professor/turmas',
         component: TurmasScreen,
-        private: true
+        private: true,
+        perfil: 'PROFESSOR'
     },
     {
         path: '/professor/listas',
         component: ListasScreen,
-        private: true
+        private: true,
+        perfil: 'PROFESSOR'
     },
     {
         path: '/professor/exercicios',
         component: ExerciciosScreen,
-        private: true
+        private: true,
+        perfil: 'PROFESSOR'
     },
     {
         path: '/professor/criarLista',
         component: CriarListaScreen,
-        private: true
+        private: true,
+        perfil: 'PROFESSOR'
     },
     {
         path: '/professor/criarExercicio',
         component: CriarExercicioScreen,
-        private: true
+        private: true,
+        perfil: 'PROFESSOR'
     },
     {
         path: '/401',
-        component: Erro401
+        component: Erro401,
+        private: true
+    },
+    {
+        path: '/professor/turma/1234',
+        component: TelaTurmaLista,
+        private: true,
+        perfil: 'PROFESSOR'
     }
 ]
 
