@@ -10,7 +10,7 @@ const routes = [
   {
     path: "/aluno",
     component: HomeAlunoScreen,
-    private: true
+    private: true,
   },
   {
     path: "/aluno/exercicio",

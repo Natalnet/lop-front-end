@@ -1,6 +1,6 @@
 import exportRoutes from 'util/routes/exportRoutes.util';
 import NovasTurmasScreen from 'screens/sistema/Professor/novasTurmas.screen';
-import TurmasScreen from 'screens/sistema/Professor/turmas.screen';
+import HomeProfessorScreen from 'screens/sistema/Professor/HomeProfessor.screen';
 import ListasScreen from 'screens/sistema/Professor/listas.screen'
 import ExerciciosScreen from 'screens/sistema/Professor/exercicios.screen'
 import CriarListaScreen from 'screens/sistema/Professor/criarLista.screen'
@@ -17,8 +17,8 @@ const routes = [
         perfil: 'PROFESSOR'
     },
     {
-        path: '/professor/turmas',
-        component: TurmasScreen,
+        path: '/professor',
+        component: HomeProfessorScreen,
         private: true,
         perfil: 'PROFESSOR'
     },

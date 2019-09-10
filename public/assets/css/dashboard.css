@@ -14276,7 +14276,12 @@ Icon input
   width: 10rem;
   font-size: .8rem;
 }
+.css-26l3qy-menu{
+  box-shadow: #fff;
+  background-color: #fff;
+  border-color:#fff;
 
+}
 .chart-circle-value {
   position: absolute;
   top: 0;

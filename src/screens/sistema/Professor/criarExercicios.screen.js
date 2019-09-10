@@ -257,7 +257,7 @@ export default class Editor extends Component {
     }
     else
     return (
-    <TemplateSistema>
+    <TemplateSistema active='criarExercicio'>
     <div className="container">
     <form className="form-group form-control col-12">
       <div className="row">

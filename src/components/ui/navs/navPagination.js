@@ -1,8 +1,6 @@
 import React from "react";
 export default props => {
     const {pageAtual,handlePage,totalPages} = props
-    console.log('info paginação:');
-    console.log('pagina atual: '+pageAtual+' totalPages: '+totalPages);
     let elementNavs = []
     for(let i=1;i<=totalPages;i++){
       elementNavs.push(

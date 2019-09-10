@@ -40,7 +40,7 @@ export default class HomeExerciciosScreen extends Component {
             return <Redirect to="/401" />;
         }
         return (
-        <TemplateSistema>
+        <TemplateSistema active='ecercicios'>
             <div>
                 <h1 styler={titulo}>Exercicios</h1><br></br>
                 <div className="row">

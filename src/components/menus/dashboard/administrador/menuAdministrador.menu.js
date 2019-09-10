@@ -21,7 +21,7 @@ export default class MenuAdministrador extends Component {
               <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                 <li className="nav-item">
                   <Link
-                    to="/sistema/administrador"
+                    to="/administrador"
                     className="nav-link"
                     data-toggle="pill"
                     aria-selected="false"
@@ -32,7 +32,7 @@ export default class MenuAdministrador extends Component {
                 </li>
                 <li className="nav-item">
                   <Link
-                    to="/sistema/administrador/usuarios"
+                    to="/administrador/usuarios"
                     className="nav-link"
                     data-toggle="pill"
                     aria-selected="false"

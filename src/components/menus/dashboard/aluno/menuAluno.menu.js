@@ -32,13 +32,13 @@ export default class MenuAluno extends Component {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/aluno/atividades" className="nav-link">
+                  <Link to="/aluno/atividades" className="nav-link">
                     <i className="fe fe-bar-chart" />
                     Atividades
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/aluno/avisos" className="nav-link">
+                  <Link to="/aluno/avisos" className="nav-link">
                     <i className="fe fe-briefcase" />
                     Avisos
                   </Link>

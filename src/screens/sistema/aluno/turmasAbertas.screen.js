@@ -30,12 +30,9 @@ export default class HomeAlunoScreen extends Component {
     }
     this.handlePage=this.handlePage.bind(this)
   }
-  componentWillMount(){
+  componentDidMount() {
     this.getInfoUser()
     this.getTurmasAbertas()
-
-  }
-  componentDidMount() {
     document.title = "Sistema Aluno - Plataforma LOP";
   }
   async getInfoUser(){
@@ -59,15 +56,9 @@ export default class HomeAlunoScreen extends Component {
     try{
       //this.setState({loadingTurmas:true})
       const response = await api.get(`/class/open/page/${this.state.numPageTurmasAbertas}`)
-      console.log(response.data);
-      let totalTurmasAbertas = response.data.totalDocs
-      let turmas = response.data.docs
-      let turmasProv = []
-      let isInclude = false
-
       this.setState({
-        turmasAbertas : turmas,
-        totalTumasAbertas : totalTurmasAbertas,
+        turmasAbertas : response.data.docs,
+        totalTumasAbertas : response.data.total,
         totalPages : response.data.totalPages
         //loadingTurmas:false
       })
@@ -189,7 +180,6 @@ export default class HomeAlunoScreen extends Component {
                         </CardBody>
                      </Card>
                  </div>
- 
               )
              })}
 

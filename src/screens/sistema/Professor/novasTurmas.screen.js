@@ -89,21 +89,14 @@ export default class NovasTurmasScreen extends Component {
         document.title = "Realizar Cadastro de turmas - Plataforma LOP";
     }
 
-    getProfessores = () => {
-        let dbfile = "http://localhost:3001/user/get/professores";
-        fetch(dbfile)
-            .then(res => res.json())
-            .then(data => {
-                data.map(user => {
-                return this.setState({
-                    items: [
-                    ...this.state.items,
-                    user
-                    ]
-                });
-                });
-            })
-            .catch(e => console.log(e));
+    async getProfessores(){
+        try{
+            const response = await api.get('/user/get/professores')
+            this.setState({items:response.data})
+        }catch(err){
+            console.log(err)
+        
+        }
     };
 
     handleNameChange = e => {
@@ -166,7 +159,7 @@ export default class NovasTurmasScreen extends Component {
     render() {
         
         return (
-        <TemplateSistema>
+        <TemplateSistema active='criarTurma'>
             <div className="container-fluid">
                 <form onSubmit={this.cadastro}>
                     <div className="row">
@@ -243,8 +236,9 @@ export default class NovasTurmasScreen extends Component {
                             <h3>Professores:</h3>
 
                             <Select
+                                style={{boxShadow: "white"}}
                                 options={this.state.items.map(t => ({ _id: t._id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
-                                closeMenuOnSelect={true}
+                                closeMenuOnSelect={false}
                                 onChange={this.handleProfessorsChange.bind(this)}                                
                             />
 
@@ -256,7 +250,7 @@ export default class NovasTurmasScreen extends Component {
                                 <thead>
                                     <tr>
                                         <th>Nome:</th>
-                                        <th>Matricula:</th>
+                                        <th>Matrícula:</th>
                                         <th>E-mail:</th>
                                         <th></th>
                                     </tr>
@@ -264,15 +258,23 @@ export default class NovasTurmasScreen extends Component {
                                 <tbody>
                                     {this.state.professorsName.map((professor, index) => (
                                         <tr key={index}>
+                                            <td className='text-center'>
+                                                <div 
+                                                    className="avatar d-block" 
+                                                    style={
+                                                        {backgroundImage: `url(${professor.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
+                                                    }
+                                                />
+                                            </td>
                                             <td>{professor.name}</td>
                                             <td>{professor.enrollment}</td>
                                             <td>{professor.email}</td>
-                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}>Excluir</a></td>
+                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
-                            
+                            <hr></hr>
                             <div>
                                 {this.renderRedirect()}
                                 <button style={botao} type="submit" className="btn btn-primary" onClick={this.cadastro} >Cadastrar</button>

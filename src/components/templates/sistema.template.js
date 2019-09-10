@@ -36,7 +36,6 @@ export default class TemplateSistema extends Component {
   componentDidMount() {
     document.title = "Template de login";
     this.handleAxiosErros();
-    console.log(this.state.perfil)
   }
 
   handleAxiosErros = () => {
@@ -97,9 +96,9 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno/>:null}
-            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor/>:null}
-            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador/>:null}
+            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno active={this.props.active}/>:null}
+            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor active={this.props.active}/>:null}
+            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador active={this.props.active}/>:null}
             <div className="my-3 my-md-5">
               <div className="container">
                 <div className="page-header">
