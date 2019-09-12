@@ -8,7 +8,7 @@ export default (props) =>{
             <div className="form-group col-md-3">
               <select className="form-control" onChange={changeLanguage}>
                 <option value = 'javascript'>JavaScript</option>
-                <option value = 'cpp'>C++</option>
+                <option value = 'c_cpp'>C++</option>
               </select>
              </div>
             <div className="form-group col-md-3">
