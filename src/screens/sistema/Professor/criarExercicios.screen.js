@@ -153,9 +153,9 @@ export default class Editor extends Component {
     const {percentualAcerto,response,redirect,msgSavedSucess,savingQuestion,msgSavedFailed ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
     const { language,theme,contentRes,contentEditor } = this.state;
 
-    /*if(redirect){
+    if(redirect){
       return <Redirect to={'/'} exact={true} />
-    }*/
+    }
     
     if(loadingEditor){
       return(
