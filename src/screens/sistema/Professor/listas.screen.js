@@ -5,6 +5,7 @@ import NavPagination from "components/ui/navs/navPagination";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import Modal from 'react-bootstrap/Modal';
 
+import BotaoModal from "components/ui/modal/btnModalLista.component"
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 
@@ -177,6 +178,7 @@ export default class HomeListasScreen extends Component {
                                             <td>{date}</td>
                                             <td className="text-center">
                                                 <button onClick={()=>this.handleShowModal()}className="btn btn-primary float-right" type="submit"><i className="fa fa-info" /></button>
+                                              
                                             </td>
                                         </tr>
                                         <Modal

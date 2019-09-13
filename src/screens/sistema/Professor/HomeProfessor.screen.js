@@ -180,7 +180,7 @@ export default class TurmasScreen extends Component {
                                         <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
                                             <i className="fe fe-edit" /> Editar
                                         </Link>
-                                        <Link to={`/professor/turma/${turma._id}`} style={botaoV} className="btn btn-primary mr-2">
+                                        <Link to={`/professor/turma/:id`} style={botaoV} className="btn btn-primary mr-2">
                                             <i className="fe fe-corner-down-right" /> Entrar
                                         </Link>
                                     </CardFooter>
