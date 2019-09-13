@@ -1,13 +1,11 @@
 import React, { Component } from "react";
 import { Redirect ,Link} from 'react-router-dom';
-
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
-
-
+import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
 import api from '../../../services/api'
 
@@ -36,6 +34,7 @@ export default class TurmasScreen extends Component {
             items: [],
             loadingTurmas:false,
             contentInputSeach:'',
+            fildFilter:'name',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
@@ -65,11 +64,12 @@ export default class TurmasScreen extends Component {
             console.log(err)
         }
     };
-    async handlePage(e,numPage){
+    handlePage(e,numPage){
         e.preventDefault()
         //console.log(numPage);
-        await this.setState({numPageAtual:numPage})
-        this.getMinhasTurmas()
+        this.setState({
+            numPageAtual:numPage
+        },()=>this.getMinhasTurmas())
     }
 
     setRedirect = () => {
@@ -78,18 +78,29 @@ export default class TurmasScreen extends Component {
         })
     }
 
-    handleContentInputSeach = (e) =>{
-        this.setState({contentInputSeach:e.target.value.trim()})
+    handleContentInputSeach(e){
+        this.setState({
+            contentInputSeach:e.target.value
+        },()=>this.getMinhasTurmas())
+        
     }
-    async clearContentInputSeach(){
-        await this.setState({contentInputSeach:''})
-        this.getMinhasTurmas()
+    handleSelectfildFilter(e){
+        console.log(e.target.value);
+        this.setState({
+            fildFilter:e.target.value
+        },()=>this.getMinhasTurmas())
+    }
+    clearContentInputSeach(){
+        this.setState({
+            contentInputSeach:''
+        },()=>this.getMinhasTurmas())
+        
     }
 
 
     render() {
 
-        const {redirect,loadingTurmas,contentInputSeach,items,numPageAtual,totalPages,perfil} = this.state
+        const {redirect,fildFilter,loadingTurmas,contentInputSeach,items,numPageAtual,totalPages,perfil} = this.state
         const range = num => {
             let arr =[]
             for(let i=0;i<num;i++) arr.push(i);
@@ -114,34 +125,16 @@ export default class TurmasScreen extends Component {
                     </div>
                 </div>
 
-                <div className="input-group mb-3 col-9">
-                    <input 
-                        type="text" 
-                        className="form-control" 
-                        placeholder="Recipient's username" 
-                        aria-label="Recipient's username" 
-                        aria-describedby="button-addon2"
+                <div className="col-9">
+                    <InputGroupo
+                        placeholder={'presquise pelo campo selecionado...'}
                         value={contentInputSeach}
-                        onChange={(e) => this.handleContentInputSeach(e)}
+                        handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+                        handleSelect={this.handleSelectfildFilter.bind(this)}
+                        options={ [{value:'name',content:'Nome'}] }
+                        clearContentInputSeach={this.clearContentInputSeach.bind(this)}
+                        loading={loadingTurmas}                            
                     />
-                    <div className="input-group-append">
-                        <button 
-                            type="button" 
-                            className='btn btn-secondary btn-outline-secondary'
-                            id="button-addon2"
-                            onClick={()=> this.getMinhasTurmas()}
-                        >
-                            <i className="fe fe-search" />
-                        </button>
-                        <button 
-                            className='btn btn-secondary btn-outline-secondary'
-                            type="button" 
-                            id="button-addon2"
-                            onClick={()=> this.clearContentInputSeach()}
-                        >
-                            <i className="fe fe-rotate-cw" />
-                        </button>
-                    </div>
                 </div>
 
                 {loadingTurmas?
