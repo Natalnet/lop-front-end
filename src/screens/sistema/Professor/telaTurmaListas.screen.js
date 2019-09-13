@@ -15,12 +15,18 @@ export default class Pagina extends Component {
     };
 
     componentDidMount() {
-        this.getListas();
+        console.log(this.props.match.params.id)
+        
     }
     async getListas(){
         try{
-            const response = await api.get('/listQuestion')
-            this.setState({items:response.data})
+            const id = this.props.match.params.id
+            const response = await api.get(`/class/${id}`)
+            
+          
+            this.setState({items:[...response.data.listsQuestions,response.data.listsQuestions]})
+            console.log('na tela de turmas')
+            console.log(this.state.items)
         }catch(err){
             console.log(err)
         
@@ -30,7 +36,6 @@ export default class Pagina extends Component {
     
 
     render() {
-        
         return (
         <TemplateSistema>
             <div>
@@ -39,9 +44,7 @@ export default class Pagina extends Component {
                 
 
                 <div className="col-3">
-                <Teste
-                    items={this.state.items}
-                />
+                
                 </div>
                 <div className="col-12">
                     <table className="table table-hover">

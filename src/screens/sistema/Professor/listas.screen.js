@@ -2,9 +2,8 @@ import React, { Component,Fragment } from "react";
 import { Link } from "react-router-dom";
 import NavPagination from "components/ui/navs/navPagination";
 
-import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
+import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import Modal from 'react-bootstrap/Modal';
-
 import BotaoModal from "components/ui/modal/btnModalLista.component"
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
@@ -117,7 +116,7 @@ export default class HomeListasScreen extends Component {
                         </div>
                     </div>
                     <div className="mb-3 col-9">     
-                        <InputGroupo
+                        <InputGroup
                             placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
                             handleContentInputSeach={this.handleContentInputSeach.bind(this)}
@@ -177,30 +176,12 @@ export default class HomeListasScreen extends Component {
                                             <td>{lista.code}</td>
                                             <td>{date}</td>
                                             <td className="text-center">
-                                                <button onClick={()=>this.handleShowModal()}className="btn btn-primary float-right" type="submit"><i className="fa fa-info" /></button>
-                                              
+                                            <BotaoModal
+                                                lista={lista}
+                                            />                                              
                                             </td>
                                         </tr>
-                                        <Modal
-                                            {...this.props}
-                                            size="lg"
-                                            show={showModal}
-                                            onHide={this.handleCloseModal.bind(this)}
-                                            aria-labelledby="contained-modal-title-vcenter"
-                                            centered
-                                        >
-                                            <Modal.Header closeButton>
-                                            <Modal.Title id="contained-modal-title-vcenter">
-                                                {lista.questions.length} Questões
-                                            </Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body>
-
-                                            </Modal.Body>
-                                            <Modal.Footer>
-                                              <button className='btn btn-primary'onClick={this.handleCloseModal.bind(this)}>Close</button>
-                                            </Modal.Footer>
-                                        </Modal>
+                                        
                                     </Fragment>
                                     )
                                 })}

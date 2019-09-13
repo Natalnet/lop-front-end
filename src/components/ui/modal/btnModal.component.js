@@ -14,7 +14,7 @@ export default (props) =>{
         </Button>
     
         <MyVerticallyCenteredModal
-            items={props}
+            items={props.items}
             show={modalShow}
             onHide={() => setModalShow(false)}
         />

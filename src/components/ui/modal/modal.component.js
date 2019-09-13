@@ -7,7 +7,9 @@ import api from '../../../services/api'
 
 
 export default(props) =>{
-    const items= props.items.items
+    const items= props.items
+    console.log('no mddal')
+    console.log(props)
     return (
       <Modal
         {...props}
@@ -32,17 +34,19 @@ export default(props) =>{
                     <button className="btn btn-outline-secondary" 
                     type="button" 
                     id="button-addon2"
-                    >Pesquisar</button>
+                    >Pesquisar
+                    </button>
                 </div>
             </div>
             {items.map((lista, index) => (
             <div key={index}>
             <Collapse
-              listas={lista}
+              lista={lista}
               key={index}
             />
             </div>
             ))}
+            <p>r<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>r</p>
           </div>
         </Modal.Body>
         <Modal.Footer>

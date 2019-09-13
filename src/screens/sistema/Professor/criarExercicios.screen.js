@@ -80,6 +80,7 @@ export default class Editor extends Component {
     this.setState({contentEditor:newValue})
   }
   async executar(e){
+    e.preventDefault()
     const {contentEditor,language} = this.state
     const request = {
       codigo : contentEditor,

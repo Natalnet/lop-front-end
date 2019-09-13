@@ -2,7 +2,9 @@ import React,{useState} from 'react';
 import {Button, Collapse} from 'react-bootstrap'
 
 export default (props) =>{
-    const listas=props.listas
+    const lista = props.lista
+    console.log('no collapse')
+    console.log(lista)
     const chave = props.chave
     const [open, setOpen] = useState(false);
     return (
@@ -11,7 +13,7 @@ export default (props) =>{
                 <table className='table table-hover' style={{borderTopRightRadius:"10%", marginBottom:"0px"}}>
                     <tbody >
                         <tr>
-                            <td>{listas.title}</td>
+                            <td>{lista.title}</td>
                             <td>
                                 <div className="btn-group float-right" role="group" aria-label="Exemplo básico" >
                                     <button type="button" className="btn btn-primary">Adicionar lista</button>
@@ -32,7 +34,7 @@ export default (props) =>{
                     </tbody>
                 </table>       
 
-                {listas.questions.map((questions, index) => (
+                {lista.questions.map((questions, index) => (
                  <div key={index}>
                     <Collapse className="col-12" in={open}
                     style={{backgroundColor:"white", marginTop:"0px"}}

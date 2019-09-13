@@ -53,6 +53,7 @@ export default class TurmasScreen extends Component {
         try{
             this.setState({loadingTurmas:true})
             const response = await api.get(`/user/class/page/${numPageAtual}?${query}`)
+            console.log(response)
             this.setState({
                 items : response.data.docs,
                 totalItens : response.data.total,
@@ -180,7 +181,7 @@ export default class TurmasScreen extends Component {
                                         <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
                                             <i className="fe fe-edit" /> Editar
                                         </Link>
-                                        <Link to={`/professor/turma/:id`} style={botaoV} className="btn btn-primary mr-2">
+                                        <Link to={`/professor/turma/${turma._id}`} style={botaoV} className="btn btn-primary mr-2">
                                             <i className="fe fe-corner-down-right" /> Entrar
                                         </Link>
                                     </CardFooter>
