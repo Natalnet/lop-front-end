@@ -1,6 +1,10 @@
-import React, { Component } from "react";
+import React, { Component,Fragment } from "react";
 import { Link } from "react-router-dom";
 import NavPagination from "components/ui/navs/navPagination";
+
+import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
+import Modal from 'react-bootstrap/Modal';
+
 import BotaoModal from "components/ui/modal/btnModalLista.component"
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
@@ -22,6 +26,7 @@ export default class HomeListasScreen extends Component {
         this.state = {
             contentInputSeach:'',
             listas: [],
+            showModal:false,
             loadingListas:false,
             fildFilter:'title',
             contentInputSeach:'',
@@ -57,6 +62,12 @@ export default class HomeListasScreen extends Component {
             console.log(err);
         }
     };
+    handleShowModal(){
+        this.setState({showModal:true})
+    }
+    handleCloseModal(){
+        this.setState({showModal:false})
+    }
     handlePage(e,numPage){
         e.preventDefault()
         //console.log(numPage);
@@ -86,7 +97,7 @@ export default class HomeListasScreen extends Component {
 
 
     render() {
-        const {listas,fildFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,perfil} = this.state
+        const {listas,showModal,fildFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,perfil} = this.state
         return (
         <TemplateSistema active='listas'>
             <div>
@@ -105,34 +116,16 @@ export default class HomeListasScreen extends Component {
                             </Link>
                         </div>
                     </div>
-
-                    <div className="input-group mb-3 col-9">
-
-                        <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`} 
-                            aria-label="Recipient's username" 
-                            aria-describedby="button-addon2"
+                    <div className="mb-3 col-9">     
+                        <InputGroupo
+                            placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
-                            onChange={(e) => this.handleContentInputSeach(e)}
+                            handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+                            handleSelect={this.handleSelectfildFilter.bind(this)}
+                            options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
+                            clearContentInputSeach={this.clearContentInputSeach.bind(this)}
+                            loading={loadingListas}                            
                         />
-                         <div className="selectgroup">
-                            <select onChange={(e)=>this.handleSelectfildFilter(e)} className="selectize-input items has-options full has-items form-control">
-                              <option value='title'>Nome</option>
-                              <option value='code'>Código</option>
-                            </select>
-                                
-                        </div>
-                  
-                        <button 
-                            className={`btn btn-secondary btn-outline-secondary ${loadingListas && 'btn-loading'}`}                           
-                            type="button" 
-                            id="button-addon2"
-                            onClick={()=> this.clearContentInputSeach()}
-                        >
-                            <i className="fe fe-rotate-cw" />
-                        </button>
                     </div>
                 </div>
                 <div className='row'>
@@ -178,17 +171,37 @@ export default class HomeListasScreen extends Component {
                                     segundo = segundo<10?'0'+segundo:segundo
                                     let date = `${dia}/${mes}/${ano} - ${hora}:${minuto}`
                                     return (
+                                    <Fragment>
                                         <tr key={index}>
                                             <td>{lista.title}</td>
                                             <td>{lista.code}</td>
                                             <td>{date}</td>
                                             <td className="text-center">
-                                            <BotaoModal
-                                                lista={lista}
-                                            />
+                                                <button onClick={()=>this.handleShowModal()}className="btn btn-primary float-right" type="submit"><i className="fa fa-info" /></button>
                                               
                                             </td>
                                         </tr>
+                                        <Modal
+                                            {...this.props}
+                                            size="lg"
+                                            show={showModal}
+                                            onHide={this.handleCloseModal.bind(this)}
+                                            aria-labelledby="contained-modal-title-vcenter"
+                                            centered
+                                        >
+                                            <Modal.Header closeButton>
+                                            <Modal.Title id="contained-modal-title-vcenter">
+                                                {lista.questions.length} Questões
+                                            </Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                              <button className='btn btn-primary'onClick={this.handleCloseModal.bind(this)}>Close</button>
+                                            </Modal.Footer>
+                                        </Modal>
+                                    </Fragment>
                                     )
                                 })}
                             </tbody>
@@ -205,6 +218,7 @@ export default class HomeListasScreen extends Component {
                     </div>
                 </div>
             </div>
+
         </TemplateSistema>
         )
     }
