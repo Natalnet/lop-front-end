@@ -6,6 +6,12 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import apiCompiler from '../../../services/apiCompiler'
 
+import brace from 'brace';
+import AceEditor from 'react-ace';
+import 'brace/mode/c_cpp';
+import 'brace/mode/javascript';
+import 'brace/theme/monokai';
+
 //import * as monaco from 'monaco-editor'
 import TableResults from '../../../components/ui/tables/tableResults.component'
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
@@ -23,17 +29,17 @@ export default class Editor extends Component {
     this.state = {
       editor:'',
       editorRes:'',
-      content:"//code here...",
-      contentRes:"//Resposta\n",
+      contentRes:"",
       language:'javascript',
-      theme:'vs-dark',
+      theme:'monokai',
       response:[],
       msgSavedSucess:false,
       msgSavedFailed:false,
       loadingReponse:false,
       savingQuestion:false,
-      loadingEditor:true,
+      loadingEditor:false,
       title:'',
+      contentEditor:'',
       description:'',
       inputs:'',
       outputs:'',
@@ -42,81 +48,6 @@ export default class Editor extends Component {
       perfil: localStorage.getItem("user.profile")
     }
   }
-
-  componentDidMount() {
-    this.handleLoad();
-  }
-  //-----------------funções para carregar o editor---------------------//
-  handleLoad(){
-    // @note: safe to not check typeof window since it'll call on componentDidMount lifecycle:
-    if (!window.require) {
-      const loaderScript = window.document.createElement("script");
-      loaderScript.type = "text/javascript";
-      // @note: Due to the way AMD is being used by Monaco, there is currently no graceful way to integrate Monaco into webpack (cf. https://github.com/Microsoft/monaco-editor/issues/18):
-      loaderScript.src = "https://unpkg.com/monaco-editor/min/vs/loader.js";
-      loaderScript.addEventListener("load", this.didLoad);
-      window.document.body.appendChild(loaderScript);
-    } else {
-      this.didLoad();
-    }
-  }
-
-  async handleMount() {
-    console.log('editor montado');
-    await this.setState({loadingEditor:false})
-
-    const elementEditor = document.getElementById('monacoEditor')
-    elementEditor.innerHTML = ''
-
-    const elementEditorRes = document.getElementById('monacoEditorRes')
-    elementEditorRes.innerHTML = ''
-
-    const { language,theme,content,contentRes } = this.state;
-    //editor de codigo
-    const editor = window.monaco.editor.create(elementEditor, {
-      value: content,
-      language,
-      theme,
-      roundedSelection: false,
-      scrollBeyondLastLine: false,
-      scrollBeyondLastColumn:false,
-      selectOnLineNumbers:false,
-      minimap:{enabled:false},
-      overviewRulerBorder:false,
-    });
-    //teste
-    const editorRes = window.monaco.editor.create(elementEditorRes, {
-      value: contentRes,
-      language:'javascript',
-      roundedSelection: false,
-      scrollBeyondLastLine: false,
-      scrollBeyondLastColumn:false,
-      selectOnLineNumbers:false,
-      minimap:{enabled:false},
-      overviewRulerBorder:false,
-      readOnly:true,
-    });
-    await this.setState({
-      editor:editor,
-      editorRes:editorRes
-
-    })
-    return this.state.editor;
-  }
-  didLoad = e => {
-
-    window.require.config({
-      paths: { vs: "https://unpkg.com/monaco-editor/min/vs" }
-    });
-    window.require(["vs/editor/editor.main"], () => {
-      this.handleMount();
-    });
-
-    if (e) {
-      e.target.removeEventListener("load", this.didLoad);
-    }
-  }
-  //--------------------------------------------------------------//
 
   async handleTitleChange(e){
       this.setState({
@@ -139,34 +70,20 @@ export default class Editor extends Component {
       })
   }
   async changeLanguage(e){
-    const language = e.target.value;
-    const content = this.state.editor.getValue()
-    const contentRes = this.state.editorRes.getValue()
-    //console.log(' e.target.value: '+language)
-    await this.setState({
-      language,
-      contentRes,
-      content
-    })
-    //console.log('language: '+this.state.language);
-    this.handleMount()
+    await this.setState({language:e.target.value})
   }
   async changeTheme(e){
-    const theme = e.target.value;
-    const content = this.state.editor.getValue()
-    const contentRes = this.state.editorRes.getValue()
-    await this.setState({
-      theme,
-      content,
-      contentRes
-    })
-    this.handleMount()
+    await this.setState({theme:e.target.value})
+
+  }
+  changeContentEditor(newValue){
+    this.setState({contentEditor:newValue})
   }
   async executar(e){
-    //console.log(e.target.value);
+    const {contentEditor,language} = this.state
     const request = {
-      codigo : this.state.editor.getValue(),
-      linguagem : this.state.language,
+      codigo : contentEditor,
+      linguagem :language==='c_cpp'?'cpp':language,
       results : this.getResults()
     }
     this.setState({loadingReponse:true})
@@ -178,19 +95,13 @@ export default class Editor extends Component {
         this.setState({
           response:response.data.results,
           percentualAcerto:response.data.percentualAcerto,
-          contentRes:'//Respostas...\n'+response.data.info,
-          content: this.state.editor.getValue()
+          contentRes:response.data.info,
         })
-        this.handleMount()
       }
     }
     catch(err){
       Object.getOwnPropertyDescriptors(err)
       this.setState({loadingReponse:false})
-      this.setState({
-        content: this.state.editor.getValue()
-      })
-      this.handleMount()
       alert('erro na conexão com o servidor')
     }
     
@@ -207,8 +118,6 @@ export default class Editor extends Component {
         output: saidas[i].split('|').join('\n')
       })
     }
-    console.log('resultados:');
-    console.log(resultados);
     return resultados
   }
   async saveQuestion(e){
@@ -242,7 +151,7 @@ export default class Editor extends Component {
       return <Redirect to="/401" />;
     }
     const {percentualAcerto,response,redirect,msgSavedSucess,savingQuestion,msgSavedFailed ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,content,contentRes } = this.state;
+    const { language,theme,contentRes,contentEditor } = this.state;
 
     /*if(redirect){
       return <Redirect to={'/'} exact={true} />
@@ -284,14 +193,47 @@ export default class Editor extends Component {
       />
           <div className='row'>
             <div className='col-6'>
-              <div id='monacoEditor' style={{height:"400px", width:"100%"}}/>
+              <AceEditor
+                mode={language}
+                theme={theme}
+                focus={false}
+                onChange={this.changeContentEditor.bind(this)}
+                value={contentEditor}
+                fontSize={14}
+                width='100%'
+                name="ACE_EDITOR"
+                showPrintMargin={true}
+                showGutter={true}
+                enableLiveAutocompletion={true}
+                enableBasicAutocompletion={true}
+                highlightActiveLine={true}
+                setOptions={{
+                  enableBasicAutocompletion: true,
+                  enableLiveAutocompletion: true,
+                  enableSnippets: true,
+                  showLineNumbers: true,
+                  tabSize: 2,
+                }}
+              />
             </div>
            {loadingReponse?
            <div className="card" className ="col-6 text-center">
               <img src={imgLoading2} width="300px" />           
            </div>:
-           <div className="card" className ="col-6">
-             <div id='monacoEditorRes' style={{height:"400px", width:"100%"}}/>
+           <div className="col-6">
+                <AceEditor
+                  mode='javascript'
+                  readOnly={true}
+                  width={'100%'}
+                  showGutter={false}
+                  focus={false}
+                  theme={theme}
+                  onChange={this.changeContentEditor.bind(this)}
+                  value={contentRes}
+                  fontSize={14}
+                  name="ACE_EDITOR_RES"
+                  editorProps={{$blockScrolling: true}}
+                />
            </div>
            }
           </div>
