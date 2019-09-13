@@ -6,7 +6,9 @@ import ExerciciosScreen from 'screens/sistema/Professor/exercicios.screen'
 import CriarListaScreen from 'screens/sistema/Professor/criarLista.screen'
 import CriarExercicioScreen from 'screens/sistema/Professor/criarExercicios.screen'
 import Erro401 from '../screens/erros/error401.screen';
-
+import TelaTurmaParticipantes from '../screens/sistema/Professor/telaTurmaParticipantes.screen'
+import TelaTurmaProvas from '../screens/sistema/Professor/telaTurmaProvas.screen'
+import TelaTurmaSolicitacoes from '../screens/sistema/Professor/telaTurmasSolicitacoes.screen'
 import TelaTurmaLista from '../screens/sistema/Professor/telaTurmaListas.screen'
 
 const routes = [
@@ -52,8 +54,26 @@ const routes = [
         private: true
     },
     {
-        path: '/professor/turma/1234',
+        path: '/professor/turma/:id',
         component: TelaTurmaLista,
+        private: true,
+        perfil: 'PROFESSOR'
+    },
+    {
+        path: '/professor/turma/:id/participantes',
+        component: TelaTurmaParticipantes,
+        private: true,
+        perfil: 'PROFESSOR'
+    },
+    {
+        path: '/professor/turma/:id/provas',
+        component: TelaTurmaProvas,
+        private: true,
+        perfil: 'PROFESSOR'
+    },
+    {
+        path: '/professor/turma/:id/solicitacoes',
+        component: TelaTurmaSolicitacoes,
         private: true,
         perfil: 'PROFESSOR'
     }

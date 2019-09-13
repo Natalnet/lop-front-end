@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {Redirect} from 'react-router-dom'
-
+import Collapse from 'components/ui/collapse/collapseCriarLista.component'
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 export default class CriarListaScreen extends Component {
@@ -14,22 +14,17 @@ export default class CriarListaScreen extends Component {
         this.getExercicio();
     }
 
+ 
+    
+
     async getExercicio(){
-        let dbfile = "http://localhost:3001/question";
-        fetch(dbfile)
-            .then(res => res.json())
-            .then(data => {
-                data.map(exercicios => {
-                return this.setState({
-                    items: [
-                    ...this.state.items,
-                    exercicios
-                    ]
-                });
-                });
-            })
-            .catch(e => console.log(e));
-            
+        try{
+            const response = await api.get('http://localhost:3001/question')
+            this.setState({items:response.data})
+        }catch(err){
+            console.log(err)
+        
+        }
     };
 
     render() {
@@ -69,26 +64,11 @@ export default class CriarListaScreen extends Component {
                             <br></br>
                             <h4>Selecione as questões:</h4>
                             <br></br>
-                            <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Titulo</th>
-                                        <th>Dificuldade</th>
-                                        <th>nota</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {this.state.items.map((exercicios, index) => (
-                                        <tr key={index}>
-                                            <td>{exercicios.title}</td>
-                                            <td>Médio</td>
-                                            <td>8/10</td>
-                                            <td><input type="checkbox"/></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            
+                            {/*<Collapse
+                                questoes={this.state.items}
+                            />*/}
+
                             <br>{console.log(this.state.items)}</br>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import NavPagination from "components/ui/navs/navPagination";
-
+import BotaoModal from "components/ui/modal/btnModalLista.component"
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 
@@ -126,7 +126,8 @@ export default class HomeListasScreen extends Component {
                         </div>
                   
                         <button 
-                            className={`btn btn-secondary btn-outline-secondary ${loadingListas && 'btn-loading'}`}                            type="button" 
+                            className={`btn btn-secondary btn-outline-secondary ${loadingListas && 'btn-loading'}`}                           
+                            type="button" 
                             id="button-addon2"
                             onClick={()=> this.clearContentInputSeach()}
                         >
@@ -182,7 +183,10 @@ export default class HomeListasScreen extends Component {
                                             <td>{lista.code}</td>
                                             <td>{date}</td>
                                             <td className="text-center">
-                                                <button className="btn btn-primary float-right" type="submit"><i className="fa fa-info" /></button>
+                                            <BotaoModal
+                                                lista={lista}
+                                            />
+                                              
                                             </td>
                                         </tr>
                                     )

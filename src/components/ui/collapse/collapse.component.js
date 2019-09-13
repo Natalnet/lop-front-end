@@ -13,15 +13,18 @@ export default (props) =>{
                         <tr>
                             <td>{listas.title}</td>
                             <td>
-                                <button
-                                className ="btn btn-primary float-right"
-                                onClick={() => setOpen(!open)}
-                                aria-controls="example-collapse-text"
-                                aria-expanded={open}
-                                style={{position: "relative"}}
-                                >
-                                ver questoes
-                                </button>
+                                <div className="btn-group float-right" role="group" aria-label="Exemplo básico" >
+                                    <button type="button" className="btn btn-primary">Adicionar lista</button>
+                                    <button
+                                    className ="btn btn btn-primary"
+                                    onClick={() => setOpen(!open)}
+                                    aria-controls="example-collapse-text"
+                                    aria-expanded={open}
+                                    style={{position: "relative"}}
+                                    >
+                                    ver
+                                    </button>
+                                </div>
                             </td>
                             
                         </tr>

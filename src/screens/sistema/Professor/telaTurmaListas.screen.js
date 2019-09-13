@@ -43,7 +43,7 @@ export default class Pagina extends Component {
                     items={this.state.items}
                 />
                 </div>
-                <div className="col-6">
+                <div className="col-12">
                     <table className="table table-hover">
                         <thead>
                             <tr>
