@@ -7,6 +7,8 @@ import Modal from 'react-bootstrap/Modal';
 import BotaoModal from "components/ui/modal/btnModalLista.component"
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
+import formataData from "../../../util/funçoesAuxiliares/formataData";
+
 
 const lista = {
     backgroundColor:"white"
@@ -134,8 +136,8 @@ export default class HomeListasScreen extends Component {
                                 <tr>
                                     <th>Nome</th>
                                     <th>Código</th>
-                                    <th>Data de criação</th>
-                                    <th className="text-center">Ver</th>
+                                    <th>Criado em</th>
+                                    <th className="text-center"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -157,24 +159,12 @@ export default class HomeListasScreen extends Component {
                                     </tr>
                                 :
                                     listas.map((lista, index) => {
-                                    let ano = new Date(lista.createdAt).getFullYear()
-                                    let mes = new Date(lista.createdAt).getMonth()+1
-                                    let dia = new Date(lista.createdAt).getDate()
-                                    let hora = new Date(lista.createdAt).getHours()
-                                    let minuto = new Date(lista.createdAt).getMinutes()
-                                    let segundo = new Date(lista.createdAt).getSeconds()
-                                    mes = mes<10?'0'+mes:mes
-                                    dia = dia<10?'0'+dia:dia
-                                    hora = hora<10?'0'+hora:hora
-                                    minuto = minuto<10?'0'+minuto:minuto
-                                    segundo = segundo<10?'0'+segundo:segundo
-                                    let date = `${dia}/${mes}/${ano} - ${hora}:${minuto}`
                                     return (
                                     <Fragment>
                                         <tr key={index}>
                                             <td>{lista.title}</td>
                                             <td>{lista.code}</td>
-                                            <td>{date}</td>
+                                            <td>{formataData(lista.createdAt)}</td>
                                             <td className="text-center">
                                             <BotaoModal
                                                 lista={lista}

@@ -128,7 +128,7 @@ export default class TurmasScreen extends Component {
 
                 <div className="col-9">
                     <InputGroupo
-                        placeholder={'presquise pelo campo selecionado...'}
+                        placeholder={'pesquiese pelo campo selecionado...'}
                         value={contentInputSeach}
                         handleContentInputSeach={this.handleContentInputSeach.bind(this)}
                         handleSelect={this.handleSelectfildFilter.bind(this)}
@@ -141,10 +141,8 @@ export default class TurmasScreen extends Component {
                 {loadingTurmas?
                     range(8).map((i) => (
                         <div key={i} className="col-6">
-                            <br></br>
                             <Card>
-                                <CardHead></CardHead>
-                                <CardBody otherClasses='text-center'>
+                                <CardBody>
                                     <div className="loader" style={{margin:'0px auto'}}></div>
                                 </CardBody>
                             </Card>
@@ -179,7 +177,7 @@ export default class TurmasScreen extends Component {
                                 </CardBody>
                                     <CardFooter>
                                         <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
-                                            <i className="fe fe-edit" /> Editar
+                                            <i className="fa fa-edit" /> Editar
                                         </Link>
                                         <Link to={`/professor/turma/${turma._id}`} style={botaoV} className="btn btn-primary mr-2">
                                             <i className="fe fe-corner-down-right" /> Entrar
