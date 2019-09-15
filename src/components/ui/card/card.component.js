@@ -9,12 +9,15 @@ import React, { Component } from "react";
 
 export default class Card extends Component {
   render() {
+  	const {loading,children} = this.props
     return (
-      <div className="row row-cards row-deck">
-        <div className="col-12">
-          <div className="card">{this.props.children}</div>
+    	<div className='row row-cards row-deck'>
+    		<div className="col-12">
+    			<div className="card">
+			      	{children}
+		      	</div>
+      	    </div>
         </div>
-      </div>
     );
   }
 }

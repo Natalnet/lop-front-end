@@ -141,10 +141,10 @@ export default class TurmasScreen extends Component {
                 {loadingTurmas?
                     range(8).map((i) => (
                         <div key={i} className="col-6">
+                            <br></br>
                             <Card>
-                                <CardBody>
-                                    <div className="loader" style={{margin:'0px auto'}}></div>
-                                </CardBody>
+                                <CardHead></CardHead>
+                                <CardBody loading></CardBody>
                             </Card>
                         </div>
                     ))
@@ -154,9 +154,9 @@ export default class TurmasScreen extends Component {
                             <br></br>
                             <Card>
                                 <CardHead>
-                                    <h3 className="card-title">
-                                        <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
-                                    </h3>
+                                    
+                                    <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
+                                    
                                     {/*<div className="card-options">
                                       <label className="custom-switch m-0">
                                         <input type="checkbox" value="1" className="custom-switch-input" checked/>
@@ -179,7 +179,7 @@ export default class TurmasScreen extends Component {
                                         <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
                                             <i className="fa fa-edit" /> Editar
                                         </Link>
-                                        <Link to={`/professor/turma/${turma._id}`} style={botaoV} className="btn btn-primary mr-2">
+                                        <Link to={`/professor/turma/${turma._id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
                                             <i className="fe fe-corner-down-right" /> Entrar
                                         </Link>
                                     </CardFooter>

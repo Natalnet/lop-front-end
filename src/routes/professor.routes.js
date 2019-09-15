@@ -12,7 +12,7 @@ import TelaTurmaParticipantes from '../screens/sistema/Professor/telaTurmaPartic
 import TelaTurmaProvas from '../screens/sistema/Professor/telaTurmaProvas.screen'
 import TelaTurmaSolicitacoes from '../screens/sistema/Professor/telaTurmasSolicitacoes.screen'
 import TelaTurmaLista from '../screens/sistema/Professor/telaTurmaListas.screen'
-
+import TelaTurmasDashboard from '../screens/sistema/Professor/telaTurmasDashboard.screen'
 const routes = [
     {
         path: '/Professor/novasturmas',
@@ -63,7 +63,7 @@ const routes = [
         private: true
     },
     {
-        path: '/professor/turma/:id',
+        path: '/professor/turma/:id/listas',
         component: TelaTurmaLista,
         private: true,
         perfil: 'PROFESSOR'
@@ -83,6 +83,12 @@ const routes = [
     {
         path: '/professor/turma/:id/solicitacoes',
         component: TelaTurmaSolicitacoes,
+        private: true,
+        perfil: 'PROFESSOR'
+    },
+    {
+        path: '/professor/turma/:id/dashboard',
+        component: TelaTurmasDashboard,
         private: true,
         perfil: 'PROFESSOR'
     }

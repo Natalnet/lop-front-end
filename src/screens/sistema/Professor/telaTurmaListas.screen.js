@@ -8,43 +8,62 @@ import Noticias from '../../../components/ui/jumbotron/jumbotronNoticias.compone
 import SubMenu from '../../../components/menus/dashboard/professor/subMenuTurma.menu'
 
 export default class Pagina extends Component {
-    state = {
-        redirect: false,
-        items: [],
-        perfil: localStorage.getItem("user.profile")
-    };
+
+    constructor(props){
+        super(props)
+        this.state = {
+            redirect: false,
+            items: [],
+            loadingInfoTurma:true,
+            turma:'',
+            //perfil: localStorage.getItem("user.profile")
+        };
+    }
 
     componentDidMount() {
-        console.log(this.props.match.params.id)
-        
+        this.getInfoTurma()
+        this.getListas()        
+    }
+    async getInfoTurma(){
+        const id = this.props.match.params.id
+        try{
+            const response = await api.get(`/class/${id}`)
+            this.setState({
+                turma:response.data,
+                loadingInfoTurma:false,
+            })
+        }
+        catch(err){
+            this.setState({loadingInfoTurma:false})
+            console.log(err);
+        }
     }
     async getListas(){
         try{
             const id = this.props.match.params.id
-            const response = await api.get(`/class/${id}`)
-            
-          
-            this.setState({items:[...response.data.listsQuestions,response.data.listsQuestions]})
-            console.log('na tela de turmas')
-            console.log(this.state.items)
+            const response = await api.get(`/class/${id}/lists`)
+            console.log(response.data);
+
+            this.setState({items:response.data})
+
         }catch(err){
             console.log(err)
         
         }
     };
     
-    
-
     render() {
+        const {loadingInfoTurma,turma} = this.state
         return (
-        <TemplateSistema>
+        <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
             <div>
-                <Noticias/>
-                <SubMenu/>
-                
-
+               {loadingInfoTurma?
+                    <div className="loader"  style={{margin:'0px auto'}}></div>
+                    :
+                    <h3><i className="fa fa-users mr-2" aria-hidden="true"/>  {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                }
+                <br/>
                 <div className="col-3">
-                
                 </div>
                 <div className="col-12">
                     <table className="table table-hover">

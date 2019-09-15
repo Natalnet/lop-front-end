@@ -10,9 +10,12 @@
 import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
-
+import SubMenuTurmas from './subMenuTurma.menu'
 export default class MenuProfessor extends Component {
   render() {
+    if(this.props.submenu==='telaTurmas')
+    return <SubMenuTurmas {...this.props}/>
+    else
     return (
       <div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
         <div className="container">
