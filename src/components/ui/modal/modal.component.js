@@ -1,13 +1,19 @@
 import Modal from 'react-bootstrap/Modal';
 import { Button } from 'react-bootstrap';
+
 import React from 'react';
-import Collapse from '../../../components/ui/collapse/collapse.component'
 import api from '../../../services/api'
+import {useState} from 'react';
+import Collapse from 'components/ui/collapse/collapse.component'
+import CriarListaScreen from 'screens/sistema/Professor/criarLista.screen';
 
 
 
 export default(props) =>{
-    const items= props.items.items
+    const todaslistas= props.todaslistas
+    console.log(todaslistas)
+
+    const [open, setOpen] = useState(false);
     return (
       <Modal
         {...props}
@@ -17,33 +23,19 @@ export default(props) =>{
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            Listas
+          Questões
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{heightMax: '400px', height: '400px'}}>
-            <div className="input-group mb-3 col-12">
-                <input type="text" 
-                className="form-control" 
-                placeholder="Digite o nome da lista...." 
-                aria-label="Digite o nome da lista...." 
-                aria-describedby="button-addon2"/>
-                <div className="input-group-append">
-                    <button className="btn btn-outline-secondary" 
-                    type="button" 
-                    id="button-addon2"
-                    >Pesquisar</button>
-                </div>
-            </div>
-            {items.map((lista, index) => (
-            <div key={index}>
+        <div style={{heightMax: '400px', height: '400px'}}>
+          {todaslistas.map((lista, index)=>(
+          <div key={index}>
             <Collapse
-              listas={lista}
-              key={index}
+            lista={lista}
             />
-            </div>
-            ))}
           </div>
+          ))}
+        </div>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={props.onHide}>Close</Button>

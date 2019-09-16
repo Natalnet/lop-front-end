@@ -36,6 +36,7 @@ export default class Editor extends Component {
       loadingReponse:false,
       savingQuestion:false,
       loadingEditor:false,
+      loadingExercicio:true,
       title:'',
       contentEditor:'',
       description:'',
@@ -45,7 +46,42 @@ export default class Editor extends Component {
       redirect:'',
     }
   }
-
+  componentDidMount(){
+    this.getExercicio()
+  }
+  async getExercicio(){
+    const id = this.props.match.params.id
+    try{
+      const response = await api.get(`/question/${id}`)
+      console.log(response.data);
+      const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
+      this.setState({
+        title:response.data.title,
+        description:response.data.description,
+        inputs:inputs,
+        outputs:outputs,
+        loadingExercicio:false
+      })
+    }
+    catch(err){
+      this.setState({loadingExercicio:false})
+      console.log(Object.getOwnPropertyDescriptors(err));
+    } 
+  }
+  getInputsAndOutpus(results){
+    let inputs=[]
+    let output=[]
+     console.log('results');
+    for(let i=0 ; i<results.length ; i++ ){
+      console.log(results[i]);
+      inputs.push(results[i].inputs.slice(0,-1).split('\n').join(','))
+      output.push(results[i].output.split('\n').join('|'))
+    }
+    inputs = inputs.join('\n')
+    output = output.join('\n')
+    console.log(inputs);
+    return [inputs,output]
+  }
   async handleTitleChange(e){
       this.setState({
         title:e.target.value
@@ -118,9 +154,10 @@ export default class Editor extends Component {
     }
     return resultados
   }
-  async saveQuestion(e){
+  async updateQuestion(e){
+    const id = this.props.match.params.id
     Swal.fire({
-      title:'Salvando questão',
+      title:'Atualizando questão',
       allowOutsideClick:false,
       allowEscapeKey:false,
       allowEnterKey:false
@@ -133,11 +170,11 @@ export default class Editor extends Component {
     }
     try{
       this.setState({savingQuestion:true})
-      const response = await api.post('/question/store',request)
+      const response = await api.put(`/question/update/${id}`,request)
       Swal.hideLoading()
       Swal.fire({
           type: 'success',
-          title: 'Questão salva com sucesso!',
+          title: 'Questão atualizada com sucesso!',
       })
       this.setState({savingQuestion:false})
       console.log(response.data)
@@ -146,7 +183,7 @@ export default class Editor extends Component {
       Swal.hideLoading()
       Swal.fire({
           type: 'error',
-          title: 'ops... Questão não pôde ser salva',
+          title: 'ops... Questão não pôde ser atualizada',
       })
       this.setState({savingQuestion:false})
       console.log(Object.getOwnPropertyDescriptors(err));
@@ -156,28 +193,16 @@ export default class Editor extends Component {
 
   render() {
     const {percentualAcerto,response,redirect,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,contentRes,contentEditor } = this.state;
+    const { language,theme,contentRes,contentEditor,loadingExercicio } = this.state;
 
-    if(redirect){
-      return <Redirect to={'/'} exact={true} />
-    }
-    
-    if(loadingEditor){
-      return(
-        <div className="container text-center">
-          <br/><br/><br/><img src={imgLoading} width="300px" />
-        </div>
-      )
-    }
-    else
+
     return (
-
-    <TemplateSistema active='criarExercicio'>
+    <TemplateSistema>
     <Card>
       <CardHead center>
-          <h2><i className="fa fa-pencil"></i> Nova questão</h2>
+          <h2><i className="fa fa-edit"></i> Atualizar questão</h2>
       </CardHead>
-      <CardBody>
+      <CardBody loading={loadingExercicio}>
       <FormExercicio
         title={title}
         description={description}
@@ -251,9 +276,9 @@ export default class Editor extends Component {
             </div>
         </div>
         </CardBody>
-        <CardFooter>
-          <button onClick={e => this.saveQuestion(e)} className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
-            <i class="fa fa-save"></i> Salvar
+        <CardFooter loading={loadingExercicio}>
+          <button onClick={e => this.updateQuestion(e)} className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
+            <i class="fa fa-save"></i> Atualizar
           </button>         
         </CardFooter>
       </Card>

@@ -1,24 +1,30 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-
-import Modal from './modal.component'
+import Modal from 'components/ui/modal/modalExercicios.component';
 import {ButtonToolbar} from 'react-bootstrap'
-
 export default (props) =>{
     const [modalShow, setModalShow] = React.useState(false);
-    const todaslistas=props.listas
+    const questao=props.questao
     
     return (
         <ButtonToolbar>
-        <Button  style={{width:'100%', marginTop: '10px'}} variant="primary" onClick={() => setModalShow(true)}>
-            Adicionar Listas
+
+        <Button
+            style={{marginRight:"5px"}} 
+            className="btn btn-primary" 
+            onClick={() => setModalShow(true)}
+            variant="primary"
+            >
+            <i className="fa fa-info"/>
         </Button>
-    
+        
         <Modal
-            todaslistas={todaslistas}
+            questao={questao}
             show={modalShow}
             onHide={() => setModalShow(false)}
         />
+
+       
         </ButtonToolbar>
     );
     }

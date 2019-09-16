@@ -83,9 +83,6 @@ export default class TemplateSistema extends Component {
     
     return arraySistemaPermisssao[0] === "sistema" ? arraySistemaPermisssao[1] : perfis.ALUNO;
   }
-
-  
-
   render() {
     return (
       <ErrorBoundary>
@@ -96,9 +93,9 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno active={this.props.active}/>:null}
-            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor active={this.props.active}/>:null}
-            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador active={this.props.active}/>:null}
+            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno {...this.props}/>:null}
+            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor {...this.props}/>:null}
+            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador {...this.props}/>:null}
             <div className="my-3 my-md-5">
               <div className="container">
                 <div className="page-header">

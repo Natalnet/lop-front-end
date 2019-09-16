@@ -9,9 +9,11 @@ import React, { Component } from "react";
 
 export default class CardHead extends Component {
   render() {
+  	const {children,center} = this.props
+  	const posicao = center?'auto':''
     return (
       <div className="card-header">
-        <h3 className="card-title">{this.props.children}</h3>
+        <h3 className="card-title" style={{margin:posicao}}>{children}</h3>
       </div>
     );
   }

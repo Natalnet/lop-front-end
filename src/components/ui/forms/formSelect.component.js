@@ -19,15 +19,9 @@ export default (props) =>{
               </select>
             </div>
             <div className="form-group col-md-3">
-              {loadingReponse?
-                <button className="btn btn-primary" disabled>
-                   Executando <img src={imgLoading1} width="20px" /> 
-                </button>
-                :
-                <button className="btn btn-primary" onClick={executar}>
+                <button className={`btn btn-primary ${loadingReponse && 'btn-loading'}`} onClick={executar}>
                   Executar
                 </button>
-              }
             </div>
           </div>
 

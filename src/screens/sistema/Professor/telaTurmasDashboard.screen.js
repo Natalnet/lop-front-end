@@ -39,7 +39,7 @@ export default class Pagina extends Component {
     render() {
         const {loadingInfoTurma,turma} = this.state
         return (
-        <TemplateSistema {...this.props} active={'provas'} submenu={'telaTurmas'}>
+        <TemplateSistema {...this.props} active={'dashboard'} submenu={'telaTurmas'}>
             {loadingInfoTurma?
                 <div className="loader"  style={{margin:'0px auto'}}></div>
                 :

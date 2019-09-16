@@ -53,6 +53,7 @@ export default class TurmasScreen extends Component {
         try{
             this.setState({loadingTurmas:true})
             const response = await api.get(`/user/class/page/${numPageAtual}?${query}`)
+            console.log(response)
             this.setState({
                 items : response.data.docs,
                 totalItens : response.data.total,
@@ -127,7 +128,7 @@ export default class TurmasScreen extends Component {
 
                 <div className="col-9">
                     <InputGroupo
-                        placeholder={'presquise pelo campo selecionado...'}
+                        placeholder={'pesquiese pelo campo selecionado...'}
                         value={contentInputSeach}
                         handleContentInputSeach={this.handleContentInputSeach.bind(this)}
                         handleSelect={this.handleSelectfildFilter.bind(this)}
@@ -143,9 +144,7 @@ export default class TurmasScreen extends Component {
                             <br></br>
                             <Card>
                                 <CardHead></CardHead>
-                                <CardBody otherClasses='text-center'>
-                                    <div className="loader" style={{margin:'0px auto'}}></div>
-                                </CardBody>
+                                <CardBody loading></CardBody>
                             </Card>
                         </div>
                     ))
@@ -155,9 +154,9 @@ export default class TurmasScreen extends Component {
                             <br></br>
                             <Card>
                                 <CardHead>
-                                    <h3 className="card-title">
-                                        <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
-                                    </h3>
+                                    
+                                    <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
+                                    
                                     {/*<div className="card-options">
                                       <label className="custom-switch m-0">
                                         <input type="checkbox" value="1" className="custom-switch-input" checked/>
@@ -178,9 +177,9 @@ export default class TurmasScreen extends Component {
                                 </CardBody>
                                     <CardFooter>
                                         <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
-                                            <i className="fe fe-edit" /> Editar
+                                            <i className="fa fa-edit" /> Editar
                                         </Link>
-                                        <Link to={`/professor/turma/:id`} style={botaoV} className="btn btn-primary mr-2">
+                                        <Link to={`/professor/turma/${turma._id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
                                             <i className="fe fe-corner-down-right" /> Entrar
                                         </Link>
                                     </CardFooter>
