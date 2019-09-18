@@ -18,9 +18,10 @@ export default class recoverScreen extends Component {
     super(props)
     this.state = {
       email: "",
+      msgEmail:'',
       msg: "",
+      erro:false,
       loading:false,
-      error: false
     };
   }
   componentDidMount() {
@@ -36,21 +37,27 @@ export default class recoverScreen extends Component {
       const response = await api.post('/auth/forgotpassword',request)         
       this.setState({
         loading:false,
-        error:false,
-        msg: response.data
+        erro:false,
+        msg: response.data,
+        msgEmail:''
       })
     }
     catch(err){
       console.log(Object.getOwnPropertyDescriptors(err))
       this.setState({
         loading:false,
-        error:true
+        msgEmail:'',
+        erro:false,
+        msg:''
       })
       if(err.message==='Request failed with status code 400'){
-        this.setState({msg:err.response.data})
+          this.setState({msgEmail:err.response.data})
       }
       else{
-        this.setState({msg:'Falha na conexão com o servidor :('})
+        this.setState({
+          msg:'Falha na conexão com o servidor :(',
+          erro:true
+        })
       }
     };
   };
@@ -59,7 +66,7 @@ export default class recoverScreen extends Component {
     this.setState({ email: e.target.value });
   };
   render() {
-    const {email,msg,loading,error} = this.state
+    const {email,msgEmail,erro,msg,loading,error} = this.state
     return (
       <TemplateAutenticacao>
         <form className="card" onSubmit={(e) =>this.send(e)}>
@@ -67,20 +74,19 @@ export default class recoverScreen extends Component {
             <LogoLOP/>
             <div className="card-title">Recuperação de senha</div>
             <div className="form-group">
-              <span
-                className={"alert-" + (error ? "danger" : "success")}
-              >
+              <span className={`alert-${erro?'danger':'success'}`}>
                 {msg}
               </span>
               <label className="form-label">Endereço de e-mail</label>
               <input
                 type="email"
-                className="form-control"
+                className={`form-control ${msgEmail && 'is-invalid'}`} 
                 placeholder="Digite seu e-mail"
                 value={email}
                 onChange={this.handleEmailChange}
                 required
               />
+              <div className="invalid-feedback">{msgEmail}</div>
             </div>
             <div className="form-footer">
               <button type="submit" className={`btn btn-primary btn-block ${loading && 'btn-loading'}`}>

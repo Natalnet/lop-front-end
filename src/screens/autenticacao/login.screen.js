@@ -11,8 +11,10 @@ export default class LoginScreen extends Component {
     super(props)
     this.state = {
       redirect: false,
-      msg: "",
+      msgEmail: "",
+      msgPass:'',
       email: "",
+      msg:'',
       password: "",
       loading:false,
       profile: "ALUNO"
@@ -43,9 +45,17 @@ export default class LoginScreen extends Component {
     }
     catch(err){
       console.log(Object.getOwnPropertyDescriptors(err))
-      this.setState({loading:false})
-      if(err.message==='Request failed with status code 400'){
-        this.setState({msg:err.response.data})
+      this.setState({
+        loading:false,
+        msgEmail:'',
+        msgPass:'',
+        msg:''
+      })
+      if(err.response.data==='O e-mail inserido não corresponde a nenhuma conta :('){
+        this.setState({msgEmail:err.response.data})
+      }
+      else if(err.response.data==='Senha incorreta :('){
+        this.setState({msgPass:err.response.data})
       }
       else{
         this.setState({msg:'Falha na conexão com o servidor :('})
@@ -69,7 +79,7 @@ export default class LoginScreen extends Component {
         return <Redirect to="/sistema/administrador/usuarios" />;
       }
     }
-    const {msg,email,password,loading} = this.state
+    const {msg,msgEmail,email,msgPass,password,loading} = this.state
     return (
       <TemplateAutenticacao>
         <form className="card" onSubmit={(e) => this.login(e)}>
@@ -77,16 +87,19 @@ export default class LoginScreen extends Component {
             <LogoLOP/>
             <div className="card-title">Faça login na sua conta</div>
             <div className="form-group">
-              <span className="alert-danger">{msg}</span>
+              <span className="alert-danger">
+                {msg}
+              </span>
               <label className="form-label">Endereço de e-mail</label>
               <input
                 type="email"
-                className="form-control"
+                className={`form-control ${msgEmail && 'is-invalid'}`}
                 placeholder="Digite seu e-mail"
                 value={email}
                 onChange={this.handleEmailChange}
                 required
               />
+              <div className="invalid-feedback">{msgEmail}</div>
             </div>
             <div className="form-group">
               <label className="form-label">
@@ -100,19 +113,16 @@ export default class LoginScreen extends Component {
               </label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control ${msgPass && 'is-invalid'}`}
                 placeholder="**********"
                 value={password}
                 onChange={this.handlePasswordChange}
                 required
               />
+              <div className="invalid-feedback">{msgPass}</div>
+
             </div>
-            <div className="form-group">
-              <label className="custom-control custom-checkbox">
-                <input type="checkbox" className="custom-control-input" />
-                <span className="custom-control-label">Lembrar-me</span>
-              </label>
-            </div>
+
             <div className="form-footer">
               <button type="submit" className={`btn btn-primary btn-block ${loading && 'btn-loading'}`}>
                 Entrar
