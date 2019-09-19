@@ -45,17 +45,19 @@ export default class LoginScreen extends Component {
     }
     catch(err){
       console.log(Object.getOwnPropertyDescriptors(err))
-      this.setState({
+      await this.setState({
         loading:false,
         msgEmail:'',
         msgPass:'',
         msg:''
       })
-      if(err.response.data==='O e-mail inserido não corresponde a nenhuma conta :('){
-        this.setState({msgEmail:err.response.data})
-      }
-      else if(err.response.data==='Senha incorreta :('){
-        this.setState({msgPass:err.response.data})
+      if(err.message==='Request failed with status code 400'){
+        if(err.response.data==='O e-mail inserido não corresponde a nenhuma conta :('){
+          this.setState({msgEmail:err.response.data})
+        }
+        else if(err.response.data==='Senha incorreta :('){
+          this.setState({msgPass:err.response.data})
+        }
       }
       else{
         this.setState({msg:'Falha na conexão com o servidor :('})
@@ -76,7 +78,7 @@ export default class LoginScreen extends Component {
       } else if (this.state.profile === "PROFESSOR") {
         return <Redirect to="/professor" />;
       } else if (this.state.profile === "ADMINISTRADOR") {
-        return <Redirect to="/sistema/administrador/usuarios" />;
+        return <Redirect to="/administrador/usuarios" />;
       }
     }
     const {msg,msgEmail,email,msgPass,password,loading} = this.state

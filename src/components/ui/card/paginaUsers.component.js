@@ -22,13 +22,11 @@ export default class pagUsuarios extends Component {
     await this.setState({ funcao: e.target.value });
     const id = this.state.users[index].id;
     const nome = this.state.users[index].nome
-    const token = localStorage.getItem("auth-token");
     const requestInfo = {
       profile: this.state.funcao
     };
-    api.put(`/admin/users/${id}/update`, requestInfo, {
-      headers: { authorization: "Bearer " + token }
-    }).then(()=>{
+    api.put(`/admin/users/${id}/update`, requestInfo)
+    .then(()=>{
       Swal.fire({
         type: "success",
         title: `Função alterada`,
@@ -46,11 +44,9 @@ export default class pagUsuarios extends Component {
   };
   getUsers = async () => {
     const token = localStorage.getItem("auth-token");
-    const { data } = await api.get("/admin/users", {
-      headers: { authorization: "Bearer " + token }
-    });
+    const { data } = await api.get("/admin/users")
 
-    data.docs.map(user => {
+    data.map(user => {
       return this.setState({
         users: [
           ...this.state.users,

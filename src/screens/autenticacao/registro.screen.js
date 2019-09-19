@@ -36,50 +36,30 @@ export default class LoginScreen extends Component {
   }
   async register(e){
     e.preventDefault();
-    const regexName = /^[A-Za-z]+$/;
-    const regexEmail = /^([a-zA-Z0-9_.+-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    await this.setState({
-      msgName:'',
-      msgEmail :'',
-      msgEnrollment:'',
-      msgPassoword:'',
-      msgConfirm_password:'',
-      msg:''
-    })
-    const {name,email,enrollment,password,confirm_password} = this.state
 
-    if (!name || !regexName.test(name)) {
-      await this.setState({ msgName: "Informe um nome válido" });
-    }
-    if (!enrollment) {
-      await this.setState({ msgEnrollment: "Informe sua matrícula" });
-    }
-    if (!email || !regexEmail.test(email)) {
-      await this.setState({ msgEmail: "Informe um endereço de email válido" });
-    }
-    if (!password) {
-      await this.setState({ msgPassoword: "Informe uma senha" });
-    }
-    if (!confirm_password) {
-      await this.setState({ msgConfirm_password: "Informe uma confirmação de senha" });
-    }
-    if (password !== confirm_password) {
+    const {name,email,enrollment,password,confirm_password} = this.state
+    if (this.state.password !== this.state.confirm_password) {
       await this.setState({ msgConfirm_password : "A senha e confirmação de senha não correspondem" });
     }
-    const {msgName,msgEmail,msgEnrollment,msgPassoword,msgConfirm_password}=this.state
-    console.log(msgName,msgEmail,msgEnrollment,msgPassoword,msgConfirm_password);
-    if(!msgName && !msgEmail && !msgEnrollment && !msgPassoword && !msgConfirm_password){
-      console.log(!msgName && !msgEmail && !msgEnrollment && !msgPassoword && !msgConfirm_password);
+    else{
       const request = {
-        name: name,
-        email: email,
-        password: password,
-        enrollment: enrollment
+        name: this.state.name,
+        email: this.state.email,
+        password: this.state.password,
+        enrollment: this.state.enrollment
       };
       try{
         this.setState({loading:true})
         const response = await api.post("/auth/register", request)
-        this.setState({loading:false})
+        await this.setState({
+          msgName:'',
+          msgEmail :'',
+          msgEnrollment:'',
+          msgPassoword:'',
+          msgConfirm_password:'',
+          msg:'',
+          loading:false
+        })
         Swal.fire({
           type: "success",
           title: `Confirme seu registro`,
@@ -94,43 +74,28 @@ export default class LoginScreen extends Component {
         })
       }
       catch(err){
-        this.setState({loading:false})
+        await this.setState({
+          msgName:'',
+          msgEmail :'',
+          msgEnrollment:'',
+          msgPassoword:'',
+          msgConfirm_password:'',
+          msg:'',
+          loading:false
+        })        
         if(err.message==='Request failed with status code 400'){
-          if(err.response.data==="Já existe um usuário cadastrado com esse email"){
-            this.setState({msgEmail:err.response.data})
-          }
-          else if(err.response.data==="Já existe um usuário cadastrado com essa matrícula!"){
-            this.setState({msgEnrollment:err.response.data})
-          }
+          this.setState({
+            msgName: err.response.data.name || '',
+            msgEmail :err.response.data.email || '',
+            msgEnrollment:err.response.data.enrollment || '',
+            msgPassoword:err.response.data.password || '',
+          }) 
         }
         else{
           this.setState({msg:'Falha na conexão com o servidor :('})
         }
 
       }
-      /*api
-        .post("/auth/register", request)
-        .then(response => {
-          if (response) {
-            Swal.fire({
-              type: "success",
-              title: `Confirme seu registro`,
-              text: `Um email foi enviado para ${
-                this.state.email
-              }, use-o para confirmar seu cadastro na plataforma`,
-              confirmButtonText: "Voltar para pagina de login"
-            }).then(result => {
-              if (result.value) {
-               return this.setState({redirect:true});
-              }
-            });
-          } else {
-            throw new Error("Failed to register");
-          }
-        })
-        .catch(err => {
-          this.setState({ msg: "Erro: matrícula ou email indisponível" });
-        });*/
     }
   };
   componentDidMount() {
