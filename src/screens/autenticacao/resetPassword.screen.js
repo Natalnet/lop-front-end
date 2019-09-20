@@ -47,7 +47,11 @@ export default class resetScreen extends Component {
       try{
         this.setState({loading:true})
         const response = await api.put(`/auth/resetpassword${key}`, request)
-        this.setState({loading:false})
+        this.setState({
+          loading:false,
+          msg:'',
+          error:false
+        })
         Swal.fire({
           type: "success",
           title: `Congratulations`,
@@ -64,6 +68,7 @@ export default class resetScreen extends Component {
         this.setState({
           loading:false,
           error:true,
+          msg:false
         })
         if(err.message==='Request failed with status code 400'){
           this.setState({msg:err.response.data})
@@ -107,7 +112,7 @@ export default class resetScreen extends Component {
             <LogoLOP />
             <div className="card-title">Restauração de Senha</div>
             <span
-              className={"alert-" + (error ? "danger" : "success")}
+              className={`alert-${error ? "danger" : "success"}`}
             >
               {msg}
             </span>
@@ -116,7 +121,7 @@ export default class resetScreen extends Component {
               <input
                 type="password"
                 name="password"
-                className="form-control"
+                className={`form-control ${error && 'is-invalid'}`}
                 placeholder="****"
                 value={password}
                 onChange={this.handleChange}
@@ -128,7 +133,7 @@ export default class resetScreen extends Component {
               <input
                 type="password"
                 name="confirmpassword"
-                className="form-control"
+                className={`form-control ${error && 'is-invalid'}`}
                 placeholder="****"
                 value={this.state.confirmpassword}
                 onChange={this.handleChange}

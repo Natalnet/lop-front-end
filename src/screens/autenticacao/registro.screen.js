@@ -15,61 +15,87 @@ import Swal from "sweetalert2";
 import LogoLOP from "components/ui/logoLOP.component";
 
 export default class LoginScreen extends Component {
-  state = {
-    redirect: false,
-    name: "",
-    enrollment: "",
-    email: "",
-    password: "",
-    confirm_password: "",
-    msg: ""
-  };
-  register = event => {
-    event.preventDefault();
-    var regex = /^([a-zA-Z0-9_.+-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 
-    if (this.state.name === "") {
-      this.setState({ msg: "Informe seu nome completo" });
-    } else if (this.state.enrollment === "") {
-      this.setState({ msg: "Informe sua matrícula" });
-    } else if (this.state.email === "" || !regex.test(this.state.email)) {
-      this.setState({ msg: "Informe um endereço de email válido" });
-    } else if (this.state.password === "") {
-      this.setState({ msg: "Informe uma senha" });
-    } else if (this.state.confirm_password === "") {
-      this.setState({ msg: "Informe uma confirmação de senha" });
-    } else if (this.state.password !== this.state.confirm_password) {
-      this.setState({ msg: "A senha e confirmação de senha não correspondem" });
-    } else {
-      const requestInfo = {
+  constructor(props){
+    super(props)
+    this.state = {
+      redirect: false,
+      loading:false,
+      name: "",
+      enrollment: "",
+      email: "",
+      password: "",
+      confirm_password: "",
+      msg: "",
+      msgName:'',
+      msgEnrollment:'',
+      msgEmail:'',
+      msgPassoword:'',
+      msgConfirm_password:''
+    };
+  }
+  async register(e){
+    e.preventDefault();
+
+    const {name,email,enrollment,password,confirm_password} = this.state
+    if (this.state.password !== this.state.confirm_password) {
+      await this.setState({ msgConfirm_password : "A senha e confirmação de senha não correspondem" });
+    }
+    else{
+      const request = {
         name: this.state.name,
         email: this.state.email,
         password: this.state.password,
         enrollment: this.state.enrollment
       };
-      api
-        .post("/auth/register", requestInfo)
-        .then(response => {
-          if (response) {
-            Swal.fire({
-              type: "success",
-              title: `Confirme seu registro`,
-              text: `Um email foi enviado para ${
-                this.state.email
-              }, use-o para confirmar seu cadastro na plataforma`,
-              confirmButtonText: "Voltar para pagina de login"
-            }).then(result => {
-              if (result.value) {
-               return this.setState({redirect:true});
-              }
-            });
-          } else {
-            throw new Error("Failed to register");
+      try{
+        this.setState({loading:true})
+        const response = await api.post("/auth/register", request)
+        await this.setState({
+          msgName:'',
+          msgEmail :'',
+          msgEnrollment:'',
+          msgPassoword:'',
+          msgConfirm_password:'',
+          msg:'',
+          loading:false
+        })
+        Swal.fire({
+          type: "success",
+          title: `Confirme seu registro`,
+          text: `Um email foi enviado para ${
+            this.state.email
+          }, use-o para confirmar seu cadastro na plataforma`,
+          confirmButtonText: "Voltar para pagina de login"
+        }).then(result => {
+          if (result.value) {
+           return this.setState({redirect:true});
           }
         })
-        .catch(err => {
-          this.setState({ msg: "Erro: matrícula ou email indisponível" });
-        });
+      }
+      catch(err){
+        await this.setState({
+          msgName:'',
+          msgEmail :'',
+          msgEnrollment:'',
+          msgPassoword:'',
+          msgConfirm_password:'',
+          msg:'',
+          loading:false
+        })        
+        if(err.message==='Request failed with status code 400'){
+          this.setState({
+            msgName: err.response.data.name || '',
+            msgEmail :err.response.data.email || '',
+            msgEnrollment:err.response.data.enrollment || '',
+            msgPassoword:err.response.data.password || '',
+          }) 
+        }
+        else{
+          this.setState({msg:'Falha na conexão com o servidor :('})
+        }
+
+      }
     }
   };
   componentDidMount() {
@@ -94,66 +120,78 @@ export default class LoginScreen extends Component {
     if(this.state.redirect){
       return <Redirect to="/"/>
     }
+    const {name,email,enrollment,password,confirm_password,msg,loading} = this.state
+    const {msgName,msgEmail,msgEnrollment,msgPassoword,msgConfirm_password}=this.state
     return (
       <TemplateAutenticacao>
-        <form className="card" onSubmit={this.register}>
+        <form className="card" onSubmit={(e)=> this.register(e)}>
           <div className="card-body p-6">
             <LogoLOP />
-            <span className="alert-danger">{this.state.msg}</span>
+            <span className="alert-danger">{msg}</span>
             <div className="card-title">Faça o seu cadastro</div>
             <div className="form-group">
               <label className="form-label">Nome</label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${msgName && 'is-invalid'}`}
                 placeholder="Digite seu nome"
-                value={this.state.name}
+                value={name}
                 onChange={this.handleNomeChange}
+                required
               />
+              <div className="invalid-feedback">{msgName}</div>
             </div>
             <div className="form-group">
               <label className="form-label">Matrícula</label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${msgEnrollment && 'is-invalid'}`}
                 placeholder="Digite sua matrícula"
-                value={this.state.enrollment}
+                value={enrollment}
                 onChange={this.handleEnrollmentChange}
+                required
               />
+              <div className="invalid-feedback">{msgEnrollment}</div>
             </div>
             <div className="form-group">
               <label className="form-label">Endereço de e-mail</label>
               <input
                 type="email"
-                className="form-control"
+                className={`form-control ${msgEmail && 'is-invalid'}`}
                 placeholder="Digite seu e-mail"
-                value={this.state.email}
+                value={email}
                 onChange={this.handleEmailChange}
+                required
               />
+              <div className="invalid-feedback">{msgEmail}</div>
             </div>
             <div className="form-group">
               <label className="form-label">Senha</label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control ${msgPassoword && 'is-invalid'}`}
                 placeholder="**********"
-                value={this.state.password}
+                value={password}
                 onChange={this.handlePasswordChange}
+                required
               />
+              <div className="invalid-feedback">{msgPassoword}</div>
             </div>
             <div className="form-group">
               <label className="form-label">Confirme sua senha</label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control ${msgConfirm_password && 'is-invalid'}`}
                 placeholder="**********"
-                value={this.state.confirm_password}
+                value={confirm_password}
                 onChange={this.handleConfirmPasswordChange}
+                required
               />
+              <div className="invalid-feedback">{msgConfirm_password}</div>
             </div>
 
             <div className="form-footer">
-              <button type="submit" className="btn btn-primary btn-block">
+              <button type="submit" className={`btn btn-primary btn-block ${loading && 'btn-loading'}`}>
                 Cadastrar
               </button>
             </div>

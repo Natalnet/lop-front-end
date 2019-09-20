@@ -60,7 +60,7 @@ export default class ConfirmRegister extends Component {
       return <Error404 />;
     }
     if (this.state.redirect) {
-      return <Redirect to="/sistema/aluno" />;
+      return <Redirect to="/aluno" />;
     }
     if (this.state.redirectLogin) {
       return <Redirect to="/" />;
