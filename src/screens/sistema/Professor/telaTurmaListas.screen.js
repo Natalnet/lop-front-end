@@ -41,6 +41,12 @@ export default class Pagina extends Component {
             console.log(err);
         }
     }
+
+    async inserirLista(id){
+        console.log("Cheguei")
+        console.log(id)
+    }
+
     async getListas(){
         try{
             const id = this.props.match.params.id
@@ -83,6 +89,7 @@ export default class Pagina extends Component {
                 <br/>
                 <div className="col-3">
                 <BtnModal
+                    onClick={this.inserirLista.bind(this)}
                     listas={this.state.todasListas}
                 />
                 </div>

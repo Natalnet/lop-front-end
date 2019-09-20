@@ -13,6 +13,7 @@ export default(props) =>{
     const todaslistas= props.todaslistas
     console.log(todaslistas)
 
+
     const [open, setOpen] = useState(false);
     return (
       <Modal
@@ -32,6 +33,7 @@ export default(props) =>{
           <div key={index}>
             <Collapse
             lista={lista}
+            {...props}
             />
           </div>
           ))}

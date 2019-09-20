@@ -6,18 +6,18 @@ export default (props) =>{
     const lista = props.lista
     console.log(lista)
     const [open, setOpen] = useState(false);
-
+    
     return (
         <div>            
             <div>
                 <table className='table table-hover' style={{borderTopRightRadius:"10%", marginBottom:"0px"}}>
                     <tbody >
                         <tr>
-                            <td>{lista.title}</td>
+                            <td style={{widthMax:"400px", width:"400px"}}>{lista.title}</td>
                             <td>{lista.code}</td>
                             <td>
                                 <div className="btn-group  float-right" role="group" aria-label="Exemplo básico">
-                                    <button className="btn-primary btn">Adicionar</button>
+                                    <button className="btn-primary btn" onClick={() => props.onClick(lista)}>Adicionar</button>
 
                                     <button
                                     className ="btn btn-primary"

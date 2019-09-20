@@ -7,7 +7,7 @@ import {ButtonToolbar} from 'react-bootstrap'
 export default (props) =>{
     const [modalShow, setModalShow] = React.useState(false);
     const todaslistas=props.listas
-    
+
     return (
         <ButtonToolbar>
         <Button  style={{width:'100%', marginTop: '10px'}} variant="primary" onClick={() => setModalShow(true)}>
@@ -15,6 +15,7 @@ export default (props) =>{
         </Button>
     
         <Modal
+            {...props}
             todaslistas={todaslistas}
             show={modalShow}
             onHide={() => setModalShow(false)}

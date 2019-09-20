@@ -1,4 +1,4 @@
-/*import React, { Component,Fragment} from "react";
+import React, { Component,Fragment} from "react";
 import {Redirect} from 'react-router-dom'
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
@@ -285,4 +285,4 @@ export default class Editor extends Component {
     </TemplateSistema>
     );
   }
-}*/
+}
