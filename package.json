@@ -15,6 +15,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.8",
     "react-select": "^3.0.4",
+    "socket.io-client": "^2.3.0",
     "stringquery": "^1.0.8",
     "sweetalert2": "^8.0.5"
   },

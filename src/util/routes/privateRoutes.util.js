@@ -5,7 +5,7 @@ export const PrivateRoutes = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      localStorage.getItem("auth-token") ? (
+      sessionStorage.getItem("auth-token") ? (
         <Component {...props} />
       ) : (
         <Redirect to={{ pathname: "/", state: { from: props.location } }} />

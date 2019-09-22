@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 
 export default class Error404 extends Component {
   state = {
-    perfil: localStorage.getItem("user.profile")
+    perfil: sessionStorage.getItem("user.profile")
   }
   componentDidMount() {
     document.title = "Error404 - Plataforma LOP";

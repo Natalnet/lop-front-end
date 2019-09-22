@@ -17,7 +17,6 @@ export default class Pagina extends Component {
             loadingInfoTurma:true,
             turma:'',
             todasListas: [],
-            //perfil: localStorage.getItem("user.profile")
         };
     }
 

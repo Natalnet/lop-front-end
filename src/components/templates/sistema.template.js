@@ -29,7 +29,7 @@ export default class TemplateSistema extends Component {
     this.state = {
       erros: [],
       keyErros: 0,
-      perfil: localStorage.getItem("user.profile")
+      perfil: sessionStorage.getItem("user.profile")
     };
   }
 
@@ -93,9 +93,9 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-            {localStorage.getItem('user.profile')==='ALUNO'?<MenuAluno {...this.props}/>:null}
-            {localStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor {...this.props}/>:null}
-            {localStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador {...this.props}/>:null}
+            {sessionStorage.getItem('user.profile')==='ALUNO'?<MenuAluno {...this.props}/>:null}
+            {sessionStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor {...this.props}/>:null}
+            {sessionStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador {...this.props}/>:null}
             <div className="my-3 my-md-5">
               <div className="container">
                 <div className="page-header">

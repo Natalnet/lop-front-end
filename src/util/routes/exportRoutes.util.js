@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import { PrivateRoutes } from "./privateRoutes.util";
 import { Redirect ,Link} from 'react-router-dom';
 const exportRoutes = routes => {
-  const perfil = localStorage.getItem("user.profile")
+  const perfil = sessionStorage.getItem("user.profile")
   console.log(perfil)
   const routesMap = routes.map((route, index) => {
     console.log(route.perfil)

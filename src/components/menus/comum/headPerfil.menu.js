@@ -11,9 +11,9 @@ import { Link } from "react-router-dom";
 
 export default class HeadPefilMenu extends Component {
   render() {
-    let profile = localStorage.getItem("user.profile");
-    let matricula = localStorage.getItem("user.enrollment");
-    let nome = localStorage.getItem("user.name");
+    let profile = sessionStorage.getItem("user.profile");
+    let matricula = sessionStorage.getItem("user.enrollment");
+    let nome = sessionStorage.getItem("user.name");
     return (
       <div className="d-flex">
         <a className="header-brand" href="/dashboard">
@@ -52,7 +52,7 @@ export default class HeadPefilMenu extends Component {
               <Link
                 className="dropdown-item"
                 to="/"
-                onClick={() => localStorage.clear()}
+                onClick={() => sessionStorage.clear()}
               >
                 <i className="dropdown-icon fe fe-log-out" /> Sair
               </Link>

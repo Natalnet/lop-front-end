@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import Swal from 'sweetalert2'
+import socket from 'socket.io-client'
 
 import api from '../../../services/api'
 import SubMenu from '../../../components/menus/dashboard/professor/subMenuTurma.menu'
@@ -27,13 +28,14 @@ export default class Pagina extends Component {
     }
     componentDidMount() {
         this.getInfoTurma()
-        this.getRequests()
+        this.getSolicitacoes()
+        this.getSolicitacoesRealTime()
     }
     async getInfoTurma(){
         const id = this.props.match.params.id
         try{
             const response = await api.get(`/class/${id}`)
-            console.log(response);
+            //console.log(response);
             this.setState({
                 turma:response.data,
                 loadingInfoTurma:false,
@@ -44,14 +46,14 @@ export default class Pagina extends Component {
             console.log(err);
         }
     }
-    async getRequests(){
+    async getSolicitacoes(){
         const id = this.props.match.params.id
         try{
             this.setState({loading:true})
             const response = await api.get(`/class/${id}/requests`)
-            console.log(response);
+            //console.log(response);
             this.setState({
-                requestsUsers:response.data,
+                requestsUsers:[...response.data],
                 loading:false,
                 loadingUsers:false
             })
@@ -63,6 +65,17 @@ export default class Pagina extends Component {
             })
             console.log(err);
         }
+    }
+    getSolicitacoesRealTime(){
+        const io = socket("http://localhost:3001")
+        const id = this.props.match.params.id
+        io.emit('connectRoonRequestClass',id)//conectando à sala
+        io.on('RequestsClass',response=>{
+            console.log('começo do socket');
+            console.log(response);
+            this.setState({requestsUsers: [...response] })
+            console.log('fim do socket');
+        })
     }
     async aceitaSolicitacao(idUser){
         const idTurma = this.props.match.params.id
@@ -75,8 +88,8 @@ export default class Pagina extends Component {
           })
           Swal.showLoading()
           const response = await api.put(`/class/${idTurma}/acceptRequest/user/${idUser}`)
-          console.log(response);
-          this.getRequests()
+          //console.log(response);
+          this.getSolicitacoes()
           Swal.hideLoading()
           Swal.fire({
               type: 'success',
@@ -103,8 +116,8 @@ export default class Pagina extends Component {
           })
           Swal.showLoading()
           const response = await api.put(`/class/${idTurma}/rejectRequest/user/${idUser}`)
-          console.log(response);
-          this.getRequests()
+          //console.log(response);
+          this.getSolicitacoes()
           Swal.hideLoading()
           Swal.fire({
               type: 'success',

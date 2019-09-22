@@ -32,7 +32,7 @@ export default class NovasTurmasScreen extends Component {
         items: [],
         Id_P: [],
         prof: "",
-        perfil: localStorage.getItem("user.profile")
+        perfil: sessionStorage.getItem("user.profile")
 
     };
 

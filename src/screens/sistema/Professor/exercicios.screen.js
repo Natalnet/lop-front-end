@@ -7,7 +7,7 @@ import NavPagination from "components/ui/navs/navPagination";
 import {Redirect} from 'react-router-dom'
 import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
-
+import socket from 'socket.io-client'
 const lista = {
     backgroundColor:"white"
 };
@@ -37,6 +37,7 @@ export default class HomeExerciciosScreen extends Component {
     }
     componentDidMount() {
         this.getExercicios();
+        this.getExerciciosRealTime()
     }
     async getExercicios(){
         const {numPageAtual,contentInputSeach,fildFilter} = this.state
@@ -46,7 +47,7 @@ export default class HomeExerciciosScreen extends Component {
             this.setState({loadingExercicios:true})
             const response = await api.get(`/question/page/${numPageAtual}?${query}`)
             this.setState({
-                exercicios : response.data.docs,
+                exercicios : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
                 loadingExercicios:false
@@ -56,6 +57,22 @@ export default class HomeExerciciosScreen extends Component {
             console.log(err);
         }
     };
+    getExerciciosRealTime(){
+        const io = socket("http://localhost:3001")
+        console.log(io);
+        io.emit('connectRoonExercicios','todosExercicios')//conectando à sala todosExercicios
+        io.on('getExercicios',response=>{
+            console.log('começo do socket');
+            console.log(response);
+            this.setState({
+                exercicios : [...response.docs],
+                totalItens : response.total,
+                totalPages : response.totalPages,
+            })
+            console.log('fim do socket');
+        })
+    }
+
     handleShowModal(){
         this.setState({showModal:true})
     }

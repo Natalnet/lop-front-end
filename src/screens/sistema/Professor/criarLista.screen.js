@@ -22,7 +22,7 @@ export default class CriarListaScreen extends Component {
         contentInputSeach:'',
         fildFilter:'name',
         title: '',
-        perfil: localStorage.getItem("user.profile")
+        perfil: sessionStorage.getItem("user.profile")
     };
 
     componentDidMount() {
