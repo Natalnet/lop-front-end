@@ -14,6 +14,7 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardBody from "components/ui/card/cardBody.component";
 import NavPagination from "components/ui/navs/navPagination";
+import socket from 'socket.io-client'
 
 export default class HomeAlunoScreen extends Component {
 
@@ -33,14 +34,15 @@ export default class HomeAlunoScreen extends Component {
   componentDidMount() {
     this.getInfoUser()
     this.getTurmasAbertas()
+    this.getTurmasAbertasRealTime()
     document.title = "Sistema Aluno - Plataforma LOP";
   }
   async getInfoUser(){
     try{
       //this.setState({loadingMinhasTurmas:true})
       const response = await api.get('/user/info/profile')
-      console.log('user:');
-      console.log(response.data)
+      //console.log('user:');
+      //console.log(response.data)
       this.setState({
         minhasTurmas:response.data.classes,
         turmasSolicitadas:response.data.requestedClasses,
@@ -56,6 +58,8 @@ export default class HomeAlunoScreen extends Component {
     try{
       //this.setState({loadingTurmas:true})
       const response = await api.get(`/class/open/page/${this.state.numPageTurmasAbertas}`)
+      console.log('turmas abertas:');
+      console.log(response.data.docs);
       this.setState({
         turmasAbertas : response.data.docs,
         totalTumasAbertas : response.data.total,
@@ -67,6 +71,16 @@ export default class HomeAlunoScreen extends Component {
       this.setState({loadingTurmas:false})
       console.log(err);
     }
+  }
+  async getTurmasAbertasRealTime(){
+    const io = socket("http://localhost:3001")
+    console.log('id do usuario');
+    console.log(sessionStorage.getItem('user.id'));
+    io.emit('connectRoonMyRequestsClass',sessionStorage.getItem('user.id'))
+    io.on('MyRequestsClass',response=>{
+      this.getInfoUser()
+      this.getTurmasAbertas()
+    })
   }
   async handlePage(e,numPage){
     e.preventDefault()
@@ -87,7 +101,7 @@ export default class HomeAlunoScreen extends Component {
       })
       Swal.showLoading()
       const response = await api.put(`/user/request/class/${id}`)
-      console.log(response);
+      //console.log(response);
       this.getTurmasAbertas()
       this.getInfoUser()
       Swal.hideLoading()
@@ -105,7 +119,6 @@ export default class HomeAlunoScreen extends Component {
           title: 'ops... Falha ao tentar fazer solicitação',
       })
       //this.setState({solicitando:''})
-
     }
   }
   async cancelarSolicitacao(id){
@@ -125,7 +138,7 @@ export default class HomeAlunoScreen extends Component {
           type: 'success',
           title: 'Solicitação cancelada!',
       })
-      console.log(response);
+      //console.log(response);
       this.getInfoUser()
       this.getTurmasAbertas()
       await this.setState({solicitando:''})
@@ -146,37 +159,29 @@ export default class HomeAlunoScreen extends Component {
     return (
       <TemplateSistema>
         <div className='row'>
-          {turmasAbertas.map((turma, index) => {
+          {turmasAbertas.map((turmaAberta, index) => {
             let jaSolicitou = false
-            let jaParticipa = false
-            for(let i=0;i<turmasSolicitadas.length;i++){
-              if(turmasSolicitadas[i]._id===turma._id){
+            for(let turmaSolicitada of turmasSolicitadas){
+              if(turmaSolicitada._id===turmaAberta._id){
                 jaSolicitou = true
-                break;
-              }
-            }
-            for(let i=0;i<minhasTurmas.length;i++){
-              if(minhasTurmas[i]._id===turma._id){
-                jaParticipa = true
                 break;
               }
             }
               return(
                 <div key={index} className="col-6">
                     <Card>
-                        <CardHead>Nome: {turma.name}</CardHead>
+                        <CardHead>Nome: {turmaAberta.name}</CardHead>
                         <CardBody>
-                            <h5 className="">Ano: {turma.year}.2{turma.semester}</h5>
+                            <h5 className="">Ano: {turmaAberta.year}.2{turmaAberta.semester}</h5>
                              <hr></hr>
-                             <p className="card-text">Descrição: {turma.description}</p>
-                             {jaParticipa?
-                             <button className="btn btn-success" disabled>Já sou participante</button>
+                             <p className="card-text">Descrição: {turmaAberta.description}</p>
+                            {
+                             jaSolicitou
+                            ?
+                             <button onClick={()=>this.cancelarSolicitacao(turmaAberta._id)} className="btn btn-danger" >Cancelar solicitação</button>
                              :
-                             jaSolicitou?
-                             <button onClick={()=>this.cancelarSolicitacao(turma._id)} className="btn btn-danger" >Cancelar solicitação</button>
-                             :
-                             <button onClick={()=>this.solicitarAcesso(turma._id)} className="btn btn-primary">Solicitar Acesso</button>
-                           }
+                             <button onClick={()=>this.solicitarAcesso(turmaAberta._id)} className="btn btn-primary">Solicitar Acesso</button>
+                            }
                         </CardBody>
                      </Card>
                  </div>
