@@ -21,7 +21,6 @@ export default class HomeAlunoScreen extends Component {
   constructor(props){
     super(props)
     this.state = {
-      minhasTurmas:[],
       numPageTurmasAbertas:1,
       turmasAbertas:[],
       totalPages:0,
@@ -32,20 +31,19 @@ export default class HomeAlunoScreen extends Component {
     this.handlePage=this.handlePage.bind(this)
   }
   componentDidMount() {
-    this.getInfoUser()
+    this.getTurmasSolicitadas()
     this.getTurmasAbertas()
     this.getTurmasAbertasRealTime()
     document.title = "Sistema Aluno - Plataforma LOP";
   }
-  async getInfoUser(){
+  async getTurmasSolicitadas(){
     try{
       //this.setState({loadingMinhasTurmas:true})
-      const response = await api.get('/user/info/profile')
-      //console.log('user:');
-      //console.log(response.data)
+      const response = await api.get('/solicitation/classes')
+      console.log('turmas solicitdas');
+      console.log(response.data);
       this.setState({
-        minhasTurmas:response.data.classes,
-        turmasSolicitadas:response.data.requestedClasses,
+        turmasSolicitadas:[...response.data].map(solicitacao =>solicitacao.classSolicited),
         //loadingMinhasTurmas:false
       })
     }
@@ -78,7 +76,7 @@ export default class HomeAlunoScreen extends Component {
     console.log(sessionStorage.getItem('user.id'));
     io.emit('connectRoonMyRequestsClass',sessionStorage.getItem('user.id'))
     io.on('MyRequestsClass',response=>{
-      this.getInfoUser()
+      this.getTurmasSolicitadas()
       this.getTurmasAbertas()
     })
   }
@@ -100,10 +98,10 @@ export default class HomeAlunoScreen extends Component {
         allowEnterKey:false
       })
       Swal.showLoading()
-      const response = await api.put(`/user/request/class/${id}`)
+      const response = await api.put(`/solicitation/class/${id}/solicit`)
       //console.log(response);
       this.getTurmasAbertas()
-      this.getInfoUser()
+      this.getTurmasSolicitadas()
       Swal.hideLoading()
       Swal.fire({
           type: 'success',
@@ -132,14 +130,14 @@ export default class HomeAlunoScreen extends Component {
         allowEnterKey:false
       })
       Swal.showLoading()
-      const response = await api.put(`/user/removeRequest/class/${id}`)
+      const response = await api.delete(`/solicitation/class/${id}/removeSolicit`)
       Swal.hideLoading()
       Swal.fire({
           type: 'success',
           title: 'Solicitação cancelada!',
       })
       //console.log(response);
-      this.getInfoUser()
+      this.getTurmasSolicitadas()
       this.getTurmasAbertas()
       await this.setState({solicitando:''})
     }
@@ -155,14 +153,14 @@ export default class HomeAlunoScreen extends Component {
   }
 
   render() {
-    const {totalPages,numPageTurmasAbertas,turmasSolicitadas,minhasTurmas,turmasAbertas} = this.state
+    const {totalPages,numPageTurmasAbertas,turmasSolicitadas,turmasAbertas} = this.state
     return (
       <TemplateSistema>
         <div className='row'>
           {turmasAbertas.map((turmaAberta, index) => {
             let jaSolicitou = false
-            for(let turmaSolicitada of turmasSolicitadas){
-              if(turmaSolicitada._id===turmaAberta._id){
+            for(let solicitacao of turmasSolicitadas){
+              if(solicitacao._id===turmaAberta._id){
                 jaSolicitou = true
                 break;
               }

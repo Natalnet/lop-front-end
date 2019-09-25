@@ -10,8 +10,8 @@ export default (props) =>{
             <div className="form-group col-md-6">
                 <label for="selectStatus">Status da questão: </label>
                 <select className="form-control" defaultValue={status} id='selectStatus' onChange={handleStatus}>
-                  <option value = 'PÚBLICA' >Pública (para uso em listas)</option>
-                  <option value = 'PRIVADA' >Oculta (para uso em provas)</option>
+                  <option value='PÚBLICA'>Pública (para uso em listas)</option>
+                  <option value='PRIVADA'>Oculta (para uso em provas)</option>
                 </select>
             </div>
             <div className="form-group col-md-6">

@@ -54,8 +54,9 @@ export default class TurmasScreen extends Component {
         try{
             this.setState({loadingTurmas:true})
             const response = await api.get(`/user/class/page/${numPageAtual}?${query}`)
+            //console.log('minhas turmas');
             //console.log(response)
-            console.log(query);
+            //console.log(query);
             this.setState({
                 items : response.data.docs,
                 totalItens : response.data.total,
@@ -172,14 +173,11 @@ export default class TurmasScreen extends Component {
                                     </div>*/}
                                 </CardHead>
                                 <CardBody>
-                                    <span title={`${turma.students.length} participante(s)`} className="avatar avatar-cyan mr-1">
-                                        {turma.students.length}
+                                    <span title={`${turma.students.length+turma.professores.length} participante(s)`} className="avatar avatar-cyan mr-1">
+                                        {turma.students.length+turma.professores.length}
                                     </span>
                                     <span title={`${0} aluno(s) online`} className="avatar avatar-teal mr-1">
                                         0
-                                    </span>
-                                    <span title={`${turma.requestingUsers.length} solicitação(ões)`} className="avatar avatar-red mr-1">
-                                        {turma.requestingUsers.length}
                                     </span>
                                 </CardBody>
                                     <CardFooter>

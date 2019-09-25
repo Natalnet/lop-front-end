@@ -19,7 +19,7 @@ export default class Pagina extends Component {
     constructor(props){
       super(props)
       this.state = {
-        requestsUsers: [],
+        solicitacoes: [],
         loading:false,
         loadingUsers:true,
         loadingInfoTurma:true,
@@ -46,14 +46,15 @@ export default class Pagina extends Component {
             console.log(err);
         }
     }
-    async getSolicitacoes(){
+    async getSolicitacoes(loadingResponse=true){
         const id = this.props.match.params.id
         try{
-            this.setState({loading:true})
-            const response = await api.get(`/class/${id}/requests`)
-            //console.log(response);
+            if(loadingResponse) this.setState({loading:true})
+            const response = await api.get(`/solicitation/users/class/${id}`)
+            console.log('solicitações')
+            console.log(response.data);
             this.setState({
-                requestsUsers:[...response.data],
+                solicitacoes:[...response.data].map(solicitacao=>solicitacao.user),
                 loading:false,
                 loadingUsers:false
             })
@@ -73,7 +74,8 @@ export default class Pagina extends Component {
         io.on('RequestsClass',response=>{
             console.log('começo do socket');
             console.log(response);
-            this.setState({requestsUsers: [...response] })
+            this.getSolicitacoes(false)
+            //this.setState({solicitacoes: [...response] })
             console.log('fim do socket');
         })
     }
@@ -87,7 +89,7 @@ export default class Pagina extends Component {
             allowEnterKey:false
           })
           Swal.showLoading()
-          const response = await api.put(`/class/${idTurma}/acceptRequest/user/${idUser}`)
+          const response = await api.put(`/solicitation/${idTurma}/acceptSolicit/user/${idUser}`)
           //console.log(response);
           this.getSolicitacoes()
           Swal.hideLoading()
@@ -115,7 +117,7 @@ export default class Pagina extends Component {
             allowEnterKey:false
           })
           Swal.showLoading()
-          const response = await api.put(`/class/${idTurma}/rejectRequest/user/${idUser}`)
+          const response = await api.delete(`/solicitation/${idTurma}/rejectSolicit/user/${idUser}`)
           //console.log(response);
           this.getSolicitacoes()
           Swal.hideLoading()
@@ -133,7 +135,7 @@ export default class Pagina extends Component {
         } 
     }
     render() {
-        const {requestsUsers,loading,loadingUsers,turma,loadingInfoTurma}=this.state
+        const {solicitacoes,loading,loadingUsers,turma,loadingInfoTurma}=this.state
         return (
             <TemplateSistema {...this.props} active={'solicitações'} submenu={'telaTurmas'}>
                 {loadingInfoTurma?
@@ -172,7 +174,7 @@ export default class Pagina extends Component {
 
                             </tr>           
                         :
-                            requestsUsers.map((user,i)=>(
+                            solicitacoes.map((user,i)=>(
                             <tr key={i}>
                                 <td className='text-center'>
                                     <div 
