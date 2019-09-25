@@ -38,7 +38,7 @@ export default class Editor extends Component {
       loadingEditor:false,
       loadingExercicio:true,
       title:'',
-      contentEditor:'',
+      solution:'',
       description:'',
       inputs:'',
       outputs:'',
@@ -56,8 +56,12 @@ export default class Editor extends Component {
       console.log(response.data);
       const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
       this.setState({
-        title:response.data.title,
-        description:response.data.description,
+        title : response.data.title,
+        description : response.data.description,
+        katexDescription:response.data.katexDescription,
+        status:response.data.status,
+        difficulty:response.data.difficulty,
+        solution:response.data.solution,
         inputs:inputs,
         outputs:outputs,
         loadingExercicio:false
@@ -92,6 +96,21 @@ export default class Editor extends Component {
         description:e.target.value
       })
   }
+  async handlekatexDescription(e){
+    this.setState({
+      katexDescription:e.target.value
+    })
+  }
+
+  async handleStatus(e){
+    console.log(e.target.value);
+    this.setState({status:e.target.value})
+  }
+  async handleDifficulty(e){
+    this.setState({
+      difficulty:e.target.value
+    })
+  }
   async handleInputsChange(e){
       this.setState({
         inputs:e.target.value
@@ -109,14 +128,14 @@ export default class Editor extends Component {
     await this.setState({theme:e.target.value})
 
   }
-  changeContentEditor(newValue){
-    this.setState({contentEditor:newValue})
+  handleSolution(newValue){
+    this.setState({solution:newValue})
   }
   async executar(e){
     e.preventDefault()
-    const {contentEditor,language} = this.state
+    const {solution,language} = this.state
     const request = {
-      codigo : contentEditor,
+      codigo : solution,
       linguagem :language==='c_cpp'?'cpp':language,
       results : this.getResults()
     }
@@ -166,6 +185,10 @@ export default class Editor extends Component {
     const request = {
       title : this.state.title,
       description : this.state.description,
+      katexDescription:this.state.katexDescription,
+      status:this.state.status,
+      difficulty:this.state.difficulty,
+      solution:this.state.solution,
       results : this.getResults()
     }
     try{
@@ -192,8 +215,8 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {percentualAcerto,response,redirect,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,contentRes,contentEditor,loadingExercicio } = this.state;
+    const {percentualAcerto,response,redirect,status,difficulty,katexDescription,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
+    const { language,theme,contentRes,solution,loadingExercicio } = this.state;
 
 
     return (
@@ -208,9 +231,15 @@ export default class Editor extends Component {
         description={description}
         inputs={inputs}
         outputs={outputs}
+        katexDescription={katexDescription}
+        status={status}
+        difficulty={difficulty}
         loadingReponse={loadingReponse}
         handleTitleChange={this.handleTitleChange.bind(this)}
         handleDescriptionChange={this.handleDescriptionChange.bind(this)}
+        handlekatexDescription={this.handlekatexDescription.bind(this)}
+        handleStatus={this.handleStatus.bind(this)}
+        handleDifficulty={this.handleDifficulty.bind(this)}
         handleInputsChange={this.handleInputsChange.bind(this)}
         handleOutputsChange={this.handleOutputsChange.bind(this)}
       />
@@ -226,8 +255,8 @@ export default class Editor extends Component {
                 mode={language}
                 theme={theme}
                 focus={false}
-                onChange={this.changeContentEditor.bind(this)}
-                value={contentEditor}
+                onChange={this.handleSolution.bind(this)}
+                value={solution}
                 fontSize={14}
                 width='100%'
                 name="ACE_EDITOR"
@@ -257,7 +286,6 @@ export default class Editor extends Component {
                   showGutter={false}
                   focus={false}
                   theme={theme}
-                  onChange={this.changeContentEditor.bind(this)}
                   value={contentRes}
                   fontSize={14}
                   name="ACE_EDITOR_RES"

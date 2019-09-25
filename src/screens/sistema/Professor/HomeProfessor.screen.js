@@ -50,10 +50,12 @@ export default class TurmasScreen extends Component {
     async getMinhasTurmas(){
         const {numPageAtual,contentInputSeach} = this.state
         const query = `include=${contentInputSeach}`
+
         try{
             this.setState({loadingTurmas:true})
             const response = await api.get(`/user/class/page/${numPageAtual}?${query}`)
-            console.log(response)
+            //console.log(response)
+            console.log(query);
             this.setState({
                 items : response.data.docs,
                 totalItens : response.data.total,
@@ -80,16 +82,20 @@ export default class TurmasScreen extends Component {
     }
 
     handleContentInputSeach(e){
+        console.log(e.target.value);
         this.setState({
             contentInputSeach:e.target.value
-        },()=>this.getMinhasTurmas())
+        }/*,()=>this.getMinhasTurmas()*/)
         
+    }
+    filterSeash(e){
+        this.getMinhasTurmas()
     }
     handleSelectfildFilter(e){
         console.log(e.target.value);
         this.setState({
             fildFilter:e.target.value
-        },()=>this.getMinhasTurmas())
+        }/*,()=>this.getMinhasTurmas()*/)
     }
     clearContentInputSeach(){
         this.setState({
@@ -131,6 +137,7 @@ export default class TurmasScreen extends Component {
                         placeholder={'pesquiese pelo campo selecionado...'}
                         value={contentInputSeach}
                         handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+                        filterSeash={this.filterSeash.bind(this)}
                         handleSelect={this.handleSelectfildFilter.bind(this)}
                         options={ [{value:'name',content:'Nome'}] }
                         clearContentInputSeach={this.clearContentInputSeach.bind(this)}

@@ -80,14 +80,16 @@ export default class HomeListasScreen extends Component {
         console.log(e.target.value);
         this.setState({
             fildFilter:e.target.value
-        },()=>this.getListas())
+        }/*,()=>this.getListas()*/)
     }
 
     handleContentInputSeach(e){
         this.setState({
             contentInputSeach:e.target.value
-        },()=>this.getListas())
-        
+        }/*,()=>this.getListas()*/)
+    }
+    filterSeash(){
+        this.getListas()
     }
     clearContentInputSeach(){
         this.setState({
@@ -122,6 +124,7 @@ export default class HomeListasScreen extends Component {
                             placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
                             handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+                            filterSeash={this.filterSeash.bind(this)}
                             handleSelect={this.handleSelectfildFilter.bind(this)}
                             options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
                             clearContentInputSeach={this.clearContentInputSeach.bind(this)}

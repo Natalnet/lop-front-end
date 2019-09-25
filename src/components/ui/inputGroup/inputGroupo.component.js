@@ -1,7 +1,7 @@
 import React from 'react'
 
 export default props =>{
-	const {placeholder,value,handleContentInputSeach,handleSelect,options,loading,clearContentInputSeach} = props
+	const {placeholder,value,filterSeash,handleContentInputSeach,handleSelect,options,loading,clearContentInputSeach} = props
 	return(
         <div className="input-group">
             <input 
@@ -21,11 +21,20 @@ export default props =>{
                 </select>     
             </div>
             <button 
-                className={`btn btn-secondary btn-outline-secondary ${loading && 'btn-loading'}`}                            type="button" 
+                className={`btn btn-secondary btn-outline-secondary `}                            
+                type="button" 
+                id="button-addon2"
+                onClick={()=> filterSeash()}
+            >
+                <i className="fe fe-search" />
+            </button>
+            <button 
+                className={`btn btn-secondary btn-outline-secondary ${loading && 'btn-loading'}`}                            
+                type="button" 
                 id="button-addon2"
                 onClick={()=> clearContentInputSeach()}
             >
-                <i className="fe fe-rotate-cw" />
+                <i className="fe fe-refresh-cw" />
             </button>
         </div>
 	)

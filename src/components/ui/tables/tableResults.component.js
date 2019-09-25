@@ -1,8 +1,7 @@
 import React,{Fragment} from 'react';
 
 export default (props) => {
-	console.log('props tableResults:');
-	console.log(props);
+
 	const {percentualAcerto,response} = props
 	if(response.length>0){
 	    return(

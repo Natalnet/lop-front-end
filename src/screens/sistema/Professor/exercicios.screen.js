@@ -7,7 +7,6 @@ import NavPagination from "components/ui/navs/navPagination";
 import {Redirect} from 'react-router-dom'
 import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
-import socket from 'socket.io-client'
 const lista = {
     backgroundColor:"white"
 };
@@ -37,7 +36,6 @@ export default class HomeExerciciosScreen extends Component {
     }
     componentDidMount() {
         this.getExercicios();
-        this.getExerciciosRealTime()
     }
     async getExercicios(){
         const {numPageAtual,contentInputSeach,fildFilter} = this.state
@@ -57,21 +55,7 @@ export default class HomeExerciciosScreen extends Component {
             console.log(err);
         }
     };
-    getExerciciosRealTime(){
-        const io = socket("http://localhost:3001")
-        console.log(io);
-        io.emit('connectRoonExercicios','todosExercicios')//conectando à sala todosExercicios
-        io.on('getExercicios',response=>{
-            console.log('começo do socket');
-            console.log(response);
-            this.setState({
-                exercicios : [...response.docs],
-                totalItens : response.total,
-                totalPages : response.totalPages,
-            })
-            console.log('fim do socket');
-        })
-    }
+
 
     handleShowModal(){
         this.setState({showModal:true})
@@ -90,14 +74,17 @@ export default class HomeExerciciosScreen extends Component {
         console.log(e.target.value);
         this.setState({
             fildFilter:e.target.value
-        },()=>this.getExercicios())
+        }/*,()=>this.getExercicios()*/)
     }
 
     handleContentInputSeach(e){
         this.setState({
             contentInputSeach:e.target.value
-        },()=>this.getExercicios())
+        }/*,()=>this.getExercicios()*/)
         
+    }
+    filterSeash(){
+        this.getExercicios()
     }
     clearContentInputSeach(){
         this.setState({
@@ -132,6 +119,7 @@ export default class HomeExerciciosScreen extends Component {
                             placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
                             handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+                            filterSeash={this.filterSeash.bind(this)}
                             handleSelect={this.handleSelectfildFilter.bind(this)}
                             options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
                             clearContentInputSeach={this.clearContentInputSeach.bind(this)}
@@ -146,7 +134,7 @@ export default class HomeExerciciosScreen extends Component {
                             <th>Nome</th>
                             <th>Código</th>
                             <th>Execuções</th>
-                            <th>Submissões</th>
+                            <th>Criado por</th>
                             <th>Criado em</th>
                             <th></th>
                         </tr>
@@ -178,7 +166,7 @@ export default class HomeExerciciosScreen extends Component {
                                     <td>{exercicio.title}</td>
                                     <td>{exercicio.code}</td>
                                     <td>0{/*exercicio.executions.length*/}</td>
-                                    <td>0{/*exercicio.submitions.length*/}</td>
+                                    <td>{exercicio.createdBy && exercicio.createdBy.email}</td>
                                     <td>{formataData(exercicio.createdAt)}</td>
                                     <td>
                                         <button className="btn btn-primary mr-2">
