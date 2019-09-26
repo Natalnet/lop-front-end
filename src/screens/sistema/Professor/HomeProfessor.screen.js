@@ -8,6 +8,7 @@ import CardFooter from "components/ui/card/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
 import api from '../../../services/api'
+import socket from 'socket.io-client'
 
 const card = {
     maxHeight: "250px",
@@ -31,7 +32,7 @@ export default class TurmasScreen extends Component {
         super(props)
         this.state = {
             redirect: false,
-            items: [],
+            munhasTurmas: [],
             loadingTurmas:false,
             contentInputSeach:'',
             fildFilter:'name',
@@ -43,22 +44,23 @@ export default class TurmasScreen extends Component {
         this.handlePage = this.handlePage.bind(this)
     }
 
-    componentDidMount() {
-        this.getMinhasTurmas();
+    async componentDidMount() {
+        await this.getMinhasTurmas();
+        this.getMinhasTurmasRealTime();
     }
 
-    async getMinhasTurmas(){
+    async getMinhasTurmas(loadingResponse=true){
         const {numPageAtual,contentInputSeach} = this.state
         const query = `include=${contentInputSeach}`
 
         try{
-            this.setState({loadingTurmas:true})
+            if(loadingResponse) this.setState({loadingTurmas:true});
             const response = await api.get(`/user/class/page/${numPageAtual}?${query}`)
-            //console.log('minhas turmas');
-            //console.log(response)
+            console.log('minhas turmas');
+            console.log(response.data.docs)
             //console.log(query);
             this.setState({
-                items : response.data.docs,
+                munhasTurmas : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
                 loadingTurmas:false,
@@ -68,6 +70,16 @@ export default class TurmasScreen extends Component {
             console.log(err)
         }
     };
+    getMinhasTurmasRealTime(){
+        const io = socket("http://localhost:3001")      
+        for(let turma of this.state.munhasTurmas){
+            io.emit('connectRoonRequestClass',turma._id)//conectando à todas salas (minhas Turmas)
+        }
+        io.on('RequestsClass',async response=>{
+            console.log(response);
+            this.getMinhasTurmas(false)
+        })
+    }
     handlePage(e,numPage){
         e.preventDefault()
         //console.log(numPage);
@@ -108,7 +120,7 @@ export default class TurmasScreen extends Component {
 
     render() {
 
-        const {redirect,fildFilter,loadingTurmas,contentInputSeach,items,numPageAtual,totalPages,perfil} = this.state
+        const {redirect,fildFilter,loadingTurmas,contentInputSeach,munhasTurmas,numPageAtual,totalPages,perfil} = this.state
         const range = num => {
             let arr =[]
             for(let i=0;i<num;i++) arr.push(i);
@@ -157,7 +169,7 @@ export default class TurmasScreen extends Component {
                         </div>
                     ))
                 :
-                    items.map((turma, index) => (
+                    munhasTurmas.map((turma, index) => (
                         <div key={index} className="col-6">
                             <br></br>
                             <Card>
@@ -178,6 +190,9 @@ export default class TurmasScreen extends Component {
                                     </span>
                                     <span title={`${0} aluno(s) online`} className="avatar avatar-teal mr-1">
                                         0
+                                    </span>
+                                    <span title={`${turma.solicitations.length} solicitação(ões)`} className="avatar avatar-red mr-1">
+                                        {turma.solicitations.length}
                                     </span>
                                 </CardBody>
                                     <CardFooter>
