@@ -29,21 +29,9 @@ export default class MenuProfessor extends Component {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/professor/novasturmas" className={`nav-link ${this.props.active==='criarTurma'?'active':''}`}>
-                    <i className="fe fe-plus" /> <i className="fe fe-users" />
-                    Criar turma
-                  </Link>
-                </li>
-                <li className="nav-item">
                   <Link to="/professor/listas" className={`nav-link ${this.props.active==='listas'?'active':''}`}>
                     <i className="fe fe-file-text" />
                     Listas
-                  </Link>
-                </li>
-               <li className="nav-item">
-                  <Link to="/professor/criarlista" className={`nav-link ${this.props.active==='criarLista'?'active':''}`}>
-                    <i className="fe fe-file-plus" />
-                    Criar listas
                   </Link>
                 </li>
                 <li className="nav-item">

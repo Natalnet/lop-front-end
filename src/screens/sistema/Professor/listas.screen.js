@@ -114,7 +114,7 @@ export default class HomeListasScreen extends Component {
                                 type="button"
                                 style={botao}
                             >
-                                Criar Lista+
+                                Criar Lista <i className="fe fe-file-plus" />
                             </button>
                             </Link>
                         </div>

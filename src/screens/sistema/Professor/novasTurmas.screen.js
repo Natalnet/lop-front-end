@@ -159,7 +159,7 @@ export default class NovasTurmasScreen extends Component {
     render() {
         
         return (
-        <TemplateSistema active='criarTurma'>
+        <TemplateSistema active='home'>
             <div className="container-fluid">
                 <form onSubmit={this.cadastro}>
                     <div className="row">

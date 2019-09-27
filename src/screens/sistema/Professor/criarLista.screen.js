@@ -5,6 +5,8 @@ import BotaoModal from 'components/ui/modal/btnModalExercicios.component'
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import InputGroupo from 'components/ui/inputGroup/inputGroupo.component'
+import formataData from "../../../util/funçoesAuxiliares/formataData";
+
 
 
 const botao2 = {
@@ -20,19 +22,22 @@ export default class CriarListaScreen extends Component {
         items: [],
         selecionados: [],
         contentInputSeach:'',
-        fildFilter:'name',
+        fildFilter:'title',
         title: '',
         perfil: sessionStorage.getItem("user.profile")
     };
 
     componentDidMount() {
-        this.getExercicio();
+        this.getExercicios();
     }
 
-    async getExercicio(){
+    async getExercicios(){
+        let {contentInputSeach,fildFilter} = this.state
+        let query = `include=${contentInputSeach.trim()}`
+        query += `&fild=${fildFilter}`
         try{
-            const response = await api.get('/question')
-            this.setState({items:response.data})
+            const response = await api.get(`/question/page/1?${query}`)
+            this.setState({items:[...response.data.docs]})
         }catch(err){
             console.log(err)
         
@@ -109,28 +114,34 @@ export default class CriarListaScreen extends Component {
         this.setState({ title: e.target.value });
         };
 
-    handleContentInputSeach(e){
-        this.setState({
-            contentInputSeach:e.target.value
-        },()=>this.getExercicio())
-        
-    }
     handleSelectfildFilter(e){
         console.log(e.target.value);
         this.setState({
             fildFilter:e.target.value
-        },()=>this.getExercicio())
+        }/*,()=>this.getExercicios()*/)
+    }
+
+    handleContentInputSeach(e){
+        this.setState({
+            contentInputSeach:e.target.value
+        }/*,()=>this.getExercicios()*/)
+        
+    }
+    filterSeash(){
+        this.getExercicios()
     }
     clearContentInputSeach(){
         this.setState({
             contentInputSeach:''
-        },()=>this.getExercicio())
+        },()=>this.getExercicios())
         
     }
 
     render() {
+        const {exercicios,showModal,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages} = this.state
+
         return (
-        <TemplateSistema active='criarLista'>
+        <TemplateSistema active='listas'>
             <div className="container-fluid">
                 <form onSubmit={this.submit}>
                     <div className="row">
@@ -154,11 +165,12 @@ export default class CriarListaScreen extends Component {
                             <br/>
                             <div className="col-12">
                                 <InputGroupo
-                                    placeholder={'pesquiese pelo campo selecionado...'}
-                                    value={this.contentInputSeach}
+                                    placeholder={`Perquise pelo nome ou código...`}
+                                    value={contentInputSeach}
                                     handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+                                    filterSeash={this.filterSeash.bind(this)}
                                     handleSelect={this.handleSelectfildFilter.bind(this)}
-                                    options={ [{value:'name',content:'Nome'}] }
+                                    options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
                                     clearContentInputSeach={this.clearContentInputSeach.bind(this)}                           
                                 />    
                             </div>
@@ -169,12 +181,12 @@ export default class CriarListaScreen extends Component {
                             <table className='table table-hover' style={{borderTopRightRadius:"10%", marginBottom:"0px"}}>
                                 <thead>
                                     <tr>
-                                        <th>Titulo</th>
-                                        <th>Dificuldade</th>
-                                        <th>nota</th>
+                                        <th>Nome</th>
+                                        <th>Código</th>
+                                        <th>Execuções</th>
+                                        <th>Criado por</th>
+                                        <th>Criado em</th>
                                         <th></th>
-                                        
-
                                     </tr>
                                 </thead>                            
                                 
@@ -182,10 +194,12 @@ export default class CriarListaScreen extends Component {
                                 {this.state.items.map((questao, index) => (
                                     <tr key={index}>
                                         <td>{questao.title}</td>
-                                        <td>{questao.difficulty}</td>
-                                        <td>8,5</td>
+                                        <td>{questao.code}</td>
+                                        <td>0{/*exercicio.executions.length*/}</td>
+                                        <td>{questao.createdBy && questao.createdBy.email}</td>
+                                        <td>{formataData(questao.createdAt)}</td>
                                         <td>
-                                            <button className="float-right btn btn-primary" onClick={(e)=>this.selecionar(e, questao)}>Adicionar</button>
+                                            <button className="float-right btn btn-primary" onClick={(e)=>this.selecionar(e, questao)}>Adicionar <i className="fe fe-file-plus" /></button>
                                         </td>
                                         
                                         
@@ -201,8 +215,11 @@ export default class CriarListaScreen extends Component {
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Nome:</th>
-                                        <th>Dificuldade:</th>
+                                        <th>Nome</th>
+                                        <th>Código</th>
+                                        <th>Execuções</th>
+                                        <th>Criado por</th>
+                                        <th>Criado em</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -210,8 +227,11 @@ export default class CriarListaScreen extends Component {
                                     {this.state.selecionados.map((questao, index) => (
                                         <tr key={index}>
                                             <td>{questao.title}</td>
-                                            <td>{questao.difficulty}</td>
-                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(questao)}><i className="fa fa-user-times" /></a></td>
+                                            <td>{questao.code}</td>
+                                            <td>0{/*exercicio.executions.length*/}</td>
+                                            <td>{questao.createdBy && questao.createdBy.email}</td>
+                                            <td>{formataData(questao.createdAt)}</td>
+                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(questao)}><i className="fe fe-file-minus" /></a></td>
                                         </tr>
                                     ))}
                                 </tbody>

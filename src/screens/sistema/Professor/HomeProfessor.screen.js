@@ -140,7 +140,7 @@ export default class TurmasScreen extends Component {
                             type="button"
                             style={botao}
                         >
-                            Nova Turma <i className="fa fa-plus-circle" />
+                            Nova Turma <i className="fa fa-plus-circle" /> <i className="fa fa-users" />
                         </Link>
                     </div>
                 </div>

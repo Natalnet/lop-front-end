@@ -72,11 +72,7 @@ export default class Pagina extends Component {
         const id = this.props.match.params.id
         io.emit('connectRoonRequestClass',id)//conectando à sala
         io.on('RequestsClass',response=>{
-            console.log('começo do socket');
-            console.log(response);
             this.getSolicitacoes(false)
-            //this.setState({solicitacoes: [...response] })
-            console.log('fim do socket');
         })
     }
     async aceitaSolicitacao(idUser){
