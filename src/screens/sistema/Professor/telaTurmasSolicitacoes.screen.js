@@ -87,6 +87,7 @@ export default class Pagina extends Component {
           Swal.showLoading()
           const response = await api.put(`/solicitation/${idTurma}/acceptSolicit/user/${idUser}`)
           //console.log(response);
+          await this.removeSolicitacao(idUser)
           this.getSolicitacoes()
           Swal.hideLoading()
           Swal.fire({
@@ -103,7 +104,7 @@ export default class Pagina extends Component {
         } 
     }
 
-    async regeitarSolicitacao(idUser){
+    async removeSolicitacao(idUser){
         const idTurma = this.props.match.params.id
         try{
           Swal.fire({
@@ -113,7 +114,7 @@ export default class Pagina extends Component {
             allowEnterKey:false
           })
           Swal.showLoading()
-          const response = await api.delete(`/solicitation/${idTurma}/rejectSolicit/user/${idUser}`)
+          const response = await api.delete(`/solicitation/${idTurma}/removeSolicitation/user/${idUser}`)
           //console.log(response);
           this.getSolicitacoes()
           Swal.hideLoading()
@@ -187,7 +188,7 @@ export default class Pagina extends Component {
                                     <button onClick={()=>this.aceitaSolicitacao(user._id)} className="btn btn-success mr-2">
                                         <i className="fa fa-user-plus"/>
                                     </button>
-                                    <button onClick={()=> this.regeitarSolicitacao(user._id)} className="btn btn-danger mr-2">
+                                    <button onClick={()=> this.removeSolicitacao(user._id)} className="btn btn-danger mr-2">
                                         <i className="fa fa-user-times" />
                                     </button>
                                 </td>
