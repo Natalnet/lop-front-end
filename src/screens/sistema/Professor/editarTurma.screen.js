@@ -32,51 +32,30 @@ export default class NovasTurmasScreen extends Component {
         items: [],
         Id_P: [],
         prof: "",
+        savingTurma:false,
         perfil: sessionStorage.getItem("user.profile")
 
     };
 
-    cadastro = event => {
-        console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.Id_P)
-
-        event.preventDefault();
-
-        if (this.state.name === "") {
-          this.setState({ msg: "Informe o nome da turma" });
-        } else if (this.state.year === "" || this.state.year > 2020 || this.state.year < 2010 ) {
-          this.setState({ msg: "Informe o ano" });
-        } else if (this.state.Id_P.length === 0) {
-          this.setState({ msg: "Selecione os professores" });
-        }else{
-            const requestInfo = {
-                name: this.state.name,
-                year: this.state.year,
-                semester: this.state.semester,
-                description: this.state.description,
-                state: this.state.state,
-                professores: this.state.Id_P
-            };
-
-            api
-                .post("/class/store", requestInfo)
-                .then(response => {
-                if (response) {
-                    Swal.fire({
-                    type: "success",
-                    }).then(result => {
-                    if (result.value) {
-                    return this.setState({redirect:true});
-                    }
-                    });
-                } else {
-                    throw new Error("Failed to register");
-                }
-                })
-                .catch(err => {
-                this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });
-                });
+    async getTurma(){
+        const id = this.props.match.params.id
+        try{
+          const response = await api.get(`/class/${id}`)
+          console.log(response.data);
+          this.setState({
+            name : response.data.name,
+            description : response.data.description,
+            year:response.data.year,
+            state:response.data.state,
+            semester:response.data.semester,
+            Id_P:response.data.professores
+          })
         }
-    };
+        catch(err){
+          this.setState({loadingExercicio:false})
+          console.log(Object.getOwnPropertyDescriptors(err));
+        } 
+      }
 
     renderRedirect = () => {
         if (this.state.redirect) {
@@ -85,7 +64,9 @@ export default class NovasTurmasScreen extends Component {
       }
 
     componentDidMount() {
+        this.getTurma();
         this.getProfessores();
+        console.log(this.state.items)
         document.title = "Realizar Cadastro de turmas - Plataforma LOP";
     }
 
@@ -97,7 +78,34 @@ export default class NovasTurmasScreen extends Component {
             console.log(err)
         
         }
+        this.professor()
     };
+    professor(){
+        const temporaria = this.state.Id_P
+        for (var i = this.state.items.length -1; i >=0; i--) {
+            for (var j = temporaria.length -1; j >=0; j--) {
+                if(this.state.items[i]._id==temporaria[j]){
+                    this.setState({
+                        professorsName: [... this.state.professorsName,
+                            this.state.items[i]
+                        ]
+                    })
+                }
+            }
+        }
+        for (var i = this.state.items.length -1; i >=0; i--) {
+            for (var j = temporaria.length -1; j >=0; j--) {
+                if(this.state.items[i]._id==temporaria[j]){
+                    this.state.items.splice(i, 1)
+                    i=this.state.items.length -1
+                }
+            }
+        }
+        console.log("professorsName")
+        console.log(this.state.professorsName)
+        console.log("items")
+        console.log(this.state.items)
+    }
 
     handleNameChange = e => {
     this.setState({ name: e.target.value });
@@ -156,8 +164,48 @@ export default class NovasTurmasScreen extends Component {
         });
     };
 
+    async updateTurma(e){
+        const id = this.props.match.params.id
+        Swal.fire({
+          title:'Atualizando Turma',
+          allowOutsideClick:false,
+          allowEscapeKey:false,
+          allowEnterKey:false
+        })
+        Swal.showLoading()
+        const request = {
+            name : this.state.name,
+            description : this.state.description,
+            year:this.state.year,
+            state:this.state.state,
+            semester:this.state.semester,
+            Id_P:this.state.professores
+        }
+        try{
+        console.log("entrou")
+          this.setState({savingTurma:true})
+          const response = await api.put(`/class/${id}/update`,request)
+          Swal.hideLoading()
+          Swal.fire({
+              type: 'success',
+              title: 'Turma atualizada com sucesso!',
+          })
+          this.setState({savingTurma:false})
+          console.log(response.data)
+        }
+        catch(err){
+          Swal.hideLoading()
+          Swal.fire({
+              type: 'error',
+              title: 'ops... Turma não pôde ser atualizada',
+          })
+          this.setState({savingTurma:false})
+          console.log(Object.getOwnPropertyDescriptors(err));
+    
+        }
+      }
+
     render() {
-        
         return (
         <TemplateSistema active='home'>
             <div className="container-fluid">
@@ -256,27 +304,27 @@ export default class NovasTurmasScreen extends Component {
                                 </thead>
                                 <tbody>
                                     {this.state.professorsName.map((professor, index) => (
-                                        <tr key={index}>
-                                            <td className='text-center'>
-                                                <div 
-                                                    className="avatar d-block" 
-                                                    style={
-                                                        {backgroundImage: `url(${professor.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                                    }
-                                                />
-                                            </td>
-                                            <td>{professor.name}</td>
-                                            <td>{professor.enrollment}</td>
-                                            <td>{professor.email}</td>
-                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
-                                        </tr>
-                                    ))}
+                                            <tr key={index}>
+                                                <td className='text-center'>
+                                                    <div 
+                                                        className="avatar d-block" 
+                                                        style={
+                                                            {backgroundImage: `url(${professor.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
+                                                        }
+                                                    />
+                                                </td>
+                                                <td>{professor.name}</td>
+                                                <td>{professor.enrollment}</td>
+                                                <td>{professor.email}</td>
+                                                <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
+                                            </tr>
+                                        ))}
                                 </tbody>
                             </table>
                             <hr></hr>
                             <div>
                                 {this.renderRedirect()}
-                                <button style={botao} type="submit" className="btn btn-primary" onClick={this.cadastro} >Cadastrar</button>
+                                <button style={botao} type="submit" className="btn btn-primary" onClick={e => this.updateTurma(e)} ><i class="fa fa-save"></i> Atualizar</button>
                             </div>
                             
 

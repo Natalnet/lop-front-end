@@ -191,9 +191,7 @@ export default class TurmasScreen extends Component {
                                     <span title={`${0} aluno(s) online`} className="avatar avatar-teal mr-1">
                                         0
                                     </span>
-                                    <span title={`${turma.solicitations.length} solicitação(ões)`} className="avatar avatar-red mr-1">
-                                        {turma.solicitations.length}
-                                    </span>
+                                    
                                 </CardBody>
                                     <CardFooter>
                                         <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
