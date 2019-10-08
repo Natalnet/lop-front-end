@@ -39,7 +39,6 @@ export default class TurmasScreen extends Component {
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
-            perfil: localStorage.getItem("user.profile")
         }
         this.handlePage = this.handlePage.bind(this)
     }
@@ -73,7 +72,7 @@ export default class TurmasScreen extends Component {
     getMinhasTurmasRealTime(){
         const io = socket("http://localhost:3001")      
         for(let turma of this.state.munhasTurmas){
-            io.emit('connectRoonRequestClass',turma._id)//conectando à todas salas (minhas Turmas)
+            io.emit('connectRoonRequestClass',turma.id)//conectando à todas salas (minhas Turmas)
         }
         io.on('RequestsClass',async response=>{
             console.log(response);
@@ -125,9 +124,6 @@ export default class TurmasScreen extends Component {
             let arr =[]
             for(let i=0;i<num;i++) arr.push(i);
             return arr
-        }
-        if(perfil!=="PROFESSOR"){
-            return <Redirect to="/401" />;
         }
         return (
         <TemplateSistema active='home'>
@@ -185,19 +181,21 @@ export default class TurmasScreen extends Component {
                                     </div>*/}
                                 </CardHead>
                                 <CardBody>
-                                    <span title={`${turma.students.length+turma.professores.length} participante(s)`} className="avatar avatar-cyan mr-1">
-                                        {turma.students.length+turma.professores.length}
+                                    <span title={`${turma.users.length} participante(s)`} data-toggle="tooltip" className="avatar avatar-cyan mr-1">
+                                        {turma.users.length}
                                     </span>
-                                    <span title={`${0} aluno(s) online`} className="avatar avatar-teal mr-1">
+                                    <span title={`${0} aluno(s) online`} data-toggle="tooltip" className="avatar avatar-teal mr-1">
                                         0
                                     </span>
-                                    
+                                    <span title={`${turma.solicitationsToClass.length} solicitação(ões)`} data-toggle="tooltip" className="avatar avatar-red mr-1">
+                                        {turma.solicitationsToClass.length}
+                                    </span>
                                 </CardBody>
                                     <CardFooter>
-                                        <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
+                                        <Link to={`/professor/turma/${turma.id}/editar`} style={botaoV} className="btn btn-success mr-2">
                                             <i className="fa fa-edit" /> Editar
                                         </Link>
-                                        <Link to={`/professor/turma/${turma._id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
+                                        <Link to={`/professor/turma/${turma.id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
                                             <i className="fe fe-corner-down-right" /> Entrar
                                         </Link>
                                     </CardFooter>

@@ -172,7 +172,7 @@ export default class HomeExerciciosScreen extends Component {
                                         <button className="btn btn-primary mr-2">
                                             <i className="fa fa-info"/>
                                         </button>
-                                        <Link to={`/professor/exercicios/${exercicio._id}/editar`} className="btn btn-success mr-2">
+                                        <Link to={`/professor/exercicios/${exercicio.id}/editar`} className="btn btn-success mr-2">
                                             <i className="fe fe-edit" />
                                         </Link>
                                     </td>

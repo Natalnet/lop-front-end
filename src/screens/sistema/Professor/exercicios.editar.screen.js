@@ -33,12 +33,14 @@ export default class Editor extends Component {
       language:'javascript',
       theme:'monokai',
       response:[],
+      katexDescription:'',
+      status:'PÚBLICA',
+      difficulty:'Médio',
+      solution:'',
       loadingReponse:false,
       savingQuestion:false,
       loadingEditor:false,
-      loadingExercicio:true,
       title:'',
-      solution:'',
       description:'',
       inputs:'',
       outputs:'',
@@ -52,13 +54,14 @@ export default class Editor extends Component {
   async getExercicio(){
     const id = this.props.match.params.id
     try{
+      this.setState({loadingExercicio:true})
       const response = await api.get(`/question/${id}`)
-      console.log(response.data);
+      //console.log(response.data);
       const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
       this.setState({
         title : response.data.title,
         description : response.data.description,
-        katexDescription:response.data.katexDescription,
+        katexDescription:response.data.katexDescription || '',
         status:response.data.status,
         difficulty:response.data.difficulty,
         solution:response.data.solution,
@@ -182,6 +185,8 @@ export default class Editor extends Component {
       allowEnterKey:false
     })
     Swal.showLoading()
+    console.log('katexDescription:');
+    console.log(this.state.katexDescription);
     const request = {
       title : this.state.title,
       description : this.state.description,
@@ -220,7 +225,7 @@ export default class Editor extends Component {
 
 
     return (
-    <TemplateSistema>
+    <TemplateSistema active='ecercicios'>
     <Card>
       <CardHead center>
           <h2><i className="fa fa-edit"></i> Atualizar questão</h2>
@@ -306,7 +311,7 @@ export default class Editor extends Component {
         </CardBody>
         <CardFooter loading={loadingExercicio}>
           <button onClick={e => this.updateQuestion(e)} className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
-            <i class="fa fa-save"></i> Atualizar
+            <i className="fa fa-save"></i> Atualizar
           </button>         
         </CardFooter>
       </Card>

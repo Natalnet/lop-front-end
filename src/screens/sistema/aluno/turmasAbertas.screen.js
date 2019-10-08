@@ -30,20 +30,20 @@ export default class HomeAlunoScreen extends Component {
     }
     this.handlePage=this.handlePage.bind(this)
   }
-  componentDidMount() {
-    this.getTurmasSolicitadas()
-    this.getTurmasAbertas()
+  async componentDidMount() {
+    await this.getTurmasSolicitadas()
+    await this.getTurmasAbertas()
     this.getTurmasAbertasRealTime()
     document.title = "Sistema Aluno - Plataforma LOP";
   }
   async getTurmasSolicitadas(){
     try{
-      //this.setState({loadingMinhasTurmas:true})
-      const response = await api.get('/solicitation/classes')
+      this.setState({loadingMinhasTurmas:true})
+      const response = await api.get('/user/solicitation/classes')
       console.log('turmas solicitdas');
       console.log(response.data);
       this.setState({
-        turmasSolicitadas:[...response.data].map(solicitacao =>solicitacao.classSolicited),
+        turmasSolicitadas:[...response.data],
         //loadingMinhasTurmas:false
       })
     }
@@ -75,8 +75,8 @@ export default class HomeAlunoScreen extends Component {
     console.log('id do usuario');
     console.log(sessionStorage.getItem('user.id'));
     io.emit('connectRoonMyRequestsClass',sessionStorage.getItem('user.id'))
-    io.on('MyRequestsClass',response=>{
-      this.getTurmasSolicitadas()
+    io.on('MyRequestsClass',async response=>{
+      await this.getTurmasSolicitadas()
       this.getTurmasAbertas()
     })
   }
@@ -97,8 +97,9 @@ export default class HomeAlunoScreen extends Component {
         allowEnterKey:false
       })
       Swal.showLoading()
-      const response = await api.put(`/solicitation/class/${idClass}/solicit`)
-      //console.log(response);
+      const response = await api.post(`/user/solicit/class/${idClass}`)
+      console.log('solicitação:');
+      console.log(response.data);
       this.getTurmasAbertas()
       this.getTurmasSolicitadas()
       Swal.hideLoading()
@@ -129,7 +130,7 @@ export default class HomeAlunoScreen extends Component {
         allowEnterKey:false
       })
       Swal.showLoading()
-      const response = await api.delete(`/solicitation/${idTurma}/removeSolicitation/user/${idUser}`)
+      const response = await api.delete(`/user/removeSolicitation/class/${idTurma}`)
       Swal.hideLoading()
       Swal.fire({
           type: 'success',
@@ -159,7 +160,7 @@ export default class HomeAlunoScreen extends Component {
           {turmasAbertas.map((turmaAberta, index) => {
             let jaSolicitou = false
             for(let solicitacao of turmasSolicitadas){
-              if(solicitacao._id===turmaAberta._id){
+              if(solicitacao.id===turmaAberta.id){
                 jaSolicitou = true
                 break;
               }
@@ -175,9 +176,9 @@ export default class HomeAlunoScreen extends Component {
                             {
                              jaSolicitou
                             ?
-                             <button onClick={()=>this.cancelarSolicitacao(turmaAberta._id)} className="btn btn-danger" >Cancelar solicitação</button>
+                             <button onClick={()=>this.cancelarSolicitacao(turmaAberta.id)} className="btn btn-danger" >Cancelar solicitação</button>
                              :
-                             <button onClick={()=>this.solicitarAcesso(turmaAberta._id)} className="btn btn-primary">Solicitar Acesso</button>
+                             <button onClick={()=>this.solicitarAcesso(turmaAberta.id)} className="btn btn-primary">Solicitar Acesso</button>
                             }
                         </CardBody>
                      </Card>

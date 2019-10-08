@@ -30,11 +30,11 @@ export default class HomeAlunoScreen extends Component {
   async getInfoUser(){
     try{
       //this.setState({loadingMinhasTurmas:true})
-      const response = await api.get('/user/info/profile')
-      console.log('user:');
-      console.log(response.data)
+      const response = await api.get('/user/class/page/1')
+      console.log('minhas turmas');
+      console.log(response.data.docs)
       this.setState({
-        minhasTurmas:response.data.classes,
+        minhasTurmas:[...response.data.docs],
         //turmasSolicitadas:response.data.requestedClasses,
         //loadingMinhasTurmas:false
       })

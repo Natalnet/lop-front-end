@@ -23,8 +23,7 @@ export default class Pagina extends Component {
     componentDidMount() {
         this.getInfoTurma()
         this.getListas() 
-        
-        this.getTodasListas()
+        //this.getTodasListas()
     }
     async getInfoTurma(){
         const id = this.props.match.params.id
@@ -51,8 +50,7 @@ export default class Pagina extends Component {
             const id = this.props.match.params.id
             const response = await api.get(`/class/${id}/lists`)
             console.log(response.data);
-
-            this.setState({items:response.data})
+            this.setState({items:[...response.data]})
 
         }catch(err){
             console.log(err)
@@ -64,6 +62,7 @@ export default class Pagina extends Component {
         try{
             const id = this.props.match.params.id
             const response = await api.get(`/listQuestion`)
+            console.log('listas');
             console.log(response.data);
 
             this.setState({todasListas:response.data})

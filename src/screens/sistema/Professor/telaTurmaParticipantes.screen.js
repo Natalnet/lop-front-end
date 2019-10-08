@@ -47,7 +47,7 @@ export default class Pagina extends Component {
             const response = await api.get(`/class/${id}/participants`)
             console.log(response);
             this.setState({
-                participantes:response.data.docs,
+                participantes:[...response.data],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
                 loadingParticipantes:false,
