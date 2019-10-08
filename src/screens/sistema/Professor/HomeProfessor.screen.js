@@ -3,10 +3,14 @@ import { Redirect ,Link} from 'react-router-dom';
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
+import {Collapse} from 'react-bootstrap'
+
 import api from '../../../services/api'
 import socket from 'socket.io-client'
 
@@ -39,6 +43,7 @@ export default class TurmasScreen extends Component {
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
+            showDescription:false,
         }
         this.handlePage = this.handlePage.bind(this)
     }
@@ -79,6 +84,10 @@ export default class TurmasScreen extends Component {
             this.getMinhasTurmas(false)
         })
     }
+    handleShowDescription(){
+        console.log('handleShowDescription');
+        this.setState({showDescription:!this.state.showDescription})
+    }
     handlePage(e,numPage){
         e.preventDefault()
         //console.log(numPage);
@@ -117,9 +126,10 @@ export default class TurmasScreen extends Component {
     }
 
 
+
     render() {
 
-        const {redirect,fildFilter,loadingTurmas,contentInputSeach,munhasTurmas,numPageAtual,totalPages,perfil} = this.state
+        const {redirect,fildFilter,loadingTurmas,contentInputSeach,munhasTurmas,numPageAtual,totalPages,showDescription} = this.state
         const range = num => {
             let arr =[]
             for(let i=0;i<num;i++) arr.push(i);
@@ -170,35 +180,40 @@ export default class TurmasScreen extends Component {
                             <br></br>
                             <Card>
                                 <CardHead>
-                                    
-                                    <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
-                                    
-                                    {/*<div className="card-options">
-                                      <label className="custom-switch m-0">
-                                        <input type="checkbox" value="1" className="custom-switch-input" checked/>
-                                        <span className="custom-switch-indicator"></span>
-                                      </label>
-                                    </div>*/}
+                                    <CardTitle>
+                                        <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
+                                    </CardTitle>
+                                    <CardOptions>
+                                      <button onClick={(e)=>this.handleShowDescription(e)} className='btn btn-secondary btn-sm' type="button" data-toggle="collapse" data-target={'#collapse'+turma.id} aria-expanded="false" aria-controls={'#collapse'+turma.id}>
+                                        <i className='fe fe-chevron-up' />
+                                      </button>
+                                    </CardOptions>
                                 </CardHead>
-                                <CardBody>
-                                    <span title={`${turma.users.length} participante(s)`} data-toggle="tooltip" className="avatar avatar-cyan mr-1">
+
+                                <div className="collapse" id={'collapse'+turma.id}>
+                                    <CardBody>
+                                        {turma.description}
+                                    </CardBody>
+                                </div>
+                                
+                                <CardFooter>
+                                    <span title={`${turma.users.length} participante(s)`}  className="avatar avatar-cyan mr-1">
                                         {turma.users.length}
                                     </span>
-                                    <span title={`${0} aluno(s) online`} data-toggle="tooltip" className="avatar avatar-teal mr-1">
+                                    <span title={`${0} aluno(s) online`} className="avatar avatar-teal mr-1">
                                         0
                                     </span>
-                                    <span title={`${turma.solicitationsToClass.length} solicitação(ões)`} data-toggle="tooltip" className="avatar avatar-red mr-1">
+                                    <span title={`${turma.solicitationsToClass.length} solicitação(ões)`} className="avatar avatar-red mr-1">
                                         {turma.solicitationsToClass.length}
                                     </span>
-                                </CardBody>
-                                    <CardFooter>
-                                        <Link to={`/professor/turma/${turma.id}/editar`} style={botaoV} className="btn btn-success mr-2">
-                                            <i className="fa fa-edit" /> Editar
-                                        </Link>
-                                        <Link to={`/professor/turma/${turma.id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
-                                            <i className="fe fe-corner-down-right" /> Entrar
-                                        </Link>
-                                    </CardFooter>
+
+                                    <Link to={`/professor/turma/${turma.id}/editar`} style={botaoV} className="btn btn-success mr-2">
+                                        <i className="fa fa-edit" /> Editar
+                                    </Link>
+                                    <Link to={`/professor/turma/${turma.id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
+                                        <i className="fe fe-corner-down-right" /> Entrar
+                                    </Link>
+                                </CardFooter>
                                 
                             </Card>
                         </div>
