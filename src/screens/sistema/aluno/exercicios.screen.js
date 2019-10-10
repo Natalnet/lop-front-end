@@ -17,7 +17,7 @@ const botao = {
     width: "100%"
 };
 
-export default class HomeExerciciosScreen extends Component {
+export default class ExerciciosScreen extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -98,7 +98,7 @@ export default class HomeExerciciosScreen extends Component {
     render() {
         const {exercicios,showModal,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages} = this.state
         return (
-        <TemplateSistema active='ecercicios'>
+        <TemplateSistema active='exercicios'>
             <div>
                 <h1 styler={titulo}>Exercicios</h1><br></br>
                 <div className="row">
@@ -170,11 +170,8 @@ export default class HomeExerciciosScreen extends Component {
                                     <td>{exercicio.createdBy && exercicio.createdBy.email}</td>
                                     <td>{formataData(exercicio.createdAt)}</td>
                                     <td>
-                                        <button className="btn btn-primary mr-2">
-                                            <i className="fa fa-info"/>
-                                        </button>
-                                        <Link to={`/professor/exercicios/${exercicio.id}/editar`} className="btn btn-success mr-2">
-                                            <i className="fe fe-edit" />
+                                        <Link to={`/aluno/exercicios/${exercicio.id}`} className="btn btn-success mr-2">
+                                            Acessar <i className="fa fa-wpexplorer" />
                                         </Link>
                                     </td>
                                 </tr>

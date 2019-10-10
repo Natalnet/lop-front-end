@@ -13,6 +13,7 @@ import 'brace/theme/monokai';
 
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
+import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import TableResults from '../../../components/ui/tables/tableResults.component'
@@ -49,6 +50,7 @@ export default class Editor extends Component {
     }
   }
   componentDidMount(){
+    document.title = "Editar Exercício - professor";
     this.getExercicio()
   }
   async getExercicio(){
@@ -227,8 +229,10 @@ export default class Editor extends Component {
     return (
     <TemplateSistema active='ecercicios'>
     <Card>
-      <CardHead center>
-          <h2><i className="fa fa-edit"></i> Atualizar questão</h2>
+      <CardHead>
+          <CardTitle center>
+            <h2><i className="fa fa-edit"></i> Atualizar questão</h2>
+          </CardTitle>
       </CardHead>
       <CardBody loading={loadingExercicio}>
       <FormExercicio

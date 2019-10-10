@@ -49,6 +49,7 @@ export default class Editor extends Component {
     }
   }
   componentDidMount(){
+    document.title = "Editar Turma - professor";
     this.getExercicio()
   }
   async getExercicio(){

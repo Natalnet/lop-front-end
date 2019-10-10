@@ -15,7 +15,7 @@ export default class CardHead extends Component {
   	const {children,center} = this.props
   	const posicao = center?'auto':''
     return (
-      <div className="card-header">
+      <div className="card-header" >
         {children}
       </div>
     );

@@ -40,6 +40,7 @@ export default class HomeListasScreen extends Component {
     }
 
     componentDidMount() {
+        document.title = "Listas - professor";
         this.getListas();
     }
 

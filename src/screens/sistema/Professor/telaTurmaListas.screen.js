@@ -20,9 +20,11 @@ export default class Pagina extends Component {
         };
     }
 
-    componentDidMount() {
-        this.getInfoTurma()
-        this.getListas() 
+    async componentDidMount() {
+        this.getListas()
+        await this.getInfoTurma()
+        document.title = `${this.state.turma} - listas`;
+         
         //this.getTodasListas()
     }
     async getInfoTurma(){

@@ -15,6 +15,7 @@ import 'brace/theme/monokai';
 
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
+import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import TableResults from '../../../components/ui/tables/tableResults.component'
@@ -49,6 +50,9 @@ export default class Editor extends Component {
       percentualAcerto:'',
       redirect:'',
     }
+  }
+  componentDidMount(){
+    document.title = "Criar Exercício - professor";
   }
 
   async handleTitleChange(e){
@@ -199,8 +203,10 @@ export default class Editor extends Component {
 
     <TemplateSistema active='criarExercicio'>
     <Card>
-      <CardHead center>
-          <h2><i className="fa fa-code"></i> Nova questão</h2>
+      <CardHead>
+          <CardTitle center>
+            <h2><i className="fa fa-code"></i> Nova questão</h2>
+          </CardTitle>
       </CardHead>
       <CardBody>
       <FormExercicio

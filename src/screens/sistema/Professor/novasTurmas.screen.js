@@ -35,6 +35,9 @@ export default class NovasTurmasScreen extends Component {
         perfil: sessionStorage.getItem("user.profile")
 
     };
+    componentDidMount(){
+        document.title = "Criar Turma - professor";
+    }
 
     cadastro = event => {
         console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.Id_P)

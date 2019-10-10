@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect ,Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -9,7 +9,6 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
-import {Collapse} from 'react-bootstrap'
 
 import api from '../../../services/api'
 import socket from 'socket.io-client'
@@ -35,20 +34,20 @@ export default class TurmasScreen extends Component {
     constructor(props){
         super(props)
         this.state = {
-            redirect: false,
-            munhasTurmas: [],
+            minhasTurmas: [],
             loadingTurmas:false,
             contentInputSeach:'',
             fildFilter:'name',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
-            showDescription:false,
+            descriptions:[],
         }
         this.handlePage = this.handlePage.bind(this)
     }
 
     async componentDidMount() {
+        document.title = "Início - professor";
         await this.getMinhasTurmas();
         this.getMinhasTurmasRealTime();
     }
@@ -64,7 +63,7 @@ export default class TurmasScreen extends Component {
             console.log(response.data.docs)
             //console.log(query);
             this.setState({
-                munhasTurmas : [...response.data.docs],
+                minhasTurmas : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
                 loadingTurmas:false,
@@ -76,7 +75,7 @@ export default class TurmasScreen extends Component {
     };
     getMinhasTurmasRealTime(){
         const io = socket("http://localhost:3001")      
-        for(let turma of this.state.munhasTurmas){
+        for(let turma of this.state.minhasTurmas){
             io.emit('connectRoonRequestClass',turma.id)//conectando à todas salas (minhas Turmas)
         }
         io.on('RequestsClass',async response=>{
@@ -84,9 +83,17 @@ export default class TurmasScreen extends Component {
             this.getMinhasTurmas(false)
         })
     }
-    handleShowDescription(){
-        console.log('handleShowDescription');
-        this.setState({showDescription:!this.state.showDescription})
+    async handleShowDescription(id){
+        console.log('descriptions');
+        const {descriptions} = this.state
+        const index = descriptions.indexOf(id)
+        if(index==-1){
+            await this.setState({descriptions:[id,...descriptions]})
+        }
+        else{
+            await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!=index)]})
+        }
+        
     }
     handlePage(e,numPage){
         e.preventDefault()
@@ -129,7 +136,7 @@ export default class TurmasScreen extends Component {
 
     render() {
 
-        const {redirect,fildFilter,loadingTurmas,contentInputSeach,munhasTurmas,numPageAtual,totalPages,showDescription} = this.state
+        const {redirect,fildFilter,loadingTurmas,contentInputSeach,minhasTurmas,numPageAtual,totalPages,descriptions} = this.state
         const range = num => {
             let arr =[]
             for(let i=0;i<num;i++) arr.push(i);
@@ -146,7 +153,7 @@ export default class TurmasScreen extends Component {
                             type="button"
                             style={botao}
                         >
-                            Nova Turma <i className="fa fa-plus-circle" /> <i className="fa fa-users" />
+                            Nova Turma  <i className="fa fa-users" /> <i className="fa fa-plus-circle" />
                         </Link>
                     </div>
                 </div>
@@ -175,18 +182,23 @@ export default class TurmasScreen extends Component {
                         </div>
                     ))
                 :
-                    munhasTurmas.map((turma, index) => (
+                    minhasTurmas.map((turma, index) => (
                         <div key={index} className="col-6">
                             <br></br>
                             <Card>
                                 <CardHead>
                                     <CardTitle>
-                                        <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
+                                        <i className="fa fa-users" /><b>{turma.name} - {turma.year}.{turma.semester || 1}</b>
                                     </CardTitle>
                                     <CardOptions>
-                                      <button onClick={(e)=>this.handleShowDescription(e)} className='btn btn-secondary btn-sm' type="button" data-toggle="collapse" data-target={'#collapse'+turma.id} aria-expanded="false" aria-controls={'#collapse'+turma.id}>
-                                        <i className='fe fe-chevron-up' />
-                                      </button>
+                                        <i
+                                          title='Ver descrição'
+                                          style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
+                                          className={`fa fa-info-circle`} 
+                                          onClick={(e)=>this.handleShowDescription(turma.id)}
+                                          data-toggle="collapse" data-target={'#collapse'+turma.id} 
+                                          aria-expanded={descriptions.includes(turma.id)}
+                                        />
                                     </CardOptions>
                                 </CardHead>
 

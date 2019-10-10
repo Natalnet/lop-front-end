@@ -20,9 +20,11 @@ export default class Pagina extends Component {
         this.handlePage = this.handlePage.bind(this)
     }
 
-    componentDidMount() {
-        this.getInfoTurma()
+    async componentDidMount() {
         this.getParticipantes()
+        await this.getInfoTurma()
+        document.title = `${this.state.turma} - listas`;
+        
     }
     async getInfoTurma(){
         const id = this.props.match.params.id

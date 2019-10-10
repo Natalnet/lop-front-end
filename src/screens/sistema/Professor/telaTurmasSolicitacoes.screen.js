@@ -26,9 +26,10 @@ export default class Pagina extends Component {
         turma:''
       };
     }
-    componentDidMount() {
-        this.getInfoTurma()
+    async componentDidMount() {
         this.getSolicitacoes()
+        await this.getInfoTurma()
+        document.title = `${this.state.turma} - Solicitações`;
         this.getSolicitacoesRealTime()
     }
     async getInfoTurma(){
