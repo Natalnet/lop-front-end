@@ -10,9 +10,12 @@
 import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
-
+import SubMenuTurmas from './subMenuTurma.menu'
 export default class MenuAluno extends Component {
   render() {
+    if(this.props.submenu==='telaTurmas')
+    return <SubMenuTurmas {...this.props}/>
+    else
     return (
       <div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
         <div className="container">
@@ -20,27 +23,15 @@ export default class MenuAluno extends Component {
             <div className="col-lg order-lg-first">
               <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                 <li className="nav-item">
-                  <Link to="/aluno" className="nav-link">
+                  <Link to="/aluno" className={`nav-link ${this.props.active==='home'?'active':''}`}>
                     <i className="fe fe-home" />
                     Início
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/aluno/turmasAbertas" className="nav-link">
-                    <i className="fe fe-bar-chart" />
-                    Turmas abertas
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/aluno/atividades" className="nav-link">
-                    <i className="fe fe-bar-chart" />
-                    Atividades
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/aluno/avisos" className="nav-link">
-                    <i className="fe fe-briefcase" />
-                    Avisos
+                  <Link to="/aluno/listas" className={`nav-link ${this.props.active==='listas'?'active':''}`}>
+                    <i className="fe fe-file-text" />
+                    turmas Abertas
                   </Link>
                 </li>
               </ul>

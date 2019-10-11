@@ -58,7 +58,7 @@ export default class HomeAlunoScreen extends Component {
                       <h5 className="">Ano: {turma.year}.2{turma.semester}</h5>
                       <hr></hr>
                       <p className="card-text">Descrição: {turma.description}</p>
-                      <a href={`/sistema/aluno/turma/${turma._id}`} className="btn btn-primary">Entrar</a>
+                      <a href={`/aluno/turma/${turma._id}/participantes`} className="btn btn-primary">Entrar</a>
                   </CardBody>
               </Card>
             </div>

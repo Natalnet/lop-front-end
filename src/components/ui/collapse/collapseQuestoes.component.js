@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 import {Button, Collapse} from 'react-bootstrap'
-
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 export default (props) =>{
     const questao = props.questoes
     console.log(questao.title)
@@ -37,6 +38,9 @@ export default (props) =>{
                     <div id="example-collapse-text">
                     <b>Descrição: </b>
                     <p>{questao.description}</p>
+                    <br/>
+                    <BlockMath>{questao.katexDescription}</BlockMath>
+                    <>{console.log(questao)}</>
                     </div>
                     </Collapse>
                 </div>
