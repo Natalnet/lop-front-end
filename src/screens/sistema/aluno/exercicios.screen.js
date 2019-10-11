@@ -35,7 +35,7 @@ export default class ExerciciosScreen extends Component {
 
     }
     componentDidMount() {
-        document.title = "Exercícios - professor";
+        document.title = "Exercícios";
         this.getExercicios();
     }
     async getExercicios(){

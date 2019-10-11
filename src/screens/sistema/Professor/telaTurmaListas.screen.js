@@ -24,7 +24,7 @@ export default class Pagina extends Component {
         this.getListas()
         this.getTodasListas()
         await this.getInfoTurma()
-        document.title = `${this.state.turma} - listas`;
+        document.title = `${this.state.turma.name} - listas`;
          
         //this.getTodasListas()
     }
@@ -43,34 +43,37 @@ export default class Pagina extends Component {
         }
     }
 
-    async inserirLista(List){
-        console.log("Cheguei")
-        console.log(List.id)
-        // const idTurma = this.props.match.params.id
-        // try{
-        //   Swal.fire({
-        //     title:'Processando',
-        //     allowOutsideClick:false,
-        //     allowEscapeKey:false,
-        //     allowEnterKey:false
-        //   })
-        //   Swal.showLoading()
-        //   if(idList.id!==undefined){
-        //     const response = await api.post(`/class/${idTurma}/addList/list/${idList.id}`)
-        //   }
-        //   Swal.hideLoading()
-        //   Swal.fire({
-        //       type: 'success',
-        //       title: 'Lista Adicionada com Sucesso!',
-        //   })
-        // }
-        // catch(err){
-        //   Swal.hideLoading()
-        //   Swal.fire({
-        //       type: 'error',
-        //       title: 'ops... Lista não pôde ser adicionado',
-        //   })
-        // } 
+    async inserirLista(list){
+        console.log("id da lista")
+        console.log(list.id)
+        const idTurma = this.props.match.params.id
+        try{
+            if(list.id){
+              Swal.fire({
+                title:'Processando',
+                allowOutsideClick:false,
+                allowEscapeKey:false,
+                allowEnterKey:false
+              })
+              Swal.showLoading()
+              
+              const response = await api.post(`/class/${idTurma}/addList/list/${list.id}`)
+              await this.getTodasListas()
+              await this.getListas()
+              Swal.hideLoading()
+              Swal.fire({
+                  type: 'success',
+                  title: 'Lista Adicionada com Sucesso!',
+              })
+            }
+        }
+        catch(err){
+          Swal.hideLoading()
+          Swal.fire({
+              type: 'error',
+              title: 'ops... Lista não pôde ser adicionado',
+          })
+        } 
     }
 
     async getListas(){
@@ -89,12 +92,10 @@ export default class Pagina extends Component {
     async getTodasListas(){
         try{
             const id = this.props.match.params.id
-            const response = await api.get(`/listQuestion`)
+            const response = await api.get(`/listQuestion/class/${id}/page/1`)
             console.log('listas');
-            console.log(response.data);
-
-            this.setState({todasListas:response.data})
-
+            console.log(response.data.docs);
+            this.setState({todasListas:response.data.docs})
         }catch(err){
             console.log(err)
         

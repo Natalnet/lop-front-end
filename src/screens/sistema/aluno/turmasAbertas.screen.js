@@ -38,7 +38,7 @@ export default class HomeAlunoScreen extends Component {
     await this.getTurmasSolicitadas()
     await this.getTurmasAbertas()
     this.getTurmasAbertasRealTime()
-    document.title = "Sistema Aluno - Plataforma LOP";
+    document.title = "Início | LoP";
   }
   async getTurmasSolicitadas(){
     try{

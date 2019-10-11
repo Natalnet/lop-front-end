@@ -17,9 +17,9 @@ export default props =>{
                         </Link>
                         </li>
                         <li className="nav-item">
-                        <Link to={`/aluno/turma/${id}/participantes`} className={`nav-link ${active==='participantes'?'active':''}`}>
-                            <i className="fa fa-users" />
-                            Participantes
+                        <Link to={`/aluno/turma/${id}/dashboard`} className={`nav-link ${active==='dashBoard'?'active':''}`}>
+                            <i className="fa fa-pie-chart" />
+                            DashBoard
                         </Link>
                         </li>
                         <li className="nav-item">
@@ -28,6 +28,13 @@ export default props =>{
                             Listas
                         </Link>
                         </li>
+                        <li className="nav-item">
+                        <Link to={`/aluno/turma/${id}/participantes`} className={`nav-link ${active==='participantes'?'active':''}`}>
+                            <i className="fa fa-users" />
+                            Participantes
+                        </Link>
+                        </li>
+
                         <li className="nav-item">
                         <Link to={`/aluno/turma/${id}/provas`} className={`nav-link ${active==='provas'?'active':''}`}
                         >

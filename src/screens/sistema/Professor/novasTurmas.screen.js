@@ -24,10 +24,10 @@ export default class NovasTurmasScreen extends Component {
     state = {
         redirect: false,
         name: "",
-        year: "",
-        semester: "",
+        year: new Date().getFullYear().toString(),
+        semester: new Date().getMonth()<6?"1":"2",
         description: "",
-        state: "",
+        state: "ATIVA",
         professorsName: [],
         items: [],
         Id_P: [],
@@ -39,18 +39,20 @@ export default class NovasTurmasScreen extends Component {
         document.title = "Criar Turma - professor";
     }
 
-    cadastro = event => {
-        console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.Id_P)
-
+    async cadastro(event){
         event.preventDefault();
-
+        console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.Id_P)
         if (this.state.name === "") {
-          this.setState({ msg: "Informe o nome da turma" });
-        } else if (this.state.year === "" || this.state.year > 2020 || this.state.year < 2010 ) {
-          this.setState({ msg: "Informe o ano" });
-        } else if (this.state.Id_P.length === 0) {
-          this.setState({ msg: "Selecione os professores" });
-        }else{
+            this.setState({ msg: "Informe o nome da turma" });
+        } 
+        else if (this.state.year === "" || this.state.year > 2020 || this.state.year < 2010 ) {
+            this.setState({ msg: "Informe o ano" });
+        } 
+        else if (this.state.Id_P.length === 0) {
+            this.setState({ msg: "Selecione os professores" });
+        }
+        else
+        {
             const requestInfo = {
                 name: this.state.name,
                 year: this.state.year,
@@ -59,34 +61,32 @@ export default class NovasTurmasScreen extends Component {
                 state: this.state.state,
                 professores: this.state.Id_P
             };
-
-            api
-                .post("/class/store", requestInfo)
-                .then(response => {
-                if (response) {
-                    Swal.fire({
-                    type: "success",
-                    }).then(result => {
-                    if (result.value) {
-                    return this.setState({redirect:true});
-                    }
-                    });
-                } else {
-                    throw new Error("Failed to register");
-                }
+            Swal.fire({
+                title:'Processando',
+                allowOutsideClick:false,
+                allowEscapeKey:false,
+                allowEnterKey:false
+            })
+            Swal.showLoading()
+            try{
+                const response = await api.post("/class/store", requestInfo)
+                Swal.hideLoading()
+                Swal.fire({
+                    type: 'success',
+                    title: 'Turma criada com sucesso!',
                 })
-                .catch(err => {
+                this.setState({redirect:true});
+            }
+            catch(err){
+                Swal.hideLoading()
+                Swal.fire({
+                    type: 'error',
+                    title: 'Erro: Não foi possivel cadastrar a Turma',
+                })
                 this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });
-                });
+            };
         }
     };
-
-    renderRedirect = () => {
-        if (this.state.redirect) {
-          return <Redirect to='/sistema/turmas' />
-        }
-      }
-
     componentDidMount() {
         this.getProfessores();
         document.title = "Realizar Cadastro de turmas - Plataforma LOP";
@@ -133,7 +133,7 @@ export default class NovasTurmasScreen extends Component {
                 ],
             Id_P: [
                 ...this.state.Id_P,
-                user._id
+                user.id
                 ]
         });
 
@@ -146,7 +146,7 @@ export default class NovasTurmasScreen extends Component {
             }
         }
         for (var i = this.state.Id_P.length-1; i >=0; i--) {
-            if(user._id === this.state.Id_P[i]){
+            if(user.id === this.state.Id_P[i]){
                 this.state.Id_P.splice(i, 1);
             }
         }
@@ -160,11 +160,13 @@ export default class NovasTurmasScreen extends Component {
     };
 
     render() {
-        
+        if (this.state.redirect) {
+          return <Redirect to='/professor' />
+        }
         return (
         <TemplateSistema active='home'>
             <div className="container-fluid">
-                <form onSubmit={this.cadastro}>
+                <form onSubmit={(e)=>this.cadastro(e)}>
                     <div className="row">
                         <div className="form-group form-control col-12">
                             <div className="align-self-center">
@@ -200,10 +202,9 @@ export default class NovasTurmasScreen extends Component {
                                     <select 
                                         className="form-control" 
                                         id="exampleFormControlSelect1" 
-                                        value={this.state.semester} 
+                                        defaultValue={this.state.semester} 
                                         onChange={this.handleSemesterChange}
                                     >
-                                        <option>selecione....</option>
                                         <option value="1">1ºSemestre</option>
                                         <option value="2">2ºSemestre</option>
                                     </select>
@@ -226,11 +227,11 @@ export default class NovasTurmasScreen extends Component {
                             <select 
                                 className="form-control" 
                                 id="exampleFormControlSelect1" 
-                                value={this.state.state} 
+                                defaultValue={this.state.state} 
                                 onChange={this.handleStateChange}
                             >
-                                <option>ATIVA</option>
-                                <option>INATIVA</option>
+                                <option value={"ATIVA"}>ATIVA</option>
+                                <option value={"INATIVA"}>INATIVA</option>
                             </select>
                             
                             <br></br>
@@ -239,7 +240,7 @@ export default class NovasTurmasScreen extends Component {
 
                             <Select
                                 style={{boxShadow: "white"}}
-                                options={this.state.items.map(t => ({ _id: t._id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
+                                options={this.state.items.map(t => ({ _id: t.id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
                                 closeMenuOnSelect={false}
                                 onChange={this.handleProfessorsChange.bind(this)}                                
                             />
@@ -278,11 +279,8 @@ export default class NovasTurmasScreen extends Component {
                             </table>
                             <hr></hr>
                             <div>
-                                {this.renderRedirect()}
-                                <button style={botao} type="submit" className="btn btn-primary" onClick={this.cadastro} >Cadastrar</button>
+                                <button style={botao} type="submit" className="btn btn-primary">Cadastrar</button>
                             </div>
-                            
-
                         </div>
                     </div>
                 </form>

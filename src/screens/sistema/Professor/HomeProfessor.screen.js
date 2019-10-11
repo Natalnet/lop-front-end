@@ -188,7 +188,7 @@ export default class TurmasScreen extends Component {
                             <Card>
                                 <CardHead>
                                     <CardTitle>
-                                        <i className="fa fa-users" /><b>{turma.name} - {turma.year}.{turma.semester || 1}</b>
+                                        <i className="fa fa-users" /> <b>{turma.name} - {turma.year}.{turma.semester || 1}</b>
                                     </CardTitle>
                                     <CardOptions>
                                         <i

@@ -96,7 +96,7 @@ export default class HomeAlunoScreen extends Component {
                                 </div>
                                 
                                 <CardFooter>
-                                    <Link to={`/aluno/turma/${turma.id}/participantes`} style={{float: "right",}} className="btn btn-primary mr-2">
+                                    <Link to={`/aluno/turma/${turma.id}/dashboard`} style={{float: "right",}} className="btn btn-primary mr-2">
                                         <i className="fe fe-corner-down-right" /> Entrar
                                     </Link>
                                 </CardFooter>

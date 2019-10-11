@@ -29,7 +29,7 @@ export default class Pagina extends Component {
     async componentDidMount() {
         this.getSolicitacoes()
         await this.getInfoTurma()
-        document.title = `${this.state.turma} - Solicitações`;
+        document.title = `${this.state.turma.name} - Solicitações`;
         this.getSolicitacoesRealTime()
     }
     async getInfoTurma(){

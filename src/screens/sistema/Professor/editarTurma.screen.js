@@ -1,322 +1,304 @@
-import React, { Component,Fragment} from "react";
-import {Redirect} from 'react-router-dom'
+import React, { Component } from "react";
+import api from "../../../services/api";
+import Swal from "sweetalert2";
+import { Redirect } from 'react-router-dom';
+import Select from 'react-select';
+
 import TemplateSistema from "components/templates/sistema.template";
-import api from '../../../services/api'
-import apiCompiler from '../../../services/apiCompiler'
-import Swal from 'sweetalert2'
 
-import brace from 'brace';
-import AceEditor from 'react-ace';
-import 'brace/mode/c_cpp';
-import 'brace/mode/javascript';
-import 'brace/theme/monokai';
+const botao = {
+    marginTop: '10px',
+    float: 'right'
+};
+const titulo = {
+    alignItems: 'center'
+};
+const botao2 = {
+    float: 'right',
+    backgroundColor: "red",
+    borderColor: 'red',
+    color: 'white'
+};
 
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import TableResults from '../../../components/ui/tables/tableResults.component'
-import FormExercicio from '../../../components/ui/forms/formExercicio.component'
-import FormSelect from '../../../components/ui/forms/formSelect.component'
-import styleEditor from '../../../'
-import imgLoading from '../../../assets/loading.gif'
-import imgLoading1 from '../../../assets/loading1.gif'
-import imgLoading2 from '../../../assets/loading2.gif'
-
-export default class Editor extends Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      editor:'',
-      editorRes:'',
-      contentRes:"",
-      language:'javascript',
-      theme:'monokai',
-      response:[],
-      katexDescription:'',
-      status:'PÚBLICA',
-      difficulty:'Médio',
-      solution:'',
-      loadingReponse:false,
-      savingQuestion:false,
-      loadingEditor:false,
-      title:'',
-      description:'',
-      inputs:'',
-      outputs:'',
-      percentualAcerto:'',
-      redirect:'',
+export default class NovasTurmasScreen extends Component {
+    state = {
+        redirect: false,
+        name: "",
+        year: new Date().getFullYear().toString(),
+        semester: new Date().getMonth()<6?"1":"2",
+        description: "",
+        state: "ATIVA",
+        professorsName: [],
+        items: [],
+        Id_P: [],
+    };
+    async componentDidMount(){
+        document.title = "Editar Turma - professor";
+        await this.getInfoTurma()
+        this.getProfessores();  
     }
-  }
-  componentDidMount(){
-    document.title = "Editar Turma - professor";
-    this.getExercicio()
-  }
-  async getExercicio(){
-    const id = this.props.match.params.id
-    try{
-      this.setState({loadingExercicio:true})
-      const response = await api.get(`/question/${id}`)
-      //console.log(response.data);
-      const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
-      this.setState({
-        title : response.data.title,
-        description : response.data.description,
-        katexDescription:response.data.katexDescription || '',
-        status:response.data.status,
-        difficulty:response.data.difficulty,
-        solution:response.data.solution,
-        inputs:inputs,
-        outputs:outputs,
-        loadingExercicio:false
-      })
-    }
-    catch(err){
-      this.setState({loadingExercicio:false})
-      console.log(Object.getOwnPropertyDescriptors(err));
-    } 
-  }
-  getInputsAndOutpus(results){
-    let inputs=[]
-    let output=[]
-     console.log('results');
-    for(let i=0 ; i<results.length ; i++ ){
-      console.log(results[i]);
-      inputs.push(results[i].inputs.slice(0,-1).split('\n').join(','))
-      output.push(results[i].output.split('\n').join('|'))
-    }
-    inputs = inputs.join('\n')
-    output = output.join('\n')
-    console.log(inputs);
-    return [inputs,output]
-  }
-  async handleTitleChange(e){
-      this.setState({
-        title:e.target.value
-      })
-  }
-  async handleDescriptionChange(e){
-      this.setState({
-        description:e.target.value
-      })
-  }
-  async handlekatexDescription(e){
-    this.setState({
-      katexDescription:e.target.value
-    })
-  }
-
-  async handleStatus(e){
-    console.log(e.target.value);
-    this.setState({status:e.target.value})
-  }
-  async handleDifficulty(e){
-    this.setState({
-      difficulty:e.target.value
-    })
-  }
-  async handleInputsChange(e){
-      this.setState({
-        inputs:e.target.value
-      })
-  }
-  async handleOutputsChange(e){
-      this.setState({
-        outputs:e.target.value
-      })
-  }
-  async changeLanguage(e){
-    await this.setState({language:e.target.value})
-  }
-  async changeTheme(e){
-    await this.setState({theme:e.target.value})
-
-  }
-  handleSolution(newValue){
-    this.setState({solution:newValue})
-  }
-  async executar(e){
-    e.preventDefault()
-    const {solution,language} = this.state
-    const request = {
-      codigo : solution,
-      linguagem :language==='c_cpp'?'cpp':language,
-      results : this.getResults()
-    }
-    this.setState({loadingReponse:true})
-    try{
-      const response = await apiCompiler.post('/submission/exec',request)
-      this.setState({ loadingReponse:false})
-      console.log(response.data);
-      if(response.status===200){
+    async getInfoTurma(){
+      const id = this.props.match.params.id
+      try{
+        const response = await api.get(`/class/${id}`)
+        console.log(response);
         this.setState({
-          response:response.data.results,
-          percentualAcerto:response.data.percentualAcerto,
-          contentRes:response.data.info,
+          name: response.data.name,
+          year: response.data.year,
+          semester: response.data.semester,
+          description: response.data.description,
+          state: response.data.description.state,
+          professorsName: response.data.users,
+          Id_P: response.data.users.map(p=>p.id),
         })
       }
-    }
-    catch(err){
-      Object.getOwnPropertyDescriptors(err)
-      this.setState({loadingReponse:false})
-      alert('erro na conexão com o servidor')
-    }
-    
-  }
-  getResults(){
-    const {inputs,outputs} = this.state
-    const entradas = inputs.split('\n')
-    const saidas = outputs.split('\n')
-    console.log('saidas: '+saidas);
-    const resultados = []
-    for(let i=0 ; i<entradas.length ; i++ ){
-      resultados.push({
-        inputs: (entradas[i].split(',').map(inp => inp+'\n')).join(''),
-        output: saidas[i].split('|').join('\n')
-      })
-    }
-    return resultados
-  }
-  async updateQuestion(e){
-    const id = this.props.match.params.id
-    Swal.fire({
-      title:'Atualizando questão',
-      allowOutsideClick:false,
-      allowEscapeKey:false,
-      allowEnterKey:false
-    })
-    Swal.showLoading()
-    console.log('katexDescription:');
-    console.log(this.state.katexDescription);
-    const request = {
-      title : this.state.title,
-      description : this.state.description,
-      katexDescription:this.state.katexDescription,
-      status:this.state.status,
-      difficulty:this.state.difficulty,
-      solution:this.state.solution,
-      results : this.getResults()
-    }
-    try{
-      this.setState({savingQuestion:true})
-      const response = await api.put(`/question/update/${id}`,request)
-      Swal.hideLoading()
-      Swal.fire({
-          type: 'success',
-          title: 'Questão atualizada com sucesso!',
-      })
-      this.setState({savingQuestion:false})
-      console.log(response.data)
-    }
-    catch(err){
-      Swal.hideLoading()
-      Swal.fire({
-          type: 'error',
-          title: 'ops... Questão não pôde ser atualizada',
-      })
-      this.setState({savingQuestion:false})
-      console.log(Object.getOwnPropertyDescriptors(err));
-
-    }
-  }
-
-  render() {
-    const {percentualAcerto,response,redirect,status,difficulty,katexDescription,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio } = this.state;
-
-
-    return (
-    <TemplateSistema active='ecercicios'>
-    <Card>
-      <CardHead center>
-          <h2><i className="fa fa-edit"></i> Atualizar questão</h2>
-      </CardHead>
-      <CardBody loading={loadingExercicio}>
-      <FormExercicio
-        title={title}
-        description={description}
-        inputs={inputs}
-        outputs={outputs}
-        katexDescription={katexDescription}
-        status={status}
-        difficulty={difficulty}
-        loadingReponse={loadingReponse}
-        handleTitleChange={this.handleTitleChange.bind(this)}
-        handleDescriptionChange={this.handleDescriptionChange.bind(this)}
-        handlekatexDescription={this.handlekatexDescription.bind(this)}
-        handleStatus={this.handleStatus.bind(this)}
-        handleDifficulty={this.handleDifficulty.bind(this)}
-        handleInputsChange={this.handleInputsChange.bind(this)}
-        handleOutputsChange={this.handleOutputsChange.bind(this)}
-      />
-      <FormSelect
-        loadingReponse={loadingReponse}
-        changeLanguage={this.changeLanguage.bind(this)}
-        changeTheme={this.changeTheme.bind(this)}
-        executar={this.executar.bind(this)}
-      />
-          <div className='row'>
-            <div className='col-6'>
-              <AceEditor
-                mode={language}
-                theme={theme}
-                focus={false}
-                onChange={this.handleSolution.bind(this)}
-                value={solution}
-                fontSize={14}
-                width='100%'
-                name="ACE_EDITOR"
-                showPrintMargin={true}
-                showGutter={true}
-                enableLiveAutocompletion={true}
-                enableBasicAutocompletion={true}
-                highlightActiveLine={true}
-                setOptions={{
-                  enableBasicAutocompletion: true,
-                  enableLiveAutocompletion: true,
-                  enableSnippets: true,
-                  showLineNumbers: true,
-                  tabSize: 2,
-                }}
-              />
-            </div>
-           {loadingReponse?
-           <div className="card" className ="col-6 text-center">
-              <img src={imgLoading2} width="300px" />           
-           </div>:
-           <div className="col-6">
-                <AceEditor
-                  mode='javascript'
-                  readOnly={true}
-                  width={'100%'}
-                  showGutter={false}
-                  focus={false}
-                  theme={theme}
-                  value={contentRes}
-                  fontSize={14}
-                  name="ACE_EDITOR_RES"
-                  editorProps={{$blockScrolling: true}}
-                />
-           </div>
-           }
-          </div>
+      catch(err){
+          this.setState({loadingInfoTurma:false})
+          console.log(err);
+      }
+    }   
+    async cadastro(event){
+        event.preventDefault();
+        console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.Id_P)
+        if (this.state.name === "") {
+            this.setState({ msg: "Informe o nome da turma" });
+        } 
+        else if (this.state.year === "" || this.state.year > 2020 || this.state.year < 2010 ) {
+            this.setState({ msg: "Informe o ano" });
+        } 
+        else if (this.state.Id_P.length === 0) {
+            this.setState({ msg: "Selecione os professores" });
+        }
+        else
+        {
+            const requestInfo = {
+                name: this.state.name,
+                year: this.state.year,
+                semester: this.state.semester,
+                description: this.state.description,
+                state: this.state.state,
+                professores: this.state.Id_P
+            };
+            Swal.fire({
+                title:'Processando',
+                allowOutsideClick:false,
+                allowEscapeKey:false,
+                allowEnterKey:false
+            })
+            Swal.showLoading()
+            try{
+                const response = await api.post("/class/store", requestInfo)
+                Swal.hideLoading()
+                Swal.fire({
+                    type: 'success',
+                    title: 'Turma criada com sucesso!',
+                })
+                this.setState({redirect:true});
+            }
+            catch(err){
+                Swal.hideLoading()
+                Swal.fire({
+                    type: 'error',
+                    title: 'Erro: Não foi possivel cadastrar a Turma',
+                })
+                this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });
+            };
+        }
+    };
+    async getProfessores(){
+        try{
+            const response = await api.get('/user/get/professores')
+            this.setState({items:response.data})
+        }catch(err){
+            console.log(err)
         
-        <div className='row'>
-            <div className="card" className ="col-12">
-              <TableResults 
-                response={response}
-                percentualAcerto={percentualAcerto}
-              />
+        }
+    };
+
+    handleNameChange = e => {
+    this.setState({ name: e.target.value });
+    };
+    handleYearChange = e => {
+    this.setState({ year: e.target.value });
+    };
+    handleSemesterChange = e => {
+    this.setState({ semester: e.target.value });
+    };
+    handleDescriptionChange = e => {
+    this.setState({ description: e.target.value });
+    };
+    handleStateChange = e => {
+    this.setState({ state: e.target.value });
+    };
+    handleProfessorsChange = user => {
+        
+        for (var i = this.state.items.length -1; i >=0; i--) {
+            if(user.name === this.state.items[i].name){
+                this.state.items.splice(i, 1);  
+            }
+        }
+        console.log(this.state.items)
+
+        this.setState({
+            professorsName: [
+                ...this.state.professorsName,
+                user
+                ],
+            Id_P: [
+                ...this.state.Id_P,
+                user.id
+                ]
+        });
+
+    };
+
+    excluir = user =>{
+        for (var i = this.state.professorsName.length -1; i >=0; i--) {
+            if(user.name === this.state.professorsName[i].name){
+                this.state.professorsName.splice(i, 1);
+            }
+        }
+        for (var i = this.state.Id_P.length-1; i >=0; i--) {
+            if(user.id === this.state.Id_P[i]){
+                this.state.Id_P.splice(i, 1);
+            }
+        }
+
+        this.setState({
+            items: [
+                ...this.state.items,
+                user
+                ]
+        });
+    };
+
+    render() {
+        if (this.state.redirect) {
+          return <Redirect to='/professor' />
+        }
+        return (
+        <TemplateSistema active='home'>
+            <div className="container-fluid">
+                <form onSubmit={(e)=>this.cadastro(e)}>
+                    <div className="row">
+                        <div className="form-group form-control col-12">
+                            <div className="align-self-center">
+                                 <h1 styler={titulo}>Cadastro de Turmas:</h1><br></br>
+                            </div>    
+
+                            <span className="alert-danger">{this.state.msg}</span>
+                            <br></br>
+
+                            <label htmlFor="">Nome: </label>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Nome de turma"
+                                value={this.state.name}
+                                onChange={this.handleNameChange}
+                            />
+
+                            <div className="row">
+                                <div className="col-6">
+                                    <label  htmlFor="">Ano: </label>
+                                    <input 
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="ex.: 2019"
+                                        value={this.state.year}
+                                        onChange={this.handleYearChange}
+                                    />
+                                </div>
+
+                                <div className="col-6">
+                                    <label htmlFor="exampleFormControlSelect1">semestre: </label>
+                                    <select 
+                                        className="form-control" 
+                                        id="exampleFormControlSelect1" 
+                                        defaultValue={this.state.semester} 
+                                        onChange={this.handleSemesterChange}
+                                    >
+                                        <option value="1">1ºSemestre</option>
+                                        <option value="2">2ºSemestre</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label  htmlFor="">Descrição</label>
+                                <textarea 
+                                    className="form-control" 
+                                    id="" 
+                                    rows="5"
+                                    value={this.state.description}
+                                    onChange={this.handleDescriptionChange}
+                                >
+                                </textarea>
+                            </div>
+
+                            <label htmlFor="exampleFormControlSelect1">Status</label>
+                            <select 
+                                className="form-control" 
+                                id="exampleFormControlSelect1" 
+                                defaultValue={this.state.state} 
+                                onChange={this.handleStateChange}
+                            >
+                                <option value={"ATIVA"}>ATIVA</option>
+                                <option value={"INATIVA"}>INATIVA</option>
+                            </select>
+                            
+                            <br></br>
+                            <hr></hr>
+                            <h3>Professores:</h3>
+
+                            <Select
+                                style={{boxShadow: "white"}}
+                                options={this.state.items.map(t => ({ id: t.id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
+                                closeMenuOnSelect={false}
+                                onChange={this.handleProfessorsChange.bind(this)}                                
+                            />
+
+                            <br></br>
+
+                            <h4>Professores Selecionados: </h4>
+                            <br></br>
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nome:</th>
+                                        <th>Matrícula:</th>
+                                        <th>E-mail:</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {this.state.professorsName.map((professor, index) => (
+                                        <tr key={index}>
+                                            <td className='text-center'>
+                                                <div 
+                                                    className="avatar d-block" 
+                                                    style={
+                                                        {backgroundImage: `url(${professor.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
+                                                    }
+                                                />
+                                            </td>
+                                            <td>{professor.name}</td>
+                                            <td>{professor.enrollment}</td>
+                                            <td>{professor.email}</td>
+                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <hr></hr>
+                            <div>
+                                <button style={botao} type="submit" className="btn btn-primary">Cadastrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </div>
-        </CardBody>
-        <CardFooter loading={loadingExercicio}>
-          <button onClick={e => this.updateQuestion(e)} className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
-            <i className="fa fa-save"></i> Atualizar
-          </button>         
-        </CardFooter>
-      </Card>
-    </TemplateSistema>
-    );
-  }
+        </TemplateSistema>
+        )
+    }
 }
