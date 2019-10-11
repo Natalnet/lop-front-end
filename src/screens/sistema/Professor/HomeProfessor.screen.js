@@ -1,12 +1,15 @@
 import React, { Component } from "react";
-import { Redirect ,Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
+
 import api from '../../../services/api'
 import socket from 'socket.io-client'
 
@@ -31,20 +34,20 @@ export default class TurmasScreen extends Component {
     constructor(props){
         super(props)
         this.state = {
-            redirect: false,
-            munhasTurmas: [],
+            minhasTurmas: [],
             loadingTurmas:false,
             contentInputSeach:'',
             fildFilter:'name',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
-            perfil: localStorage.getItem("user.profile")
+            descriptions:[],
         }
         this.handlePage = this.handlePage.bind(this)
     }
 
     async componentDidMount() {
+        document.title = "Início - professor";
         await this.getMinhasTurmas();
         this.getMinhasTurmasRealTime();
     }
@@ -60,7 +63,7 @@ export default class TurmasScreen extends Component {
             console.log(response.data.docs)
             //console.log(query);
             this.setState({
-                munhasTurmas : [...response.data.docs],
+                minhasTurmas : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
                 loadingTurmas:false,
@@ -72,13 +75,25 @@ export default class TurmasScreen extends Component {
     };
     getMinhasTurmasRealTime(){
         const io = socket("http://localhost:3001")      
-        for(let turma of this.state.munhasTurmas){
-            io.emit('connectRoonRequestClass',turma._id)//conectando à todas salas (minhas Turmas)
+        for(let turma of this.state.minhasTurmas){
+            io.emit('connectRoonRequestClass',turma.id)//conectando à todas salas (minhas Turmas)
         }
         io.on('RequestsClass',async response=>{
             console.log(response);
             this.getMinhasTurmas(false)
         })
+    }
+    async handleShowDescription(id){
+        console.log('descriptions');
+        const {descriptions} = this.state
+        const index = descriptions.indexOf(id)
+        if(index==-1){
+            await this.setState({descriptions:[id,...descriptions]})
+        }
+        else{
+            await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!=index)]})
+        }
+        
     }
     handlePage(e,numPage){
         e.preventDefault()
@@ -118,16 +133,14 @@ export default class TurmasScreen extends Component {
     }
 
 
+
     render() {
 
-        const {redirect,fildFilter,loadingTurmas,contentInputSeach,munhasTurmas,numPageAtual,totalPages,perfil} = this.state
+        const {redirect,fildFilter,loadingTurmas,contentInputSeach,minhasTurmas,numPageAtual,totalPages,descriptions} = this.state
         const range = num => {
             let arr =[]
             for(let i=0;i<num;i++) arr.push(i);
             return arr
-        }
-        if(perfil!=="PROFESSOR"){
-            return <Redirect to="/401" />;
         }
         return (
         <TemplateSistema active='home'>
@@ -140,7 +153,7 @@ export default class TurmasScreen extends Component {
                             type="button"
                             style={botao}
                         >
-                            Nova Turma <i className="fa fa-plus-circle" /> <i className="fa fa-users" />
+                            Nova Turma  <i className="fa fa-users" /> <i className="fa fa-plus-circle" />
                         </Link>
                     </div>
                 </div>
@@ -169,38 +182,50 @@ export default class TurmasScreen extends Component {
                         </div>
                     ))
                 :
-                    munhasTurmas.map((turma, index) => (
+                    minhasTurmas.map((turma, index) => (
                         <div key={index} className="col-6">
                             <br></br>
                             <Card>
                                 <CardHead>
-                                    
-                                    <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester || 1}
-                                    
-                                    {/*<div className="card-options">
-                                      <label className="custom-switch m-0">
-                                        <input type="checkbox" value="1" className="custom-switch-input" checked/>
-                                        <span className="custom-switch-indicator"></span>
-                                      </label>
-                                    </div>*/}
+                                    <CardTitle>
+                                        <i className="fa fa-users" /><b>{turma.name} - {turma.year}.{turma.semester || 1}</b>
+                                    </CardTitle>
+                                    <CardOptions>
+                                        <i
+                                          title='Ver descrição'
+                                          style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
+                                          className={`fa fa-info-circle`} 
+                                          onClick={(e)=>this.handleShowDescription(turma.id)}
+                                          data-toggle="collapse" data-target={'#collapse'+turma.id} 
+                                          aria-expanded={descriptions.includes(turma.id)}
+                                        />
+                                    </CardOptions>
                                 </CardHead>
-                                <CardBody>
-                                    <span title={`${turma.students.length+turma.professores.length} participante(s)`} className="avatar avatar-cyan mr-1">
-                                        {turma.students.length+turma.professores.length}
+
+                                <div className="collapse" id={'collapse'+turma.id}>
+                                    <CardBody>
+                                        {turma.description}
+                                    </CardBody>
+                                </div>
+                                
+                                <CardFooter>
+                                    <span title={`${turma.users.length} participante(s)`}  className="avatar avatar-cyan mr-1">
+                                        {turma.users.length}
                                     </span>
                                     <span title={`${0} aluno(s) online`} className="avatar avatar-teal mr-1">
                                         0
                                     </span>
-                                    
-                                </CardBody>
-                                    <CardFooter>
-                                        <Link to={`/professor/turma/${turma._id}/editar`} style={botaoV} className="btn btn-success mr-2">
-                                            <i className="fa fa-edit" /> Editar
-                                        </Link>
-                                        <Link to={`/professor/turma/${turma._id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
-                                            <i className="fe fe-corner-down-right" /> Entrar
-                                        </Link>
-                                    </CardFooter>
+                                    <span title={`${turma.solicitationsToClass.length} solicitação(ões)`} className="avatar avatar-red mr-1">
+                                        {turma.solicitationsToClass.length}
+                                    </span>
+
+                                    <Link to={`/professor/turma/${turma.id}/editar`} style={botaoV} className="btn btn-success mr-2">
+                                        <i className="fa fa-edit" /> Editar
+                                    </Link>
+                                    <Link to={`/professor/turma/${turma.id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
+                                        <i className="fe fe-corner-down-right" /> Entrar
+                                    </Link>
+                                </CardFooter>
                                 
                             </Card>
                         </div>

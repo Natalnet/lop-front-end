@@ -26,9 +26,10 @@ export default class Pagina extends Component {
         turma:''
       };
     }
-    componentDidMount() {
-        this.getInfoTurma()
+    async componentDidMount() {
         this.getSolicitacoes()
+        await this.getInfoTurma()
+        document.title = `${this.state.turma} - Solicitações`;
         this.getSolicitacoesRealTime()
     }
     async getInfoTurma(){
@@ -50,11 +51,11 @@ export default class Pagina extends Component {
         const id = this.props.match.params.id
         try{
             if(loadingResponse) this.setState({loading:true})
-            const response = await api.get(`/solicitation/users/class/${id}`)
+            const response = await api.get(`/class/${id}/solicitations`)
             console.log('solicitações')
             console.log(response.data);
             this.setState({
-                solicitacoes:[...response.data].map(solicitacao=>solicitacao.user),
+                solicitacoes:[...response.data],
                 loading:false,
                 loadingUsers:false
             })
@@ -85,7 +86,7 @@ export default class Pagina extends Component {
             allowEnterKey:false
           })
           Swal.showLoading()
-          const response = await api.put(`/solicitation/${idTurma}/acceptSolicit/user/${idUser}`)
+          const response = await api.post(`/class/${idTurma}/acceptSolicit/user/${idUser}`)
           //console.log(response);
           await this.removeSolicitacao(idUser)
           this.getSolicitacoes()
@@ -114,8 +115,8 @@ export default class Pagina extends Component {
             allowEnterKey:false
           })
           Swal.showLoading()
-          const response = await api.delete(`/solicitation/${idTurma}/removeSolicitation/user/${idUser}`)
-          //console.log(response);
+          const response = await api.delete(`/class/${idTurma}/removeSolicitation/user/${idUser}`)
+          console.log(response.data);
           this.getSolicitacoes()
           Swal.hideLoading()
           Swal.fire({
@@ -185,10 +186,10 @@ export default class Pagina extends Component {
                                 <td>{user.email}</td>
                                 <td>{user.enrollment}</td>
                                 <td>
-                                    <button onClick={()=>this.aceitaSolicitacao(user._id)} className="btn btn-success mr-2">
+                                    <button onClick={()=>this.aceitaSolicitacao(user.id)} className="btn btn-success mr-2">
                                         <i className="fa fa-user-plus"/>
                                     </button>
-                                    <button onClick={()=> this.removeSolicitacao(user._id)} className="btn btn-danger mr-2">
+                                    <button onClick={()=> this.removeSolicitacao(user.id)} className="btn btn-danger mr-2">
                                         <i className="fa fa-user-times" />
                                     </button>
                                 </td>

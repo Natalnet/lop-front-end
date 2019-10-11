@@ -23,7 +23,7 @@ export default class ConfirmRegister extends Component {
       .then(response => {
         if (response) {
           sessionStorage.setItem("auth-token", response.data.token);
-          sessionStorage.setItem("user.id", response.data.user._id);
+          sessionStorage.setItem("user.id", response.data.user.id);
           sessionStorage.setItem("user.profile", response.data.user.profile);
           sessionStorage.setItem("user.name", response.data.user.name);
           sessionStorage.setItem("user.email", response.data.user.email);

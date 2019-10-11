@@ -1,5 +1,4 @@
 import ReactDOM from 'react-dom';
-
 import 'sweetalert2/src/sweetalert2.scss';
 
 import * as serviceWorker from './serviceWorker';

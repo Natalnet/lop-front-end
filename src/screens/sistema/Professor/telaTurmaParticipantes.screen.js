@@ -20,9 +20,11 @@ export default class Pagina extends Component {
         this.handlePage = this.handlePage.bind(this)
     }
 
-    componentDidMount() {
-        this.getInfoTurma()
+    async componentDidMount() {
         this.getParticipantes()
+        await this.getInfoTurma()
+        document.title = `${this.state.turma} - listas`;
+        
     }
     async getInfoTurma(){
         const id = this.props.match.params.id
@@ -47,7 +49,7 @@ export default class Pagina extends Component {
             const response = await api.get(`/class/${id}/participants`)
             console.log(response);
             this.setState({
-                participantes:response.data.docs,
+                participantes:[...response.data],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
                 loadingParticipantes:false,

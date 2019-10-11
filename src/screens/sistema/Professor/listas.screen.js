@@ -40,6 +40,7 @@ export default class HomeListasScreen extends Component {
     }
 
     componentDidMount() {
+        document.title = "Listas - professor";
         this.getListas();
     }
 
@@ -52,8 +53,10 @@ export default class HomeListasScreen extends Component {
         try{
             this.setState({loadingListas:true})
             const response = await api.get(`/listQuestion/page/${numPageAtual}?${query}`)
+            console.log('listas');
+            console.log(response.data.docs);
             this.setState({
-                listas : response.data.docs,
+                listas : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
                 loadingListas:false
@@ -171,7 +174,7 @@ export default class HomeListasScreen extends Component {
                                             <td className="text-center">
                                             <BotaoModal
                                                 lista={lista}
-                                            />                                              
+                                            />                                             
                                             </td>
                                         </tr>
                                         
