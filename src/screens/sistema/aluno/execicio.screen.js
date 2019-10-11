@@ -7,7 +7,7 @@ import apiCompiler from '../../../services/apiCompiler'
 import TableResults from '../../../components/ui/tables/tableResults.component'
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
 import FormSelect from '../../../components/ui/forms/formSelect.component'
-
+import TemplateSistema from '../../../components/templates/sistema.template'
 import CardEnunciado from '../../../components/ui/card/cardEnunciadoExercicio.component'
 import styleEditor from '../../../assets/Editor.css'
 import imgLoading from '../../../assets/loading.gif'
@@ -39,10 +39,9 @@ export default class Editor extends Component {
     }
     this.idTurma = this.props.match.params.idTurma
     this.idLista = this.props.match.params.idLista
-    this.idExercicio = this.props.match.params.idExercicio
+    this.idExercicio = this.props.match.params.id
   }
   async componentWillMount(){
-
     try{
       const response = await api.get(`/question/${this.idExercicio}`)
       console.log('results:');
@@ -206,6 +205,8 @@ export default class Editor extends Component {
     }
     else{
     return (
+
+    <TemplateSistema>
     <div className="container">
         <div className='row'>
           <div className ="col-12">
@@ -257,6 +258,7 @@ export default class Editor extends Component {
           }
         </div>
     </div>
+    </TemplateSistema>
     );
     }
   }

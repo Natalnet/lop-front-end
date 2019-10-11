@@ -2,6 +2,7 @@ import React,{useState} from 'react';
 import {Button, Collapse} from 'react-bootstrap'
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
+import { Link } from "react-router-dom";
 
 
 var var_katex = null;
@@ -54,6 +55,8 @@ export default (props) =>{
                     <br/>
                     {katex(questao.katexDescription)}
                     <BlockMath>{var_katex}</BlockMath>
+                    <br/>
+                    <a href={`http://localhost:3000/aluno/exercicio/${questao.id}`} className ="btn btn-primary float-right" style={{margin:'10px'}}>Acessar</a>
                     <>{console.log(questao)}</>
                     </div>
                     </Collapse>

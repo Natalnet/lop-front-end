@@ -102,20 +102,7 @@ export default class ExerciciosScreen extends Component {
             <div>
                 <h1 styler={titulo}>Exercicios</h1><br></br>
                 <div className="row">
-                    <div className="col-3">
-                        <div>
-                            <Link to="/professor/criarExercicio">
-                            <button 
-                                className="btn btn-primary"
-                                type="button"
-                                style={botao}
-                            >
-                                Criar Exercicio +
-                            </button>
-                            </Link>
-                        </div>
-                    </div>
-                    <div className="mb-3 col-9">     
+                    <div className="mb-3 col-12">     
                         <InputGroup
                             placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
@@ -170,7 +157,7 @@ export default class ExerciciosScreen extends Component {
                                     <td>{exercicio.createdBy && exercicio.createdBy.email}</td>
                                     <td>{formataData(exercicio.createdAt)}</td>
                                     <td>
-                                        <Link to={`/aluno/exercicios/${exercicio.id}`} className="btn btn-success mr-2">
+                                        <Link to={`/aluno/exercicio/${exercicio.id}`} className="btn btn-success mr-2">
                                             Acessar <i className="fa fa-wpexplorer" />
                                         </Link>
                                     </td>

@@ -11,7 +11,7 @@ export default props =>{
                     <div className="col-lg order-lg-first">
                     <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                        <li className="nav-item">
-                        <Link to="/professor" className="nav-link">
+                        <Link to="/aluno" className="nav-link">
                             <i className="fa fa-arrow-left" />
                             Voltar
                         </Link>
