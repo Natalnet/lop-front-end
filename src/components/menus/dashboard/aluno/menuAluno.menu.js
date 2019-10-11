@@ -29,11 +29,6 @@ export default class MenuAluno extends Component {
                   </Link>
                 </li>
                 <li className="nav-item">
-<<<<<<< HEAD
-                  <Link to="/aluno/listas" className={`nav-link ${this.props.active==='listas'?'active':''}`}>
-                    <i className="fe fe-file-text" />
-                    turmas Abertas
-=======
                   <Link to="/aluno/turmasAbertas" className={`nav-link ${this.props.active==='turmasAbertas'?'active':''}`}>
                     <i className="fe fe-users" />
                     Turmas abertas
@@ -43,7 +38,6 @@ export default class MenuAluno extends Component {
                   <Link to="/aluno/exercicios" className={`nav-link ${this.props.active==='exercicios'?'active':''}`}>
                     <i className="fa fa-code" />
                     Exercícios
->>>>>>> refs/remotes/origin/desenvolvimento
                   </Link>
                 </li>
               </ul>

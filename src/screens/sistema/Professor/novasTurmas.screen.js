@@ -230,7 +230,7 @@ export default class NovasTurmasScreen extends Component {
                                 onChange={this.handleStateChange}
                             >
                                 <option>ATIVA</option>
-                                <option>DESATIVADA</option>
+                                <option>INATIVA</option>
                             </select>
                             
                             <br></br>
