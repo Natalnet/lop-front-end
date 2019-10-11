@@ -2,6 +2,19 @@ import React,{useState} from 'react';
 import {Button, Collapse} from 'react-bootstrap'
 import 'katex/dist/katex.min.css';
 import { InlineMath, BlockMath } from 'react-katex';
+
+
+var var_katex = null;
+
+function katex(katex){
+    if(katex!==null){
+        var_katex=katex;
+    }
+    else{
+        var_katex="";
+    }
+};
+
 export default (props) =>{
     const questao = props.questoes
     console.log(questao.title)
@@ -39,7 +52,8 @@ export default (props) =>{
                     <b>Descrição: </b>
                     <p>{questao.description}</p>
                     <br/>
-                    <BlockMath>{questao.katexDescription}</BlockMath>
+                    {katex(questao.katexDescription)}
+                    <BlockMath>{var_katex}</BlockMath>
                     <>{console.log(questao)}</>
                     </div>
                     </Collapse>

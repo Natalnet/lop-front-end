@@ -3,7 +3,7 @@ import Teste from '../../../components/ui/modal/btnModal.component'
 
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
-
+import Swal from 'sweetalert2'
 import BtnModal from 'components/ui/modal/btnModal.component'
 import BotaoModal from "components/ui/modal/btnModalLista.component"
 
@@ -22,6 +22,7 @@ export default class Pagina extends Component {
 
     async componentDidMount() {
         this.getListas()
+        this.getTodasListas()
         await this.getInfoTurma()
         document.title = `${this.state.turma} - listas`;
          
@@ -42,9 +43,34 @@ export default class Pagina extends Component {
         }
     }
 
-    async inserirLista(id){
+    async inserirLista(List){
         console.log("Cheguei")
-        console.log(id)
+        console.log(List.id)
+        // const idTurma = this.props.match.params.id
+        // try{
+        //   Swal.fire({
+        //     title:'Processando',
+        //     allowOutsideClick:false,
+        //     allowEscapeKey:false,
+        //     allowEnterKey:false
+        //   })
+        //   Swal.showLoading()
+        //   if(idList.id!==undefined){
+        //     const response = await api.post(`/class/${idTurma}/addList/list/${idList.id}`)
+        //   }
+        //   Swal.hideLoading()
+        //   Swal.fire({
+        //       type: 'success',
+        //       title: 'Lista Adicionada com Sucesso!',
+        //   })
+        // }
+        // catch(err){
+        //   Swal.hideLoading()
+        //   Swal.fire({
+        //       type: 'error',
+        //       title: 'ops... Lista não pôde ser adicionado',
+        //   })
+        // } 
     }
 
     async getListas(){

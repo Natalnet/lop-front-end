@@ -113,51 +113,7 @@ export default class Pagina extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {loadingParticipantes
-                        ?
-                            <tr>
-                                <td>
-                                    <div className="loader" />
-                                </td>
-                                <td>                                        
-                                    <div className="loader" />
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>                                        
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                            </tr>           
-                        :
-                            participantes.map((user, index) => (
-                                <tr key={index}>
-                                    <td className='text-center'>
-                                        <div 
-                                            className="avatar d-block" 
-                                            style={
-                                                {backgroundImage: `url(${user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                            }
-                                        />
-                                    </td>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.enrollment}</td>
-                                    <td>{user.profile}</td>
-                                    <td>
-                                        <button className="btn btn-primary mr-2">
-                                            <i className="fa fa-info"/>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        }
+                       
                     </tbody>
                 </table>
                 <div className='row'>
