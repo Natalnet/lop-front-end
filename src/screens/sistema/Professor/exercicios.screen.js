@@ -22,7 +22,7 @@ export default class HomeExerciciosScreen extends Component {
         super(props)
         this.state = {
             contentInputSeach:'',
-            exercicíos: [],
+            exercicios: [],
             showModal:false,
             loadingExercicios:false,
             fildFilter:'title',

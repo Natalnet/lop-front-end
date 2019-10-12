@@ -1,12 +1,17 @@
-import React, { Component } from "react";
-import Teste from '../../../components/ui/modal/btnModal.component'
-
+import React, { Component,Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
-import BtnModal from 'components/ui/modal/btnModal.component'
-import BotaoModal from "components/ui/modal/btnModalLista.component"
-
+import {Modal} from 'react-bootstrap'
+import 'katex/dist/katex.min.css';
+import {BlockMath } from 'react-katex';
+import NavPagination from "components/ui/navs/navPagination";
+import InputGroup from "components/ui/inputGroup/inputGroupo.component";
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
 export default class Pagina extends Component {
 
     constructor(props){
@@ -16,16 +21,27 @@ export default class Pagina extends Component {
             items: [],
             loadingInfoTurma:true,
             turma:'',
+            loandingTodasListas:true,
+            loandingListas:false,
+            showModalListas:false,
+            showModalInfo:false,
             todasListas: [],
+            numPageAtual:1,
+            totalItens:0,
+            totalPages:0,
+            contentInputSeach:'',
+            fildFilter:'title',
+            questions:[]
         };
     }
 
     async componentDidMount() {
+
         this.getListas()
         this.getTodasListas()
+
         await this.getInfoTurma()
         document.title = `${this.state.turma.name} - listas`;
-         
         //this.getTodasListas()
     }
     async getInfoTurma(){
@@ -43,29 +59,26 @@ export default class Pagina extends Component {
         }
     }
 
-    async inserirLista(list){
-        console.log("id da lista")
-        console.log(list.id)
+    async inserirLista(idLista){
         const idTurma = this.props.match.params.id
         try{
-            if(list.id){
               Swal.fire({
-                title:'Processando',
+                title:'Adicionando lista',
                 allowOutsideClick:false,
                 allowEscapeKey:false,
                 allowEnterKey:false
               })
               Swal.showLoading()
               
-              const response = await api.post(`/class/${idTurma}/addList/list/${list.id}`)
+              const response = await api.post(`/class/${idTurma}/addList/list/${idLista}`)
               await this.getTodasListas()
-              await this.getListas()
               Swal.hideLoading()
               Swal.fire({
                   type: 'success',
                   title: 'Lista Adicionada com Sucesso!',
               })
-            }
+              this.getListas()
+            
         }
         catch(err){
           Swal.hideLoading()
@@ -80,6 +93,7 @@ export default class Pagina extends Component {
         try{
             const id = this.props.match.params.id
             const response = await api.get(`/class/${id}/lists`)
+            console.log('listas');
             console.log(response.data);
             this.setState({items:[...response.data]})
 
@@ -90,21 +104,74 @@ export default class Pagina extends Component {
     };
 
     async getTodasListas(){
+        const {numPageAtual,contentInputSeach,fildFilter} = this.state
+        let query = `include=${contentInputSeach.trim()}`
+        query += `&fild=${fildFilter}`
         try{
+            this.setState({loandingTodasListas:true})
             const id = this.props.match.params.id
-            const response = await api.get(`/listQuestion/class/${id}/page/1`)
-            console.log('listas');
+            const response = await api.get(`/listQuestion/class/${id}/page/${numPageAtual}?${query}`)
+            console.log('todasListas');
             console.log(response.data.docs);
-            this.setState({todasListas:response.data.docs})
+            this.setState({
+                todasListas:[...response.data.docs],
+                totalItens : response.data.total,
+                totalPages : response.data.totalPages,
+                loandingTodasListas:false
+            })
         }catch(err){
+            this.setState({loandingTodasListas:false})
             console.log(err)
         
         }
     };
+    handlePage(e,numPage){
+        e.preventDefault()
+        //console.log(numPage);
+        this.setState({
+            numPageAtual:numPage
+        },()=>this.getTodasListas())
+    }
+    handleShowModalInfo(questions){
+        this.setState({
+            showModalInfo:true,
+            questions:[...questions]
+        })
+    }
+    handleCloseshowModalInfo(e){
+        this.setState({showModalInfo:false})
+    }
+    handleShowModalListas(e){
+        this.setState({showModalListas:true})
+    }
+    handleCloseshowModalListas(e){
+        this.setState({showModalListas:false})
+    }
+
+    handleSelectfildFilter(e){
+        console.log(e.target.value);
+        this.setState({
+            fildFilter:e.target.value
+        }/*,()=>this.getTodasListas()*/)
+    }
+
+    handleContentInputSeach(e){
+        this.setState({
+            contentInputSeach:e.target.value
+        }/*,()=>this.getTodasListas()*/)
+    }
+    filterSeash(){
+        this.getTodasListas()
+    }
+    clearContentInputSeach(){
+        this.setState({
+            contentInputSeach:''
+        },()=>this.getTodasListas()) 
+    }
     
     render() {
-        
-        const {loadingInfoTurma,turma} = this.state
+        const {loadingInfoTurma,turma,todasListas,loandingTodasListas,totalPages,numPageAtual} = this.state
+        const {contentInputSeach,fildFilter,showModalListas,questions,showModalInfo,loandingListas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
             <div>
@@ -115,10 +182,9 @@ export default class Pagina extends Component {
                 }
                 <br/>
                 <div className="col-3">
-                <BtnModal
-                    onClick={this.inserirLista.bind(this)}
-                    listas={this.state.todasListas}
-                />
+                    <button className="btn btn-primary" onClick={()=>this.handleShowModalListas()}>
+                        Adicionar novas listas
+                    </button>
                 </div>
                 <br/>
 
@@ -140,24 +206,158 @@ export default class Pagina extends Component {
                                    <td>{lista.title}</td>
                                    <td>{lista.code}</td>
                                    <td className="float-right">
-                                       <BotaoModal
-                                            lista={lista}
-                                       />
+                                       <button className="btn btn-primary float-right" onClick={()=>this.handleShowModalInfo(lista.questions)}>
+                                            <i className="fa fa-info"/>
+                                       </button>
                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
-
-                <div className="col-6">
-                    <table>
-
-                    </table>
-                </div>
             </div>
 
+                <Modal
+                  show={showModalListas} onHide={this.handleCloseshowModalListas.bind(this)}
+                  size="lg"
+                  aria-labelledby="contained-modal-title-vcenter"
+                  centered
+                >
+                    <Modal.Header>
+                      <Modal.Title id="contained-modal-title-vcenter">
+                        Listas
+                      </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                    <Fragment>
+                    <div className='row'>
+                        <div className=" col-12">     
+                            <InputGroup
+                                placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
+                                value={contentInputSeach}
+                                handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+                                filterSeash={this.filterSeash.bind(this)}
+                                handleSelect={this.handleSelectfildFilter.bind(this)}
+                                options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
+                                clearContentInputSeach={this.clearContentInputSeach.bind(this)}
+                                loading={loandingTodasListas}                            
+                            />
+                        </div>
+                    </div>
+                    <br/>
+                    <div className="row">
+                        {loandingTodasListas 
+                        ?        
+                            <div className="loader" style={{margin:'0px auto'}}/>
+                        :
+                            
+                            todasListas.map((lista,index)=>(
+                                <div key={index} className="col-6"> 
+                                    <Card>
+                                        <CardHead>
+                                            <CardTitle>
+                                                {`${lista.title} - ${lista.code}`} 
+                                            </CardTitle>
+                                            <CardOptions>
+
+                                                <div className="btn-group  float-right" role="group" aria-label="Exemplo básico">
+                                                    <button className="btn-primary btn" onClick={()=>this.inserirLista(lista.id)} >Adicionar</button>
+                                                        <button
+                                                            className ="btn btn-primary"
+                                                            data-toggle="collapse" data-target={'#collapse'+lista.id}
+                                                            aria-expanded="example-collapse-text"
+                                                            style={{position: "relative"}}
+                                                        >
+                                                        <i className="fe fe-chevron-down"/>
+                                                    </button>
+                                                </div>
+                                            </CardOptions>
+                                        </CardHead>
+                                        <div className="collapse" id={'collapse'+lista.id}>
+                                            <CardBody>
+                                                <b>Questões: </b> <br/><br/>
+                                                {lista.questions.map((questoes, index)=>(
+                                                    <div key={index}>
+                                                        <p>{index+1+" - "+questoes.title}</p>
+                                                    </div>
+                                                ))}
+                                            </CardBody>
+                                        </div>
+                                    </Card>
+                                </div>
+                            ))
+                            
+                        }
+                    </div>
+                    <div className='row'>
+                        <div className='col-12 text-center'>
+                            <NavPagination
+                              totalPages={totalPages}
+                              pageAtual={numPageAtual}
+                              handlePage={this.handlePage.bind(this)}
+                            />
+                        </div>
+                    </div>
+                </Fragment>
+                </Modal.Body>
+              <Modal.Footer>
+                <button className="btn btn-primary" onClick={this.handleCloseshowModalListas.bind(this)}>Fechar</button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal
+                show={showModalInfo} onHide={this.handleCloseshowModalInfo.bind(this)}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+            <Modal.Header>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Questões
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="row">            
+                {questions.map((questao, index)=>(
+                    <div key={index} className="col-6"> 
+                        <Card >
+                            <CardHead>
+                                <CardTitle>
+                                    {questao.title}
+                                </CardTitle>
+                                <CardOptions>
+                                    <button
+                                        className ="btn btn-primary"
+                                        data-toggle="collapse" data-target={'#collapse'+questao.id}
+                                        aria-expanded="example-collapse-text"
+                                        style={{position: "relative"}}
+                                    >
+                                        <i className="fa fa-info"/>
+                                    </button>
+                                </CardOptions>
+                            </CardHead>
+                            <div className="collapse" id={'collapse'+questao.id}>
+                                <CardBody>
+                                <b>Descrição: </b>
+                                <p>{questao.description}</p>
+                                <br/>
+                                <BlockMath>{questao.katexDescription|| ''}</BlockMath>
+                                <br/>
+                                </CardBody>
+                            </div>
+                        </Card>
+                    </div>
+                ))}
+                </div>      
+                
+            </Modal.Body>
+            <Modal.Footer>
+                <button className="btn btn-primary" onClick={this.handleCloseshowModalInfo.bind(this)}>Fechar</button>
+            </Modal.Footer>
+            </Modal>
+
         </TemplateSistema>
+
         )
     }
 }

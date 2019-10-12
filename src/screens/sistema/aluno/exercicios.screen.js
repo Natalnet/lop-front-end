@@ -121,7 +121,7 @@ export default class ExerciciosScreen extends Component {
                         <tr>
                             <th>Nome</th>
                             <th>Código</th>
-                            <th>Execuções</th>
+                            <th>Submissões</th>
                             <th>Criado por</th>
                             <th>Criado em</th>
                             <th></th>
@@ -154,7 +154,7 @@ export default class ExerciciosScreen extends Component {
                                     <td>{exercicio.title}</td>
                                     <td>{exercicio.code}</td>
                                     <td>0{/*exercicio.executions.length*/}</td>
-                                    <td>{exercicio.createdBy && exercicio.createdBy.email}</td>
+                                    <td>{exercicio.author.email}</td>
                                     <td>{formataData(exercicio.createdAt)}</td>
                                     <td>
                                         <Link to={`/aluno/exercicio/${exercicio.id}`} className="btn btn-success mr-2">

@@ -30,7 +30,6 @@ export default class HomeListasScreen extends Component {
             showModal:false,
             loadingListas:false,
             fildFilter:'title',
-            contentInputSeach:'',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,

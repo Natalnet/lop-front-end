@@ -1,8 +1,7 @@
 import React,{Fragment,Component} from 'react';
 
+
 export default (props) => {
-	console.log('props tableExemplos:');
-	console.log(props);
 	const {title,description,id,results} = props
 	  return(
             <div className="card">
@@ -17,11 +16,7 @@ export default (props) => {
                   <div className="form-group col-md-3">
                     <h4>Exemplos</h4>
                   </div>
-                  <div className="form-group col-md-9 text-right">
-                    <a href={`/sistema/professor/exercicio/${id}/atualizar`}>Editar questão</a>
-                  </div>
                 </div>
-                
                   <table className="table">
                     <tbody>
                      <tr>

@@ -3,13 +3,21 @@ import {Redirect} from 'react-router-dom'
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
 import apiCompiler from '../../../services/apiCompiler'
-//import * as monaco from 'monaco-editor'
-import TableResults from '../../../components/ui/tables/tableResults.component'
+import brace from 'brace';
+import AceEditor from 'react-ace';
+import 'brace/mode/c_cpp';
+import 'brace/mode/javascript';
+import 'brace/theme/monokai';
+
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";import TableResults from '../../../components/ui/tables/tableResults.component'
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
 import FormSelect from '../../../components/ui/forms/formSelect.component'
 import TemplateSistema from '../../../components/templates/sistema.template'
 import CardEnunciado from '../../../components/ui/card/cardEnunciadoExercicio.component'
-import styleEditor from '../../../assets/Editor.css'
 import imgLoading from '../../../assets/loading.gif'
 import imgLoading1 from '../../../assets/loading1.gif'
 import imgLoading2 from '../../../assets/loading2.gif'
@@ -21,178 +29,120 @@ export default class Editor extends Component {
     this.state = {
       editor:'',
       editorRes:'',
-      content:"//code here...",
       contentRes:"",
       language:'javascript',
-      theme:'vs-dark',
+      theme:'monokai',
       response:[],
-      percentualAcerto:'',
+      katexDescription:'',
+      status:'PÚBLICA',
+      difficulty:'Médio',
+      solution:'',
+      results:[],
       loadingReponse:false,
-      loadingEditor:true,
+      loadingEditor:false,
       title:'',
+      someErro:false,
       description:'',
-      results:'',
       inputs:'',
       outputs:'',
+      percentualAcerto:'',
       redirect:'',
-      someErro:false
     }
-    this.idTurma = this.props.match.params.idTurma
-    this.idLista = this.props.match.params.idLista
-    this.idExercicio = this.props.match.params.id
   }
-  async componentWillMount(){
+
+  componentDidMount() {
+    this.getExercicio()
+  }
+  async getExercicio(){
+    const id = this.props.match.params.id
     try{
-      const response = await api.get(`/question/${this.idExercicio}`)
-      console.log('results:');
-      console.log(response.data.results);
+      this.setState({loadingExercicio:true})
+      const response = await api.get(`/question/${id}`)
+      console.log('questão');
+      console.log(response.data);
+      //const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
       this.setState({
-        title:response.data.title,
-        description:response.data.description,
-        results:response.data.results,
+        results : [...response.data.results],
+        title : response.data.title,
+        description : response.data.description,
+        katexDescription:response.data.katexDescription || '',
+        difficulty:response.data.difficulty,
+        loadingExercicio:false
       })
     }
     catch(err){
-      console.log(Object.getOwnPropertyDescriptors(err));
-    }  
+      this.setState({loadingExercicio:false})
+    } 
   }
-  componentDidMount() {
-    this.handleLoad();
-  }
-  //-----------------funções para carregar o editor---------------------//
-  handleLoad() {
-    // @note: safe to not check typeof window since it'll call on componentDidMount lifecycle:
-    if (!window.require) {
-      const loaderScript = window.document.createElement("script");
-      loaderScript.type = "text/javascript";
-      // @note: Due to the way AMD is being used by Monaco, there is currently no graceful way to integrate Monaco into webpack (cf. https://github.com/Microsoft/monaco-editor/issues/18):
-      loaderScript.src = "https://unpkg.com/monaco-editor/min/vs/loader.js";
-      loaderScript.addEventListener("load", this.didLoad);
-      window.document.body.appendChild(loaderScript);
-    } else {
-      this.didLoad();
-    }
-  }
-  async handleMount() {
-    console.log('editor montado');
-    await this.setState({loadingEditor:false})
-
-    const elementEditor = document.getElementById('monacoEditor')
-    elementEditor.innerHTML = ''
-
-    const { language,theme,content,contentRes,someErro } = this.state;
-    //editor de codigo
-    const editor = window.monaco.editor.create(elementEditor, {
-      value: content,
-      language,
-      theme,
-      roundedSelection: false,
-      scrollBeyondLastLine: false,
-      scrollBeyondLastColumn:false,
-      selectOnLineNumbers:false,
-      minimap:{enabled:false},
-      overviewRulerBorder:false,
-    });
-    await this.setState({editor:editor})
-
-    if(someErro){
-      const elementEditorRes = document.getElementById('monacoEditorRes1')
-      elementEditorRes.innerHTML = ''
-      //teste
-      const editorRes = window.monaco.editor.create(elementEditorRes, {
-        value: contentRes,
-        language:'javascript',
-        roundedSelection: false,
-        scrollBeyondLastLine: false,
-        scrollBeyondLastColumn:false,
-        selectOnLineNumbers:false,
-        minimap:{enabled:false},
-        overviewRulerBorder:false,
-        readOnly:true,
-      });
-      await this.setState({editorRes:editorRes})
-    }
-    return this.state.editor;
-  }
-  didLoad = e => {
-
-    window.require.config({
-      paths: { vs: "https://unpkg.com/monaco-editor/min/vs" }
-    });
-    window.require(["vs/editor/editor.main"], () => {
-      this.handleMount();
-    });
-
-    if (e) {
-      e.target.removeEventListener("load", this.didLoad);
-    }
-  }
-  //--------------------------------------------------------------------//
-
-  async changeLanguage(e){
-    const language = e.target.value;
-    const {editor,editorRes} = this.state
-    const content = editor?editor.getValue():''
-    const contentRes = editorRes?editorRes.getValue():''
-    
-    //console.log(' e.target.value: '+language)
-    await this.setState({
-      language,
-      contentRes,
-      content
-    })
-    //console.log('language: '+this.state.language);
-    this.handleMount()
-  }
-  async changeTheme(e){
-    const theme = e.target.value;
-    const {editor,editorRes} = this.state
-    const content = editor?editor.getValue():''
-    const contentRes = editorRes?editorRes.getValue():''
-    await this.setState({
-      theme,
-      content,
-      contentRes
-    })
-    this.handleMount()
-  }
-  async executar(e){
-    //console.log(e.target.value);
+  async submeter(e){
+    e.preventDefault()
+    const {solution,language,results} = this.state
     const request = {
-      codigo : this.state.editor.getValue(),
-      linguagem : this.state.language,
-      results:this.state.results
+      codigo : solution,
+      linguagem :language==='c_cpp'?'cpp':language,
+      results : results
     }
     this.setState({loadingReponse:true})
     try{
       const response = await apiCompiler.post('/submission/exec',request)
-      this.setState({loadingReponse:false})
+      console.log('sumbissão: ');
       console.log(response.data);
-      if(response.status===200){
-        this.setState({
-          response:response.data.results,
-          percentualAcerto:response.data.percentualAcerto,
-          contentRes:response.data.info,
-          someErro:response.data.someErro,
-          content: this.state.editor.getValue()
-        })
-        this.handleMount()
-        
-      }
+      this.setState({
+        loadingReponse:false,
+        response:response.data.results,
+        percentualAcerto:response.data.percentualAcerto,
+        contentRes:response.data.info,
+        someErro:response.data.someErro,
+      })
     }
     catch(err){
       Object.getOwnPropertyDescriptors(err)
       this.setState({loadingReponse:false})
-      this.setState({
-        content: this.state.editor.getValue()
-      })
-      this.handleMount()
       alert('erro na conexão com o servidor')
     }
     
   }
+  getInputsAndOutpus(results){
+    let inputs=[]
+    let output=[]
+    for(let i=0 ; i<results.length ; i++ ){
+      console.log(results[i]);
+      inputs.push(results[i].inputs.slice(0,-1).split('\n').join(','))
+      output.push(results[i].output.split('\n').join('|'))
+    }
+    inputs = inputs.join('\n')
+    output = output.join('\n')
+    console.log(inputs);
+    return [inputs,output]
+  }
+  /*getResults(){
+    const {inputs,outputs} = this.state
+    const entradas = inputs.split('\n')
+    const saidas = outputs.split('\n')
+    console.log('saidas: '+saidas);
+    const resultados = []
+    for(let i=0 ; i<entradas.length ; i++ ){
+      resultados.push({
+        inputs: (entradas[i].split(',').map(inp => inp+'\n')).join(''),
+        output: saidas[i].split('|').join('\n')
+      })
+    }
+    return resultados
+  }*/
+  async changeLanguage(e){
+    await this.setState({language:e.target.value})
+  }
+  async changeTheme(e){
+    await this.setState({theme:e.target.value})
+
+  }
+  handleSolution(newValue){
+    this.setState({solution:newValue})
+  }
   render() {
     const {response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results} = this.state
+    const { language,theme,contentRes,solution,loadingExercicio } = this.state;
+
     if(redirect){
       return <Redirect to={'/'} exact={true} />
     }
@@ -207,7 +157,6 @@ export default class Editor extends Component {
     return (
 
     <TemplateSistema>
-    <div className="container">
         <div className='row'>
           <div className ="col-12">
             <CardEnunciado
@@ -222,14 +171,28 @@ export default class Editor extends Component {
               loadingReponse={loadingReponse}
               changeLanguage={this.changeLanguage.bind(this)}
               changeTheme={this.changeTheme.bind(this)}
-              executar={this.executar.bind(this)}
+              executar={this.submeter.bind(this)}
             />
            </div>
          </div>
 
          <div className='row'>
            <div className="card" className ="col-12">
-             <div  id='monacoEditor' style={{height:"400px", width:"100%"}}/>
+              <AceEditor
+                mode={language}
+                theme={theme}
+                focus={false}
+                onChange={this.handleSolution.bind(this)}
+                value={solution}
+                fontSize={14}
+                width='100%'
+                name="ACE_EDITOR"
+                showPrintMargin={true}
+                showGutter={true}
+                enableLiveAutocompletion={true}
+                enableBasicAutocompletion={true}
+                highlightActiveLine={true}
+              />
            </div>
          </div>
         <div className='row'>
@@ -243,21 +206,34 @@ export default class Editor extends Component {
            <Fragment>
             {someErro?
               <div className="card" className ="col-12">
-                <div id='monacoEditorRes1' style={{height:"200px", width:"100%"}}/>
+                <AceEditor
+                  mode='javascript'
+                  readOnly={true}
+                  width={'100%'}
+                  height={'100px'}
+                  showGutter={false}
+                  focus={false}
+                  theme={theme}
+                  value={contentRes}
+                  fontSize={14}
+                  name="ACE_EDITOR_RES"
+                  editorProps={{$blockScrolling: true}}
+                />
               </div>
-            :''
+            :null
             }
             
-            <div className="card" className ="col-12">
-              <TableResults 
-                response={response}
-                percentualAcerto={percentualAcerto}
-              />
-            </div>
+          <div className='row'>
+              <div className="card" className ="col-12">
+                <TableResults 
+                  response={response}
+                  percentualAcerto={percentualAcerto}
+                />
+              </div>
+          </div>
           </Fragment>
           }
         </div>
-    </div>
     </TemplateSistema>
     );
     }
