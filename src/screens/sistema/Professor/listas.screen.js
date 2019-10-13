@@ -3,12 +3,17 @@ import { Link } from "react-router-dom";
 import NavPagination from "components/ui/navs/navPagination";
 
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
-import Modal from 'react-bootstrap/Modal';
-import BotaoModal from "components/ui/modal/btnModalLista.component"
+import {Modal} from 'react-bootstrap'
+import 'katex/dist/katex.min.css';
+import {BlockMath } from 'react-katex';
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import formataData from "../../../util/funçoesAuxiliares/formataData";
-
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
 
 const lista = {
     backgroundColor:"white"
@@ -27,12 +32,14 @@ export default class HomeListasScreen extends Component {
         this.state = {
             contentInputSeach:'',
             listas: [],
+            questions:[],
             showModal:false,
             loadingListas:false,
             fildFilter:'title',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
+            showModalInfo:false
         }
         this.handlePage = this.handlePage.bind(this)
 
@@ -65,11 +72,14 @@ export default class HomeListasScreen extends Component {
             console.log(err);
         }
     };
-    handleShowModal(){
-        this.setState({showModal:true})
+    handleShowModalInfo(questions){
+        this.setState({
+            showModalInfo:true,
+            questions:[...questions]
+        })
     }
-    handleCloseModal(){
-        this.setState({showModal:false})
+    handleCloseshowModalInfo(e){
+        this.setState({showModalInfo:false})
     }
     handlePage(e,numPage){
         e.preventDefault()
@@ -102,7 +112,7 @@ export default class HomeListasScreen extends Component {
 
 
     render() {
-        const {listas,showModal,fildFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,perfil} = this.state
+        const {listas,showModal,fildFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,showModalInfo,questions} = this.state
         return (
         <TemplateSistema active='listas'>
             <div>
@@ -171,9 +181,9 @@ export default class HomeListasScreen extends Component {
                                             <td>{lista.code}</td>
                                             <td>{formataData(lista.createdAt)}</td>
                                             <td className="text-center">
-                                            <BotaoModal
-                                                lista={lista}
-                                            />                                             
+                                            <button className="btn btn-primary float-right" onClick={()=>this.handleShowModalInfo(lista.questions)}>
+                                                <i className="fa fa-info"/>
+                                            </button>                                            
                                             </td>
                                         </tr>
                                         
@@ -194,6 +204,57 @@ export default class HomeListasScreen extends Component {
                     </div>
                 </div>
             </div>
+
+            <Modal
+                show={showModalInfo} onHide={this.handleCloseshowModalInfo.bind(this)}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+            <Modal.Header>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Questões
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="row">            
+                {questions.map((questao, index)=>(
+                    <div key={index} className="col-6"> 
+                        <Card >
+                            <CardHead>
+                                <CardTitle>
+                                    {questao.title}
+                                </CardTitle>
+                                <CardOptions>
+                                    <button
+                                        className ="btn btn-primary"
+                                        data-toggle="collapse" data-target={'#collapse'+questao.id}
+                                        aria-expanded="example-collapse-text"
+                                        style={{position: "relative"}}
+                                    >
+                                        <i className="fa fa-info"/>
+                                    </button>
+                                </CardOptions>
+                            </CardHead>
+                            <div className="collapse" id={'collapse'+questao.id}>
+                                <CardBody>
+                                <b>Descrição: </b>
+                                <p>{questao.description}</p>
+                                <br/>
+                                <BlockMath>{questao.katexDescription|| ''}</BlockMath>
+                                <br/>
+                                </CardBody>
+                            </div>
+                        </Card>
+                    </div>
+                ))}
+                </div>      
+                
+            </Modal.Body>
+            <Modal.Footer>
+                <button className="btn btn-primary" onClick={this.handleCloseshowModalInfo.bind(this)}>Fechar</button>
+            </Modal.Footer>
+            </Modal>
 
         </TemplateSistema>
         )

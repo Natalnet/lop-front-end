@@ -18,7 +18,7 @@ export default class Pagina extends Component {
         super(props)
         this.state = {
             redirect: false,
-            items: [],
+            listas: [],
             loadingInfoTurma:true,
             turma:'',
             loandingTodasListas:true,
@@ -90,14 +90,20 @@ export default class Pagina extends Component {
     }
 
     async getListas(){
+        const id = this.props.match.params.id
         try{
-            const id = this.props.match.params.id
+            
+            this.setState({loandingListas:true})
             const response = await api.get(`/class/${id}/lists`)
             console.log('listas');
             console.log(response.data);
-            this.setState({items:[...response.data]})
+            this.setState({
+                listas:[...response.data],
+                loandingListas:false,
+            })
 
         }catch(err){
+            this.setState({loandingListas:false})
             console.log(err)
         
         }
@@ -188,9 +194,11 @@ export default class Pagina extends Component {
                 </div>
                 <br/>
 
-                <div>
-                </div>
-
+                
+                {loandingListas
+                ?
+                    <div className="loader"  style={{margin:'0px auto'}}></div>
+                :
                 <div className="col-12">
                     <table  style={{backgroundColor:"white"}} className="table table-hover">
                         <thead>
@@ -201,7 +209,7 @@ export default class Pagina extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.items.map((lista, index)=>(
+                            {this.state.listas.map((lista, index)=>(
                                 <tr key={index}>
                                    <td>{lista.title}</td>
                                    <td>{lista.code}</td>
@@ -215,6 +223,7 @@ export default class Pagina extends Component {
                         </tbody>
                     </table>
                 </div>
+                }
             </div>
 
                 <Modal

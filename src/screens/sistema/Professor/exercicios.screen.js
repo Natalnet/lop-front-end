@@ -7,6 +7,16 @@ import NavPagination from "components/ui/navs/navPagination";
 import {Redirect} from 'react-router-dom'
 import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
+import SwalModal from "components/ui/modal/swalModal.component";
+import 'katex/dist/katex.min.css';
+import {BlockMath } from 'react-katex';
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
+
+
 const lista = {
     backgroundColor:"white"
 };
@@ -30,6 +40,7 @@ export default class HomeExerciciosScreen extends Component {
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
+            question:''
         }
         this.handlePage = this.handlePage.bind(this)
 
@@ -45,6 +56,8 @@ export default class HomeExerciciosScreen extends Component {
         try{
             this.setState({loadingExercicios:true})
             const response = await api.get(`/question/page/${numPageAtual}?${query}`)
+            console.log('exercicios:');
+            console.log(response.data.docs);
             this.setState({
                 exercicios : [...response.data.docs],
                 totalItens : response.data.total,
@@ -56,13 +69,15 @@ export default class HomeExerciciosScreen extends Component {
             console.log(err);
         }
     };
-
-
-    handleShowModal(){
-        this.setState({showModal:true})
+    handleShowModalInfo(question){
+        console.log(question);
+        this.setState({
+            question:question,
+            showModalInfo:true,
+        })
     }
-    handleCloseModal(){
-        this.setState({showModal:false})
+    handleCloseshowModalInfo(e){
+        this.setState({showModalInfo:false})
     }
     handlePage(e,numPage){
         e.preventDefault()
@@ -96,7 +111,7 @@ export default class HomeExerciciosScreen extends Component {
 
 
     render() {
-        const {exercicios,showModal,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages} = this.state
+        const {exercicios,showModalInfo,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,question} = this.state
         return (
         <TemplateSistema active='ecercicios'>
             <div>
@@ -134,7 +149,7 @@ export default class HomeExerciciosScreen extends Component {
                         <tr>
                             <th>Nome</th>
                             <th>Código</th>
-                            <th>Execuções</th>
+                            <th>Submissões</th>
                             <th>Criado por</th>
                             <th>Criado em</th>
                             <th></th>
@@ -167,10 +182,10 @@ export default class HomeExerciciosScreen extends Component {
                                     <td>{exercicio.title}</td>
                                     <td>{exercicio.code}</td>
                                     <td>0{/*exercicio.executions.length*/}</td>
-                                    <td>{exercicio.createdBy && exercicio.createdBy.email}</td>
+                                    <td>{exercicio.author.email}</td>
                                     <td>{formataData(exercicio.createdAt)}</td>
                                     <td>
-                                        <button className="btn btn-primary mr-2">
+                                        <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(exercicio)}>
                                             <i className="fa fa-info"/>
                                         </button>
                                         <Link to={`/professor/exercicios/${exercicio.id}/editar`} className="btn btn-success mr-2">
@@ -192,6 +207,24 @@ export default class HomeExerciciosScreen extends Component {
                     </div>
                 </div>
             </div>
+            <SwalModal
+                show={showModalInfo}
+                title="Exercício"
+                handleModal={this.handleCloseshowModalInfo.bind(this)}
+                width={'90%'}
+            >
+            <Card>
+                <CardHead>
+                    <CardTitle>
+                        {question.title}
+                    </CardTitle>
+                </CardHead>
+                <CardBody>
+                    {question.description}
+                    <BlockMath>{question.katexDescription|| ''}</BlockMath>
+                </CardBody>
+            </Card>
+            </SwalModal>
         </TemplateSistema>
         )
     }

@@ -62,7 +62,7 @@ export default class NovasTurmasScreen extends Component {
                 professores: this.state.Id_P
             };
             Swal.fire({
-                title:'Processando',
+                title:'Criando turma',
                 allowOutsideClick:false,
                 allowEscapeKey:false,
                 allowEnterKey:false
