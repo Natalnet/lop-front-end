@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
+import Swal from 'sweetalert2'
 import NavPagination from "components/ui/navs/navPagination";
 
 export default class Pagina extends Component {
@@ -42,10 +43,10 @@ export default class Pagina extends Component {
         }
     }
 
-    async getParticipantes(){
+    async getParticipantes(loading=true){
         const id = this.props.match.params.id
         try{
-            this.setState({loadingParticipantes:true})
+            if(loading) this.setState({loadingParticipantes:true})
             const response = await api.get(`/class/${id}/participants`)
             console.log(response);
             this.setState({
@@ -59,6 +60,45 @@ export default class Pagina extends Component {
         catch(err){
             this.setState({loadingParticipantes:false,})
             console.log(err);
+        }
+    }
+    async removerParticipante(user){
+        const idUser = user.id
+        const idTurma = this.props.match.params.id
+        try{
+            const {value} = await Swal.fire({
+                title: `Tem certeza que quer remover "${user.email}" da turma?`,
+                //text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, remover usuário!',
+                cancelButtonText:'Não, cancelar!'
+            })
+            if(!value) return null
+            Swal.fire({
+                title:'Removendo usuário',
+                allowOutsideClick:false,
+                allowEscapeKey:false,
+                allowEnterKey:false
+            })
+            Swal.showLoading()
+            const response = await api.delete(`/class/${idTurma}/remove/user/${idUser}`)
+            console.log(response.data);
+            this.getParticipantes(false)
+            Swal.hideLoading()
+            Swal.fire({
+                type: 'success',
+                title: 'Usuário removido com sucesso!',
+            })
+        }
+        catch(err){
+          Swal.hideLoading()
+          Swal.fire({
+              type: 'error',
+              title: 'ops... Usuário não pôde ser removido',
+          })
         }
     }
     handleShowModal(){
@@ -156,6 +196,12 @@ export default class Pagina extends Component {
                                         <button className="btn btn-primary mr-2">
                                             <i className="fa fa-info"/>
                                         </button>
+
+                                        {user.profile!=="PROFESSOR" && 
+                                        <button className="btn btn-danger" onClick={()=>this.removerParticipante(user)}>
+                                            <i className="fa fa-trash "/>
+                                        </button>
+                                        }
                                     </td>
                                 </tr>
                             ))

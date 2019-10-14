@@ -343,8 +343,6 @@ export default class CriarListaScreen extends Component {
                     <BlockMath>{question.katexDescription|| ''}</BlockMath>
                 </CardBody>
             </Card>
-            
-
             </SwalModal>
         </TemplateSistema>
         )

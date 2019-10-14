@@ -40,9 +40,9 @@ export default class HomeAlunoScreen extends Component {
     this.getTurmasAbertasRealTime()
     document.title = "Início | LoP";
   }
-  async getTurmasSolicitadas(){
+  async getTurmasSolicitadas(loading=true){
     try{
-      this.setState({loandingTurmasAbertas:true})
+      if(loading) this.setState({loandingTurmasAbertas:true})
       const response = await api.get('/user/solicitation/classes')
       console.log('turmas solicitdas');
       console.log(response.data);
@@ -56,9 +56,9 @@ export default class HomeAlunoScreen extends Component {
       console.log(err);
     }
   }
-  async getTurmasAbertas(){
+  async getTurmasAbertas(loading=true){
     try{
-      this.setState({loandingTurmasAbertas:true})
+      if(loading) this.setState({loandingTurmasAbertas:true})
       const response = await api.get(`/class/open/page/${this.state.numPageTurmasAbertas}`)
       console.log('turmas abertas:');
       console.log(response.data.docs);
@@ -80,8 +80,8 @@ export default class HomeAlunoScreen extends Component {
     console.log(sessionStorage.getItem('user.id'));
     io.emit('connectRoonMyRequestsClass',sessionStorage.getItem('user.id'))
     io.on('MyRequestsClass',async response=>{
-      await this.getTurmasSolicitadas()
-      this.getTurmasAbertas()
+      await this.getTurmasSolicitadas(false)
+      this.getTurmasAbertas(false)
     })
   }
   async handlePage(e,numPage){
@@ -104,8 +104,9 @@ export default class HomeAlunoScreen extends Component {
       const response = await api.post(`/user/solicit/class/${idClass}`)
       console.log('solicitação:');
       console.log(response.data);
-      this.getTurmasAbertas()
-      this.getTurmasSolicitadas()
+      await this.getTurmasSolicitadas(false)
+      this.getTurmasAbertas(false)
+      
       Swal.hideLoading()
       Swal.fire({
           type: 'success',
@@ -146,14 +147,15 @@ export default class HomeAlunoScreen extends Component {
       })
       Swal.showLoading()
       const response = await api.delete(`/user/removeSolicitation/class/${idTurma}`)
+      await this.getTurmasSolicitadas(false)
+      this.getTurmasAbertas(false)
       Swal.hideLoading()
       Swal.fire({
           type: 'success',
           title: 'Solicitação cancelada!',
       })
       //console.log(response);
-      this.getTurmasSolicitadas()
-      this.getTurmasAbertas()
+
       await this.setState({solicitando:''})
     }
     catch(err){

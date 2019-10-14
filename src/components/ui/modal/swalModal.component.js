@@ -12,7 +12,6 @@ export default (props) =>{
 			width:width,
 			showConfirmButton:false,
 			showCloseButton:true,
-			animation: false,
 			onClose: () => {
 	    		handleModal()
 	  		}
