@@ -112,6 +112,7 @@ export default class TurmasScreen extends Component {
     handleContentInputSeach(e){
         console.log(e.target.value);
         this.setState({
+            ...this.state,
             contentInputSeach:e.target.value
         }/*,()=>this.getMinhasTurmas()*/)
         

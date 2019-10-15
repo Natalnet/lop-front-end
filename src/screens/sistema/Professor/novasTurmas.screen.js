@@ -29,11 +29,15 @@ export default class NovasTurmasScreen extends Component {
         description: "",
         state: "ATIVA",
         professorsName: [],
-        items: [],
         Id_P: [],
         prof: "",
-        perfil: sessionStorage.getItem("user.profile")
-
+        items: [],
+        professorsName: [{
+            id:sessionStorage.getItem('user.id'),
+            email:sessionStorage.getItem('user.email'),
+            enrollment:sessionStorage.getItem('user.enrollment'),
+            name:sessionStorage.getItem('user.name'),
+        }],
     };
     componentDidMount(){
         document.title = "Criar Turma - professor";
@@ -95,7 +99,12 @@ export default class NovasTurmasScreen extends Component {
     async getProfessores(){
         try{
             const response = await api.get('/user/get/professores')
-            this.setState({items:response.data})
+            console.log(response.data);
+            console.log(sessionStorage.getItem('user.id'));
+            const professores = [...response.data].filter(prof=>prof.id!==sessionStorage.getItem('user.id'))
+            this.setState({
+                items:professores
+            })
         }catch(err){
             console.log(err)
         
@@ -165,7 +174,6 @@ export default class NovasTurmasScreen extends Component {
         }
         return (
         <TemplateSistema active='home'>
-            <div className="container-fluid">
                 <form onSubmit={(e)=>this.cadastro(e)}>
                     <div className="row">
                         <div className="form-group form-control col-12">
@@ -187,14 +195,22 @@ export default class NovasTurmasScreen extends Component {
 
                             <div className="row">
                                 <div className="col-6">
-                                    <label  htmlFor="">Ano: </label>
-                                    <input 
-                                        type="text" 
+                                    <label  htmlFor="exampleFormControlSelect0">Ano: </label>
+                                    <select 
                                         className="form-control" 
-                                        placeholder="ex.: 2019"
-                                        value={this.state.year}
+                                        id="exampleFormControlSelect0" 
+                                        defaultValue={this.state.year} 
                                         onChange={this.handleYearChange}
-                                    />
+                                    >
+
+                                    {
+                                        
+                                        [new Date().getFullYear()-1,new Date().getFullYear(),new Date().getFullYear()+1].map((ano,index)=>(
+                                            <option key={ano} value={ano}>{ano}</option>
+                                        ))
+                                    }
+                                        
+                                    </select>
                                 </div>
 
                                 <div className="col-6">
@@ -240,7 +256,15 @@ export default class NovasTurmasScreen extends Component {
 
                             <Select
                                 style={{boxShadow: "white"}}
-                                options={this.state.items.map(t => ({ _id: t.id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
+                                options={this.state.items.map(t => (
+                                    { 
+                                        id: t.id, 
+                                        label: t.email, 
+                                        enrollment: t.enrollment, 
+                                        email: t.email, 
+                                        name: t.name 
+                                    }
+                                ))} 
                                 closeMenuOnSelect={false}
                                 onChange={this.handleProfessorsChange.bind(this)}                                
                             />
@@ -252,6 +276,7 @@ export default class NovasTurmasScreen extends Component {
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th>Nome:</th>
                                         <th>Matrícula:</th>
                                         <th>E-mail:</th>
@@ -284,7 +309,6 @@ export default class NovasTurmasScreen extends Component {
                         </div>
                     </div>
                 </form>
-            </div>
         </TemplateSistema>
         )
     }

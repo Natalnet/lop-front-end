@@ -20,7 +20,7 @@ export default props => {
             </a>
           </li>
           {elementNavs}
-          <li className={`page-item ${pageAtual===totalPages?'disabled':''}`}>
+          <li className={`page-item ${pageAtual===totalPages || totalPages===0?'disabled':''}`}>
             <a className="page-link" onClick={(e)=>handlePage(e,pageAtual+1)} href="#">
               Próximo
             </a>

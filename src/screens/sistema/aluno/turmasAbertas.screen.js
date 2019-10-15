@@ -191,13 +191,13 @@ export default class HomeAlunoScreen extends Component {
           ))
         :
           turmasAbertas.map((turma, index) => {
-            let jaSolicitou = false
+            /*let jaSolicitou = false
             for(let solicitacao of turmasSolicitadas){
               if(solicitacao.id===turma.id){
                 jaSolicitou = true
                 break;
               }
-            }
+            }*/
           return(
                   <div key={index} className="col-6">
                           <br></br>
@@ -226,7 +226,7 @@ export default class HomeAlunoScreen extends Component {
                                 
                                 <CardFooter>
                                     {
-                                     jaSolicitou
+                                     turmasSolicitadas.map(t=>t.id).includes(turma.id)
                                     ?
                                      <button onClick={()=>this.cancelarSolicitacao(turma.id)} className="btn btn-danger" style={{float: "right"}}>
                                       Cancelar solicitação <i className="fa fa-users" /> -

@@ -11,7 +11,7 @@ const botao = {
     float: 'right'
 };
 const titulo = {
-    alignItems: 'center'
+    aligntodosProfessores: 'center'
 };
 const botao2 = {
     float: 'right',
@@ -29,8 +29,10 @@ export default class NovasTurmasScreen extends Component {
         description: "",
         state: "ATIVA",
         professorsName: [],
-        items: [],
+        todosProfessores: [],
         Id_P: [],
+        loadingInfoTurma:true,
+
     };
     async componentDidMount(){
         document.title = "Editar Turma - professor";
@@ -50,6 +52,7 @@ export default class NovasTurmasScreen extends Component {
           state: response.data.description.state,
           professorsName: response.data.users,
           Id_P: response.data.users.map(p=>p.id),
+          loadingInfoTurma:false
         })
       }
       catch(err){
@@ -57,7 +60,7 @@ export default class NovasTurmasScreen extends Component {
           console.log(err);
       }
     }   
-    async cadastro(event){
+    async atualizarTurma(event){
         event.preventDefault();
         console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.Id_P)
         if (this.state.name === "") {
@@ -80,18 +83,19 @@ export default class NovasTurmasScreen extends Component {
                 professores: this.state.Id_P
             };
             Swal.fire({
-                title:'Processando',
+                title:'Atualizando turma',
                 allowOutsideClick:false,
                 allowEscapeKey:false,
                 allowEnterKey:false
             })
             Swal.showLoading()
             try{
-                const response = await api.post("/class/store", requestInfo)
+                const idClass = this.props.match.params.id
+                const response = await api.put(`/class/${idClass}/update`, requestInfo)
                 Swal.hideLoading()
                 Swal.fire({
                     type: 'success',
-                    title: 'Turma criada com sucesso!',
+                    title: 'Turma atualizada com sucesso!',
                 })
                 this.setState({redirect:true});
             }
@@ -108,7 +112,9 @@ export default class NovasTurmasScreen extends Component {
     async getProfessores(){
         try{
             const response = await api.get('/user/get/professores')
-            this.setState({items:response.data})
+            this.setState({
+                todosProfessores:response.data.filter(p=> !this.state.Id_P.includes(p.id))
+            })
         }catch(err){
             console.log(err)
         
@@ -132,12 +138,12 @@ export default class NovasTurmasScreen extends Component {
     };
     handleProfessorsChange = user => {
         
-        for (var i = this.state.items.length -1; i >=0; i--) {
-            if(user.name === this.state.items[i].name){
-                this.state.items.splice(i, 1);  
+        for (var i = this.state.todosProfessores.length -1; i >=0; i--) {
+            if(user.name === this.state.todosProfessores[i].name){
+                this.state.todosProfessores.splice(i, 1);  
             }
         }
-        console.log(this.state.items)
+        console.log(this.state.todosProfessores)
 
         this.setState({
             professorsName: [
@@ -165,8 +171,8 @@ export default class NovasTurmasScreen extends Component {
         }
 
         this.setState({
-            items: [
-                ...this.state.items,
+            todosProfessores: [
+                ...this.state.todosProfessores,
                 user
                 ]
         });
@@ -176,14 +182,17 @@ export default class NovasTurmasScreen extends Component {
         if (this.state.redirect) {
           return <Redirect to='/professor' />
         }
+        const {loadingInfoTurma} = this.state
         return (
         <TemplateSistema active='home'>
-            <div className="container-fluid">
-                <form onSubmit={(e)=>this.cadastro(e)}>
+            {loadingInfoTurma?
+                <div className="loader"  style={{margin:'0px auto'}}></div>
+            :
+                <form onSubmit={(e)=>this.atualizarTurma(e)}>
                     <div className="row">
                         <div className="form-group form-control col-12">
                             <div className="align-self-center">
-                                 <h1 styler={titulo}>Cadastro de Turmas:</h1><br></br>
+                                 <h1 styler={titulo}>Atualização de Turmas:</h1><br></br>
                             </div>    
 
                             <span className="alert-danger">{this.state.msg}</span>
@@ -200,14 +209,22 @@ export default class NovasTurmasScreen extends Component {
 
                             <div className="row">
                                 <div className="col-6">
-                                    <label  htmlFor="">Ano: </label>
-                                    <input 
-                                        type="text" 
+                                    <label  htmlFor="exampleFormControlSelect0">Ano: </label>
+                                    <select 
                                         className="form-control" 
-                                        placeholder="ex.: 2019"
-                                        value={this.state.year}
+                                        id="exampleFormControlSelect0" 
+                                        defaultValue={this.state.year} 
                                         onChange={this.handleYearChange}
-                                    />
+                                    >
+
+                                    {
+                                        
+                                        [new Date().getFullYear()-1,new Date().getFullYear(),new Date().getFullYear()+1].map((ano,index)=>(
+                                            <option key={ano} value={ano}>{ano}</option>
+                                        ))
+                                    }
+                                        
+                                    </select>
                                 </div>
 
                                 <div className="col-6">
@@ -253,7 +270,7 @@ export default class NovasTurmasScreen extends Component {
 
                             <Select
                                 style={{boxShadow: "white"}}
-                                options={this.state.items.map(t => ({ id: t.id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
+                                options={this.state.todosProfessores.map(t => ({ id: t.id, label: t.name, enrollment: t.enrollment, email: t.email, name: t.name }))} 
                                 closeMenuOnSelect={false}
                                 onChange={this.handleProfessorsChange.bind(this)}                                
                             />
@@ -292,12 +309,12 @@ export default class NovasTurmasScreen extends Component {
                             </table>
                             <hr></hr>
                             <div>
-                                <button style={botao} type="submit" className="btn btn-primary">Cadastrar</button>
+                                <button style={botao} type="submit" className="btn btn-primary">Atualizar turma</button>
                             </div>
                         </div>
                     </div>
                 </form>
-            </div>
+            }
         </TemplateSistema>
         )
     }

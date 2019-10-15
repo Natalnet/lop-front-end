@@ -242,13 +242,13 @@ export default class CriarListaScreen extends Component {
                                 </tr> 
                             :
                                 this.state.exercicios.map((questao, index) =>{
-                                    let jaSelecionou = false
+                                    /*let jaSelecionou = false
                                     for(let selecionado of selecionados){
                                         if(selecionado.id===questao.id){
                                             jaSelecionou = true
                                             break
                                         }
-                                    }
+                                    }*/
                                     return (
                                     <tr key={index}>
                                         <td>{questao.title}</td>
@@ -260,9 +260,9 @@ export default class CriarListaScreen extends Component {
                                             <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(questao)}>
                                                 <i className="fa fa-info"/>
                                             </button>
-                                            {jaSelecionou
-                                                ?
-                                                <button className="float-right btn btn-orange disabled">
+                                            {selecionados.map(s=> s.id).includes(questao.id)
+                                             ?
+                                                <button className="float-right btn btn-indigo disabled">
                                                     Selecionada
                                                 </button>
                                             :
