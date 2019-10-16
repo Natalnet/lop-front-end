@@ -19,7 +19,7 @@ export default class LoginScreen extends Component {
   constructor(props){
     super(props)
     this.state = {
-      redirect: false,
+      showMenssageSendMail: false,
       loading:false,
       name: "",
       enrollment: "",
@@ -52,25 +52,8 @@ export default class LoginScreen extends Component {
         this.setState({loading:true})
         const response = await api.post("/auth/register", request)
         await this.setState({
-          msgName:'',
-          msgEmail :'',
-          msgEnrollment:'',
-          msgPassoword:'',
-          msgConfirm_password:'',
-          msg:'',
+          showMenssageSendMail:true,
           loading:false
-        })
-        Swal.fire({
-          type: "success",
-          title: `Confirme seu registro`,
-          text: `Um email foi enviado para ${
-            this.state.email
-          }, use-o para confirmar seu cadastro na plataforma`,
-          confirmButtonText: "Voltar para pagina de login"
-        }).then(result => {
-          if (result.value) {
-           return this.setState({redirect:true});
-          }
         })
       }
       catch(err){
@@ -84,12 +67,27 @@ export default class LoginScreen extends Component {
           loading:false
         })        
         if(err.message==='Request failed with status code 400'){
-          this.setState({
+          console.log(err.response.data);
+          for(let fieldErro of err.response.data){
+            if(fieldErro.field==="name"){
+              this.setState({msgName:fieldErro.msg})
+            }
+            if(fieldErro.field==="email"){
+              this.setState({msgEmail:fieldErro.msg})
+            }
+            if(fieldErro.field==="enrollment"){
+              this.setState({msgEnrollment:fieldErro.msg})
+            }
+            if(fieldErro.field==="password"){
+              this.setState({msgPassoword:fieldErro.msg})
+            }
+          }
+          /*this.setState({
             msgName: err.response.data.name || '',
             msgEmail :err.response.data.email || '',
             msgEnrollment:err.response.data.enrollment || '',
             msgPassoword:err.response.data.password || '',
-          }) 
+          })*/
         }
         else{
           this.setState({msg:'Falha na conexão com o servidor :('})
@@ -122,6 +120,18 @@ export default class LoginScreen extends Component {
     }
     const {name,email,enrollment,password,confirm_password,msg,loading} = this.state
     const {msgName,msgEmail,msgEnrollment,msgPassoword,msgConfirm_password}=this.state
+    if(this.state.showMenssageSendMail){
+      return(
+        <TemplateAutenticacao>
+          <div className="alert alert-light" role="alert">
+            <h4 className="alert-heading">Confirme seu cadastro!</h4>
+            <p>
+              {`Um email foi enviado para ${email}, use-o para confirmar seu cadastro na plataforma!`}
+            </p>
+          </div>
+        </TemplateAutenticacao>
+        )
+    }
     return (
       <TemplateAutenticacao>
         <form className="card" onSubmit={(e)=> this.register(e)}>

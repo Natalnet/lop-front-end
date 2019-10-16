@@ -15,42 +15,50 @@ const routes = [
     path: "/aluno",
     component: HomeAlunoScreen,
     private: true,
+    perfil: 'ALUNO'
   },
   {
     path: "/aluno/exercicio",
     component: HomeListaExercicios,
-    private: true
+    private: true,
+    perfil: 'ALUNO'
   },
   {
     path: "/aluno/turmasAbertas",
     component: TurmasAbertasAlunoScreen,
-    private: true
+    private: true,
+    perfil: 'ALUNO'
   },
   {
     path: "/aluno/exercicios/",
     component: Exercicios,
-    private: true
+    private: true,
+    perfil: 'ALUNO'
   },
   {
     path: "/aluno/turma/:id/listas",
     component: TurmaLista,
-    private: true
+    private: true,
+    perfil: 'ALUNO'
   },
   
   {
     path: "/aluno/turma/:id/participantes",
     component: TurmaAluno,
-    private: true
+    private: true,
+    perfil: 'ALUNO'
   },
   {
     path: "/aluno/turma/:id/dashboard",
     component: DashBoardAluno,
-    private: true
+    private: true,
+    perfil: 'ALUNO'
   },
   {
     path: "/aluno/exercicio/:id",
     component: Exercicio,
-    private: true
+    private: true,
+    perfil: 'ALUNO'
   }
 ];
 

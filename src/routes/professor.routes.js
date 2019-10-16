@@ -16,7 +16,7 @@ import TelaTurmasDashboard from '../screens/sistema/Professor/telaTurmasDashboar
 import EditarTurma from '../screens/sistema/Professor/editarTurma.screen'
 const routes = [
     {
-        path: '/Professor/novasturmas',
+        path: '/professor/novasturmas',
         component: NovasTurmasScreen,
         private: true,
         perfil: 'PROFESSOR'

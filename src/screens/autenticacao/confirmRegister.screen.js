@@ -30,14 +30,12 @@ export default class ConfirmRegister extends Component {
           sessionStorage.setItem("user.enrollment",response.data.user.enrollment);
           Swal.fire({
             type: "success",
-            title: `Congratulations`,
+            title: `Seja bem vindo(a)`,
             text: `Seu email foi confirmado com sucesso, uso da plataforma já disponivel.`,
-            confirmButtonText: "Acessar o sistema"
-          }).then(result => {
-            if (result.value) {
-              return this.setState({ redirect: true });
-            }
-          });
+          })
+          return this.setState({ redirect: true });
+            
+          
         }
       })
       .catch(err => {
