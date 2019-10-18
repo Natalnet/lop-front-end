@@ -220,8 +220,8 @@ export default class HomeListasScreen extends Component {
                 <div className="row">            
                 {questions.map((questao, index)=>(
                     <div key={index} className="col-6"> 
-                        <Card >
-                            <CardHead>
+                        <Card style={{marginBottom: "0"}}>
+                            <CardHead style={{marginBottom: "0"}}>
                                 <CardTitle>
                                     {questao.title}
                                 </CardTitle>
