@@ -37,7 +37,7 @@ export default class TurmasScreen extends Component {
             minhasTurmas: [],
             loadingTurmas:false,
             contentInputSeach:'',
-            fildFilter:'name',
+            fieldFilter:'name',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
@@ -53,8 +53,9 @@ export default class TurmasScreen extends Component {
     }
 
     async getMinhasTurmas(loadingResponse=true){
-        const {numPageAtual,contentInputSeach} = this.state
-        const query = `include=${contentInputSeach}`
+        const {numPageAtual,contentInputSeach,fieldFilter} = this.state
+        let query = `include=${contentInputSeach}`
+        query += `&field=${fieldFilter}`
 
         try{
             if(loadingResponse) this.setState({loadingTurmas:true});
@@ -120,10 +121,10 @@ export default class TurmasScreen extends Component {
     filterSeash(e){
         this.getMinhasTurmas()
     }
-    handleSelectfildFilter(e){
+    handleSelectFieldFilter(e){
         console.log(e.target.value);
         this.setState({
-            fildFilter:e.target.value
+            fieldFilter:e.target.value
         }/*,()=>this.getMinhasTurmas()*/)
     }
     clearContentInputSeach(){
@@ -137,7 +138,7 @@ export default class TurmasScreen extends Component {
 
     render() {
 
-        const {redirect,fildFilter,loadingTurmas,contentInputSeach,minhasTurmas,numPageAtual,totalPages,descriptions} = this.state
+        const {redirect,fieldFilter,loadingTurmas,contentInputSeach,minhasTurmas,numPageAtual,totalPages,descriptions} = this.state
         const range = num => {
             let arr =[]
             for(let i=0;i<num;i++) arr.push(i);
@@ -161,12 +162,12 @@ export default class TurmasScreen extends Component {
 
                 <div className="col-9">
                     <InputGroupo
-                        placeholder={'pesquiese pelo campo selecionado...'}
+                        placeholder={`Perquise pelo ${fieldFilter==='nome'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                         value={contentInputSeach}
                         handleContentInputSeach={this.handleContentInputSeach.bind(this)}
                         filterSeash={this.filterSeash.bind(this)}
-                        handleSelect={this.handleSelectfildFilter.bind(this)}
-                        options={ [{value:'name',content:'Nome'}] }
+                        handleSelect={this.handleSelectFieldFilter.bind(this)}
+                        options={ [{value:'name',content:'Nome'},{value:'code',content:'Código'}] }
                         clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                         loading={loadingTurmas}                            
                     />

@@ -35,7 +35,7 @@ export default class HomeExerciciosScreen extends Component {
             exercicios: [],
             showModal:false,
             loadingExercicios:false,
-            fildFilter:'title',
+            fieldFilter:'title',
             contentInputSeach:'',
             numPageAtual:1,
             totalItens:0,
@@ -50,9 +50,9 @@ export default class HomeExerciciosScreen extends Component {
         this.getExercicios();
     }
     async getExercicios(){
-        const {numPageAtual,contentInputSeach,fildFilter} = this.state
+        const {numPageAtual,contentInputSeach,fieldFilter} = this.state
         let query = `include=${contentInputSeach.trim()}`
-        query += `&fild=${fildFilter}`
+        query += `&field=${fieldFilter}`
         try{
             this.setState({loadingExercicios:true})
             const response = await api.get(`/question/page/${numPageAtual}?${query}`)
@@ -86,10 +86,10 @@ export default class HomeExerciciosScreen extends Component {
             numPageAtual:numPage
         },()=>this.getExercicios())
     }
-    handleSelectfildFilter(e){
+    handleSelectFieldFilter(e){
         console.log(e.target.value);
         this.setState({
-            fildFilter:e.target.value
+            fieldFilter:e.target.value
         }/*,()=>this.getExercicios()*/)
     }
 
@@ -111,7 +111,7 @@ export default class HomeExerciciosScreen extends Component {
 
 
     render() {
-        const {exercicios,showModalInfo,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,question} = this.state
+        const {exercicios,showModalInfo,fieldFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,question} = this.state
         return (
         <TemplateSistema active='ecercicios'>
             <div>
@@ -132,11 +132,11 @@ export default class HomeExerciciosScreen extends Component {
                     </div>
                     <div className="mb-3 col-9">     
                         <InputGroup
-                            placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
+                            placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
                             handleContentInputSeach={this.handleContentInputSeach.bind(this)}
                             filterSeash={this.filterSeash.bind(this)}
-                            handleSelect={this.handleSelectfildFilter.bind(this)}
+                            handleSelect={this.handleSelectFieldFilter.bind(this)}
                             options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
                             clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                             loading={loadingExercicios}                            

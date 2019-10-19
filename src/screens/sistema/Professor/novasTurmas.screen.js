@@ -11,7 +11,7 @@ const botao = {
     float: 'right'
 };
 const titulo = {
-    alignItems: 'center'
+    aligntodosProfessores: 'center'
 };
 const botao2 = {
     float: 'right',
@@ -28,31 +28,29 @@ export default class NovasTurmasScreen extends Component {
         semester: new Date().getMonth()<6?"1":"2",
         description: "",
         state: "ATIVA",
-        professorsName: [],
-        Id_P: [],
         prof: "",
-        items: [],
-        professorsName: [{
+        todosProfessores: [],
+        professoresSelecionados: [{
             id:sessionStorage.getItem('user.id'),
             email:sessionStorage.getItem('user.email'),
             enrollment:sessionStorage.getItem('user.enrollment'),
             name:sessionStorage.getItem('user.name'),
         }],
     };
-    componentDidMount(){
-        document.title = "Criar Turma - professor";
+    componentDidMount() {
+        this.getProfessores();
+        document.title = "Cadastro de turmas - Plataforma LOP";
     }
-
     async cadastro(event){
         event.preventDefault();
-        console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.Id_P)
+        console.log(" nome: "+this.state.name+"\n ano: "+this.state.year+"\n semestre: "+this.state.semester+"\n descriçao: "+this.state.description+"\n Status: "+this.state.state+"\n professores: "+this.state.professoresSelecionados)
         if (this.state.name === "") {
             this.setState({ msg: "Informe o nome da turma" });
         } 
         else if (this.state.year === "" || this.state.year > 2020 || this.state.year < 2010 ) {
             this.setState({ msg: "Informe o ano" });
         } 
-        else if (this.state.Id_P.length === 0) {
+        else if (this.state.professoresSelecionados.length === 0) {
             this.setState({ msg: "Selecione os professores" });
         }
         else
@@ -63,7 +61,7 @@ export default class NovasTurmasScreen extends Component {
                 semester: this.state.semester,
                 description: this.state.description,
                 state: this.state.state,
-                professores: this.state.Id_P
+                professores: this.state.professoresSelecionados.map(p=>p.id)
             };
             Swal.fire({
                 title:'Criando turma',
@@ -91,23 +89,19 @@ export default class NovasTurmasScreen extends Component {
             };
         }
     };
-    componentDidMount() {
-        this.getProfessores();
-        document.title = "Realizar Cadastro de turmas - Plataforma LOP";
-    }
+
 
     async getProfessores(){
         try{
             const response = await api.get('/user/get/professores')
+            console.log('todos professores');
             console.log(response.data);
-            console.log(sessionStorage.getItem('user.id'));
-            const professores = [...response.data].filter(prof=>prof.id!==sessionStorage.getItem('user.id'))
+            const professores = [...response.data].filter(p=>p.id!==sessionStorage.getItem('user.id'))
             this.setState({
-                items:professores
+                todosProfessores:professores
             })
         }catch(err){
             console.log(err)
-        
         }
     };
 
@@ -127,45 +121,19 @@ export default class NovasTurmasScreen extends Component {
     this.setState({ state: e.target.value });
     };
     handleProfessorsChange = user => {
-        
-        for (var i = this.state.items.length -1; i >=0; i--) {
-            if(user.name === this.state.items[i].name){
-                this.state.items.splice(i, 1);  
-            }
-        }
-        console.log(this.state.items)
-
+        const {todosProfessores,professoresSelecionados} = this.state
         this.setState({
-            professorsName: [
-                ...this.state.professorsName,
-                user
-                ],
-            Id_P: [
-                ...this.state.Id_P,
-                user.id
-                ]
-        });
-
+            todosProfessores: todosProfessores.filter(p=>p.id!==user.id),
+            professoresSelecionados:[user,...professoresSelecionados]
+        })
     };
 
     excluir = user =>{
-        for (var i = this.state.professorsName.length -1; i >=0; i--) {
-            if(user.name === this.state.professorsName[i].name){
-                this.state.professorsName.splice(i, 1);
-            }
-        }
-        for (var i = this.state.Id_P.length-1; i >=0; i--) {
-            if(user.id === this.state.Id_P[i]){
-                this.state.Id_P.splice(i, 1);
-            }
-        }
-
+        const {todosProfessores,professoresSelecionados} = this.state
         this.setState({
-            items: [
-                ...this.state.items,
-                user
-                ]
-        });
+            professoresSelecionados: professoresSelecionados.filter(p=>p.id!==user.id),
+            todosProfessores:[user,...todosProfessores]
+        })
     };
 
     render() {
@@ -256,7 +224,7 @@ export default class NovasTurmasScreen extends Component {
 
                             <Select
                                 style={{boxShadow: "white"}}
-                                options={this.state.items.map(t => (
+                                options={this.state.todosProfessores.map(t => (
                                     { 
                                         id: t.id, 
                                         label: t.email, 
@@ -284,7 +252,7 @@ export default class NovasTurmasScreen extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.state.professorsName.map((professor, index) => (
+                                    {this.state.professoresSelecionados.map((professor, index) => (
                                         <tr key={index}>
                                             <td className='text-center'>
                                                 <div 
@@ -297,7 +265,9 @@ export default class NovasTurmasScreen extends Component {
                                             <td>{professor.name}</td>
                                             <td>{professor.enrollment}</td>
                                             <td>{professor.email}</td>
-                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
+                                            {professor.id!==sessionStorage.getItem('user.id')?
+                                                <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
+                                            :null}
                                         </tr>
                                     ))}
                                 </tbody>

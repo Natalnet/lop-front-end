@@ -30,7 +30,7 @@ export default class Pagina extends Component {
             totalItens:0,
             totalPages:0,
             contentInputSeach:'',
-            fildFilter:'title',
+            fieldFilter:'title',
             questions:[]
         };
     }
@@ -110,9 +110,9 @@ export default class Pagina extends Component {
     };
 
     async getTodasListas(){
-        const {numPageAtual,contentInputSeach,fildFilter} = this.state
+        const {numPageAtual,contentInputSeach,fieldFilter} = this.state
         let query = `include=${contentInputSeach.trim()}`
-        query += `&fild=${fildFilter}`
+        query += `&field=${fieldFilter}`
         try{
             this.setState({loandingTodasListas:true})
             const id = this.props.match.params.id
@@ -154,10 +154,10 @@ export default class Pagina extends Component {
         this.setState({showModalListas:false})
     }
 
-    handleSelectfildFilter(e){
+    handleSelectFieldFilter(e){
         console.log(e.target.value);
         this.setState({
-            fildFilter:e.target.value
+            fieldFilter:e.target.value
         }/*,()=>this.getTodasListas()*/)
     }
 
@@ -177,7 +177,7 @@ export default class Pagina extends Component {
     
     render() {
         const {loadingInfoTurma,turma,todasListas,loandingTodasListas,totalPages,numPageAtual} = this.state
-        const {contentInputSeach,fildFilter,showModalListas,questions,showModalInfo,loandingListas} = this.state
+        const {contentInputSeach,fieldFilter,showModalListas,questions,showModalInfo,loandingListas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
             <div>
@@ -242,11 +242,11 @@ export default class Pagina extends Component {
                     <div className='row'>
                         <div className=" col-12">     
                             <InputGroup
-                                placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
+                                placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                                 value={contentInputSeach}
                                 handleContentInputSeach={this.handleContentInputSeach.bind(this)}
                                 filterSeash={this.filterSeash.bind(this)}
-                                handleSelect={this.handleSelectfildFilter.bind(this)}
+                                handleSelect={this.handleSelectFieldFilter.bind(this)}
                                 options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
                                 clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                                 loading={loandingTodasListas}                            

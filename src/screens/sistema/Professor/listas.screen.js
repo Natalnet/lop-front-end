@@ -35,7 +35,7 @@ export default class HomeListasScreen extends Component {
             questions:[],
             showModal:false,
             loadingListas:false,
-            fildFilter:'title',
+            fieldFilter:'title',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
@@ -51,9 +51,9 @@ export default class HomeListasScreen extends Component {
     }
 
     async getListas(){
-        const {numPageAtual,contentInputSeach,fildFilter} = this.state
+        const {numPageAtual,contentInputSeach,fieldFilter} = this.state
         let query = `include=${contentInputSeach.trim()}`
-        query += `&fild=${fildFilter}`
+        query += `&field=${fieldFilter}`
         console.log(query);
 
         try{
@@ -88,10 +88,10 @@ export default class HomeListasScreen extends Component {
             numPageAtual:numPage
         },()=>this.getListas())
     }
-    handleSelectfildFilter(e){
+    handleSelectFieldFilter(e){
         console.log(e.target.value);
         this.setState({
-            fildFilter:e.target.value
+            fieldFilter:e.target.value
         }/*,()=>this.getListas()*/)
     }
 
@@ -112,7 +112,7 @@ export default class HomeListasScreen extends Component {
 
 
     render() {
-        const {listas,showModal,fildFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,showModalInfo,questions} = this.state
+        const {listas,showModal,fieldFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,showModalInfo,questions} = this.state
         return (
         <TemplateSistema active='listas'>
             <div>
@@ -133,11 +133,11 @@ export default class HomeListasScreen extends Component {
                     </div>
                     <div className="mb-3 col-9">     
                         <InputGroup
-                            placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
+                            placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
                             handleContentInputSeach={this.handleContentInputSeach.bind(this)}
                             filterSeash={this.filterSeash.bind(this)}
-                            handleSelect={this.handleSelectfildFilter.bind(this)}
+                            handleSelect={this.handleSelectFieldFilter.bind(this)}
                             options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
                             clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                             loading={loadingListas}                            
