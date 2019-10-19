@@ -220,8 +220,28 @@ export default class HomeExerciciosScreen extends Component {
                     </CardTitle>
                 </CardHead>
                 <CardBody>
+                    <b>Descrição: </b> <br/>
                     {question.description}
                     <BlockMath>{question.katexDescription|| ''}</BlockMath>
+                    <br/>
+                    {/* <div className="row">
+
+                        <div className="col-6">
+                        <b>Entradas: </b>
+                        {question.results.map((resultados)=>(
+                        <p>{resultados.inputs}</p>
+                        ))}
+                        </div>
+
+                        <div className="col-6">
+                        <b>saidas: </b>
+                        {question.results.map((resultados)=>(
+                        <p>{resultados.output}</p>
+                        ))}
+                        </div>
+                        
+                    </div> */}
+
                 </CardBody>
             </Card>
             </SwalModal>
