@@ -32,26 +32,37 @@ export default class NovasTurmasScreen extends Component {
         todosProfessores: [],
         loadingInfoTurma:true,
 
+
     };
     async componentDidMount(){
         document.title = "Editar Turma - professor";
-        await this.getInfoTurma()
-        this.getProfessores();  
+        await this.getProfessores();
+        this.getInfoTurma()
+          
     }
     async getInfoTurma(){
       const id = this.props.match.params.id
       try{
         const response = await api.get(`/class/${id}`)
         console.log(response);
-        this.setState({
-          name: response.data.name,
-          year: response.data.year,
-          semester: response.data.semester,
-          description: response.data.description,
-          state: response.data.description.state,
-          professoresSelecionados: response.data.users.filter(p=>p.profile==="PROFESSOR"),
-          loadingInfoTurma:false
+        await this.setState({
+            name: response.data.name,
+            year: response.data.year,
+            semester: response.data.semester,
+            description: response.data.description,
+            state: response.data.description.state,
+            professoresSelecionados: response.data.users
+            .filter(
+                p=>p.profile==="PROFESSOR"
+            ).map(p=>{
+                return {
+                    id : p.id,
+                    value : p.id,
+                    label:p.email
+                }
+            }),
         })
+        this.setState({loadingInfoTurma:false})
       }
       catch(err){
           this.setState({loadingInfoTurma:false})
@@ -110,9 +121,14 @@ export default class NovasTurmasScreen extends Component {
     async getProfessores(){
         try{
             const response = await api.get('/user/get/professores')
-            const idsProfsSelecionados = this.state.professoresSelecionados.map(p=>p.id)
             this.setState({
-                todosProfessores:response.data.filter(p=> !idsProfsSelecionados.includes(p.id))
+                todosProfessores:response.data.map(p=>{
+                    return {
+                        value :p.id,
+                        id:p.id,
+                        label:p.email, 
+                    }
+                }),             
             })
         }catch(err){
             console.log(err)
@@ -135,20 +151,13 @@ export default class NovasTurmasScreen extends Component {
     handleStateChange = e => {
     this.setState({ state: e.target.value });
     };
-    handleProfessorsChange = user => {
-        const {todosProfessores,professoresSelecionados} = this.state
+    handleProfessorsChange = professores => {
+        const {professoresSelecionados} = this.state
         this.setState({
-            todosProfessores: todosProfessores.filter(p=>p.id!==user.id),
-            professoresSelecionados:[user,...professoresSelecionados]
+            professoresSelecionados:professores || []
         })
     };
-    excluir = user =>{
-        const {todosProfessores,professoresSelecionados} = this.state
-        this.setState({
-            professoresSelecionados: professoresSelecionados.filter(p=>p.id!==user.id),
-            todosProfessores:[user,...todosProfessores]
-        })
-    };
+
 
     render() {
         if (this.state.redirect) {
@@ -242,45 +251,17 @@ export default class NovasTurmasScreen extends Component {
 
                             <Select
                                 style={{boxShadow: "white"}}
-                                options={this.state.todosProfessores.map(t => ({ id: t.id, label: t.email, enrollment: t.enrollment, email: t.email, name: t.name }))} 
+                                defaultValue={this.state.professoresSelecionados}
+                                options={this.state.todosProfessores}
+                                isMulti
                                 closeMenuOnSelect={false}
                                 onChange={this.handleProfessorsChange.bind(this)}                                
                             />
 
                             <br></br>
 
-                            <h4>Professores Selecionados: </h4>
                             <br></br>
-                            <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Nome:</th>
-                                        <th>Matrícula:</th>
-                                        <th>E-mail:</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {this.state.professoresSelecionados.map((professor, index) => (
-                                        <tr key={index}>
-                                            <td className='text-center'>
-                                                <div 
-                                                    className="avatar d-block" 
-                                                    style={
-                                                        {backgroundImage: `url(${professor.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                                    }
-                                                />
-                                            </td>
-                                            <td>{professor.name}</td>
-                                            <td>{professor.enrollment}</td>
-                                            <td>{professor.email}</td>
-                                            {professor.id!==sessionStorage.getItem('user.id')?
-                                                <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
-                                            :null}                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <hr></hr>
+
                             <div>
                                 <button style={botao} type="submit" className="btn btn-primary">Atualizar turma</button>
                             </div>

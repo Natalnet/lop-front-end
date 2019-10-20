@@ -22,23 +22,12 @@ export default class MenuAdministrador extends Component {
                 <li className="nav-item">
                   <Link
                     to="/administrador"
-                    className="nav-link"
+                    className={`nav-link ${this.props.active==='home'?'active':''}`}
                     data-toggle="pill"
                     aria-selected="false"
                   >
                     <i className="fe fe-home" />
                     Início
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    to="/administrador/usuarios"
-                    className="nav-link"
-                    data-toggle="pill"
-                    aria-selected="false"
-                  >
-                    <i className="fe fe-bar-chart" />
-                    Usuários
                   </Link>
                 </li>
               </ul>

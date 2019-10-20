@@ -13,7 +13,8 @@ export default class Pagina extends Component {
         super(props)
         this.state = {
             redirect: false,
-            items: [],
+            listas: [],
+            loandingListas:true,
             loadingInfoTurma:true,
             turma:'',
             todasListas: [],
@@ -45,16 +46,20 @@ export default class Pagina extends Component {
             const id = this.props.match.params.id
             const response = await api.get(`/class/${id}/lists`)
             console.log(response.data);
-            this.setState({items:[...response.data]})
+            this.setState({
+                listas:[...response.data],
+                loandingListas:false
+            })
 
         }catch(err){
+            this.setState({loandingListas:false})
             console.log(err)
         
         }
     };
     render() {
         
-        const {loadingInfoTurma,turma} = this.state
+        const {loadingInfoTurma,turma,loandingListas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
             <div>
@@ -65,7 +70,10 @@ export default class Pagina extends Component {
                 }
                 <br/>
                 
-
+                {loandingListas
+                ?
+                    <div className="loader"  style={{margin:'0px auto'}}></div>
+                :
                 <div className="col-12">
                     <table  style={{backgroundColor:"white"}} className="table table-hover">
                         <thead>
@@ -76,7 +84,7 @@ export default class Pagina extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.items.map((lista, index)=>(
+                            {this.state.listas.map((lista, index)=>(
                                 <tr key={index}>
                                    <td>{lista.title}</td>
                                    <td>{lista.code}</td>
@@ -90,12 +98,8 @@ export default class Pagina extends Component {
                         </tbody>
                     </table>
                 </div>
+                }
 
-                <div className="col-6">
-                    <table>
-
-                    </table>
-                </div>
             </div>
 
         </TemplateSistema>

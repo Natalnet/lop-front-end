@@ -56,7 +56,7 @@ export default class TemplateSistema extends Component {
                 <HeadPefilMenu />
               </div>
             </div>
-            <MenuAdministrador />
+            <MenuAdministrador {...this.props} />
             <div className="my-3 my-md-5 ">
               <div className="container">{this.props.children}</div>
             </div>

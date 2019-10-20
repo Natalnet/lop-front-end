@@ -30,12 +30,8 @@ export default class NovasTurmasScreen extends Component {
         state: "ATIVA",
         prof: "",
         todosProfessores: [],
-        professoresSelecionados: [{
-            id:sessionStorage.getItem('user.id'),
-            email:sessionStorage.getItem('user.email'),
-            enrollment:sessionStorage.getItem('user.enrollment'),
-            name:sessionStorage.getItem('user.name'),
-        }],
+        professoresSelecionados: [],
+        loadingProfessores:true,
     };
     componentDidMount() {
         this.getProfessores();
@@ -94,48 +90,53 @@ export default class NovasTurmasScreen extends Component {
     async getProfessores(){
         try{
             const response = await api.get('/user/get/professores')
-            console.log('todos professores');
-            console.log(response.data);
-            const professores = [...response.data].filter(p=>p.id!==sessionStorage.getItem('user.id'))
-            this.setState({
-                todosProfessores:professores
+            await this.setState({
+                professoresSelecionados:[{
+                    value:sessionStorage.getItem('user.id'),
+                    id:sessionStorage.getItem('user.id'),
+                    label:sessionStorage.getItem('user.email'),
+                }],
+                todosProfessores:response.data.map(p=>{
+                    return {
+                        value :p.id,
+                        id:p.id,
+                        label:p.email, 
+                    }
+                }), 
             })
+            this.setState({loadingProfessores:false})
+            console.log('todos professores');
+            console.log(this.state.todosProfessores)
+            console.log('professores selecionados');
+            console.log(this.state.professoresSelecionados)
+
         }catch(err){
             console.log(err)
         }
     };
 
     handleNameChange = e => {
-    this.setState({ name: e.target.value });
+        this.setState({ name: e.target.value });
     };
     handleYearChange = e => {
-    this.setState({ year: e.target.value });
+        this.setState({ year: e.target.value });
     };
     handleSemesterChange = e => {
-    this.setState({ semester: e.target.value });
+        this.setState({ semester: e.target.value });
     };
     handleDescriptionChange = e => {
-    this.setState({ description: e.target.value });
+        this.setState({ description: e.target.value });
     };
     handleStateChange = e => {
-    this.setState({ state: e.target.value });
+        this.setState({ state: e.target.value });
     };
-    handleProfessorsChange = user => {
-        const {todosProfessores,professoresSelecionados} = this.state
+    handleProfessorsChange = professores => {
+        console.log(professores);
+        const {professoresSelecionados} = this.state
         this.setState({
-            todosProfessores: todosProfessores.filter(p=>p.id!==user.id),
-            professoresSelecionados:[user,...professoresSelecionados]
+            professoresSelecionados:professores || []
         })
     };
-
-    excluir = user =>{
-        const {todosProfessores,professoresSelecionados} = this.state
-        this.setState({
-            professoresSelecionados: professoresSelecionados.filter(p=>p.id!==user.id),
-            todosProfessores:[user,...todosProfessores]
-        })
-    };
-
     render() {
         if (this.state.redirect) {
           return <Redirect to='/professor' />
@@ -222,57 +223,20 @@ export default class NovasTurmasScreen extends Component {
                             <hr></hr>
                             <h3>Professores:</h3>
 
-                            <Select
+                            {!this.state.loadingProfessores && <Select
+                                {...this.props}
                                 style={{boxShadow: "white"}}
-                                options={this.state.todosProfessores.map(t => (
-                                    { 
-                                        id: t.id, 
-                                        label: t.email, 
-                                        enrollment: t.enrollment, 
-                                        email: t.email, 
-                                        name: t.name 
-                                    }
-                                ))} 
+                                isMulti
+                                defaultValue={[{
+                                    value:sessionStorage.getItem('user.id'),
+                                    id:sessionStorage.getItem('user.id'),
+                                    label:sessionStorage.getItem('user.email'),
+                                }]}
+                                options={this.state.todosProfessores} 
                                 closeMenuOnSelect={false}
                                 onChange={this.handleProfessorsChange.bind(this)}                                
-                            />
-
-                            <br></br>
-
-                            <h4>Professores Selecionados: </h4>
-                            <br></br>
-                            <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Nome:</th>
-                                        <th>Matrícula:</th>
-                                        <th>E-mail:</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {this.state.professoresSelecionados.map((professor, index) => (
-                                        <tr key={index}>
-                                            <td className='text-center'>
-                                                <div 
-                                                    className="avatar d-block" 
-                                                    style={
-                                                        {backgroundImage: `url(${professor.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                                    }
-                                                />
-                                            </td>
-                                            <td>{professor.name}</td>
-                                            <td>{professor.enrollment}</td>
-                                            <td>{professor.email}</td>
-                                            {professor.id!==sessionStorage.getItem('user.id')?
-                                                <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(professor)}><i className="fa fa-user-times" /></a></td>
-                                            :null}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <hr></hr>
+                            />}
+                            <br/><br/>
                             <div>
                                 <button style={botao} type="submit" className="btn btn-primary">Cadastrar</button>
                             </div>

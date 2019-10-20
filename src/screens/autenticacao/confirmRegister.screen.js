@@ -56,7 +56,7 @@ export default class ConfirmRegister extends Component {
       return <Error404 />;
     }
     if (this.state.redirect) {
-      return <Redirect to="/aluno" />;
+      return <Redirect to={`/${sessionStorage.getItem("user.profile").toLocaleLowerCase()}`} />;
     }
     if (this.state.redirectLogin) {
       return <Redirect to="/" />;

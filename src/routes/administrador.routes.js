@@ -3,9 +3,10 @@ import UsuariosScreen from "screens/sistema/administracao/usuarios.screen";
 
 const routes = [
   {
-    path: "/administrador/usuarios",
+    path: "/administrador",
     component: UsuariosScreen,
-    private: true
+    private: true,
+    perfil:"ADMINISTRADOR"
   }
 ];
 

@@ -44,12 +44,15 @@ export default class Pagina extends Component {
 
     async getParticipantes(){
         const id = this.props.match.params.id
+        const {numPageAtual} = this.state
+
         try{
             this.setState({loadingParticipantes:true})
-            const response = await api.get(`/class/${id}/participants`)
+            const response = await api.get(`/class/${id}/participants/page/${numPageAtual}`)
+            console.log('participantes');
             console.log(response);
             this.setState({
-                participantes:[...response.data],
+                participantes:[...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
                 loadingParticipantes:false,
