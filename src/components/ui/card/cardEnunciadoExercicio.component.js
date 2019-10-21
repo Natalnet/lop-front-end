@@ -1,4 +1,5 @@
 import React,{Fragment,Component} from 'react';
+import HTMLFormat from '../htmlFormat'
 
 
 export default (props) => {
@@ -26,18 +27,14 @@ export default (props) => {
                        {results.map((res,i)=> 
                         <tr key={i}>
                           <td>
-                            {res.inputs.split('').map((v,i) => {
-                              if(v ==='\n') return <Fragment key={i}><br/></Fragment>
-                              else if(v ===' ') return <Fragment key={i}>&nbsp;</Fragment>
-                              else return <Fragment key={i}>{v}</Fragment>
-                            })}
+                            <HTMLFormat>
+                              {res.inputs}
+                            </HTMLFormat>
                           </td>
                           <td>
-                            {res.output.split('').map((v,i) => {
-                              if(v ==='\n') return <Fragment key={i}><br/></Fragment>
-                              else if(v ===' ') return <Fragment key={i}>&nbsp;</Fragment>
-                              else return <Fragment key={i}>{v}</Fragment>
-                            })}
+                            <HTMLFormat>
+                              {res.output}
+                            </HTMLFormat>
                           </td>
                         </tr>
                       ).filter((res,i) => i<3)}

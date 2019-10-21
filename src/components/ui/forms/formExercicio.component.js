@@ -8,14 +8,14 @@ export default (props) =>{
 	return(
           <div className="form-row">
             <div className="form-group col-md-6">
-                <label for="selectStatus">Status da questão: </label>
+                <label HTMLFor="selectStatus">Status da questão: </label>
                 <select className="form-control" defaultValue={status} id='selectStatus' onChange={handleStatus}>
                   <option value='PÚBLICA'>Pública (para uso em listas)</option>
                   <option value='PRIVADA'>Oculta (para uso em provas)</option>
                 </select>
             </div>
             <div className="form-group col-md-6">
-                <label for="selectDifficulty">Dificudade </label>
+                <label HTMLFor="selectDifficulty">Dificudade </label>
                 <select className="form-control" defaultValue={difficulty} id='selectDifficulty' onChange={handleDifficulty}>
                   <option value = 'Muito fácil' >Muito fácil</option>
                   <option value = 'Fácil' >Fácil</option>

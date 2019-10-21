@@ -19,6 +19,8 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import TableResults from '../../../components/ui/tables/tableResults.component'
+import TableIO from '../../../components/ui/tables/tableIO.component'
+
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
 import FormSelect from '../../../components/ui/forms/formSelect.component'
 import styleEditor from '../../../'
@@ -48,7 +50,7 @@ export default class Editor extends Component {
       inputs:'',
       outputs:'',
       percentualAcerto:'',
-      redirect:'',
+      redirect:false,
     }
   }
   componentDidMount(){
@@ -81,9 +83,10 @@ export default class Editor extends Component {
     })
   }
   async handleInputsChange(e){
-      this.setState({
-        inputs:e.target.value
-      })
+    console.log('handleInputsChange');
+    console.log(e.target.value);
+
+    this.setState({inputs:e.target.value})
   }
   async handleOutputsChange(e){
       this.setState({
@@ -137,8 +140,8 @@ export default class Editor extends Component {
     const resultados = []
     for(let i=0 ; i<entradas.length ; i++ ){
       resultados.push({
-        inputs: (entradas[i].split(',').map(inp => inp+'\n')).join(''),
-        output: saidas[i].split('|').join('\n')
+        inputs: entradas[i]?entradas[i].split(',').map(inp => inp+'\n').join(''):'',
+        output: saidas[i]?saidas[i].split('|').join('\n'):''
       })
     }
     return resultados
@@ -168,7 +171,10 @@ export default class Editor extends Component {
           type: 'success',
           title: 'Questão salva com sucesso!',
       })
-      this.setState({savingQuestion:false})
+      this.setState({
+        savingQuestion:false,
+        redirect:true
+      })
       console.log(response.data)
     }
     catch(err){
@@ -184,12 +190,11 @@ export default class Editor extends Component {
   }
 
   render() {
+    if(this.state.redirect){
+      return <Redirect to='/professor/exercicios' />
+    }
     const {percentualAcerto,status,difficulty,katexDescription,response,redirect,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
     const { language,theme,contentRes,solution } = this.state;
-
-    if(redirect){
-      return <Redirect to={'/'} exact={true} />
-    }
     
     if(loadingEditor){
       return(
@@ -205,7 +210,7 @@ export default class Editor extends Component {
     <Card>
       <CardHead>
           <CardTitle center>
-            <h2><i className="fa fa-code"></i> Nova questão</h2>
+            <i className="fa fa-code"></i> Nova questão
           </CardTitle>
       </CardHead>
       <CardBody>
@@ -227,6 +232,13 @@ export default class Editor extends Component {
         handleInputsChange={this.handleInputsChange.bind(this)}
         handleOutputsChange={this.handleOutputsChange.bind(this)}
       />
+      <div className='row'>
+        <div className="card" className ="col-12">
+          <TableIO
+            results={this.getResults()}
+          />
+        </div>
+      </div>
       <FormSelect
         loadingReponse={loadingReponse}
         changeLanguage={this.changeLanguage.bind(this)}
@@ -290,7 +302,7 @@ export default class Editor extends Component {
         </CardBody>
         <CardFooter>
           <button onClick={e => this.saveQuestion(e)} className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
-            <i class="fa fa-save"></i> Salvar
+            <i className="fa fa-save"></i> Salvar
           </button>         
         </CardFooter>
       </Card>
