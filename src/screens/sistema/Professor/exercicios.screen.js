@@ -9,7 +9,9 @@ import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
 import SwalModal from "components/ui/modal/swalModal.component";
 import 'katex/dist/katex.min.css';
+import HTMLFormat from 'components/ui/htmlFormat'
 import {BlockMath } from 'react-katex';
+import TableIO from 'components/ui/tables/tableIO.component'
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -224,24 +226,13 @@ export default class HomeExerciciosScreen extends Component {
                     {question.description}
                     <BlockMath>{question.katexDescription|| ''}</BlockMath>
                     <br/>
-                    {/* <div className="row">
-
-                        <div className="col-6">
-                        <b>Entradas: </b>
-                        {question.results.map((resultados)=>(
-                        <p>{resultados.inputs}</p>
-                        ))}
+                    <div className="row">
+                        <div className ="col-12">
+                          <TableIO
+                            results={question.results || []}
+                          />
                         </div>
-
-                        <div className="col-6">
-                        <b>saidas: </b>
-                        {question.results.map((resultados)=>(
-                        <p>{resultados.output}</p>
-                        ))}
-                        </div>
-                        
-                    </div> */}
-
+                    </div>
                 </CardBody>
             </Card>
             </SwalModal>
