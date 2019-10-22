@@ -8,12 +8,23 @@ import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
 import 'brace/theme/monokai';
-
+import 'brace/theme/github';
+import 'brace/theme/tomorrow';
+import 'brace/theme/kuroir';
+import 'brace/theme/twilight';
+import 'brace/theme/xcode';
+import 'brace/theme/textmate';
+import 'brace/theme/solarized_dark';
+import 'brace/theme/solarized_light';
+import 'brace/theme/terminal';
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";import TableResults from '../../../components/ui/tables/tableResults.component'
+import CardFooter from "components/ui/card/cardFooter.component";
+import TableResults from '../../../components/ui/tables/tableResults.component'
+import TableResults2 from '../../../components/ui/tables/tableResults2.component'
+
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
 import FormSelect from '../../../components/ui/forms/formSelect.component'
 import TemplateSistema from '../../../components/templates/sistema.template'
@@ -156,7 +167,7 @@ export default class Editor extends Component {
     else{
     return (
 
-    <TemplateSistema>
+    <TemplateSistema active='exercicios'>
         <div className='row'>
           <div className ="col-12">
             <CardEnunciado
@@ -177,7 +188,8 @@ export default class Editor extends Component {
          </div>
 
          <div className='row'>
-           <div className="card" className ="col-12">
+           <div className ="col-6">
+              <Card>
               <AceEditor
                 mode={language}
                 theme={theme}
@@ -193,47 +205,24 @@ export default class Editor extends Component {
                 enableBasicAutocompletion={true}
                 highlightActiveLine={true}
               />
+              </Card>
            </div>
-         </div>
-        <div className='row'>
-          <div className="card" className ="col-12">
-            <h3>Resultados:</h3>
-          </div>
+
+          <div className ="col-6">
           {loadingReponse?
-           <div className="card" className ="col-12 text-center">
-              <img src={imgLoading2} width="300px" />           
-           </div>:
-           <Fragment>
-            {someErro?
-              <div className="card" className ="col-12">
-                <AceEditor
-                  mode='javascript'
-                  readOnly={true}
-                  width={'100%'}
-                  height={'100px'}
-                  showGutter={false}
-                  focus={false}
-                  theme={theme}
-                  value={contentRes}
-                  fontSize={14}
-                  name="ACE_EDITOR_RES"
-                  editorProps={{$blockScrolling: true}}
-                />
-              </div>
-            :null
-            }
-            
-          <div className='row'>
-              <div className="card" className ="col-12">
-                <TableResults 
-                  response={response}
-                  percentualAcerto={percentualAcerto}
-                />
-              </div>
-          </div>
-          </Fragment>
+              <div className="loader"  style={{margin:'0px auto'}}></div>
+           :
+              
+              <TableResults2 
+                response={response}
+                descriptionErro={contentRes}
+                erro={someErro}
+                percentualAcerto={percentualAcerto}
+              />
           }
+          </div>
         </div>
+        
     </TemplateSistema>
     );
     }

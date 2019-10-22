@@ -13,7 +13,7 @@ export default class Card extends Component {
     return (
     	<div className='row row-cards row-deck turma'>
     		<div className="col-12">
-    			<div className="card">
+    			<div className="card" style={{overflow:'auto'}}>
 			      	{children}
 		      	</div>
       	    </div>

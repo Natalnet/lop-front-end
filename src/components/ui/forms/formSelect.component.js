@@ -3,7 +3,8 @@ import imgLoading1 from '../../../assets/loading1.gif'
 
 export default (props) =>{
 	const {changeLanguage,changeTheme,executar,loadingReponse} = props
-	return(
+	const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal']
+  return(
           <div className="form-row">
             <div className="form-group col-md-3">
               <select className="form-control" onChange={changeLanguage}>
@@ -12,10 +13,12 @@ export default (props) =>{
               </select>
              </div>
             <div className="form-group col-md-3">
-              <select className="form-control" onChange={changeTheme}>
-                <option value = 'vs-dark'>Visual Studio Dark</option>
-                <option value = 'hc-black'>High Contrast Dark</option>
-                <option value = 'vs'>Visual Studio</option>
+              <select defaultValue='monokai' className="form-control" onChange={changeTheme}>
+                {
+                  themes.map(thene=>(
+                    <option key={thene} value ={thene}>{thene}</option>
+                  ))
+                }
               </select>
             </div>
             <div className="form-group col-md-3">
