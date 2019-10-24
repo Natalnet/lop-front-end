@@ -112,13 +112,14 @@ export default class Pagina extends Component {
                                         title='Ver descrição'
                                         style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
                                         className={`fe fe-chevron-down`} 
-                                        data-toggle="collapse2" data-target={'#collapse2'+j} 
+                                        data-toggle="collapse" data-target={'#collapse2'+j} 
                                         aria-expanded={false}
                                         />
                                     </CardOptions>
                                     </CardHead>
-                                    <div className="collapse2" id={'collapse2'+j}>
+                                    <div className="collapse" id={'collapse2'+j}>
                                     <CardBody>
+                                        {questions.description}
                                        </CardBody>
                                     </div>
                                     <CardFooter>
