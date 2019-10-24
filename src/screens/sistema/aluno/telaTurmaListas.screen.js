@@ -1,11 +1,18 @@
 import React, { Component } from "react";
 import Teste from '../../../components/ui/modal/btnModal.component'
 
+import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
 import BtnModal from 'components/ui/modal/btnModal.component'
 import BotaoModal from "components/ui/modal/btnModalLista.component"
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
 
 export default class Pagina extends Component {
 
@@ -59,7 +66,7 @@ export default class Pagina extends Component {
     };
     render() {
         
-        const {loadingInfoTurma,turma,loandingListas} = this.state
+        const {loadingInfoTurma,turma,loandingListas,listas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
             <div>
@@ -75,28 +82,57 @@ export default class Pagina extends Component {
                     <div className="loader"  style={{margin:'0px auto'}}></div>
                 :
                 <div className="col-12">
-                    <table  style={{backgroundColor:"white"}} className="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Nome: </th>
-                                <th>Codigo: </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.listas.map((lista, index)=>(
-                                <tr key={index}>
-                                   <td>{lista.title}</td>
-                                   <td>{lista.code}</td>
-                                   <td className="float-right">
-                                       <BotaoModal
-                                            lista={lista}
-                                       />
-                                   </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    {listas.map((lista,i)=>
+                    <Card key={i}>
+                        <CardHead>
+                        <CardTitle>
+                                    {lista.title}
+                        </CardTitle>
+                        <CardOptions>
+                            <i
+                            title='Ver descrição'
+                            style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
+                            className={`fe fe-chevron-down`} 
+                            data-toggle="collapse" data-target={'#collapse'+i} 
+                            aria-expanded={false}
+                            />
+                        </CardOptions>
+                        </CardHead>
+                        <div className="collapse" id={'collapse'+i}>
+                        <CardBody>
+                            {lista.questions.map((questions,j)=>
+                            <div className="col-6" style={{display: "inline-block"}}>
+                            <Card key={j}>
+                                    <CardHead>
+                                    <CardTitle>
+                                        {questions.title}
+                                    </CardTitle>
+                                    <CardOptions>
+                                        <i
+                                        title='Ver descrição'
+                                        style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
+                                        className={`fe fe-chevron-down`} 
+                                        data-toggle="collapse2" data-target={'#collapse2'+j} 
+                                        aria-expanded={false}
+                                        />
+                                    </CardOptions>
+                                    </CardHead>
+                                    <div className="collapse2" id={'collapse2'+j}>
+                                    <CardBody>
+                                       </CardBody>
+                                    </div>
+                                    <CardFooter>
+                                        <Link to={`/aluno/exercicio/${questions.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
+                                                Acessar <i className="fa fa-wpexplorer" />
+                                        </Link>
+                                    </CardFooter>
+                            </Card>
+                            </div>
+                            )}
+                        </CardBody>
+                        </div>
+                    </Card>
+                    )}
                 </div>
                 }
 
