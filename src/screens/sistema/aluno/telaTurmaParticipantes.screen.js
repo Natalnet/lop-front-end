@@ -4,6 +4,8 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import NavPagination from "components/ui/navs/navPagination";
 
+import Card from "components/ui/card/card.component";
+
 export default class Pagina extends Component {
     constructor(props){
         super(props)

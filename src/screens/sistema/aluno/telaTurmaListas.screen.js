@@ -85,9 +85,12 @@ export default class Pagina extends Component {
                     {listas.map((lista,i)=>
                     <Card key={i}>
                         <CardHead>
-                        <CardTitle>
-                                    {lista.title}
-                        </CardTitle>
+                                    <div className="col-4">
+                                        {lista.title}
+                                    </div>
+                                    <div className="progress col-8" style={{height: "20px"}}>
+                                        <div className="progress-bar" role="progressbar" style={{width: "25%"}} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                    </div>
                         <CardOptions>
                             <i
                             title='Ver descrição'
