@@ -87,20 +87,20 @@ export default class Pagina extends Component {
                     <Card key={lista.id}>
                         <CardHead>
                             <div className="col-4">
-                                <b>{lista.title}</b>
+                                <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
                             </div>
                             <div className="progress col-8" style={{height: "20px"}}>
                                 <div className="progress-bar" role="progressbar" style={{width: `${lista.completed}%`}} aria-valuenow={lista.completed} aria-valuemin="0" aria-valuemax="100">{lista.completed}%</div>
                             </div>
-                        <CardOptions>
-                            <i
-                            title='Ver descrição'
-                            style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                            className={`fe fe-chevron-down`} 
-                            data-toggle="collapse" data-target={'#collapse'+i} 
-                            aria-expanded={false}
-                            />
-                        </CardOptions>
+                            <CardOptions>
+                                <i
+                                title='Ver descrição'
+                                style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
+                                className={`fe fe-chevron-down`} 
+                                data-toggle="collapse" data-target={'#collapse'+i} 
+                                aria-expanded={false}
+                                />
+                            </CardOptions>
                         </CardHead>
                         <div className="collapse" id={'collapse'+i}>
                         <CardBody>
