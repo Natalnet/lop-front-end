@@ -49,6 +49,7 @@ export default class Editor extends Component {
       difficulty:'Médio',
       solution:'',
       results:[],
+      tempo_inicial:null,
       loadingReponse:false,
       loadingEditor:false,
       title:'',
@@ -62,6 +63,9 @@ export default class Editor extends Component {
   }
 
   componentDidMount() {
+    this.setState({tempo_inicial:new Date()})
+    console.log('props');
+    console.log(this.props);
     this.getExercicio()
   }
   async getExercicio(){
@@ -87,6 +91,7 @@ export default class Editor extends Component {
   }
   async submeter(e){
     e.preventDefault()
+    const timeConsuming = new Date() - this.state.tempo_inicial
     const {solution,language,results} = this.state
     const request = {
       codigo : solution,
@@ -96,6 +101,7 @@ export default class Editor extends Component {
     this.setState({loadingReponse:true})
     try{
       const response = await apiCompiler.post('/submission/exec',request)
+      this.saveSubmission(request,response.data.percentualAcerto,timeConsuming)
       console.log('sumbissão: ');
       console.log(response.data);
       this.setState({
@@ -112,6 +118,24 @@ export default class Editor extends Component {
       alert('erro na conexão com o servidor')
     }
     
+  }
+  async saveSubmission({codigo,linguagem},hitPercentage,timeConsuming){
+    const idQuestion = this.props.match.params.id
+    const query = this.props.location.search
+    const request = {
+      answer: codigo,
+      language: linguagem,
+      hitPercentage : hitPercentage,
+      timeConsuming : timeConsuming
+    }
+    try{
+      const response = await api.post(`/submission/question/${idQuestion}/store${query}`,request)
+      this.setState({tempo_inicial:new Date()})
+    }
+    catch(err){
+      this.setState({tempo_inicial:new Date()})
+      console.log(err);
+    }
   }
   getInputsAndOutpus(results){
     let inputs=[]

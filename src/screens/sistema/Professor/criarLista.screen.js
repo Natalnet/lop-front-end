@@ -73,6 +73,7 @@ export default class CriarListaScreen extends Component {
     };
 
     async criarLista(e){
+        console.log('criar lista');
         e.preventDefault();
         if (this.state.title === "") {
           this.setState({ msg: "Informe o nome da turma" });
@@ -242,31 +243,24 @@ export default class CriarListaScreen extends Component {
                                 </tr> 
                             :
                                 this.state.exercicios.map((questao, index) =>{
-                                    /*let jaSelecionou = false
-                                    for(let selecionado of selecionados){
-                                        if(selecionado.id===questao.id){
-                                            jaSelecionou = true
-                                            break
-                                        }
-                                    }*/
                                     return (
-                                    <tr key={index}>
+                                    <tr key={questao.id}>
                                         <td>{questao.title}</td>
                                         <td>{questao.code}</td>
                                         <td>0{/*exercicio.executions.length*/}</td>
                                         <td>{questao.author.email}</td>
                                         <td>{formataData(questao.createdAt)}</td>
                                         <td>
-                                            <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(questao)}>
+                                            <button type='button' className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(questao)}>
                                                 <i className="fa fa-info"/>
                                             </button>
                                             {selecionados.map(s=> s.id).includes(questao.id)
                                              ?
-                                                <button className="float-right btn btn-indigo disabled">
+                                                <button type='button' className="float-right btn btn-indigo disabled">
                                                     Selecionada
                                                 </button>
                                             :
-                                                <button className="float-right btn btn-primary" onClick={(e)=>this.selecionar(questao)}>
+                                                <button type='button' className="float-right btn btn-primary" onClick={(e)=>this.selecionar(questao)}>
                                                     Adicionar <i className="fe fe-file-plus" />
                                                 </button>
                                             }
@@ -311,7 +305,7 @@ export default class CriarListaScreen extends Component {
                                             <td>0{/*exercicio.executions.length*/}</td>
                                             <td>{questao.author.email}</td>
                                             <td>{formataData(questao.createdAt)}</td>
-                                            <td><a className="btn btn-primary" style={botao2} onClick={()=>this.excluir(questao)}><i className="fe fe-file-minus" /></a></td>
+                                            <td><button type='button' className="btn btn-primary" style={botao2} onClick={()=>this.excluir(questao)}><i className="fe fe-file-minus" /></button></td>
                                         </tr>
                                     ))}
                                 </tbody>

@@ -52,6 +52,7 @@ export default class Pagina extends Component {
         try{
             const id = this.props.match.params.id
             const response = await api.get(`/class/${id}/lists`)
+            console.log('listas');
             console.log(response.data);
             this.setState({
                 listas:[...response.data],
@@ -73,7 +74,7 @@ export default class Pagina extends Component {
                {loadingInfoTurma?
                     <div className="loader"  style={{margin:'0px auto'}}></div>
                     :
-                    <h3><i className="fa fa-users mr-2" aria-hidden="true"/>  {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                    <h3><i className="fa fa-users mr-2" aria-hidden="true"/>  {turma.name} - {turma.year}.{turma.semester}</h3>
                 }
                 <br/>
                 
@@ -83,14 +84,14 @@ export default class Pagina extends Component {
                 :
                 <div className="col-12">
                     {listas.map((lista,i)=>
-                    <Card key={i}>
+                    <Card key={lista.id}>
                         <CardHead>
-                                    <div className="col-4">
-                                        {lista.title}
-                                    </div>
-                                    <div className="progress col-8" style={{height: "20px"}}>
-                                        <div className="progress-bar" role="progressbar" style={{width: "25%"}} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                                    </div>
+                            <div className="col-4">
+                                <b>{lista.title}</b>
+                            </div>
+                            <div className="progress col-8" style={{height: "20px"}}>
+                                <div className="progress-bar" role="progressbar" style={{width: `${lista.completed}%`}} aria-valuenow={lista.completed} aria-valuemin="0" aria-valuemax="100">{lista.completed}%</div>
+                            </div>
                         <CardOptions>
                             <i
                             title='Ver descrição'
@@ -103,30 +104,40 @@ export default class Pagina extends Component {
                         </CardHead>
                         <div className="collapse" id={'collapse'+i}>
                         <CardBody>
-                            {lista.questions.map((questions,j)=>
-                            <div className="col-6" style={{display: "inline-block"}}>
-                            <Card key={j}>
+                            {lista.questions.map((question,j)=>
+                            <div key={question.id} className="col-6" style={{display: "inline-block"}}>
+                            <Card >
                                     <CardHead>
                                     <CardTitle>
-                                        {questions.title}
+
+                                        <b>
+                                        {question.title}&nbsp;
+                                        { question.submission && question.submission.hitPercentage===100?
+                                            <i className="fa fa-check" style={{color:'#0f0'}}/>
+                                        :null}
+                                        </b>
                                     </CardTitle>
                                     <CardOptions>
                                         <i
                                         title='Ver descrição'
                                         style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
                                         className={`fe fe-chevron-down`} 
-                                        data-toggle="collapse" data-target={'#collapse2'+j} 
+                                        data-toggle="collapse" data-target={'#collapse2'+j+lista.id} 
                                         aria-expanded={false}
                                         />
                                     </CardOptions>
                                     </CardHead>
-                                    <div className="collapse" id={'collapse2'+j}>
-                                    <CardBody>
-                                        {questions.description}
+                                    <div className="collapse" id={'collapse2'+j+lista.id}>
+                                        <CardBody>
+                                            {question.description}
                                        </CardBody>
                                     </div>
                                     <CardFooter>
-                                        <Link to={`/aluno/exercicio/${questions.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
+
+                                        <span className="avatar avatar-cyan" title={`Voçê submeteu essa questão ${question.submission?question.submission.version+1:0} vez(es)`}>
+                                            {question.submission?question.submission.version+1:0}
+                                        </span>
+                                        <Link to={`/aluno/exercicio/${question.id}?list=${lista.id}&class=${this.props.match.params.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
                                                 Acessar <i className="fa fa-wpexplorer" />
                                         </Link>
                                     </CardFooter>
