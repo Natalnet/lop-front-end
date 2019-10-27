@@ -70,9 +70,11 @@ export default class Editor extends Component {
   }
   async getExercicio(){
     const id = this.props.match.params.id
+    const query = `?exclude=solution`
     try{
+
       this.setState({loadingExercicio:true})
-      const response = await api.get(`/question/${id}`)
+      const response = await api.get(`/question/${id}${query}`)
       console.log('questão');
       console.log(response.data);
       //const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
@@ -212,7 +214,7 @@ export default class Editor extends Component {
          </div>
 
          <div className='row'>
-           <div className ="col-6">
+           <div className ="col-12 col-md-6">
               <Card>
               <AceEditor
                 mode={language}
@@ -232,7 +234,7 @@ export default class Editor extends Component {
               </Card>
            </div>
 
-          <div className ="col-6">
+          <div className ="col-12 col-md-6">
           {loadingReponse?
               <div className="loader"  style={{margin:'0px auto'}}></div>
            :

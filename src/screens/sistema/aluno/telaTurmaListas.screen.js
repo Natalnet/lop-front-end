@@ -105,7 +105,7 @@ export default class Pagina extends Component {
                         <div className="collapse" id={'collapse'+i}>
                         <CardBody>
                             {lista.questions.map((question,j)=>
-                            <div key={question.id} className="col-6" style={{display: "inline-block"}}>
+                            <div key={question.id} className="col-12 col-md-6" style={{display: "inline-block"}}>
                             <Card >
                                     <CardHead>
                                     <CardTitle>
@@ -134,7 +134,7 @@ export default class Pagina extends Component {
                                     </div>
                                     <CardFooter>
 
-                                        <span className="avatar avatar-cyan" title={`Voçê submeteu essa questão ${question.submission?question.submission.version+1:0} vez(es)`}>
+                                        <span className="avatar avatar-cyan" title={`Você submeteu essa questão ${question.submission?question.submission.version+1:0} vez(es)`}>
                                             {question.submission?question.submission.version+1:0}
                                         </span>
                                         <Link to={`/aluno/exercicio/${question.id}?list=${lista.id}&class=${this.props.match.params.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
