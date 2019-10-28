@@ -44,12 +44,13 @@ export default class HomesubmissoesScreen extends Component {
             turma:'',
             showModal:false,
             loadingSubmissoes:false,
-            fieldFilter:'title',
+            fieldFilter:'name',
             contentInputSeach:'',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
-            submissao:''
+            submissao:'',
+
         }
         this.handlePage = this.handlePage.bind(this)
 
@@ -156,17 +157,15 @@ export default class HomesubmissoesScreen extends Component {
                     :
                     <h3><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
                 }
-                <br/>
-                <h1 styler={titulo}>Submissões</h1><br></br>
                 <div className="row">
                     <div className="mb-3 col-12">     
                         <InputGroup
-                            placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
+                            placeholder={`Perquise pelo ${fieldFilter==='name'?'nome do aluno':fieldFilter==='title'?'nome da questão':'...'}`}
                             value={contentInputSeach}
                             handleContentInputSeach={this.handleContentInputSeach.bind(this)}
                             filterSeash={this.filterSeash.bind(this)}
                             handleSelect={this.handleSelectFieldFilter.bind(this)}
-                            options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
+                            options={ [{value:'name',content:'Aluno'},{value:'title',content:'Questão'}] }
                             clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                             loading={loadingSubmissoes}                            
                         />
@@ -199,6 +198,9 @@ export default class HomesubmissoesScreen extends Component {
                                 <td>
                                     <div className="loader"/>
                                 </td>                                        
+                                <td>
+                                    <div className="loader"/>
+                                </td>
                                 <td>
                                     <div className="loader"/>
                                 </td>

@@ -59,17 +59,35 @@ export default class Editor extends Component {
       outputs:'',
       percentualAcerto:'',
       redirect:'',
+      turma:'',
+      loadingInfoTurma:true,
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.setState({tempo_inicial:new Date()})
-    console.log('props');
-    console.log(this.props);
-    this.getExercicio()
+    
+    this.getInfoTurma()
+    await this.getExercicio()
+    document.title = `${this.state.title}`
+  }
+  async getInfoTurma(){
+      const id = this.props.match.params.id
+      try{
+          const response = await api.get(`/class/${id}`)
+          console.log(response);
+          this.setState({
+              turma:response.data,
+              loadingInfoTurma:false,
+          })
+      }
+      catch(err){
+          this.setState({loadingInfoTurma:false})
+          console.log(err);
+      }
   }
   async getExercicio(){
-    const id = this.props.match.params.id
+    const id = this.props.match.params.idExercicio
     const query = `?exclude=solution`
     try{
 
@@ -122,8 +140,8 @@ export default class Editor extends Component {
     
   }
   async saveSubmission({codigo,linguagem},hitPercentage,timeConsuming){
-    const idQuestion = this.props.match.params.id
-    const query = this.props.location.search
+    const idQuestion = this.props.match.params.idExercicio
+    const query = `?class=${this.props.match.params.id}`
     const request = {
       answer: codigo,
       language: linguagem,
@@ -177,12 +195,26 @@ export default class Editor extends Component {
     this.setState({solution:newValue})
   }
   render() {
-    const {response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio } = this.state;
+    const {turma,response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results} = this.state
+    const { language,theme,contentRes,solution,loadingExercicio ,loadingInfoTurma} = this.state;
 
     return (
-    <TemplateSistema active='exercicios'>
+
+    <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
         <div className='row'>
+        <div className ="col-12">
+          {loadingInfoTurma?
+              <div className="loader"  style={{margin:'0px auto'}}></div>
+              :
+              <h3><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+          }
+        </div>
+        </div>
+        {loadingExercicio?
+          <div className="loader"  style={{margin:'0px auto'}}></div>
+        :
+        <Fragment>
+        <div className="row">
           <div className ="col-12">
             <CardEnunciado
               title={title}
@@ -236,6 +268,8 @@ export default class Editor extends Component {
           }
           </div>
         </div>
+        </Fragment>
+        }
         
     </TemplateSistema>
     );

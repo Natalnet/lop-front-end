@@ -7,6 +7,8 @@ import TurmaAluno from "../screens/sistema/aluno/telaTurmaParticipantes.screen"
 import Exercicios from "../screens/sistema/aluno/exercicios.screen";
 import Exercicio from "../screens/sistema/aluno/execicio.screen";
 import TurmaLista from '../screens/sistema/aluno/telaTurmaListas.screen'
+import TurmaExercicio from '../screens/sistema/aluno/telaTurmaExercicio.screen'
+
 import DashBoardAluno from "../screens/sistema/aluno/telaTurmaDashBoard.screen"
 import TurmasAbertasAlunoScreen from "screens/sistema/aluno/turmasAbertas.screen";
 
@@ -38,6 +40,12 @@ const routes = [
   {
     path: "/aluno/turma/:id/listas",
     component: TurmaLista,
+    private: true,
+    perfil: 'ALUNO'
+  },
+  {
+    path: "/aluno/turma/:id/lista/:idLista/exercicio/:idExercicio",
+    component: TurmaExercicio,
     private: true,
     perfil: 'ALUNO'
   },

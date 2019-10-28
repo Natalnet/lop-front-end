@@ -1,18 +1,24 @@
 import React,{Fragment,Component} from 'react';
 import HTMLFormat from '../htmlFormat'
-
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
 
 export default (props) => {
 	const {title,description,id,results} = props
 	  return(
-            <div className="card">
-              <div className="card-header">
-                <h3>{title}</h3>
-              </div>
-              <div className="card-body">
+            <Card>
+              <CardHead>
+                <CardTitle>
+                  {title}
+                </CardTitle>
+              </CardHead>
+              <CardBody>
                 <p className="card-text">{description}</p>
-              </div>
-              <div className="card-footer">
+              </CardBody>
+              <CardFooter>
                 <div className="form-row">
                   <div className="form-group col-md-3">
                     <h4>Exemplos</h4>
@@ -40,7 +46,7 @@ export default (props) => {
                       ).filter((res,i) => i<3)}
                     </tbody>
                   </table>
-              </div>
-            </div>
+              </CardFooter>
+            </Card>
 	  )
 }

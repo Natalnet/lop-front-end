@@ -181,6 +181,7 @@ export default class Pagina extends Component {
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
             <div>
+            
                {loadingInfoTurma?
                     <div className="loader"  style={{margin:'0px auto'}}></div>
                     :

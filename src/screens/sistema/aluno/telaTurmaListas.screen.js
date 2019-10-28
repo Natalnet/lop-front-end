@@ -137,7 +137,7 @@ export default class Pagina extends Component {
                                         <span className="avatar avatar-cyan" title={`Você submeteu essa questão ${question.submission?question.submission.version+1:0} vez(es)`}>
                                             {question.submission?question.submission.version+1:0}
                                         </span>
-                                        <Link to={`/aluno/exercicio/${question.id}?list=${lista.id}&class=${this.props.match.params.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
+                                        <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
                                                 Acessar <i className="fa fa-wpexplorer" />
                                         </Link>
                                     </CardFooter>
