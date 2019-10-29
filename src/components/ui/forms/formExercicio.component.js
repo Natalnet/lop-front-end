@@ -1,21 +1,34 @@
 import React from 'react'
+import Select from 'react-select';
+
 import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
 
 export default (props) =>{
-	const {title,description,inputs,outputs,katexDescription,status,difficulty} = props
-	const {handleTitleChange,handleDescriptionChange,handlekatexDescription,handleStatus,handleDifficulty,handleInputsChange} = props
-	return(
+	const {title,description,inputs,outputs,katexDescription,status,difficulty,tags,defaultTags,loadingTags} = props
+	const {handleTitleChange,handleDescriptionChange,handlekatexDescription,handleStatus,handleDifficulty,handleInputsChange,handleTagsChangeTags} = props
+
+  return(
           <div className="form-row">
+
+            <div className="form-group col-md-12">
+              <label>Título: </label>
+              <input onChange={props.handleTitleChange} className="form-control" placeholder="Digite o título da questão..." value={title}/>
+            </div>
+
+            <div className="form-group col-md-12">
+              <label>Enunciado:  </label>
+              <textarea onChange={props.handleDescriptionChange} style={{height:'150px'}} className="form-control" value={description}></textarea> 
+            </div>
             <div className="form-group col-md-6">
-                <label HTMLFor="selectStatus">Status da questão: </label>
+                <label htmlFor="selectStatus">Status da questão: </label>
                 <select className="form-control" defaultValue={status} id='selectStatus' onChange={handleStatus}>
                   <option value='PÚBLICA'>Pública (para uso em listas)</option>
                   <option value='PRIVADA'>Oculta (para uso em provas)</option>
                 </select>
             </div>
             <div className="form-group col-md-6">
-                <label HTMLFor="selectDifficulty">Dificudade </label>
+                <label htmlFor="selectDifficulty">Dificudade </label>
                 <select className="form-control" defaultValue={difficulty} id='selectDifficulty' onChange={handleDifficulty}>
                   <option value = 'Muito fácil' >Muito fácil</option>
                   <option value = 'Fácil' >Fácil</option>
@@ -25,14 +38,17 @@ export default (props) =>{
 
                 </select>
             </div>
-            <div className="form-group col-md-12">
-              <label>Título: </label>
-              <input onChange={props.handleTitleChange} className="form-control" placeholder="Digite o título da questão..." value={title}/>
-            </div>
-
-            <div className="form-group col-md-12">
-              <label>Enunciado:  </label>
-              <textarea onChange={props.handleDescriptionChange} style={{height:'150px'}} className="form-control" value={description}></textarea> 
+            <div className="form-group col-12">
+              <label>Tags </label>
+              <Select
+                  style={{boxShadow: "white"}}
+                  defaultValue={defaultTags || []}
+                  options={tags || []}
+                  isMulti
+                  isLoading={loadingTags}
+                  closeMenuOnSelect={false}
+                  onChange={handleTagsChangeTags}                                
+              />
             </div>
             <div className="form-group col-md-6">
                 <label>

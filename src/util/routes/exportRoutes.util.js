@@ -4,7 +4,6 @@ import { PrivateRoutes } from "./privateRoutes.util";
 import { Redirect ,Link} from 'react-router-dom';
 const exportRoutes = routes => {
   const routesMap = routes.map((route, index) => {
-    console.log(route.perfil)
     if (route.private === false) {
       return (
         <Route

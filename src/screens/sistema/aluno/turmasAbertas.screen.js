@@ -95,6 +95,7 @@ export default class HomeAlunoScreen extends Component {
     this.getTurmasAbertas()
   }
   async solicitarAcesso(idClass){
+    console.log(idClass);
     try{
       //this.setState({solicitando:'disabled'})
       Swal.fire({

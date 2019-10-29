@@ -10,7 +10,15 @@ import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
 import 'brace/theme/monokai';
-
+import 'brace/theme/github';
+import 'brace/theme/tomorrow';
+import 'brace/theme/kuroir';
+import 'brace/theme/twilight';
+import 'brace/theme/xcode';
+import 'brace/theme/textmate';
+import 'brace/theme/solarized_dark';
+import 'brace/theme/solarized_light';
+import 'brace/theme/terminal';
 
 
 import Card from "components/ui/card/card.component";
@@ -50,13 +58,41 @@ export default class Editor extends Component {
       inputs:'',
       outputs:'',
       percentualAcerto:'',
+      tags:[],
+      tagsSelecionadas:[],
+      loadingTags:false,
       redirect:false,
     }
   }
   componentDidMount(){
+    this.getTags()
     document.title = "Criar Exercício - professor";
   }
-
+  async getTags(){
+    try{
+      this.setState({loadingTags:true})
+      const response = await api.get('/tag')
+      this.setState({
+        tags: response.data.map(tag=>{
+          return {
+            value: tag.id,
+            label: tag.name
+          }
+        }),
+        loadingTags:false
+      })
+    }
+    catch(err){
+      console.log(err);
+      this.setState({loadingTags:false})
+    }
+  }
+  async handleTagsChangeTags(tags){
+    console.log(tags);
+    this.setState({
+        tagsSelecionadas:tags || []
+    })
+  }
   async handleTitleChange(e){
       this.setState({
         title:e.target.value
@@ -157,6 +193,7 @@ export default class Editor extends Component {
     const request = {
       title : this.state.title,
       description : this.state.description,
+      tags : this.state.tagsSelecionadas.map(tag=>tag.value),
       katexDescription:this.state.katexDescription,
       status:this.state.status,
       difficulty:this.state.difficulty,
@@ -194,7 +231,7 @@ export default class Editor extends Component {
       return <Redirect to='/professor/exercicios' />
     }
     const {percentualAcerto,status,difficulty,katexDescription,response,redirect,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,contentRes,solution } = this.state;
+    const { language,theme,contentRes,solution,tags,loadingTags } = this.state;
     
     if(loadingEditor){
       return(
@@ -224,6 +261,9 @@ export default class Editor extends Component {
         difficulty={difficulty}
         solution={solution}
         loadingReponse={loadingReponse}
+        tags={tags}
+        loadingTags={loadingTags}
+        handleTagsChangeTags={this.handleTagsChangeTags.bind(this)}
         handleTitleChange={this.handleTitleChange.bind(this)}
         handleDescriptionChange={this.handleDescriptionChange.bind(this)}
         handlekatexDescription={this.handlekatexDescription.bind(this)}

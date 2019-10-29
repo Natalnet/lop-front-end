@@ -10,6 +10,15 @@ import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
 import 'brace/theme/monokai';
+import 'brace/theme/github';
+import 'brace/theme/tomorrow';
+import 'brace/theme/kuroir';
+import 'brace/theme/twilight';
+import 'brace/theme/xcode';
+import 'brace/theme/textmate';
+import 'brace/theme/solarized_dark';
+import 'brace/theme/solarized_light';
+import 'brace/theme/terminal';
 
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -47,12 +56,35 @@ export default class Editor extends Component {
       inputs:'',
       outputs:'',
       percentualAcerto:'',
+      tags:[],
+      tagsSelecionadas:[],
+      loadingTags:false,
       redirect:false,
     }
   }
   componentDidMount(){
     document.title = "Editar Exercício - professor";
+    this.getTags()
     this.getExercicio()
+  }
+  async getTags(){
+    try{
+      this.setState({loadingTags:true})
+      const response = await api.get('/tag')
+      this.setState({
+        tags: response.data.map(tag=>{
+          return {
+            value: tag.id,
+            label: tag.name
+          }
+        }),
+        loadingTags:false
+      })
+    }
+    catch(err){
+      console.log(err);
+      this.setState({loadingTags:false})
+    }
   }
   async getExercicio(){
     const id = this.props.match.params.id
@@ -70,13 +102,26 @@ export default class Editor extends Component {
         solution:response.data.solution,
         inputs:inputs,
         outputs:outputs,
-        loadingExercicio:false
+        loadingExercicio:false,
+        tagsSelecionadas:response.data.tags.map(tag=>{
+          return {
+            value:tag.id,
+            label:tag.name
+          }
+        })
       })
     }
+
     catch(err){
       this.setState({loadingExercicio:false})
       console.log(Object.getOwnPropertyDescriptors(err));
     } 
+  }
+  async handleTagsChangeTags(tags){
+    console.log(tags);
+    this.setState({
+        tagsSelecionadas:tags || []
+    })
   }
   getInputsAndOutpus(results){
     let inputs=[]
@@ -197,6 +242,7 @@ export default class Editor extends Component {
       status:this.state.status,
       difficulty:this.state.difficulty,
       solution:this.state.solution,
+      tags:this.state.tagsSelecionadas.map(tag=>tag.value),
       results : this.getResults()
     }
     try{
@@ -231,7 +277,7 @@ export default class Editor extends Component {
       return <Redirect to='/professor/exercicios' />
     }
     const {percentualAcerto,response,redirect,status,difficulty,katexDescription,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio } = this.state;
+    const { language,theme,contentRes,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags } = this.state;
 
 
     return (
@@ -239,7 +285,7 @@ export default class Editor extends Component {
     <Card>
       <CardHead>
           <CardTitle center>
-            <h2><i className="fa fa-edit"></i> Atualizar questão</h2>
+            <i className="fa fa-edit"></i> Atualizar questão
           </CardTitle>
       </CardHead>
       <CardBody loading={loadingExercicio}>
@@ -252,6 +298,10 @@ export default class Editor extends Component {
         status={status}
         difficulty={difficulty}
         loadingReponse={loadingReponse}
+        tags={tags}
+        defaultTags={tagsSelecionadas}
+        loadingTags={loadingTags}
+        handleTagsChangeTags={this.handleTagsChangeTags.bind(this)}
         handleTitleChange={this.handleTitleChange.bind(this)}
         handleDescriptionChange={this.handleDescriptionChange.bind(this)}
         handlekatexDescription={this.handlekatexDescription.bind(this)}
