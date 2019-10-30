@@ -2,6 +2,7 @@ import React, { Component,Fragment} from "react";
 import {Redirect} from 'react-router-dom'
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
+import HTMLFormat from '../../../components/ui/htmlFormat'
 import apiCompiler from '../../../services/apiCompiler'
 import brace from 'brace';
 import AceEditor from 'react-ace';
@@ -182,15 +183,53 @@ export default class Editor extends Component {
 
     return (
     <TemplateSistema active='exercicios'>
-        <div className='row'>
-          <div className ="col-12">
-            <CardEnunciado
-              title={title}
-              description={description}
-              id={this.idExercicio}
-              results={results}
-            />
+        <div className='row' >
+          <div className ="col-7">
+
+            <Card>
+              <CardHead>
+                <b>{title}</b>
+              </CardHead>
+              <CardBody>
+                {description}
+              </CardBody>
+            </Card>
+
           </div>
+          <div className="col-5">
+            <Card>
+            <CardBody>
+              <div className="form-row">
+                <div className="form-group col-md-3">
+                  <h4 style={{textAlign:"center"}}>Exemplos</h4>
+                </div>
+              </div>
+                <table className="table">
+                  <tbody>
+                    <tr>
+                      <td><b>Exemplo de entrada</b></td>
+                      <td><b>Exemplo de saída</b></td>                       
+                    </tr>
+                      {results.map((res,i)=> 
+                      <tr key={i}>
+                        <td>
+                          <HTMLFormat>
+                            {res.inputs}
+                          </HTMLFormat>
+                        </td>
+                        <td>
+                          <HTMLFormat>
+                            {res.output}
+                          </HTMLFormat>
+                        </td>
+                      </tr>
+                    ).filter((res,i) => i<3)}
+                  </tbody>
+                </table>
+            </CardBody>
+            </Card>
+          </div>
+
           <div className ="col-12">
             <FormSelect
               loadingReponse={loadingReponse}
@@ -226,13 +265,17 @@ export default class Editor extends Component {
           {loadingReponse?
               <div className="loader"  style={{margin:'0px auto'}}></div>
            :
-              
-              <TableResults2 
-                response={response}
-                descriptionErro={contentRes}
-                erro={someErro}
-                percentualAcerto={percentualAcerto}
-              />
+              <div style={{backgroundColor:"white"}}>
+                <CardHead>
+                  <h3>Resultados:</h3>
+                </CardHead>
+                <TableResults2 
+                  response={response}
+                  descriptionErro={contentRes}
+                  erro={someErro}
+                  percentualAcerto={percentualAcerto}
+                />
+              </div>
           }
           </div>
         </div>

@@ -17,6 +17,7 @@ const botao = {
     width: "100%"
 };
 
+
 export default class ExerciciosScreen extends Component {
     constructor(props){
         super(props)

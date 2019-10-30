@@ -32,6 +32,7 @@ export default class NovasTurmasScreen extends Component {
         todosProfessores: [],
         professoresSelecionados: [],
         loadingProfessores:true,
+        language: ""
     };
     componentDidMount() {
         this.getProfessores();
@@ -124,6 +125,9 @@ export default class NovasTurmasScreen extends Component {
     handleSemesterChange = e => {
         this.setState({ semester: e.target.value });
     };
+    handleLanguageChange = e => {
+        this.setState({ language: e.target.value });
+    };
     handleDescriptionChange = e => {
         this.setState({ description: e.target.value });
     };
@@ -161,9 +165,24 @@ export default class NovasTurmasScreen extends Component {
                                 value={this.state.name}
                                 onChange={this.handleNameChange}
                             />
+                            
+                            
 
                             <div className="row">
-                                <div className="col-6">
+                                <div className="col-4">
+                                    <label htmlFor="exampleFormControlSelect1">Linguagem: </label>
+                                    <select 
+                                        className="form-control" 
+                                        id="exampleFormControlSelect1" 
+                                        defaultValue={this.state.language} 
+                                        onChange={this.handleLanguageChange}
+                                    >
+                                        <option value="javascript">JavaScript</option>
+                                        <option value="c++">C++</option>
+                                    </select>
+                                </div>
+
+                                <div className="col-4">
                                     <label  htmlFor="exampleFormControlSelect0">Ano: </label>
                                     <select 
                                         className="form-control" 
@@ -182,7 +201,7 @@ export default class NovasTurmasScreen extends Component {
                                     </select>
                                 </div>
 
-                                <div className="col-6">
+                                <div className="col-4">
                                     <label htmlFor="exampleFormControlSelect1">semestre: </label>
                                     <select 
                                         className="form-control" 
