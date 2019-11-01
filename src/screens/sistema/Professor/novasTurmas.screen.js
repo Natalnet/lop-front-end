@@ -58,7 +58,8 @@ export default class NovasTurmasScreen extends Component {
                 semester: this.state.semester,
                 description: this.state.description,
                 state: this.state.state,
-                professores: this.state.professoresSelecionados.map(p=>p.id)
+                professores: this.state.professoresSelecionados.map(p=>p.id),
+                language: this.state.language
             };
             Swal.fire({
                 title:'Criando turma',
@@ -178,7 +179,7 @@ export default class NovasTurmasScreen extends Component {
                                         onChange={this.handleLanguageChange}
                                     >
                                         <option value="javascript">JavaScript</option>
-                                        <option value="c++">C++</option>
+                                        <option value="cpp">C++</option>
                                     </select>
                                 </div>
 

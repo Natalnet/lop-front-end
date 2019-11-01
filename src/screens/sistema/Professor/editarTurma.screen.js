@@ -89,7 +89,8 @@ export default class NovasTurmasScreen extends Component {
                 semester: this.state.semester,
                 description: this.state.description,
                 state: this.state.state,
-                professores: this.state.professoresSelecionados.map(p=>p.id)
+                professores: this.state.professoresSelecionados.map(p=>p.id),
+                lenguage: this.state.lenguage
             };
             Swal.fire({
                 title:'Atualizando turma',

@@ -279,12 +279,14 @@ export default class Editor extends Component {
           />
         </div>
       </div>
-      <FormSelect
-        loadingReponse={loadingReponse}
-        changeLanguage={this.changeLanguage.bind(this)}
-        changeTheme={this.changeTheme.bind(this)}
-        executar={this.executar.bind(this)}
-      />
+      <div style={{marginBottom:"10px"}}>
+        <FormSelect
+          loadingReponse={loadingReponse}
+          changeLanguage={this.changeLanguage.bind(this)}
+          changeTheme={this.changeTheme.bind(this)}
+          executar={this.executar.bind(this)}
+        />
+      </div>
           <div className='row'>
             <div className='col-6'>
               <AceEditor

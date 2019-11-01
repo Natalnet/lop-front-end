@@ -4,7 +4,7 @@ import {Redirect} from 'react-router-dom'
 import api from '../../../services/api'
 import HTMLFormat from '../../../components/ui/htmlFormat'
 import apiCompiler from '../../../services/apiCompiler'
-import brace from 'brace';
+import { InlineMath, BlockMath } from 'react-katex';
 import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
@@ -33,6 +33,9 @@ import CardEnunciado from '../../../components/ui/card/cardEnunciadoExercicio.co
 import imgLoading from '../../../assets/loading.gif'
 import imgLoading1 from '../../../assets/loading1.gif'
 import imgLoading2 from '../../../assets/loading2.gif'
+
+let var_katex = null;
+
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts
   // (https://github.com/Microsoft/monaco-editor/blob/master/monaco.d.ts):
@@ -180,8 +183,18 @@ export default class Editor extends Component {
   handleSolution(newValue){
     this.setState({solution:newValue})
   }
+  katex(katexDescription){
+      console.log("entrou")
+      if(katexDescription!==null){
+          return var_katex=katexDescription;
+      }
+      else{
+          return var_katex="";
+      }
+  }
+
   render() {
-    const {response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results} = this.state
+    const {response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results,katexDescription} = this.state
     const { language,theme,contentRes,solution,loadingExercicio } = this.state;
 
     return (
@@ -200,6 +213,10 @@ export default class Editor extends Component {
               </CardHead>
               <CardBody>
                 {description}
+                {this.katex(katexDescription)}
+                <br/>
+                <br/>
+                <BlockMath>{var_katex}</BlockMath>
               </CardBody>
             </Card>
 
@@ -239,18 +256,29 @@ export default class Editor extends Component {
             </Card>
           </div>
           </div>
-          <div className ="row">
-          <div className ="col-12">
-            <FormSelect
-              loadingReponse={loadingReponse}
-              changeLanguage={this.changeLanguage.bind(this)}
-              changeTheme={this.changeTheme.bind(this)}
-              executar={this.submeter.bind(this)}
-            />
-           </div>
+          <div className ="row" style={{marginBottom:"10px"}}>
+            <div className = 'col-7'>
+              <FormSelect
+                loadingReponse={loadingReponse}
+                changeLanguage={this.changeLanguage.bind(this)}
+                changeTheme={this.changeTheme.bind(this)}
+                executar={this.submeter.bind(this)}
+              />
+            </div>
+            <div className="col-2" style={{float:"right", marginLeft:"auto"}}>
+              <label htmlFor="selectDifficulty">Dificudade: </label>
+              <select className="form-control"  id='selectDifficulty' >
+                <option value = 'Muito fácil' >Muito fácil</option>
+                <option value = 'Fácil' >Fácil</option>
+                <option value = 'Médio' >Médio</option>
+                <option value = 'Difícil' >Difícil</option>
+                <option value = 'Muito difícil' >Muito difícil</option>
+
+              </select>
+            </div>
           </div>
          <div className='row'>
-           <div className ="col-12 col-md-6">
+           <div className ="col-12 col-md-7">
               <Card>
               <AceEditor
                 mode={language}
@@ -270,7 +298,7 @@ export default class Editor extends Component {
               </Card>
            </div>
 
-          <div className ="col-12 col-md-6">
+          <div className ="col-12 col-md-5">
           {loadingReponse?
               <div className="loader"  style={{margin:'0px auto'}}></div>
            :
