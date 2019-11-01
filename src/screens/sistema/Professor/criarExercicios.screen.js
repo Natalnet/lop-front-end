@@ -170,14 +170,14 @@ export default class Editor extends Component {
   }
   getResults(){
     const {inputs,outputs} = this.state
-    const entradas = inputs.split('\n')
-    const saidas = outputs.split('\n')
+    const entradas = inputs.split('\n').map(input => input.trim())
+    const saidas = outputs.split('\n').map(input => input.replace(/\s+$/,''))
     console.log('saidas: '+saidas);
     const resultados = []
     for(let i=0 ; i<entradas.length ; i++ ){
       resultados.push({
-        inputs: entradas[i]?entradas[i].split(',').map(inp => inp+'\n').join(''):'',
-        output: saidas[i]?saidas[i].split('|').join('\n'):''
+        inputs: entradas[i]?entradas[i].split(',').map(i=>i.trim()).map(inp => inp+'\n').join(''):'',
+        output: saidas[i]?saidas[i].split('|').map(input => input.replace(/\s+$/,'')).join('\n'):''
       })
     }
     return resultados
