@@ -9,11 +9,11 @@ import React, { Component } from "react";
 
 export default class Card extends Component {
   render() {
-  	const {loading,children} = this.props
+  	const {loading,children,style,id} = this.props
     return (
     	<div className='row row-cards row-deck turma'>
     		<div className="col-12">
-    			<div className="card" >
+    			<div id={id || ''} className="card" style={style || {} } >
 			      	{children}
 		      	</div>
       	    </div>

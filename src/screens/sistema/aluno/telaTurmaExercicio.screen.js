@@ -2,6 +2,8 @@ import React, { Component,Fragment} from "react";
 import {Redirect} from 'react-router-dom'
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
+import HTMLFormat from '../../../components/ui/htmlFormat'
+
 import apiCompiler from '../../../services/apiCompiler'
 import brace from 'brace';
 import AceEditor from 'react-ace';
@@ -70,6 +72,21 @@ export default class Editor extends Component {
     this.getInfoTurma()
     await this.getExercicio()
     document.title = `${this.state.title}`
+    this.appStyles()
+  }
+  appStyles(){
+    const cardEnunciado = document.getElementById('cardEnunciado')
+    const cardExemplos = document.getElementById('cardExemplos')
+    const heightCardEnunciado = cardEnunciado.offsetHeight 
+    const heightCardExemplos = cardExemplos.offsetHeight 
+    if(heightCardEnunciado>heightCardExemplos){
+      cardEnunciado.setAttribute("style",`height:${heightCardEnunciado}px`);
+      cardExemplos.setAttribute("style",`height:${heightCardEnunciado}px`);
+    }
+    else{
+      cardEnunciado.setAttribute("style",`height:${heightCardExemplos}px`);
+      cardExemplos.setAttribute("style",`height:${heightCardExemplos}px`);
+    }
   }
   async getInfoTurma(){
       const id = this.props.match.params.id
@@ -113,6 +130,7 @@ export default class Editor extends Component {
     e.preventDefault()
     const timeConsuming = new Date() - this.state.tempo_inicial
     const {solution,language,results} = this.state
+    console.log(solution);
     const request = {
       codigo : solution,
       linguagem :language==='c_cpp'?'cpp':language,
@@ -170,20 +188,7 @@ export default class Editor extends Component {
     console.log(inputs);
     return [inputs,output]
   }
-  /*getResults(){
-    const {inputs,outputs} = this.state
-    const entradas = inputs.split('\n')
-    const saidas = outputs.split('\n')
-    console.log('saidas: '+saidas);
-    const resultados = []
-    for(let i=0 ; i<entradas.length ; i++ ){
-      resultados.push({
-        inputs: (entradas[i].split(',').map(inp => inp+'\n')).join(''),
-        output: saidas[i].split('|').join('\n')
-      })
-    }
-    return resultados
-  }*/
+
   async changeLanguage(e){
     await this.setState({language:e.target.value})
   }
@@ -214,15 +219,56 @@ export default class Editor extends Component {
           <div className="loader"  style={{margin:'0px auto'}}></div>
         :
         <Fragment>
-        <div className="row">
-          <div className ="col-12">
-            <CardEnunciado
-              title={title}
-              description={description}
-              id={this.idExercicio}
-              results={results}
-            />
+        <div className='row' >
+          <div className ="col-7">
+            <Card id='cardEnunciado'>
+              <CardHead>
+                <CardTitle>
+                <b>{title}</b>
+                </CardTitle>
+              </CardHead>
+              <CardBody>
+                {description}
+              </CardBody>
+            </Card>
+
           </div>
+          <div className="col-5">
+            <Card id="cardExemplos">
+              <CardHead>
+                <CardTitle>
+                  Exemplos
+                </CardTitle>
+              </CardHead>
+              <CardBody>
+              
+                <table className="table">
+                  <tbody>
+                    <tr>
+                      <td><b>Exemplo de entrada</b></td>
+                      <td><b>Exemplo de saída</b></td>                       
+                    </tr>
+                      {results.map((res,i)=> 
+                      <tr key={i}>
+                        <td>
+                          <HTMLFormat>
+                            {res.inputs}
+                          </HTMLFormat>
+                        </td>
+                        <td>
+                          <HTMLFormat>
+                            {res.output}
+                          </HTMLFormat>
+                        </td>
+                      </tr>
+                    ).filter((res,i) => i<2)}
+                  </tbody>
+                </table>
+            </CardBody>
+            </Card>
+          </div>
+          </div>
+          <div className ="row">
           <div className ="col-12">
             <FormSelect
               loadingReponse={loadingReponse}
@@ -231,8 +277,7 @@ export default class Editor extends Component {
               executar={this.submeter.bind(this)}
             />
            </div>
-         </div>
-
+          </div>
          <div className='row'>
            <div className ="col-12 col-md-6">
               <Card>
@@ -258,13 +303,17 @@ export default class Editor extends Component {
           {loadingReponse?
               <div className="loader"  style={{margin:'0px auto'}}></div>
            :
-              
-              <TableResults2 
-                response={response}
-                descriptionErro={contentRes}
-                erro={someErro}
-                percentualAcerto={percentualAcerto}
-              />
+              <div style={{backgroundColor:"white"}}>
+                <CardHead>
+                  <h3>Resultados:</h3>
+                </CardHead>
+                <TableResults2 
+                  response={response}
+                  descriptionErro={contentRes}
+                  erro={someErro}
+                  percentualAcerto={percentualAcerto}
+                />
+              </div>
           }
           </div>
         </div>

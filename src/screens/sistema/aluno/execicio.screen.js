@@ -63,11 +63,27 @@ export default class Editor extends Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.setState({tempo_inicial:new Date()})
     console.log('props');
     console.log(this.props);
-    this.getExercicio()
+    await this.getExercicio()
+    this.appStyles()
+
+  }
+  appStyles(){
+    const cardEnunciado = document.getElementById('cardEnunciado')
+    const cardExemplos = document.getElementById('cardExemplos')
+    const heightCardEnunciado = cardEnunciado.offsetHeight 
+    const heightCardExemplos = cardExemplos.offsetHeight 
+    if(heightCardEnunciado>heightCardExemplos){
+      cardEnunciado.setAttribute("style",`height:${heightCardEnunciado}px`);
+      cardExemplos.setAttribute("style",`height:${heightCardEnunciado}px`);
+    }
+    else{
+      cardEnunciado.setAttribute("style",`height:${heightCardExemplos}px`);
+      cardExemplos.setAttribute("style",`height:${heightCardExemplos}px`);
+    }
   }
   async getExercicio(){
     const id = this.props.match.params.id
@@ -153,20 +169,7 @@ export default class Editor extends Component {
     console.log(inputs);
     return [inputs,output]
   }
-  /*getResults(){
-    const {inputs,outputs} = this.state
-    const entradas = inputs.split('\n')
-    const saidas = outputs.split('\n')
-    console.log('saidas: '+saidas);
-    const resultados = []
-    for(let i=0 ; i<entradas.length ; i++ ){
-      resultados.push({
-        inputs: (entradas[i].split(',').map(inp => inp+'\n')).join(''),
-        output: saidas[i].split('|').join('\n')
-      })
-    }
-    return resultados
-  }*/
+
   async changeLanguage(e){
     await this.setState({language:e.target.value})
   }
@@ -183,12 +186,17 @@ export default class Editor extends Component {
 
     return (
     <TemplateSistema active='exercicios'>
+        {loadingExercicio?
+          <div className="loader"  style={{margin:'0px auto'}}></div>
+        :
+        <Fragment>
         <div className='row' >
           <div className ="col-7">
-
-            <Card>
+            <Card id='cardEnunciado'>
               <CardHead>
+                <CardTitle>
                 <b>{title}</b>
+                </CardTitle>
               </CardHead>
               <CardBody>
                 {description}
@@ -197,13 +205,14 @@ export default class Editor extends Component {
 
           </div>
           <div className="col-5">
-            <Card>
-            <CardBody>
-              <div className="form-row">
-                <div className="form-group col-md-3">
-                  <h4 style={{textAlign:"center"}}>Exemplos</h4>
-                </div>
-              </div>
+            <Card id="cardExemplos">
+              <CardHead>
+                <CardTitle>
+                  Exemplos
+                </CardTitle>
+              </CardHead>
+              <CardBody>
+              
                 <table className="table">
                   <tbody>
                     <tr>
@@ -223,13 +232,14 @@ export default class Editor extends Component {
                           </HTMLFormat>
                         </td>
                       </tr>
-                    ).filter((res,i) => i<3)}
+                    ).filter((res,i) => i<2)}
                   </tbody>
                 </table>
             </CardBody>
             </Card>
           </div>
-
+          </div>
+          <div className ="row">
           <div className ="col-12">
             <FormSelect
               loadingReponse={loadingReponse}
@@ -238,8 +248,7 @@ export default class Editor extends Component {
               executar={this.submeter.bind(this)}
             />
            </div>
-         </div>
-
+          </div>
          <div className='row'>
            <div className ="col-12 col-md-6">
               <Card>
@@ -279,6 +288,8 @@ export default class Editor extends Component {
           }
           </div>
         </div>
+        </Fragment>
+      }
         
     </TemplateSistema>
     );
