@@ -31,7 +31,17 @@ export default class NovasTurmasScreen extends Component {
         professoresSelecionados: [],
         todosProfessores: [],
         loadingInfoTurma:true,
-        lenguage: ""
+        linguagensSelecionadas:[],
+        linguagens: [
+            {
+                value:'javascript',
+                label:'JavaScript'
+            },
+            {
+                value:'cpp',
+                label:'C++'
+            }
+        ],
 
     };
     async componentDidMount(){
@@ -44,7 +54,8 @@ export default class NovasTurmasScreen extends Component {
       const id = this.props.match.params.id
       try{
         const response = await api.get(`/class/${id}`)
-        console.log(response);
+        console.log('class:');
+        console.log(response.data);
         await this.setState({
             name: response.data.name,
             year: response.data.year,
@@ -61,8 +72,17 @@ export default class NovasTurmasScreen extends Component {
                     label:p.email
                 }
             }),
+            linguagensSelecionadas:response.data.languages.map(language=>{
+                return {
+                    value : language,
+                    label : language==="javascript"?"JavaScript":language==="cpp"?"C++":''
+                }
+            })
+
         })
+        console.log(this.state.linguagensSelecionadas)
         this.setState({loadingInfoTurma:false})
+        
       }
       catch(err){
           this.setState({loadingInfoTurma:false})
@@ -90,7 +110,7 @@ export default class NovasTurmasScreen extends Component {
                 description: this.state.description,
                 state: this.state.state,
                 professores: this.state.professoresSelecionados.map(p=>p.id),
-                lenguage: this.state.lenguage
+                languages: this.state.linguagensSelecionadas.map(l=>l.value)
             };
             Swal.fire({
                 title:'Atualizando turma',
@@ -146,9 +166,7 @@ export default class NovasTurmasScreen extends Component {
     handleSemesterChange = e => {
     this.setState({ semester: e.target.value });
     };
-    handleLenguageChange = e => {
-    this.setState({ lenguage: e.target.value });
-    };
+
     handleDescriptionChange = e => {
     this.setState({ description: e.target.value });
     };
@@ -159,6 +177,11 @@ export default class NovasTurmasScreen extends Component {
         const {professoresSelecionados} = this.state
         this.setState({
             professoresSelecionados:professores || []
+        })
+    };
+    handleLanguageChange = linguagens => {
+        this.setState({
+            linguagensSelecionadas:linguagens || []
         })
     };
 
@@ -194,18 +217,7 @@ export default class NovasTurmasScreen extends Component {
 
                             <div className="row">
 
-                                <div className="col-4">
-                                    <label htmlFor="exampleFormControlSelect1">Linguagem: </label>
-                                    <select 
-                                        className="form-control" 
-                                        id="exampleFormControlSelect1" 
-                                        defaultValue={this.state.language} 
-                                        onChange={this.handleLanguageChange}
-                                    >
-                                        <option value="javascript">JavaScript</option>
-                                        <option value="c++">C++</option>
-                                    </select>
-                                </div>
+
 
                                 <div className="col-4">
                                     <label  htmlFor="exampleFormControlSelect0">Ano: </label>
@@ -238,6 +250,18 @@ export default class NovasTurmasScreen extends Component {
                                         <option value="2">2ºSemestre</option>
                                     </select>
                                 </div>
+                                <div className="col-4">
+                                    <label htmlFor="exampleFormControlSelect1">Status</label>
+                                    <select 
+                                        className="form-control" 
+                                        id="exampleFormControlSelect1" 
+                                        defaultValue={this.state.state} 
+                                        onChange={this.handleStateChange}
+                                    >
+                                        <option value={"ATIVA"}>ATIVA</option>
+                                        <option value={"INATIVA"}>INATIVA</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div className="form-group">
@@ -252,19 +276,16 @@ export default class NovasTurmasScreen extends Component {
                                 </textarea>
                             </div>
 
-                            <label htmlFor="exampleFormControlSelect1">Status</label>
-                            <select 
-                                className="form-control" 
-                                id="exampleFormControlSelect1" 
-                                defaultValue={this.state.state} 
-                                onChange={this.handleStateChange}
-                            >
-                                <option value={"ATIVA"}>ATIVA</option>
-                                <option value={"INATIVA"}>INATIVA</option>
-                            </select>
-                            
-                            <br></br>
-                            <hr></hr>
+                            <h3>Linguagens:</h3>
+                            <Select
+                                style={{boxShadow: "white"}}
+                                
+                                defaultValue={this.state.linguagensSelecionadas}
+                                isMulti
+                                options={this.state.linguagens} 
+                                closeMenuOnSelect={false}
+                                onChange={this.handleLanguageChange.bind(this)}                                
+                            />
                             <h3>Professores:</h3>
 
                             <Select

@@ -30,7 +30,7 @@ import TableResults from '../../../components/ui/tables/tableResults.component'
 import TableIO from '../../../components/ui/tables/tableIO.component'
 
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
-import FormSelect from '../../../components/ui/forms/formSelect.component'
+import FormSelect2 from '../../../components/ui/forms/formSelect2.component'
 import styleEditor from '../../../'
 import imgLoading from '../../../assets/loading.gif'
 import imgLoading1 from '../../../assets/loading1.gif'
@@ -176,8 +176,8 @@ export default class Editor extends Component {
     const resultados = []
     for(let i=0 ; i<entradas.length ; i++ ){
       resultados.push({
-        inputs: entradas[i]?entradas[i].split(',').map(i=>i.trim()).map(inp => inp+'\n').join(''):'',
-        output: saidas[i]?saidas[i].split('|').map(input => input.replace(/\s+$/,'')).join('\n'):''
+        inputs: entradas[i]?entradas[i].split(',').map(i=>i.trim()).map(entrada => entrada+'\n').join(''):'',
+        output: saidas[i]?saidas[i].split('|').map(saida => saida.replace(/\s+$/,'')).join('\n').replace(/\n+$/,''):''
       })
     }
     return resultados
@@ -243,7 +243,7 @@ export default class Editor extends Component {
     else
     return (
 
-    <TemplateSistema active='criarExercicio'>
+    <TemplateSistema active='exercicios'>
     <Card>
       <CardHead>
           <CardTitle center>
@@ -279,8 +279,8 @@ export default class Editor extends Component {
           />
         </div>
       </div>
-      <div style={{marginBottom:"10px"}}>
-        <FormSelect
+      <div className ="row" style={{marginBottom:"10px"}}>
+        <FormSelect2
           loadingReponse={loadingReponse}
           changeLanguage={this.changeLanguage.bind(this)}
           changeTheme={this.changeTheme.bind(this)}
@@ -298,7 +298,7 @@ export default class Editor extends Component {
                 fontSize={14}
                 width='100%'
                 name="ACE_EDITOR"
-                showPrintMargin={true}
+                showPrintMargin={false}
                 showGutter={true}
                 enableLiveAutocompletion={true}
                 enableBasicAutocompletion={true}
@@ -326,6 +326,7 @@ export default class Editor extends Component {
                   theme={theme}
                   value={contentRes}
                   fontSize={14}
+                  showPrintMargin={false}
                   name="ACE_EDITOR_RES"
                   editorProps={{$blockScrolling: true}}
                 />

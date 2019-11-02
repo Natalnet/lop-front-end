@@ -243,7 +243,7 @@ export default class HomeAlunoScreen extends Component {
                                 <i
                                   title='Ver descrição'
                                   style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                                  className={`fa fa-info-circle`} 
+                                  className={`fe fe-chevron-down`} 
                                   onClick={(e)=>this.handleShowDescription(turma.id)}
                                   data-toggle="collapse" data-target={'#collapse'+turma.id} 
                                   aria-expanded={descriptions.includes(turma.id)}

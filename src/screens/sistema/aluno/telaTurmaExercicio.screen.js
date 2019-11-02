@@ -35,7 +35,6 @@ import imgLoading from '../../../assets/loading.gif'
 import imgLoading1 from '../../../assets/loading1.gif'
 import imgLoading2 from '../../../assets/loading2.gif'
 
-let var_katex = null;
 
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts
@@ -66,13 +65,14 @@ export default class Editor extends Component {
       redirect:'',
       turma:'',
       loadingInfoTurma:true,
+      loadingExercicio:true
     }
   }
 
   async componentDidMount() {
     this.setState({tempo_inicial:new Date()})
     
-    this.getInfoTurma()
+    await this.getInfoTurma()
     await this.getExercicio()
     document.title = `${this.state.title}`
     this.appStyles()
@@ -80,22 +80,21 @@ export default class Editor extends Component {
   appStyles(){
     const cardEnunciado = document.getElementById('cardEnunciado')
     const cardExemplos = document.getElementById('cardExemplos')
-    const heightCardEnunciado = cardEnunciado.offsetHeight 
-    const heightCardExemplos = cardExemplos.offsetHeight 
+    const heightCardEnunciado = cardEnunciado && cardEnunciado.offsetHeight 
+    const heightCardExemplos = cardExemplos && cardExemplos.offsetHeight 
     if(heightCardEnunciado>heightCardExemplos){
-      cardEnunciado.setAttribute("style",`height:${heightCardEnunciado}px`);
-      cardExemplos.setAttribute("style",`height:${heightCardEnunciado}px`);
+      cardEnunciado && cardEnunciado.setAttribute("style",`height:${heightCardEnunciado}px`);
+      cardExemplos && cardExemplos.setAttribute("style",`height:${heightCardEnunciado}px`);
     }
     else{
-      cardEnunciado.setAttribute("style",`height:${heightCardExemplos}px`);
-      cardExemplos.setAttribute("style",`height:${heightCardExemplos}px`);
+      cardEnunciado && cardEnunciado.setAttribute("style",`height:${heightCardExemplos}px`);
+      cardExemplos && cardExemplos.setAttribute("style",`height:${heightCardExemplos}px`);
     }
   }
   async getInfoTurma(){
       const id = this.props.match.params.id
       try{
           const response = await api.get(`/class/${id}`)
-          console.log(response);
           this.setState({
               turma:response.data,
               loadingInfoTurma:false,
@@ -111,19 +110,19 @@ export default class Editor extends Component {
     const query = `?exclude=solution`
     try{
 
-      this.setState({loadingExercicio:true})
       const response = await api.get(`/question/${id}${query}`)
       console.log('questão');
       console.log(response.data);
-      //const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
       this.setState({
         results : [...response.data.results],
         title : response.data.title,
         description : response.data.description,
         katexDescription:response.data.katexDescription || '',
         difficulty:response.data.difficulty,
+        
         loadingExercicio:false
       })
+
     }
     catch(err){
       this.setState({loadingExercicio:false})
@@ -133,12 +132,15 @@ export default class Editor extends Component {
     e.preventDefault()
     const timeConsuming = new Date() - this.state.tempo_inicial
     const {solution,language,results} = this.state
+    console.log('solution:');
     console.log(solution);
     const request = {
       codigo : solution,
       linguagem :language==='c_cpp'?'cpp':language,
       results : results
     }
+    console.log('codigo aparado');
+    console.log(request.codigo);
     this.setState({loadingReponse:true})
     try{
       const response = await apiCompiler.post('/submission/exec',request)
@@ -178,19 +180,6 @@ export default class Editor extends Component {
       console.log(err);
     }
   }
-  getInputsAndOutpus(results){
-    let inputs=[]
-    let output=[]
-    for(let i=0 ; i<results.length ; i++ ){
-      console.log(results[i]);
-      inputs.push(results[i].inputs.slice(0,-1).split('\n').join(','))
-      output.push(results[i].output.split('\n').join('|'))
-    }
-    inputs = inputs.join('\n')
-    output = output.join('\n')
-    console.log(inputs);
-    return [inputs,output]
-  }
 
   async changeLanguage(e){
     await this.setState({language:e.target.value})
@@ -201,15 +190,6 @@ export default class Editor extends Component {
   }
   handleSolution(newValue){
     this.setState({solution:newValue})
-  }
-  katex(katexDescription){
-    console.log("entrou")
-    if(katexDescription!==null){
-        return var_katex=katexDescription;
-    }
-    else{
-        return var_katex="";
-    }
   }
 
   render() {
@@ -242,10 +222,7 @@ export default class Editor extends Component {
               </CardHead>
               <CardBody>
                 {description}
-                {this.katex(katexDescription)}
-                <br/>
-                <br/>
-                <BlockMath>{var_katex}</BlockMath>
+                {katexDescription?[<br/>,<br/>,<BlockMath>{katexDescription}</BlockMath>]:''}                
               </CardBody>
             </Card>
 
@@ -286,16 +263,22 @@ export default class Editor extends Component {
           </div>
           </div>
           <div className ="row" style={{marginBottom:"10px"}}>
-            <div className = 'col-7'>
               <FormSelect
                 loadingReponse={loadingReponse}
+                languages = {this.state.turma.languages}
                 changeLanguage={this.changeLanguage.bind(this)}
                 changeTheme={this.changeTheme.bind(this)}
                 executar={this.submeter.bind(this)}
               />
+            <div className="col-5 col-md-3">
+                <label htmlFor="rascunho">&nbsp;</label>
+                <button style={{width:"100%"}} className={`btn btn-azure`} >
+                  <i className="fa fa-floppy-o"/>&nbsp;&nbsp; Salvar rascunho
+                </button>
             </div>
-            <div className="col-2" style={{float:"right", marginLeft:"auto"}}>
-              <label htmlFor="selectDifficulty">Dificudade: </label>
+            <div className="col-5 col-md-2" style={{float:"right", marginLeft:"auto"}}>
+
+            <label htmlFor="selectDifficulty">Dificudade: </label>
               <select className="form-control"  id='selectDifficulty' >
                 <option value = 'Muito fácil' >Muito fácil</option>
                 <option value = 'Fácil' >Fácil</option>
@@ -317,8 +300,8 @@ export default class Editor extends Component {
                 value={solution}
                 fontSize={14}
                 width='100%'
+                showPrintMargin={false}
                 name="ACE_EDITOR"
-                showPrintMargin={true}
                 showGutter={true}
                 enableLiveAutocompletion={true}
                 enableBasicAutocompletion={true}

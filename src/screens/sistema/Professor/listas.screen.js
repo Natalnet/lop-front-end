@@ -1,3 +1,4 @@
+
 import React, { Component,Fragment } from "react";
 import { Link } from "react-router-dom";
 import NavPagination from "components/ui/navs/navPagination";
@@ -227,12 +228,12 @@ export default class HomeListasScreen extends Component {
                                 </CardTitle>
                                 <CardOptions>
                                     <button
-                                        className ="btn btn-primary"
+                                        className='btn btn-primary'
                                         data-toggle="collapse" data-target={'#collapse'+questao.id}
                                         aria-expanded="example-collapse-text"
                                         style={{position: "relative"}}
                                     >
-                                        <i className="fa fa-info"/>
+                                        <i  className={`fe fe-chevron-down`}/>
                                     </button>
                                 </CardOptions>
                             </CardHead>

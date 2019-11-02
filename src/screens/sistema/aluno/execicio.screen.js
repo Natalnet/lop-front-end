@@ -34,8 +34,6 @@ import imgLoading from '../../../assets/loading.gif'
 import imgLoading1 from '../../../assets/loading1.gif'
 import imgLoading2 from '../../../assets/loading2.gif'
 
-let var_katex = null;
-
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts
   // (https://github.com/Microsoft/monaco-editor/blob/master/monaco.d.ts):
@@ -63,6 +61,7 @@ export default class Editor extends Component {
       outputs:'',
       percentualAcerto:'',
       redirect:'',
+      loadingExercicio:true,
     }
   }
 
@@ -77,15 +76,15 @@ export default class Editor extends Component {
   appStyles(){
     const cardEnunciado = document.getElementById('cardEnunciado')
     const cardExemplos = document.getElementById('cardExemplos')
-    const heightCardEnunciado = cardEnunciado.offsetHeight 
-    const heightCardExemplos = cardExemplos.offsetHeight 
+    const heightCardEnunciado = cardEnunciado && cardEnunciado.offsetHeight 
+    const heightCardExemplos = cardExemplos && cardExemplos.offsetHeight 
     if(heightCardEnunciado>heightCardExemplos){
-      cardEnunciado.setAttribute("style",`height:${heightCardEnunciado}px`);
-      cardExemplos.setAttribute("style",`height:${heightCardEnunciado}px`);
+      cardEnunciado && cardEnunciado.setAttribute("style",`height:${heightCardEnunciado}px`);
+      cardExemplos && cardExemplos.setAttribute("style",`height:${heightCardEnunciado}px`);
     }
     else{
-      cardEnunciado.setAttribute("style",`height:${heightCardExemplos}px`);
-      cardExemplos.setAttribute("style",`height:${heightCardExemplos}px`);
+      cardEnunciado && cardEnunciado.setAttribute("style",`height:${heightCardExemplos}px`);
+      cardExemplos && cardExemplos.setAttribute("style",`height:${heightCardExemplos}px`);
     }
   }
   async getExercicio(){
@@ -93,11 +92,9 @@ export default class Editor extends Component {
     const query = `?exclude=solution`
     try{
 
-      this.setState({loadingExercicio:true})
       const response = await api.get(`/question/${id}${query}`)
       console.log('questão');
       console.log(response.data);
-      //const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
       this.setState({
         results : [...response.data.results],
         title : response.data.title,
@@ -159,19 +156,7 @@ export default class Editor extends Component {
       console.log(err);
     }
   }
-  getInputsAndOutpus(results){
-    let inputs=[]
-    let output=[]
-    for(let i=0 ; i<results.length ; i++ ){
-      console.log(results[i]);
-      inputs.push(results[i].inputs.slice(0,-1).split('\n').join(','))
-      output.push(results[i].output.split('\n').join('|'))
-    }
-    inputs = inputs.join('\n')
-    output = output.join('\n')
-    console.log(inputs);
-    return [inputs,output]
-  }
+
 
   async changeLanguage(e){
     await this.setState({language:e.target.value})
@@ -182,15 +167,6 @@ export default class Editor extends Component {
   }
   handleSolution(newValue){
     this.setState({solution:newValue})
-  }
-  katex(katexDescription){
-      console.log("entrou")
-      if(katexDescription!==null){
-          return var_katex=katexDescription;
-      }
-      else{
-          return var_katex="";
-      }
   }
 
   render() {
@@ -213,10 +189,7 @@ export default class Editor extends Component {
               </CardHead>
               <CardBody>
                 {description}
-                {this.katex(katexDescription)}
-                <br/>
-                <br/>
-                <BlockMath>{var_katex}</BlockMath>
+                {katexDescription?[<br/>,<br/>,<BlockMath>{katexDescription}</BlockMath>]:''}                
               </CardBody>
             </Card>
 
@@ -257,15 +230,20 @@ export default class Editor extends Component {
           </div>
           </div>
           <div className ="row" style={{marginBottom:"10px"}}>
-            <div className = 'col-7'>
+            
               <FormSelect
                 loadingReponse={loadingReponse}
                 changeLanguage={this.changeLanguage.bind(this)}
                 changeTheme={this.changeTheme.bind(this)}
                 executar={this.submeter.bind(this)}
               />
+            <div className="col-5 col-md-3">
+                <label htmlFor="rascunho">&nbsp;</label>
+                <button style={{width:"100%"}} className={`btn btn-azure`} >
+                  <i className="fa fa-floppy-o"/>&nbsp;&nbsp; Salvar rascunho
+                </button>
             </div>
-            <div className="col-2" style={{float:"right", marginLeft:"auto"}}>
+            <div className="col-5 col-md-2" style={{float:"right", marginLeft:"auto"}}>
               <label htmlFor="selectDifficulty">Dificudade: </label>
               <select className="form-control"  id='selectDifficulty' >
                 <option value = 'Muito fácil' >Muito fácil</option>
@@ -277,8 +255,8 @@ export default class Editor extends Component {
               </select>
             </div>
           </div>
-         <div className='row'>
-           <div className ="col-12 col-md-7">
+          <div className='row'>
+            <div className ="col-12 col-md-7">
               <Card>
               <AceEditor
                 mode={language}
@@ -288,8 +266,8 @@ export default class Editor extends Component {
                 value={solution}
                 fontSize={14}
                 width='100%'
+                showPrintMargin={false}
                 name="ACE_EDITOR"
-                showPrintMargin={true}
                 showGutter={true}
                 enableLiveAutocompletion={true}
                 enableBasicAutocompletion={true}

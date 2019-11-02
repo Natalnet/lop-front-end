@@ -32,7 +32,17 @@ export default class NovasTurmasScreen extends Component {
         todosProfessores: [],
         professoresSelecionados: [],
         loadingProfessores:true,
-        language: ""
+        linguagensSelecionadas:[],
+        linguagens: [
+            {
+                value:'javascript',
+                label:'JavaScript'
+            },
+            {
+                value:'cpp',
+                label:'C++'
+            }
+        ],
     };
     componentDidMount() {
         this.getProfessores();
@@ -59,7 +69,7 @@ export default class NovasTurmasScreen extends Component {
                 description: this.state.description,
                 state: this.state.state,
                 professores: this.state.professoresSelecionados.map(p=>p.id),
-                language: this.state.language
+                languages: this.state.linguagensSelecionadas.map(l=>l.value)
             };
             Swal.fire({
                 title:'Criando turma',
@@ -126,9 +136,7 @@ export default class NovasTurmasScreen extends Component {
     handleSemesterChange = e => {
         this.setState({ semester: e.target.value });
     };
-    handleLanguageChange = e => {
-        this.setState({ language: e.target.value });
-    };
+
     handleDescriptionChange = e => {
         this.setState({ description: e.target.value });
     };
@@ -136,10 +144,13 @@ export default class NovasTurmasScreen extends Component {
         this.setState({ state: e.target.value });
     };
     handleProfessorsChange = professores => {
-        console.log(professores);
-        const {professoresSelecionados} = this.state
         this.setState({
             professoresSelecionados:professores || []
+        })
+    };
+    handleLanguageChange = linguagens => {
+        this.setState({
+            linguagensSelecionadas:linguagens || []
         })
     };
     render() {
@@ -170,18 +181,7 @@ export default class NovasTurmasScreen extends Component {
                             
 
                             <div className="row">
-                                <div className="col-4">
-                                    <label htmlFor="exampleFormControlSelect1">Linguagem: </label>
-                                    <select 
-                                        className="form-control" 
-                                        id="exampleFormControlSelect1" 
-                                        defaultValue={this.state.language} 
-                                        onChange={this.handleLanguageChange}
-                                    >
-                                        <option value="javascript">JavaScript</option>
-                                        <option value="cpp">C++</option>
-                                    </select>
-                                </div>
+
 
                                 <div className="col-4">
                                     <label  htmlFor="exampleFormControlSelect0">Ano: </label>
@@ -214,8 +214,21 @@ export default class NovasTurmasScreen extends Component {
                                         <option value="2">2ºSemestre</option>
                                     </select>
                                 </div>
-                            </div>
+                            
+                                <div className="col-4">
 
+                                    <label htmlFor="exampleFormControlSelect1">Status</label>
+                                    <select 
+                                        className="form-control" 
+                                        id="exampleFormControlSelect1" 
+                                        defaultValue={this.state.state} 
+                                        onChange={this.handleStateChange}
+                                    >
+                                        <option value={"ATIVA"}>ATIVA</option>
+                                        <option value={"INATIVA"}>INATIVA</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div className="form-group">
                                 <label  htmlFor="">Descrição</label>
                                 <textarea 
@@ -227,26 +240,23 @@ export default class NovasTurmasScreen extends Component {
                                 >
                                 </textarea>
                             </div>
+                            <label htmlFor="exampleFormControlSelect1">Linguagem: </label>
 
-                            <label htmlFor="exampleFormControlSelect1">Status</label>
-                            <select 
-                                className="form-control" 
-                                id="exampleFormControlSelect1" 
-                                defaultValue={this.state.state} 
-                                onChange={this.handleStateChange}
-                            >
-                                <option value={"ATIVA"}>ATIVA</option>
-                                <option value={"INATIVA"}>INATIVA</option>
-                            </select>
-                            
-                            <br></br>
-                            <hr></hr>
+                            <h3>Linguagens:</h3>
+                            <Select
+                                style={{boxShadow: "white"}}
+                                placeholder={'Selecione as linguagens'}
+                                isMulti
+                                options={this.state.linguagens} 
+                                closeMenuOnSelect={false}
+                                onChange={this.handleLanguageChange.bind(this)}                                
+                            />
                             <h3>Professores:</h3>
-
-                            {!this.state.loadingProfessores && <Select
-                                {...this.props}
+                            <Select
+                                
                                 style={{boxShadow: "white"}}
                                 isMulti
+                                isLoading={this.state.loadingProfessores}
                                 defaultValue={[{
                                     value:sessionStorage.getItem('user.id'),
                                     id:sessionStorage.getItem('user.id'),
@@ -255,7 +265,7 @@ export default class NovasTurmasScreen extends Component {
                                 options={this.state.todosProfessores} 
                                 closeMenuOnSelect={false}
                                 onChange={this.handleProfessorsChange.bind(this)}                                
-                            />}
+                            />
                             <br/><br/>
                             <div>
                                 <button style={botao} type="submit" className="btn btn-primary">Cadastrar</button>

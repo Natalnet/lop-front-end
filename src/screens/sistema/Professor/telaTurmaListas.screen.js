@@ -342,7 +342,7 @@ export default class Pagina extends Component {
                                         aria-expanded="example-collapse-text"
                                         style={{position: "relative"}}
                                     >
-                                        <i className="fa fa-info"/>
+                                        <i className="fe fe-chevron-down"/>
                                     </button>
                                 </CardOptions>
                             </CardHead>

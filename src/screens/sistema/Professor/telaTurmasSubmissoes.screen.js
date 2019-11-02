@@ -253,7 +253,7 @@ export default class HomesubmissoesScreen extends Component {
                 width={'100%'}
             >
                 <div className='row'>
-                    <div className='col-12 col-md-6'>
+                    <div className='col-12 offset-md-2 col-md-8 text-center'>
                     <AceEditor
                       mode={submissao.language==='cpp'?'c_cpp':submissao.language}
                       readOnly={true}
@@ -261,8 +261,9 @@ export default class HomesubmissoesScreen extends Component {
                       showGutter={false}
                       focus={false}
                       theme='monokai'
+                      showPrintMargin={false}
                       value={submissao.answer || ''}
-                      fontSize={14}
+                      fontSize={16}
                       name="ACE_EDITOR_RES"
                       editorProps={{$blockScrolling: true}}
                     />

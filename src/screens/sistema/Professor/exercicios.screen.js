@@ -115,7 +115,7 @@ export default class HomeExerciciosScreen extends Component {
     render() {
         const {exercicios,showModalInfo,fieldFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,question} = this.state
         return (
-        <TemplateSistema active='ecercicios'>
+        <TemplateSistema active='exercicios'>
             <div>
                 <h1 styler={titulo}>Exercicios</h1><br></br>
                 <div className="row">
