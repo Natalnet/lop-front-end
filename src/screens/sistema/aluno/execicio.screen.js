@@ -48,7 +48,7 @@ export default class Editor extends Component {
       response:[],
       katexDescription:'',
       status:'PÚBLICA',
-      difficulty:'Médio',
+      difficulty:null,
       solution:'',
       results:[],
       tempo_inicial:null,
@@ -62,6 +62,8 @@ export default class Editor extends Component {
       percentualAcerto:'',
       redirect:'',
       loadingExercicio:true,
+      userDifficulty:'',
+      loadDifficulty:false,
     }
   }
 
@@ -101,6 +103,7 @@ export default class Editor extends Component {
         description : response.data.description,
         katexDescription:response.data.katexDescription || '',
         difficulty:response.data.difficulty,
+        userDifficulty:response.data.userDifficulty || '',
         loadingExercicio:false
       })
     }
@@ -168,10 +171,29 @@ export default class Editor extends Component {
   handleSolution(newValue){
     this.setState({solution:newValue})
   }
+  async handleDifficulty(e){
+    const userDifficulty = e.target?e.target.value:''
+    const idQuestion = this.props.match.params.id
+    const request = {
+      userDifficulty:userDifficulty
+    }
+    try{
+      this.setState({loadDifficulty:true})
+      const response = await api.post(`/difficulty/question/${idQuestion}/store`,request)
+      this.setState({ 
+        userDifficulty:userDifficulty,
+        loadDifficulty:false
+      })
+    }
+    catch(err){
+      this.setState({loadDifficulty:false})
+      console.log(err);
+    }
+  }
 
   render() {
     const {response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results,katexDescription} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio } = this.state;
+    const { language,theme,contentRes,solution,loadingExercicio,userDifficulty,loadDifficulty } = this.state;
 
     return (
     <TemplateSistema active='exercicios'>
@@ -244,14 +266,14 @@ export default class Editor extends Component {
                 </button>
             </div>
             <div className="col-5 col-md-2" style={{float:"right", marginLeft:"auto"}}>
-              <label htmlFor="selectDifficulty">Dificudade: </label>
-              <select className="form-control"  id='selectDifficulty' >
+              <label htmlFor="selectDifficulty">Dificuldade: </label>
+              <select defaultValue={userDifficulty} className="form-control"  id='selectDifficulty' disabled={loadDifficulty?'disabled':''} onChange={(e)=>this.handleDifficulty(e)} >
+                <option value =  {''} ></option>
                 <option value = 'Muito fácil' >Muito fácil</option>
                 <option value = 'Fácil' >Fácil</option>
                 <option value = 'Médio' >Médio</option>
                 <option value = 'Difícil' >Difícil</option>
                 <option value = 'Muito difícil' >Muito difícil</option>
-
               </select>
             </div>
           </div>

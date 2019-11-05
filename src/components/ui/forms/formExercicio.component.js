@@ -28,7 +28,7 @@ export default (props) =>{
                 </select>
             </div>
             <div className="form-group col-md-6">
-                <label htmlFor="selectDifficulty">Dificudade </label>
+                <label htmlFor="selectDifficulty">Dificuldade </label>
                 <select className="form-control" defaultValue={difficulty} id='selectDifficulty' onChange={handleDifficulty}>
                   <option value = 'Muito fácil' >Muito fácil</option>
                   <option value = 'Fácil' >Fácil</option>
