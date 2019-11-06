@@ -1,4 +1,4 @@
-import React, { Component,Fragment} from "react";
+import React, { Component,Fragment,createRef} from "react";
 import {Redirect} from 'react-router-dom'
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
@@ -69,6 +69,8 @@ export default class Editor extends Component {
       userDifficulty:'',
       loadDifficulty:false,
     }
+    this.cardEnunciadoRef = createRef()
+    this.cardExemplos = createRef()
   }
 
   async componentDidMount() {
@@ -80,8 +82,8 @@ export default class Editor extends Component {
     this.appStyles()
   }
   appStyles(){
-    const cardEnunciado = document.getElementById('cardEnunciado')
-    const cardExemplos = document.getElementById('cardExemplos')
+    const cardEnunciado = this.cardEnunciadoRef.current
+    const cardExemplos = this.cardExemplos.current
     const heightCardEnunciado = cardEnunciado && cardEnunciado.offsetHeight 
     const heightCardExemplos = cardExemplos && cardExemplos.offsetHeight 
     if(heightCardEnunciado>heightCardExemplos){
@@ -235,7 +237,7 @@ export default class Editor extends Component {
         <Fragment>
         <div className='row' >
           <div className ="col-7">
-            <Card id='cardEnunciado'>
+            <Card ref={this.cardEnunciadoRef}>
               <CardHead>
                 <CardTitle>
                 <b>{title}</b>
@@ -249,7 +251,7 @@ export default class Editor extends Component {
 
           </div>
           <div className="col-5">
-            <Card id="cardExemplos">
+            <Card ref={this.cardExemplos}>
               <CardHead>
                 <CardTitle>
                   Exemplos

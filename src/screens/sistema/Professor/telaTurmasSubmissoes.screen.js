@@ -224,7 +224,7 @@ export default class HomesubmissoesScreen extends Component {
                                     <td>{submission.question.title}</td>
                                     <td style={{color:`${submission.hitPercentage===100?'#0f0':'#f00'}`}}><b>{submission.hitPercentage}%</b></td>
                                     <td>{parseInt(submission.timeConsuming/1000/60)}min{parseInt((submission.timeConsuming/1000)%60)}seg</td>
-                                    <td>{submission.version+1}°</td>
+                                    <td>{submission.numSubmissions}°</td>
                                     <td>{formataData(submission.dateSubmission)}</td>
                                     <td>
                                         <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(submission)}>
