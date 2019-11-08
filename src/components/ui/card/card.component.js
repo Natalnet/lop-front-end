@@ -7,7 +7,7 @@
 
 import React,{forwardRef} from "react";
 
-export default forwardRef((props,ref)=>{
+const Card = (props,ref)=>{
   	const {loading,children,style} = props
     return (
     	<div className='row row-cards row-deck turma' ref={ref}>
@@ -18,5 +18,6 @@ export default forwardRef((props,ref)=>{
       	</div>
       </div>
     );
-})
+}
+export default forwardRef(Card)
 

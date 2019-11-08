@@ -2,6 +2,7 @@ import React, { Component,Fragment,createRef} from "react";
 import {Redirect} from 'react-router-dom'
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
+import Swal from 'sweetalert2'
 import HTMLFormat from '../../../components/ui/htmlFormat'
 import apiCompiler from '../../../services/apiCompiler'
 import { InlineMath, BlockMath } from 'react-katex';
@@ -64,6 +65,7 @@ export default class Editor extends Component {
       loadingExercicio:true,
       userDifficulty:'',
       loadDifficulty:false,
+      salvandoRascunho:false,
     }
     this.cardEnunciadoRef = createRef()
     this.cardExemplos = createRef()
@@ -75,6 +77,9 @@ export default class Editor extends Component {
     console.log(this.props);
     await this.getExercicio()
     this.appStyles()
+    document.title = `${this.state.title}`
+    //salva rascunho a cada 1 minuto
+    setInterval(function(){ this.salvaRascunho(false) }.bind(this), 60000);
 
   }
   appStyles(){
@@ -107,12 +112,40 @@ export default class Editor extends Component {
         katexDescription:response.data.katexDescription || '',
         difficulty:response.data.difficulty,
         userDifficulty:response.data.userDifficulty || '',
+        solution:response.data.questionDraft || '',
         loadingExercicio:false
       })
     }
     catch(err){
       this.setState({loadingExercicio:false})
     } 
+  }
+  async salvaRascunho(showMsg=true){
+    const idQuestion = this.props.match.params.id
+    const request = {
+      answer:this.state.solution
+    }
+    try{
+      this.setState({salvandoRascunho:true})
+      const response = await api.post(`/draft/question/${idQuestion}/store`,request)
+      this.setState({salvandoRascunho:false})
+      if(showMsg){
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        })
+        Toast.fire({
+          icon: 'success',
+          title: 'Rascunho salvo com sucesso!'
+        })
+      }
+    }
+    catch(err){
+      console.log(err);
+      this.setState({salvandoRascunho:false})
+    }
   }
   async submeter(e){
     e.preventDefault()
@@ -125,6 +158,7 @@ export default class Editor extends Component {
     }
     this.setState({loadingReponse:true})
     try{
+      this.salvaRascunho()
       const response = await apiCompiler.post('/submission/exec',request)
       this.saveSubmission(request,response.data.percentualAcerto,timeConsuming)
       console.log('sumbissão: ');
@@ -141,9 +175,9 @@ export default class Editor extends Component {
       Object.getOwnPropertyDescriptors(err)
       this.setState({loadingReponse:false})
       alert('erro na conexão com o servidor')
-    }
-    
+    } 
   }
+
   async saveSubmission({codigo,linguagem},hitPercentage,timeConsuming){
     const idQuestion = this.props.match.params.id
     const query = this.props.location.search
@@ -196,7 +230,7 @@ export default class Editor extends Component {
 
   render() {
     const {response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results,katexDescription} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio,userDifficulty,loadDifficulty } = this.state;
+    const { language,theme,contentRes,solution,loadingExercicio,userDifficulty,loadDifficulty,salvandoRascunho } = this.state;
 
     return (
     <TemplateSistema active='exercicios'>
@@ -264,7 +298,11 @@ export default class Editor extends Component {
               />
             <div className="col-5 col-md-3">
                 <label htmlFor="rascunho">&nbsp;</label>
-                <button style={{width:"100%"}} className={`btn btn-azure`} >
+                <button 
+                  style={{width:"100%"}} 
+                  className={`btn btn-azure ${salvandoRascunho && 'btn-loading'}`} 
+                  onClick={()=>this.salvaRascunho()}
+                >                  
                   <i className="fa fa-floppy-o"/>&nbsp;&nbsp; Salvar rascunho
                 </button>
             </div>
@@ -305,9 +343,11 @@ export default class Editor extends Component {
           {loadingReponse?
               <div className="loader"  style={{margin:'0px auto'}}></div>
            :
-              <div style={{backgroundColor:"white"}}>
+              <Card style={{minHeight:'500px'}}>
                 <CardHead>
-                  <h3>Resultados:</h3>
+                  <CardTitle>
+                    Resultados
+                  </CardTitle>
                 </CardHead>
                 <TableResults2 
                   response={response}
@@ -315,7 +355,7 @@ export default class Editor extends Component {
                   erro={someErro}
                   percentualAcerto={percentualAcerto}
                 />
-              </div>
+              </Card>
           }
           </div>
         </div>
