@@ -3,7 +3,11 @@ import api from "../../../services/api";
 import Swal from "sweetalert2";
 import { Redirect } from 'react-router-dom';
 import Select from 'react-select';
-
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
 import TemplateSistema from "components/templates/sistema.template";
 
 const botao = {
@@ -159,31 +163,30 @@ export default class NovasTurmasScreen extends Component {
         }
         return (
         <TemplateSistema active='home'>
-                <form onSubmit={(e)=>this.cadastro(e)}>
-                    <div className="row">
-                        <div className="form-group form-control col-12">
-                            <div className="align-self-center">
-                                 <h1 styler={titulo}>Cadastro de Turmas:</h1><br></br>
-                            </div>    
-
-                            <span className="alert-danger">{this.state.msg}</span>
-                            <br></br>
-
-                            <label htmlFor="">Nome: </label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Nome de turma"
-                                value={this.state.name}
-                                onChange={this.handleNameChange}
-                            />
-                            
-                            
-
-                            <div className="row">
-
-
-                                <div className="col-4">
+            <Card>
+                <CardHead>
+                    <CardTitle>
+                    Cadastro de Turmas
+                    </CardTitle>
+                </CardHead>
+                <CardBody>
+                    <form onSubmit={(e)=>this.cadastro(e)}>
+                            <div className="form-row">
+                                <div className="form-group col-12">    
+                                    <span className="alert-danger">{this.state.msg}</span>
+                                    <label htmlFor="name">Nome: </label>
+                                    <input 
+                                        id='name'
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="Nome de turma"
+                                        value={this.state.name}
+                                        onChange={this.handleNameChange}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group col-4"> 
                                     <label  htmlFor="exampleFormControlSelect0">Ano: </label>
                                     <select 
                                         className="form-control" 
@@ -202,7 +205,7 @@ export default class NovasTurmasScreen extends Component {
                                     </select>
                                 </div>
 
-                                <div className="col-4">
+                                <div className="form-group col-4">
                                     <label htmlFor="exampleFormControlSelect1">semestre: </label>
                                     <select 
                                         className="form-control" 
@@ -215,7 +218,7 @@ export default class NovasTurmasScreen extends Component {
                                     </select>
                                 </div>
                             
-                                <div className="col-4">
+                                <div className="form-group col-4">
 
                                     <label htmlFor="exampleFormControlSelect1">Status</label>
                                     <select 
@@ -229,50 +232,58 @@ export default class NovasTurmasScreen extends Component {
                                     </select>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label  htmlFor="">Descrição</label>
-                                <textarea 
-                                    className="form-control" 
-                                    id="" 
-                                    rows="5"
-                                    value={this.state.description}
-                                    onChange={this.handleDescriptionChange}
-                                >
-                                </textarea>
+                            <div className="form-row">
+                                <div className="form-group col-12">
+                                    <label  htmlFor="Descricao">Descrição</label>
+                                    <textarea 
+                                        className="form-control" 
+                                        id="Descricao" 
+                                        rows="5"
+                                        value={this.state.description}
+                                        onChange={this.handleDescriptionChange}
+                                    >
+                                    </textarea>
+                                </div>
                             </div>
-                            <label htmlFor="exampleFormControlSelect1">Linguagem: </label>
-
-                            <h3>Linguagens:</h3>
-                            <Select
-                                style={{boxShadow: "white"}}
-                                placeholder={'Selecione as linguagens'}
-                                isMulti
-                                options={this.state.linguagens} 
-                                closeMenuOnSelect={false}
-                                onChange={this.handleLanguageChange.bind(this)}                                
-                            />
-                            <h3>Professores:</h3>
-                            <Select
-                                
-                                style={{boxShadow: "white"}}
-                                isMulti
-                                isLoading={this.state.loadingProfessores}
-                                defaultValue={[{
-                                    value:sessionStorage.getItem('user.id'),
-                                    id:sessionStorage.getItem('user.id'),
-                                    label:sessionStorage.getItem('user.email'),
-                                }]}
-                                options={this.state.todosProfessores} 
-                                closeMenuOnSelect={false}
-                                onChange={this.handleProfessorsChange.bind(this)}                                
-                            />
-                            <br/><br/>
-                            <div>
+                            <div className="form-row">
+                                <div className="form-group col-12">
+                                    <label>Linguagems: </label>
+                                    <Select
+                                        style={{boxShadow: "white"}}
+                                        placeholder={'Selecione as linguagens'}
+                                        isMulti
+                                        options={this.state.linguagens} 
+                                        onChange={this.handleLanguageChange.bind(this)}                                
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group col-12">
+                                    <label>Professores: </label>
+                                    <Select
+                                        style={{boxShadow: "white"}}
+                                        isMulti
+                                        isLoading={this.state.loadingProfessores}
+                                        defaultValue={[{
+                                            value:sessionStorage.getItem('user.id'),
+                                            id:sessionStorage.getItem('user.id'),
+                                            label:sessionStorage.getItem('user.email'),
+                                        }]}
+                                        options={this.state.todosProfessores} 
+                                        
+                                        onChange={this.handleProfessorsChange.bind(this)}                                
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div className="form-row">
+                                <div className="form-group col-12">
                                 <button style={botao} type="submit" className="btn btn-primary">Cadastrar</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                                </div>
+                            </div>                    
+                    </form>
+                </CardBody>
+            </Card>
         </TemplateSistema>
         )
     }

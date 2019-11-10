@@ -116,12 +116,15 @@ export default class HomeExerciciosScreen extends Component {
         const {exercicios,showModalInfo,fieldFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,question} = this.state
         return (
         <TemplateSistema active='exercicios'>
-            <div>
-                <h1 styler={titulo}>Exercicios</h1><br></br>
-                <div className="row">
+            
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        <h3 style={{margin:'0px'}}> Listas de Exercícios</h3>
+                    </div>
+                </div>
+                <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-3">
-                        <div>
-                            <Link to="/professor/criarExercicio">
+                        <Link to="/professor/criarExercicio">
                             <button 
                                 className="btn btn-primary"
                                 type="button"
@@ -129,10 +132,9 @@ export default class HomeExerciciosScreen extends Component {
                             >
                                 Criar Exercicio +
                             </button>
-                            </Link>
-                        </div>
-                    </div>
-                    <div className="mb-3 col-9">     
+                        </Link>
+                    </div>            
+                    <div className=" col-9">     
                         <InputGroup
                             placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
@@ -145,61 +147,64 @@ export default class HomeExerciciosScreen extends Component {
                         />
                     </div>
                 </div>
-
-                 <table style={lista} className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Código</th>
-                            <th>Submissões</th>
-                            <th>Criado por</th>
-                            <th>Criado em</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loadingExercicios
-                        ?
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className=" col-12">
+                     <table style={lista} className="table table-hover">
+                        <thead>
                             <tr>
-                                <td>
-                                    <div className="loader" />
-                                </td>
-                                <td>                                        
-                                    <div className="loader" />
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>                                        
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-
-                            </tr>           
-                        :
-                            exercicios.map((exercicio, index) => (
-                                <tr key={index}>
-                                    <td>{exercicio.title}</td>
-                                    <td>{exercicio.code}</td>
-                                    <td>0{/*exercicio.executions.length*/}</td>
-                                    <td>{exercicio.author.email}</td>
-                                    <td>{formataData(exercicio.createdAt)}</td>
+                                <th>Nome</th>
+                                <th>Código</th>
+                                <th>Submissões</th>
+                                <th>Criado por</th>
+                                <th>Criado em</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loadingExercicios
+                            ?
+                                <tr>
                                     <td>
-                                        <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(exercicio)}>
-                                            <i className="fa fa-info"/>
-                                        </button>
-                                        <Link to={`/professor/exercicios/${exercicio.id}/editar`} className="btn btn-success mr-2">
-                                            <i className="fe fe-edit" />
-                                        </Link>
+                                        <div className="loader" />
                                     </td>
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-                <div className='row'>
+                                    <td>                                        
+                                        <div className="loader" />
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>                                        
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+
+                                </tr>           
+                            :
+                                exercicios.map((exercicio, index) => (
+                                    <tr key={index}>
+                                        <td>{exercicio.title}</td>
+                                        <td>{exercicio.code}</td>
+                                        <td>0{/*exercicio.executions.length*/}</td>
+                                        <td>{exercicio.author.email}</td>
+                                        <td>{formataData(exercicio.createdAt)}</td>
+                                        <td>
+                                            <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(exercicio)}>
+                                                <i className="fa fa-info"/>
+                                            </button>
+                                            <Link to={`/professor/exercicios/${exercicio.id}/editar`} className="btn btn-success mr-2">
+                                                <i className="fe fe-edit" />
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div className="row" style={{marginBottom:'15px'}}>
                     <div className='col-12 text-center'>
                         <NavPagination
                           totalPages={totalPages}
@@ -208,7 +213,6 @@ export default class HomeExerciciosScreen extends Component {
                         />
                     </div>
                 </div>
-            </div>
             <SwalModal
                 show={showModalInfo}
                 title="Exercício"

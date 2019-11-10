@@ -13,7 +13,7 @@ export default class Pagina extends Component {
             participantes: [],
             showModal:false,
             loadingParticipantes:false,
-            turma:'',
+            turma:JSON.parse(sessionStorage.getItem('turma')) || '',
             loadingInfoTurma:true,
             numPageAtual:1,
             totalItens:0,
@@ -28,19 +28,33 @@ export default class Pagina extends Component {
         document.title = `${this.state.turma.name} - participantes`;
         
     }
-    async getInfoTurma(){
+     async getInfoTurma(){
         const id = this.props.match.params.id
-        try{
-            const response = await api.get(`/class/${id}`)
-            console.log(response);
-            this.setState({
-                turma:response.data,
-                loadingInfoTurma:false,
-            })
+        const {turma} = this.state
+        if(!turma || (turma && turma.id!==id)){
+            console.log('dentro do if');
+            try{
+                const response = await api.get(`/class/${id}`)
+                const turmaData = {
+                    id:response.data.id,
+                    name:response.data.name,
+                    year:response.data.year,
+                    semester:response.data.semester,
+                    languages:response.data.languages
+                }
+                this.setState({
+                    turma:turmaData,
+                    loadingInfoTurma:false,
+                })
+                sessionStorage.setItem('turma',JSON.stringify(turmaData))
+            }
+            catch(err){
+                this.setState({loadingInfoTurma:false})
+                console.log(err);
+            }
         }
-        catch(err){
+        else{
             this.setState({loadingInfoTurma:false})
-            console.log(err);
         }
     }
 
@@ -101,72 +115,78 @@ export default class Pagina extends Component {
         const {turma,participantes,showModal,fildFilter,loadingInfoTurma,loadingParticipantes,contentInputSeach,numPageAtual,totalPages} = this.state
         return (
         <TemplateSistema {...this.props} active={'participantes'} submenu={'telaTurmas'}>
-            <div>
-                {loadingInfoTurma?
-                    <div className="loader"  style={{margin:'0px auto'}}></div>
-                    :
-                    <h3><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
-                }
-                <br/>
-                 <table style={{backgroundColor:"white"}} className="table table-hover">
-                    <thead> 
-                        <tr>
-                            <th></th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Matrícula</th>
-                            <th>Função</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loadingParticipantes
-                        ?
-                            <tr>
-                                <td>
-                                    <div className="loader" />
-                                </td>
-                                <td>                                        
-                                    <div className="loader" />
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>                                        
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                            </tr>           
-                        :
-                            participantes.map((user, index) => (
-                                <tr key={index}>
-                                    <td className='text-center'>
-                                        <div 
-                                            className="avatar d-block" 
-                                            style={
-                                                {backgroundImage: `url(${user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                            }
-                                        />
-                                    </td>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.enrollment}</td>
-                                    <td>{user.profile}</td>
-                                    <td>
-                                        <button className="btn btn-primary mr-2">
-                                            <i className="fa fa-info"/>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        {loadingInfoTurma?
+                            <div className="loader"  style={{margin:'0px auto'}}></div>
+                            :
+                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
                         }
-                    </tbody>
-                </table>
+                    </div>
+                </div>
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                     <table style={{backgroundColor:"white"}} className="table table-hover">
+                        <thead> 
+                            <tr>
+                                <th></th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Matrícula</th>
+                                <th>Função</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loadingParticipantes
+                            ?
+                                <tr>
+                                    <td>
+                                        <div className="loader" />
+                                    </td>
+                                    <td>                                        
+                                        <div className="loader" />
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>                                        
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+                                </tr>           
+                            :
+                                participantes.map((user, index) => (
+                                    <tr key={index}>
+                                        <td className='text-center'>
+                                            <div 
+                                                className="avatar d-block" 
+                                                style={
+                                                    {backgroundImage: `url(${user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
+                                                }
+                                            />
+                                        </td>
+                                        <td>{user.name}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.enrollment}</td>
+                                        <td>{user.profile}</td>
+                                        <td>
+                                            <button className="btn btn-primary mr-2">
+                                                <i className="fa fa-info"/>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
                 <div className='row'>
                     <div className='col-12 text-center'>
                         <NavPagination
@@ -176,7 +196,6 @@ export default class Pagina extends Component {
                         />
                     </div>
                 </div>
-            </div>
         </TemplateSistema>
         )
     }

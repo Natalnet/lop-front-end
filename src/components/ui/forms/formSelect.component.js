@@ -10,8 +10,12 @@ export default (props) =>{
             <div className="col-4 col-md-2">
             <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
               <select className="form-control" onChange={changeLanguage}>
-                <option value = 'javascript' >JavaScript</option>
-                <option value = 'c_cpp' >C++</option>
+                {languages.map(lang=>{
+                  const language = lang==='javascript'?'JavaScript':lang==='cpp'?'C/C++':''
+                  return(
+                    <option key={lang} value = {lang}>{language}</option>
+                  )
+                })}
               </select>
              </div>
             <div className="col-4 col-md-2">

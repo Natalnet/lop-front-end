@@ -19,9 +19,7 @@ import CardBody from "components/ui/card/cardBody.component";
 const lista = {
     backgroundColor:"white"
 };
-const titulo = {
-    alignItems: 'center'
-};
+
 const botao = {
     width: "100%"
 };
@@ -116,12 +114,15 @@ export default class HomeListasScreen extends Component {
         const {listas,showModal,fieldFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,showModalInfo,questions} = this.state
         return (
         <TemplateSistema active='listas'>
-            <div>
-                <h1 styler={titulo}>Listas de Exercicios</h1><br></br>
-                <div className="row">
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        <h3 style={{margin:'0px'}}> Listas de Exercícios</h3>
+                    </div>
+                </div>
+                <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-3">
-                        <div>
-                            <Link to="/professor/criarlista" className="nav-link">
+                       
+                            <Link to="/professor/criarlista">
                             <button 
                                 className="btn btn-primary"
                                 type="button"
@@ -130,9 +131,9 @@ export default class HomeListasScreen extends Component {
                                 Criar Lista <i className="fe fe-file-plus" />
                             </button>
                             </Link>
-                        </div>
+                        
                     </div>
-                    <div className="mb-3 col-9">     
+                    <div className=" col-9">     
                         <InputGroup
                             placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
@@ -145,7 +146,7 @@ export default class HomeListasScreen extends Component {
                         />
                     </div>
                 </div>
-                <div className='row'>
+                <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-12">
                         <table style={lista} className="table table-hover">
                             <thead>
@@ -204,8 +205,6 @@ export default class HomeListasScreen extends Component {
                         />
                     </div>
                 </div>
-            </div>
-
             <Modal
                 show={showModalInfo} onHide={this.handleCloseshowModalInfo.bind(this)}
                 size="lg"

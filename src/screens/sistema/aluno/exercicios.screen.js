@@ -100,8 +100,11 @@ export default class ExerciciosScreen extends Component {
         const {exercicios,showModal,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages} = this.state
         return (
         <TemplateSistema active='exercicios'>
-            <div>
-                <h1 styler={titulo}>Exercicios</h1><br></br>
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        <h3 style={{margin:'0px'}}> Listas de Exercícios</h3>
+                    </div>
+                </div>
                 <div className="row">
                     <div className="mb-3 col-12">     
                         <InputGroup
@@ -116,57 +119,60 @@ export default class ExerciciosScreen extends Component {
                         />
                     </div>
                 </div>
-
-                 <table style={lista} className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Código</th>
-                            <th>Submissões</th>
-                            <th>Criado por</th>
-                            <th>Criado em</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loadingExercicios
-                        ?
-                            <tr>
-                                <td>
-                                    <div className="loader" />
-                                </td>
-                                <td>                                        
-                                    <div className="loader" />
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>                                        
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-
-                            </tr>           
-                        :
-                            exercicios.map((exercicio, index) => (
-                                <tr key={index}>
-                                    <td>{exercicio.title}</td>
-                                    <td>{exercicio.code}</td>
-                                    <td>0{/*exercicio.executions.length*/}</td>
-                                    <td>{exercicio.author.email}</td>
-                                    <td>{formataData(exercicio.createdAt)}</td>
-                                    <td>
-                                        <Link to={`/aluno/exercicio/${exercicio.id}`} className="btn btn-success mr-2">
-                                            Acessar <i className="fa fa-wpexplorer" />
-                                        </Link>
-                                    </td>
+               <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        <table style={lista} className="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Código</th>
+                                    <th>Submissões</th>
+                                    <th>Criado por</th>
+                                    <th>Criado em</th>
+                                    <th></th>
                                 </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody>
+                                {loadingExercicios
+                                ?
+                                    <tr>
+                                        <td>
+                                            <div className="loader" />
+                                        </td>
+                                        <td>                                        
+                                            <div className="loader" />
+                                        </td>
+                                        <td>
+                                            <div className="loader"/>
+                                        </td>                                        
+                                        <td>
+                                            <div className="loader"/>
+                                        </td>
+                                        <td>
+                                            <div className="loader"/>
+                                        </td>
+
+                                    </tr>           
+                                :
+                                    exercicios.map((exercicio, index) => (
+                                        <tr key={index}>
+                                            <td>{exercicio.title}</td>
+                                            <td>{exercicio.code}</td>
+                                            <td>0{/*exercicio.executions.length*/}</td>
+                                            <td>{exercicio.author.email}</td>
+                                            <td>{formataData(exercicio.createdAt)}</td>
+                                            <td>
+                                                <Link to={`/aluno/exercicio/${exercicio.id}`} className="btn btn-success mr-2">
+                                                    Acessar <i className="fa fa-wpexplorer" />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div className='row'>
                     <div className='col-12 text-center'>
                         <NavPagination
@@ -176,7 +182,6 @@ export default class ExerciciosScreen extends Component {
                         />
                     </div>
                 </div>
-            </div>
         </TemplateSistema>
         )
     }

@@ -219,6 +219,8 @@ export default class HomeAlunoScreen extends Component {
                   loading={loandingTurmasAbertas}                            
               />
           </div>
+        </div>
+        <div className='row'>
         {loandingTurmasAbertas?
           range(8).map((i) => (
               <div key={i} className="col-6">

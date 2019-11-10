@@ -177,27 +177,29 @@ export default class CriarListaScreen extends Component {
 
         return (
         <TemplateSistema active='listas'>
-            <div className="container-fluid">
-                <form onSubmit={(e)=>this.criarLista(e)}>
-                    <div className="row">
-                        <div className="form-group form-control col-12">
-                            <div className="align-self-center">
-                                 <h1>Criar Lista</h1><br></br>
-                            </div>    
-                            
-                            <div className="col-12">
-                                <div className="input-group">
-                                    <input 
-                                        type="text"
-                                        value={this.state.name}
-                                        onChange={(e)=>this.handleTitleChange(e)}
-                                        className="form-control" 
-                                        placeholder="Título da lista"
-                                    />
-                                </div>
-                            </div>  
-                            <br/>
-                            <div className="col-12">
+            <Card>
+                <CardHead>
+                    <CardTitle>
+                    Criar lista
+                    </CardTitle>
+                </CardHead>
+                <CardBody>
+                    <form onSubmit={(e)=>this.criarLista(e)}>
+                        <div className="form-row">
+                            <div className="form-group col-12">
+                                <label htmlFor="inputTitulo">Título</label>
+                                <input 
+                                    id="inputTitulo"
+                                    type="text"
+                                    value={this.state.name}
+                                    onChange={(e)=>this.handleTitleChange(e)}
+                                    className="form-control" 
+                                    placeholder="Título da lista"
+                                />  
+                            </div> 
+                        </div>
+                        <div className="row">
+                            <div className="form-group col-12">
                                 <InputGroupo
                                     placeholder={`Perquise pelo nome ou código...`}
                                     value={contentInputSeach}
@@ -208,8 +210,10 @@ export default class CriarListaScreen extends Component {
                                     clearContentInputSeach={this.clearContentInputSeach.bind(this)}                           
                                 />    
                             </div>
-                            <br></br>
-                            <h4>Selecione as questões:</h4>
+                        </div>
+                        <div className="row">
+                            <div className="form-group col-12">
+                            <label >Selecione as questões</label>
                             <table className='table table-hover' style={{borderTopRightRadius:"10%", marginBottom:"0px"}}>
                                 <thead>
                                     <tr>
@@ -273,7 +277,8 @@ export default class CriarListaScreen extends Component {
                                 </tbody>
                                 
                             </table>
-                            
+                            </div>
+                        </div>
                             <div className='row'>
                                 <div className='col-12 text-center'>
                                     <NavPagination
@@ -284,8 +289,9 @@ export default class CriarListaScreen extends Component {
                                 </div>
                             </div>
                             <hr/>
-                            <h4>Selecionados:</h4>
-                            <br/>
+                        <div className='row'>
+                            <div className='col-12 text-center'>
+                            <label >Selecionadas</label>
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
@@ -310,16 +316,16 @@ export default class CriarListaScreen extends Component {
                                     ))}
                                 </tbody>
                             </table>
-
-
-                            <br></br>
-                            <div className="">
+                            </div>
+                        </div>
+                        <div className='row'>
+                            <div className='col-12 text-center'>
                             <button type ="submit" className="btn btn-primary float-right col-3" style={{width:"100%"}}>Criar Lista</button>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </CardBody>
+            
             <SwalModal
                 show={showModalInfo}
                 title="Exercício"
@@ -338,6 +344,7 @@ export default class CriarListaScreen extends Component {
                 </CardBody>
             </Card>
             </SwalModal>
+        </Card>
         </TemplateSistema>
         )
     }

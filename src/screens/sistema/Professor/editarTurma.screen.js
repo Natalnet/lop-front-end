@@ -3,7 +3,11 @@ import api from "../../../services/api";
 import Swal from "sweetalert2";
 import { Redirect } from 'react-router-dom';
 import Select from 'react-select';
-
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
 import TemplateSistema from "components/templates/sistema.template";
 
 const botao = {
@@ -196,30 +200,30 @@ export default class NovasTurmasScreen extends Component {
             {loadingInfoTurma?
                 <div className="loader"  style={{margin:'0px auto'}}></div>
             :
-                <form onSubmit={(e)=>this.atualizarTurma(e)}>
-                    <div className="row">
-                        <div className="form-group form-control col-12">
-                            <div className="align-self-center">
-                                 <h1 styler={titulo}>Atualização de Turmas:</h1><br></br>
-                            </div>    
-
-                            <span className="alert-danger">{this.state.msg}</span>
-                            <br></br>
-
-                            <label htmlFor="">Nome: </label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Nome de turma"
-                                value={this.state.name}
-                                onChange={this.handleNameChange}
-                            />
-
-                            <div className="row">
-
-
-
-                                <div className="col-4">
+            <Card>
+                <CardHead>
+                    <CardTitle>
+                    Cadastro de Turmas
+                    </CardTitle>
+                </CardHead>
+                <CardBody>
+                    <form onSubmit={(e)=>this.atualizarTurma(e)}>
+                            <div className="form-row">
+                                <div className="form-group col-12">    
+                                    <span className="alert-danger">{this.state.msg}</span>
+                                    <label htmlFor="name">Nome: </label>
+                                    <input 
+                                        id='name'
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="Nome de turma"
+                                        value={this.state.name}
+                                        onChange={this.handleNameChange}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group col-4"> 
                                     <label  htmlFor="exampleFormControlSelect0">Ano: </label>
                                     <select 
                                         className="form-control" 
@@ -238,7 +242,7 @@ export default class NovasTurmasScreen extends Component {
                                     </select>
                                 </div>
 
-                                <div className="col-4">
+                                <div className="form-group col-4">
                                     <label htmlFor="exampleFormControlSelect1">semestre: </label>
                                     <select 
                                         className="form-control" 
@@ -250,7 +254,9 @@ export default class NovasTurmasScreen extends Component {
                                         <option value="2">2ºSemestre</option>
                                     </select>
                                 </div>
-                                <div className="col-4">
+                            
+                                <div className="form-group col-4">
+
                                     <label htmlFor="exampleFormControlSelect1">Status</label>
                                     <select 
                                         className="form-control" 
@@ -264,49 +270,55 @@ export default class NovasTurmasScreen extends Component {
                                 </div>
                             </div>
 
-                            <div className="form-group">
-                                <label  htmlFor="">Descrição</label>
-                                <textarea 
-                                    className="form-control" 
-                                    id="" 
-                                    rows="5"
-                                    value={this.state.description}
-                                    onChange={this.handleDescriptionChange}
-                                >
-                                </textarea>
+                            <div className="form-row">
+                                <div className="form-group col-12">
+                                    <label  htmlFor="Descricao">Descrição</label>
+                                    <textarea 
+                                        className="form-control" 
+                                        id="Descricao" 
+                                        rows="5"
+                                        value={this.state.description}
+                                        onChange={this.handleDescriptionChange}
+                                    >
+                                    </textarea>
+                                </div>
                             </div>
 
-                            <h3>Linguagens:</h3>
-                            <Select
-                                style={{boxShadow: "white"}}
-                                
-                                defaultValue={this.state.linguagensSelecionadas}
-                                isMulti
-                                options={this.state.linguagens} 
-                                closeMenuOnSelect={false}
-                                onChange={this.handleLanguageChange.bind(this)}                                
-                            />
-                            <h3>Professores:</h3>
-
-                            <Select
-                                style={{boxShadow: "white"}}
-                                defaultValue={this.state.professoresSelecionados}
-                                options={this.state.todosProfessores}
-                                isMulti
-                                closeMenuOnSelect={false}
-                                onChange={this.handleProfessorsChange.bind(this)}                                
-                            />
-
-                            <br></br>
-
-                            <br></br>
-
-                            <div>
-                                <button style={botao} type="submit" className="btn btn-primary">Atualizar turma</button>
+                            <div className="form-row">
+                                <div className="form-group col-12">
+                                    <label  htmlFor="Descricao">Linguagens:</label>
+                                    <Select
+                                        style={{boxShadow: "white"}}
+                                        
+                                        defaultValue={this.state.linguagensSelecionadas}
+                                        isMulti
+                                        options={this.state.linguagens} 
+                                        closeMenuOnSelect={false}
+                                        onChange={this.handleLanguageChange.bind(this)}                                
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </form>
+                            <div className="form-row">
+                                <div className="form-group col-12">
+                                    <label>Professores: </label>
+                                    <Select
+                                        style={{boxShadow: "white"}}
+                                        defaultValue={this.state.professoresSelecionados}
+                                        options={this.state.todosProfessores}
+                                        isMulti
+                                        onChange={this.handleProfessorsChange.bind(this)}                                
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group col-12">
+                                    <button style={botao} type="submit" className="btn btn-primary">Atualizar turma</button>
+                                </div>
+                            </div>
+
+                        </form>
+                </CardBody>
+            </Card>
             }
         </TemplateSistema>
         )

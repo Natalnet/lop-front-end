@@ -63,7 +63,7 @@ export default class Editor extends Component {
       outputs:'',
       percentualAcerto:'',
       redirect:'',
-      turma:'',
+      turma:JSON.parse(sessionStorage.getItem('turma')) || '',
       loadingInfoTurma:true,
       loadingExercicio:true,
       userDifficulty:'',
@@ -97,20 +97,35 @@ export default class Editor extends Component {
       cardExemplos && cardExemplos.setAttribute("style",`height:${heightCardExemplos}px`);
     }
   }
-  async getInfoTurma(){
-      const id = this.props.match.params.id
-      try{
-          const response = await api.get(`/class/${id}`)
-          this.setState({
-              turma:response.data,
-              loadingInfoTurma:false,
-          })
-      }
-      catch(err){
-          this.setState({loadingInfoTurma:false})
-          console.log(err);
-      }
-  }
+     async getInfoTurma(){
+        const id = this.props.match.params.id
+        const {turma} = this.state
+        if(!turma || (turma && turma.id!==id)){
+            console.log('dentro do if');
+            try{
+                const response = await api.get(`/class/${id}`)
+                const turmaData = {
+                    id:response.data.id,
+                    name:response.data.name,
+                    year:response.data.year,
+                    semester:response.data.semester,
+                    languages:response.data.languages
+                }
+                this.setState({
+                    turma:turmaData,
+                    loadingInfoTurma:false,
+                })
+                sessionStorage.setItem('turma',JSON.stringify(turmaData))
+            }
+            catch(err){
+                this.setState({loadingInfoTurma:false})
+                console.log(err);
+            }
+        }
+        else{
+            this.setState({loadingInfoTurma:false})
+        }
+    }
   async getExercicio(){
     const id = this.props.match.params.idExercicio
     const query = `?exclude=solution`
@@ -170,7 +185,7 @@ export default class Editor extends Component {
     console.log(solution);
     const request = {
       codigo : solution,
-      linguagem :language==='c_cpp'?'cpp':language,
+      linguagem :language,
       results : results
     }
     console.log('codigo aparado');
@@ -350,7 +365,7 @@ export default class Editor extends Component {
            <div className ="col-12 col-md-7">
               <Card>
               <AceEditor
-                mode={language}
+                mode={language==='cpp'?'c_cpp':language}
                 theme={theme}
                 focus={false}
                 onChange={this.handleSolution.bind(this)}

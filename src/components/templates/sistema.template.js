@@ -98,9 +98,6 @@ export default class TemplateSistema extends Component {
             {sessionStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador {...this.props}/>:null}
             <div className="my-3 my-md-5">
               <div className="container">
-                <div className="page-header">
-                  <h1 className="page-title"></h1>
-                </div>
                 {this.props.children}
               </div>
             </div>

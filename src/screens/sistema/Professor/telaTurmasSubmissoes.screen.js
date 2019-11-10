@@ -8,6 +8,7 @@ import NavPagination from "components/ui/navs/navPagination";
 import {Redirect} from 'react-router-dom'
 import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
+import arrayPaginate from "../../../util/funçoesAuxiliares/arrayPaginate";
 import SwalModal from "components/ui/modal/swalModal.component";
 import 'katex/dist/katex.min.css';
 import HTMLFormat from 'components/ui/htmlFormat'
@@ -41,7 +42,7 @@ export default class HomesubmissoesScreen extends Component {
             loadingInfoTurma:true,
             contentInputSeach:'',
             submissoes: [],
-            turma:'',
+            turma:JSON.parse(sessionStorage.getItem('turma')) || '',
             showModal:false,
             loadingSubmissoes:false,
             fieldFilter:'name',
@@ -62,19 +63,33 @@ export default class HomesubmissoesScreen extends Component {
         document.title = `${this.state.turma.name} - Submissões`;
         
     }
-    async getInfoTurma(){
+     async getInfoTurma(){
         const id = this.props.match.params.id
-        try{
-            const response = await api.get(`/class/${id}`)
-            console.log(response);
-            this.setState({
-                turma:response.data,
-                loadingInfoTurma:false,
-            })
+        const {turma} = this.state
+        if(!turma || (turma && turma.id!==id)){
+            console.log('dentro do if');
+            try{
+                const response = await api.get(`/class/${id}`)
+                const turmaData = {
+                    id:response.data.id,
+                    name:response.data.name,
+                    year:response.data.year,
+                    semester:response.data.semester,
+                    languages:response.data.languages
+                }
+                this.setState({
+                    turma:turmaData,
+                    loadingInfoTurma:false,
+                })
+                sessionStorage.setItem('turma',JSON.stringify(turmaData))
+            }
+            catch(err){
+                this.setState({loadingInfoTurma:false})
+                console.log(err);
+            }
         }
-        catch(err){
+        else{
             this.setState({loadingInfoTurma:false})
-            console.log(err);
         }
     }
     async getSubmissoes(loading=true){
@@ -85,14 +100,13 @@ export default class HomesubmissoesScreen extends Component {
         try{
             if(loading) this.setState({loadingSubmissoes:true})
             const response = await api.get(`/class/${id}/submissions/page/${numPageAtual}?${query}`)
-            console.log('submissoes:');
-            console.log(response.data.docs);
+            console.log('todas submissoes:');
+            console.log(response.data);
             this.setState({
-                submissoes : [...response.data.docs],
-                totalItens : response.data.total,
-                totalPages : response.data.totalPages,
+                todasSubmissoes: response.data,
                 loadingSubmissoes:false
             })
+            this.applyPagination(response.data)
         }catch(err){
             this.setState({loadingSubmissoes:false})
             console.log(err);
@@ -102,8 +116,11 @@ export default class HomesubmissoesScreen extends Component {
         const io = socket("http://localhost:3001")
         const id = this.props.match.params.id
         io.emit('connectRoonSubmissionClass',id)//conectando à sala
-        io.on('SubmissionClass',response=>{
-            this.getSubmissoes(false)
+        io.on('SubmissionClass',async response=>{
+            await this.setState({
+                todasSubmissoes:[response,...this.state.todasSubmissoes]
+            })
+            this.applyPagination(this.state.todasSubmissoes)
         })
     }
     handleShowModalInfo(submissao){
@@ -116,12 +133,29 @@ export default class HomesubmissoesScreen extends Component {
     handleCloseshowModalInfo(e){
         this.setState({showModalInfo:false})
     }
+    applyPagination(arr){
+        const {numPageAtual } =this.state
+        const arrayPagined = arrayPaginate(arr,numPageAtual,14)
+        this.setState({
+            submissoes : arrayPagined.docs,
+            totalItens : arrayPagined.total,
+            totalPages : arrayPagined.totalPages,
+            loadingSubmissoes:false
+        })
+    }
     handlePage(e,numPage){
         e.preventDefault()
-        //console.log(numPage);
+        const {todasSubmissoes} = this.state
+        const submissoesPaginadas = arrayPaginate(todasSubmissoes,numPage,14)
+        console.log('handlePage');
+        console.log(submissoesPaginadas);
         this.setState({
-            numPageAtual:numPage
-        },()=>this.getSubmissoes())
+            numPageAtual:numPage,
+            submissoes : submissoesPaginadas.docs,
+            totalItens : submissoesPaginadas.total,
+            totalPages : submissoesPaginadas.totalPages,
+            loadingSubmissoes:false
+        })
     }
     handleSelectFieldFilter(e){
         console.log(e.target.value);
@@ -137,13 +171,20 @@ export default class HomesubmissoesScreen extends Component {
         
     }
     filterSeash(){
-        this.getSubmissoes()
+        const {todasSubmissoes,fieldFilter, contentInputSeach,numPageAtual } =this.state
+        const submissoes = todasSubmissoes.filter(sub=>{
+            if(fieldFilter==='name')
+                return sub.user.name.toLowerCase().includes(contentInputSeach.toLowerCase())
+            else if(fieldFilter==='title')
+                return sub.question.title.toLowerCase().includes(contentInputSeach.toLowerCase())
+        })
+        this.applyPagination(submissoes)
     }
     clearContentInputSeach(){
         this.setState({
-            contentInputSeach:''
-        },()=>this.getSubmissoes())
-        
+            contentInputSeach:'',
+        })
+        this.applyPagination(this.state.todasSubmissoes)
     }
 
 
@@ -151,12 +192,15 @@ export default class HomesubmissoesScreen extends Component {
         const {submissoes,showModalInfo,fieldFilter,loadingSubmissoes,contentInputSeach,numPageAtual,totalPages,submissao,loadingInfoTurma,turma} = this.state
         return (
         <TemplateSistema active='submissoes' {...this.props} submenu={'telaTurmas'}>
-            <div>
-                {loadingInfoTurma?
-                    <div className="loader"  style={{margin:'0px auto'}}></div>
-                    :
-                    <h3><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
-                }
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        {loadingInfoTurma?
+                            <div className="loader"  style={{margin:'0px auto'}}></div>
+                            :
+                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                        }
+                    </div>
+                </div>
                 <div className="row">
                     <div className="mb-3 col-12">     
                         <InputGroup
@@ -171,73 +215,74 @@ export default class HomesubmissoesScreen extends Component {
                         />
                     </div>
                 </div>
-
-                 <table style={lista} className="table table-hover table-responsive">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Nome</th>
-                            <th>Questão</th>
-                            <th>Percentual de acerto</th>
-                            <th>Tempo gasto</th>
-                            <th>N° da Submissão</th>
-                            <th>Submetido em</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loadingSubmissoes
-                        ?
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                     <table style={lista} className="table table-hover table-responsive">
+                        <thead>
                             <tr>
-                                <td>
-                                    <div className="loader" />
-                                </td>
-                                <td>                                        
-                                    <div className="loader" />
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>                                        
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-
-                            </tr>           
-                        :
-                            submissoes.map((submission, index) => (
-                                <tr key={submission.id}>
-                                    <td className='text-center'>
-                                        <div 
-                                            className="avatar d-block" 
-                                            style={
-                                                {backgroundImage: `url(${submission.user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                            }
-                                        />
-                                    </td>
-                                    <td>{submission.user.name}</td>
-                                    <td>{submission.question.title}</td>
-                                    <td style={{color:`${submission.hitPercentage===100?'#0f0':'#f00'}`}}><b>{submission.hitPercentage}%</b></td>
-                                    <td>{parseInt(submission.timeConsuming/1000/60)}min{parseInt((submission.timeConsuming/1000)%60)}seg</td>
-                                    <td>{submission.numSubmissions}°</td>
-                                    <td>{formataData(submission.dateSubmission)}</td>
+                                <th></th>
+                                <th>Nome</th>
+                                <th>Questão</th>
+                                <th>Percentual de acerto</th>
+                                <th>Tempo gasto</th>
+                                <th>Submetido em</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loadingSubmissoes
+                            ?
+                                <tr>
                                     <td>
-                                        <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(submission)}>
-                                            <i className="fa fa-info"/>
-                                        </button>
+                                        <div className="loader" />
                                     </td>
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-                <div className='row'>
-                    <div className='col-12 text-center'>
+                                    <td>                                        
+                                        <div className="loader" />
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>                                        
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+
+                                </tr>           
+                            :
+                                submissoes.map((submission, index) => (
+                                    <tr key={submission.id}>
+                                        <td className='text-center'>
+                                            <div 
+                                                className="avatar d-block" 
+                                                style={
+                                                    {backgroundImage: `url(${submission.user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
+                                                }
+                                            />
+                                        </td>
+                                        <td>{submission.user.name}</td>
+                                        <td>{submission.question.title}</td>
+                                        <td style={{color:`${submission.hitPercentage===100?'#0f0':'#f00'}`}}><b>{parseFloat(submission.hitPercentage)}%</b></td>
+                                        <td>{parseInt(submission.timeConsuming/1000/60)}min{parseInt((submission.timeConsuming/1000)%60)}seg</td>
+                                        <td>{formataData(submission.dateSubmission)}</td>
+                                        <td>
+                                            <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(submission)}>
+                                                <i className="fa fa-info"/>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12 text-center">
                         <NavPagination
                           totalPages={totalPages}
                           pageAtual={numPageAtual}
@@ -245,7 +290,7 @@ export default class HomesubmissoesScreen extends Component {
                         />
                     </div>
                 </div>
-            </div>
+            
             <SwalModal
                 show={showModalInfo}
                 title={submissao && submissao.question.description}

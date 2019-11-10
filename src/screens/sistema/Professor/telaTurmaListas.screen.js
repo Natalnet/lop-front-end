@@ -20,7 +20,7 @@ export default class Pagina extends Component {
             redirect: false,
             listas: [],
             loadingInfoTurma:true,
-            turma:'',
+            turma:JSON.parse(sessionStorage.getItem('turma')) || '',
             loandingTodasListas:true,
             loandingListas:false,
             showModalListas:false,
@@ -44,18 +44,33 @@ export default class Pagina extends Component {
         document.title = `${this.state.turma.name} - listas`;
         //this.getTodasListas()
     }
-    async getInfoTurma(){
+     async getInfoTurma(){
         const id = this.props.match.params.id
-        try{
-            const response = await api.get(`/class/${id}`)
-            this.setState({
-                turma:response.data,
-                loadingInfoTurma:false,
-            })
+        const {turma} = this.state
+        if(!turma || (turma && turma.id!==id)){
+            console.log('dentro do if');
+            try{
+                const response = await api.get(`/class/${id}`)
+                const turmaData = {
+                    id:response.data.id,
+                    name:response.data.name,
+                    year:response.data.year,
+                    semester:response.data.semester,
+                    languages:response.data.languages
+                }
+                this.setState({
+                    turma:turmaData,
+                    loadingInfoTurma:false,
+                })
+                sessionStorage.setItem('turma',JSON.stringify(turmaData))
+            }
+            catch(err){
+                this.setState({loadingInfoTurma:false})
+                console.log(err);
+            }
         }
-        catch(err){
+        else{
             this.setState({loadingInfoTurma:false})
-            console.log(err);
         }
     }
 
@@ -180,52 +195,59 @@ export default class Pagina extends Component {
         const {contentInputSeach,fieldFilter,showModalListas,questions,showModalInfo,loandingListas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
-            <div>
             
-               {loadingInfoTurma?
-                    <div className="loader"  style={{margin:'0px auto'}}></div>
-                    :
-                    <h3><i className="fa fa-users mr-2" aria-hidden="true"/>  {turma.name} - {turma.year}.{turma.semester || 1}</h3>
-                }
-                <br/>
-                <div className="col-3">
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        {loadingInfoTurma?
+                            <div className="loader"  style={{margin:'0px auto'}}></div>
+                            :
+                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                        }
+                    </div>
+                </div>
+
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-3">
                     <button className="btn btn-primary" onClick={()=>this.handleShowModalListas()}>
                         Adicionar novas listas
                     </button>
+                    </div>
                 </div>
-                <br/>
-
                 
-                {loandingListas
-                ?
-                    <div className="loader"  style={{margin:'0px auto'}}></div>
-                :
-                <div className="col-12">
-                    <table  style={{backgroundColor:"white"}} className="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Nome: </th>
-                                <th>Codigo: </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.listas.map((lista, index)=>(
-                                <tr key={index}>
-                                   <td>{lista.title}</td>
-                                   <td>{lista.code}</td>
-                                   <td className="float-right">
-                                       <button className="btn btn-primary float-right" onClick={()=>this.handleShowModalInfo(lista.questions)}>
-                                            <i className="fa fa-info"/>
-                                       </button>
-                                   </td>
+
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                    {loandingListas
+                    ?
+                        <div className="loader"  style={{margin:'0px auto'}}></div>
+                    :
+                    
+                        <table  style={{backgroundColor:"white"}} className="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome: </th>
+                                    <th>Codigo: </th>
+                                    <th></th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {this.state.listas.map((lista, index)=>(
+                                    <tr key={index}>
+                                       <td>{lista.title}</td>
+                                       <td>{lista.code}</td>
+                                       <td className="float-right">
+                                           <button className="btn btn-primary float-right" onClick={()=>this.handleShowModalInfo(lista.questions)}>
+                                                <i className="fa fa-info"/>
+                                           </button>
+                                       </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    }
+                    </div>
                 </div>
-                }
-            </div>
+            
 
                 <Modal
                   show={showModalListas} onHide={this.handleCloseshowModalListas.bind(this)}

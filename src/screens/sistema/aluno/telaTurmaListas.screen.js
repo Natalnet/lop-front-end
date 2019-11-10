@@ -23,7 +23,7 @@ export default class Pagina extends Component {
             listas: [],
             loandingListas:true,
             loadingInfoTurma:true,
-            turma:'',
+            turma:JSON.parse(sessionStorage.getItem('turma')) || '',
             todasListas: [],
         };
     }
@@ -33,21 +33,35 @@ export default class Pagina extends Component {
         await this.getInfoTurma()
         document.title = `${this.state.turma.name} - listas`;
     }
-    async getInfoTurma(){
+     async getInfoTurma(){
         const id = this.props.match.params.id
-        try{
-            const response = await api.get(`/class/${id}`)
-            this.setState({
-                turma:response.data,
-                loadingInfoTurma:false,
-            })
+        const {turma} = this.state
+        if(!turma || (turma && turma.id!==id)){
+            console.log('dentro do if');
+            try{
+                const response = await api.get(`/class/${id}`)
+                const turmaData = {
+                    id:response.data.id,
+                    name:response.data.name,
+                    year:response.data.year,
+                    semester:response.data.semester,
+                    languages:response.data.languages
+                }
+                this.setState({
+                    turma:turmaData,
+                    loadingInfoTurma:false,
+                })
+                sessionStorage.setItem('turma',JSON.stringify(turmaData))
+            }
+            catch(err){
+                this.setState({loadingInfoTurma:false})
+                console.log(err);
+            }
         }
-        catch(err){
+        else{
             this.setState({loadingInfoTurma:false})
-            console.log(err);
         }
     }
-
     async getListas(){
         try{
             const id = this.props.match.params.id
@@ -70,89 +84,94 @@ export default class Pagina extends Component {
         const {loadingInfoTurma,turma,loandingListas,listas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
-            <div>
-               {loadingInfoTurma?
-                    <div className="loader"  style={{margin:'0px auto'}}></div>
-                    :
-                    <h3><i className="fa fa-users mr-2" aria-hidden="true"/>  {turma.name} - {turma.year}.{turma.semester}</h3>
-                }
-                <br/>
-                
-                {loandingListas
-                ?
-                    <div className="loader"  style={{margin:'0px auto'}}></div>
-                :
-                <div className="col-12">
-                    {listas.map((lista,i)=>
-                    <Card key={lista.id}>
-                        <CardHead>
-                            <div className="col-4">
-                                <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
-                            </div>
-                            <div className="progress col-8" style={{height: "20px"}}>
-                                <div className="progress-bar" role="progressbar" style={{width: `${lista.completed}%`}} aria-valuenow={lista.completed} aria-valuemin="0" aria-valuemax="100">{lista.completed}%</div>
-                            </div>
-                            <CardOptions>
-                                <i
-                                title='Ver descrição'
-                                style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                                className={`fe fe-chevron-down`} 
-                                data-toggle="collapse" data-target={'#collapse'+i} 
-                                aria-expanded={false}
-                                />
-                            </CardOptions>
-                        </CardHead>
-                        <div className="collapse" id={'collapse'+i}>
-                        <CardBody>
-                            {lista.questions.map((question,j)=>
-                            <div key={question.id} className="col-12 col-md-6" style={{display: "inline-block"}}>
-                            <Card >
-                                    <CardHead>
-                                    <CardTitle>
-
-                                        <b>
-                                        {question.title}&nbsp;
-                                        { question.submission && question.submission.hitPercentage===100?
-                                            <i className="fa fa-check" style={{color:'#0f0'}}/>
-                                        :null}
-                                        </b>
-                                    </CardTitle>
-                                    <CardOptions>
-                                        <i
-                                        title='Ver descrição'
-                                        style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                                        className={`fe fe-chevron-down`} 
-                                        data-toggle="collapse" data-target={'#collapse2'+j+lista.id} 
-                                        aria-expanded={false}
-                                        />
-                                    </CardOptions>
-                                    </CardHead>
-                                    <div className="collapse" id={'collapse2'+j+lista.id}>
-                                        <CardBody>
-                                            {question.description}
-                                       </CardBody>
-                                    </div>
-                                    <CardFooter>
-
-                                        <span className="avatar avatar-cyan" title={`Você submeteu essa questão ${question.submission?question.submission.numSubmissions:0} vez(es)`}>
-                                            {question.submission?question.submission.numSubmissions:0}
-                                        </span>
-                                        <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
-                                                Acessar <i className="fa fa-wpexplorer" />
-                                        </Link>
-                                    </CardFooter>
-                            </Card>
-                            </div>
-                            )}
-                        </CardBody>
-                        </div>
-                    </Card>
-                    )}
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        {loadingInfoTurma?
+                            <div className="loader"  style={{margin:'0px auto'}}></div>
+                            :
+                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                        }
+                    </div>
                 </div>
-                }
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                    {loandingListas
+                    ?
+                        <div className="loader"  style={{margin:'0px auto'}}></div>
+                    :
+                    listas.map((lista,i)=>{
+                        const questions = lista.questions
+                        const questionsCompleted = lista.questions.filter(q=>q.completed)
+                        const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
+                        return(
+                        <Card key={lista.id}>
+                            <CardHead>
+                                <div className="col-4">
+                                    <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
+                                </div>
+                                <div className="progress col-8" style={{height: "20px"}}>
+                                    <div className="progress-bar" role="progressbar" style={{width: `${completed}%`}} aria-valuenow={completed} aria-valuemin="0" aria-valuemax="100">{completed}%</div>
+                                </div>
+                                <CardOptions>
+                                    <i
+                                    title='Ver descrição'
+                                    style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
+                                    className={`fe fe-chevron-down`} 
+                                    data-toggle="collapse" data-target={'#collapse'+i} 
+                                    aria-expanded={false}
+                                    />
+                                </CardOptions>
+                            </CardHead>
+                            <div className="collapse" id={'collapse'+i}>
+                            <CardBody>
+                                {lista.questions.map((question,j)=>
+                                <div key={question.id} className="col-12 col-md-6" style={{display: "inline-block"}}>
+                                <Card >
+                                        <CardHead>
+                                        <CardTitle>
 
-            </div>
+                                            <b>
+                                            {question.title}&nbsp;
+                                            {question.completed?
+                                                <i className="fa fa-check" style={{color:'#0f0'}}/>
+                                            :null}
+                                            </b>
+                                        </CardTitle>
+                                        <CardOptions>
+                                            <i
+                                            title='Ver descrição'
+                                            style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
+                                            className={`fe fe-chevron-down`} 
+                                            data-toggle="collapse" data-target={'#collapse2'+j+lista.id} 
+                                            aria-expanded={false}
+                                            />
+                                        </CardOptions>
+                                        </CardHead>
+                                        <div className="collapse" id={'collapse2'+j+lista.id}>
+                                            <CardBody>
+                                                {question.description}
+                                           </CardBody>
+                                        </div>
+                                        <CardFooter>
 
+                                            <span className="avatar avatar-cyan" title={`Você submeteu essa questão ${question.submission?question.submission.numSubmissions:0} vez(es)`}>
+                                                {question.submissions.length}
+                                            </span>
+                                            <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
+                                                    Acessar <i className="fa fa-wpexplorer" />
+                                            </Link>
+                                        </CardFooter>
+                                </Card>
+                                </div>
+                                )}
+                            </CardBody>
+                            </div>
+                        </Card>
+                        )
+                    })
+                    }
+                    </div>
+                </div>
         </TemplateSistema>
         )
     }

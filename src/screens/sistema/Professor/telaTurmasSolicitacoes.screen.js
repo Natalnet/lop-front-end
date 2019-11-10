@@ -23,7 +23,7 @@ export default class Pagina extends Component {
         loading:false,
         loadingUsers:true,
         loadingInfoTurma:true,
-        turma:''
+        turma:JSON.parse(sessionStorage.getItem('turma')) || '',
       };
     }
     async componentDidMount() {
@@ -32,19 +32,33 @@ export default class Pagina extends Component {
         document.title = `${this.state.turma.name} - Solicitações`;
         this.getSolicitacoesRealTime()
     }
-    async getInfoTurma(){
+     async getInfoTurma(){
         const id = this.props.match.params.id
-        try{
-            const response = await api.get(`/class/${id}`)
-            //console.log(response);
-            this.setState({
-                turma:response.data,
-                loadingInfoTurma:false,
-            })
+        const {turma} = this.state
+        if(!turma || (turma && turma.id!==id)){
+            console.log('dentro do if');
+            try{
+                const response = await api.get(`/class/${id}`)
+                const turmaData = {
+                    id:response.data.id,
+                    name:response.data.name,
+                    year:response.data.year,
+                    semester:response.data.semester,
+                    languages:response.data.languages
+                }
+                this.setState({
+                    turma:turmaData,
+                    loadingInfoTurma:false,
+                })
+                sessionStorage.setItem('turma',JSON.stringify(turmaData))
+            }
+            catch(err){
+                this.setState({loadingInfoTurma:false})
+                console.log(err);
+            }
         }
-        catch(err){
+        else{
             this.setState({loadingInfoTurma:false})
-            console.log(err);
         }
     }
     async getSolicitacoes(loadingResponse=true){
@@ -136,67 +150,74 @@ export default class Pagina extends Component {
         const {solicitacoes,loading,loadingUsers,turma,loadingInfoTurma}=this.state
         return (
             <TemplateSistema {...this.props} active={'solicitações'} submenu={'telaTurmas'}>
-                {loadingInfoTurma?
-                    <div className="loader"  style={{margin:'0px auto'}}></div>
-                    :
-                    <h3><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
-                }
-                <br/>
-                <table style={lista} className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Nome</th>
-                            <th>email</th>
-                            <th>Matrícula</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loadingUsers
-                        ?
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                        {loadingInfoTurma?
+                            <div className="loader"  style={{margin:'0px auto'}}></div>
+                            :
+                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                        }
+                    </div>
+                </div>
+                <div className="row" style={{marginBottom:'15px'}}>
+                    <div className="col-12">
+                    <table style={lista} className="table table-hover">
+                        <thead>
                             <tr>
-                                <td>
-                                    <div className="loader" />
-                                </td>
-                                <td>                                        
-                                    <div className="loader" />
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>                                        
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-
-
-                            </tr>           
-                        :
-                            solicitacoes.map((user,i)=>(
-                            <tr key={i}>
-                                <td className='text-center'>
-                                    <div 
-                                        className="avatar d-block" 
-                                        style={
-                                            {backgroundImage: `url(${user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                        }
-                                    />
-                                </td>
-                                <td>{user.name}</td>
-                                <td>{user.email}</td>
-                                <td>{user.enrollment}</td>
-                                <td>
-                                    <button onClick={()=>this.aceitaSolicitacao(user.id)} className="btn btn-success mr-2">
-                                        <i className="fa fa-user-plus"/>
-                                    </button>
-                                    <button onClick={()=> this.removeSolicitacao(user.id)} className="btn btn-danger mr-2">
-                                        <i className="fa fa-user-times" />
-                                    </button>
-                                </td>
+                                <th></th>
+                                <th>Nome</th>
+                                <th>email</th>
+                                <th>Matrícula</th>
+                                <th></th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table> 
+                        </thead>
+                        <tbody>
+                            {loadingUsers
+                            ?
+                                <tr>
+                                    <td>
+                                        <div className="loader" />
+                                    </td>
+                                    <td>                                        
+                                        <div className="loader" />
+                                    </td>
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>                                        
+                                    <td>
+                                        <div className="loader"/>
+                                    </td>
+
+
+                                </tr>           
+                            :
+                                solicitacoes.map((user,i)=>(
+                                <tr key={i}>
+                                    <td className='text-center'>
+                                        <div 
+                                            className="avatar d-block" 
+                                            style={
+                                                {backgroundImage: `url(${user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
+                                            }
+                                        />
+                                    </td>
+                                    <td>{user.name}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.enrollment}</td>
+                                    <td>
+                                        <button onClick={()=>this.aceitaSolicitacao(user.id)} className="btn btn-success mr-2">
+                                            <i className="fa fa-user-plus"/>
+                                        </button>
+                                        <button onClick={()=> this.removeSolicitacao(user.id)} className="btn btn-danger mr-2">
+                                            <i className="fa fa-user-times" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
             </TemplateSistema>
         )
     }

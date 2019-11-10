@@ -148,7 +148,7 @@ export default class TurmasScreen extends Component {
         <TemplateSistema active='home'>
             <div className="row">
                 <div className="col-3">
-                    <div>
+                    
                         <Link 
                             to={'/professor/novasturmas'}
                             className="btn btn-primary"
@@ -157,7 +157,7 @@ export default class TurmasScreen extends Component {
                         >
                             Nova Turma  <i className="fa fa-users" /> <i className="fa fa-plus-circle" />
                         </Link>
-                    </div>
+                    
                 </div>
 
                 <div className="col-9">

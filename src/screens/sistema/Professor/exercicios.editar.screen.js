@@ -25,7 +25,7 @@ import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
-import TableResults from '../../../components/ui/tables/tableResults.component'
+import TableResults2 from '../../../components/ui/tables/tableResults2.component'
 import TableIO from '../../../components/ui/tables/tableIO.component'
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
 import FormSelect2 from '../../../components/ui/forms/formSelect2.component'
@@ -187,7 +187,7 @@ export default class Editor extends Component {
     const {solution,language} = this.state
     const request = {
       codigo : solution,
-      linguagem :language==='c_cpp'?'cpp':language,
+      linguagem :language,
       results : this.getResults()
     }
     this.setState({loadingReponse:true})
@@ -277,7 +277,7 @@ export default class Editor extends Component {
       return <Redirect to='/professor/exercicios' />
     }
     const {percentualAcerto,response,redirect,status,difficulty,katexDescription,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags } = this.state;
+    const { language,theme,contentRes,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags,someErro } = this.state;
 
 
     return (
@@ -326,17 +326,17 @@ export default class Editor extends Component {
       />
       </div>
           <div className='row'>
-            <div className='col-6'>
+            <div className='col-12 col-md-7'>
               <AceEditor
-                mode={language}
+                mode={language==='cpp'?'c_cpp':language}
                 theme={theme}
                 focus={false}
                 onChange={this.handleSolution.bind(this)}
                 value={solution}
                 fontSize={14}
-                showPrintMargin={false}
                 width='100%'
                 name="ACE_EDITOR"
+                showPrintMargin={false}
                 showGutter={true}
                 enableLiveAutocompletion={true}
                 enableBasicAutocompletion={true}
@@ -350,36 +350,27 @@ export default class Editor extends Component {
                 }}
               />
             </div>
-           {loadingReponse?
-           <div className="card" className ="col-6 text-center">
-              <img src={imgLoading2} width="300px" />           
-           </div>:
-           <div className="col-6">
-                <AceEditor
-                  mode='javascript'
-                  readOnly={true}
-                  width={'100%'}
-                  showGutter={false}
-                  showPrintMargin={false}
-                  focus={false}
-                  theme={theme}
-                  value={contentRes}
-                  fontSize={14}
-                  name="ACE_EDITOR_RES"
-                  editorProps={{$blockScrolling: true}}
+
+          <div className ="col-12 col-md-5">
+          {loadingReponse?
+              <div className="loader"  style={{margin:'0px auto'}}></div>
+           :
+              <Card style={{minHeight:'500px'}}>
+                <CardHead>
+                  <CardTitle>
+                    Resultados
+                  </CardTitle>
+                </CardHead>
+                <TableResults2 
+                  response={response}
+                  descriptionErro={contentRes}
+                  erro={someErro}
+                  percentualAcerto={percentualAcerto}
                 />
-           </div>
-           }
+              </Card>
+          }
           </div>
-        
-        <div className='row'>
-            <div className="card" className ="col-12">
-              <TableResults 
-                response={response}
-                percentualAcerto={percentualAcerto}
-              />
-            </div>
-        </div>
+          </div>
         </CardBody>
         <CardFooter loading={loadingExercicio}>
           <button onClick={e => this.updateQuestion(e)} className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
