@@ -4,26 +4,20 @@ import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
-import {Redirect} from 'react-router-dom'
 import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
 import SwalModal from "components/ui/modal/swalModal.component";
 import 'katex/dist/katex.min.css';
-import HTMLFormat from 'components/ui/htmlFormat'
 import {BlockMath } from 'react-katex';
 import TableIO from 'components/ui/tables/tableIO.component'
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 
 
 const lista = {
     backgroundColor:"white"
-};
-const titulo = {
-    alignItems: 'center'
 };
 const botao = {
     width: "100%"

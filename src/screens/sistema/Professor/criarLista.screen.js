@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import {Redirect} from 'react-router-dom'
 import Swal from "sweetalert2";
-
-import BotaoModal from 'components/ui/modal/btnModalExercicios.component'
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import InputGroupo from 'components/ui/inputGroup/inputGroupo.component'
@@ -13,7 +11,6 @@ import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 
@@ -33,7 +30,6 @@ export default class CriarListaScreen extends Component {
             redirect: false,
             exercicios: [],
             selecionados: [],
-            contentInputSeach:'',
             fildFilter:'title',
             title: '',
             loadingExercicios:false,
@@ -173,7 +169,7 @@ export default class CriarListaScreen extends Component {
         if(this.state.redirect){
             return <Redirect to='/professor/listas' />
         }
-        const {exercicios,showModal,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,selecionados,question,showModalInfo} = this.state
+        const {loadingExercicios,contentInputSeach,numPageAtual,totalPages,selecionados,question,showModalInfo} = this.state
 
         return (
         <TemplateSistema active='listas'>

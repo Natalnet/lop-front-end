@@ -2,17 +2,9 @@ import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import Swal from 'sweetalert2'
 import socket from 'socket.io-client'
-
 import api from '../../../services/api'
-import SubMenu from '../../../components/menus/dashboard/professor/subMenuTurma.menu'
 const lista = {
     backgroundColor:"white"
-};
-const titulo = {
-    alignItems: 'center'
-};
-const botao = {
-    width: "100%"
 };
 export default class Pagina extends Component {
 
@@ -147,7 +139,7 @@ export default class Pagina extends Component {
         } 
     }
     render() {
-        const {solicitacoes,loading,loadingUsers,turma,loadingInfoTurma}=this.state
+        const {solicitacoes,loadingUsers,turma,loadingInfoTurma}=this.state
         return (
             <TemplateSistema {...this.props} active={'solicitações'} submenu={'telaTurmas'}>
                 <div className="row" style={{marginBottom:'15px'}}>

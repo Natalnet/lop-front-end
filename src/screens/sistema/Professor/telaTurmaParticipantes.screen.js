@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
@@ -150,7 +149,7 @@ export default class Pagina extends Component {
         },()=>this.getParticipantes())
     }
     render() {
-        const {turma,participantes,showModal,fildFilter,loadingInfoTurma,loadingParticipantes,contentInputSeach,numPageAtual,totalPages} = this.state
+        const {turma,participantes,loadingInfoTurma,loadingParticipantes,numPageAtual,totalPages} = this.state
         return (
         <TemplateSistema {...this.props} active={'participantes'} submenu={'telaTurmas'}>
                 <div className="row" style={{marginBottom:'15px'}}>

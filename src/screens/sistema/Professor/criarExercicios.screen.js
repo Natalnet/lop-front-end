@@ -1,11 +1,9 @@
-import React, { Component,Fragment} from "react";
+import React, { Component } from "react";
 import {Redirect} from 'react-router-dom'
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import apiCompiler from '../../../services/apiCompiler'
 import Swal from 'sweetalert2'
-
-import brace from 'brace';
 import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
@@ -19,8 +17,6 @@ import 'brace/theme/textmate';
 import 'brace/theme/solarized_dark';
 import 'brace/theme/solarized_light';
 import 'brace/theme/terminal';
-
-
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
@@ -28,13 +24,9 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import TableResults2 from '../../../components/ui/tables/tableResults2.component'
 import TableIO from '../../../components/ui/tables/tableIO.component'
-
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
 import FormSelect2 from '../../../components/ui/forms/formSelect2.component'
-import styleEditor from '../../../'
 import imgLoading from '../../../assets/loading.gif'
-import imgLoading1 from '../../../assets/loading1.gif'
-import imgLoading2 from '../../../assets/loading2.gif'
 
 export default class Editor extends Component {
   constructor(props){
@@ -230,7 +222,7 @@ export default class Editor extends Component {
     if(this.state.redirect){
       return <Redirect to='/professor/exercicios' />
     }
-    const {percentualAcerto,status,difficulty,katexDescription,response,redirect,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
+    const {percentualAcerto,status,difficulty,katexDescription,response,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
     const { language,theme,contentRes,solution,tags,loadingTags,someErro } = this.state;
     
     if(loadingEditor){

@@ -7,8 +7,6 @@
 
 
 import React, { Component } from "react";
-import CardTitle from './cardTitle.component'
-import CardOptions from './cardOptions.component'
 
 export default class CardHead extends Component {
   render() {

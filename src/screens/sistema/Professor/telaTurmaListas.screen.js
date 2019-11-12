@@ -297,7 +297,6 @@ export default class Pagina extends Component {
                                                         <button
                                                             className ="btn btn-primary"
                                                             data-toggle="collapse" data-target={'#collapse'+lista.id}
-                                                            aria-expanded="example-collapse-text"
                                                             style={{position: "relative"}}
                                                         >
                                                         <i className="fe fe-chevron-down"/>
@@ -361,7 +360,6 @@ export default class Pagina extends Component {
                                     <button
                                         className ="btn btn-primary"
                                         data-toggle="collapse" data-target={'#collapse'+questao.id}
-                                        aria-expanded="example-collapse-text"
                                         style={{position: "relative"}}
                                     >
                                         <i className="fe fe-chevron-down"/>

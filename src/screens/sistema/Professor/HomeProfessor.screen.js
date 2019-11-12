@@ -9,14 +9,8 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
-
 import api from '../../../services/api'
 import socket from 'socket.io-client'
-
-const card = {
-    maxHeight: "250px",
-    minHeight: "250px"
-}
 
 const botaoV = {
     float: "right",
@@ -24,10 +18,6 @@ const botaoV = {
 
 const botao = {
     width: "100%"
-}
-
-const estilo = {
-    paddingBottom: "25%"
 }
 
 export default class TurmasScreen extends Component {

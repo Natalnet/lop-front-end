@@ -1,25 +1,13 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-
 import socket from 'socket.io-client'
 import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
-import {Redirect} from 'react-router-dom'
 import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
 import arrayPaginate from "../../../util/funçoesAuxiliares/arrayPaginate";
 import SwalModal from "components/ui/modal/swalModal.component";
 import 'katex/dist/katex.min.css';
-import HTMLFormat from 'components/ui/htmlFormat'
-import {BlockMath } from 'react-katex';
-import TableIO from 'components/ui/tables/tableIO.component'
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import brace from 'brace';
 import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
@@ -27,12 +15,6 @@ import 'brace/theme/monokai';
 
 const lista = {
     backgroundColor:"white"
-};
-const titulo = {
-    alignItems: 'center'
-};
-const botao = {
-    width: "100%"
 };
 
 export default class HomesubmissoesScreen extends Component {
@@ -46,7 +28,6 @@ export default class HomesubmissoesScreen extends Component {
             showModal:false,
             loadingSubmissoes:false,
             fieldFilter:'name',
-            contentInputSeach:'',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,

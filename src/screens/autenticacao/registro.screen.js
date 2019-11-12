@@ -4,18 +4,12 @@
  *
  */
 import React, { Component } from "react";
-
 import TemplateAutenticacao from "components/templates/autenticacao.template";
-
 import api from "../../services/api";
-
 import { Link, Redirect } from "react-router-dom";
-
-import Swal from "sweetalert2";
 import LogoLOP from "components/ui/logoLOP.component";
 
 export default class LoginScreen extends Component {
-
   constructor(props){
     super(props)
     this.state = {
@@ -37,7 +31,7 @@ export default class LoginScreen extends Component {
   async register(e){
     e.preventDefault();
 
-    const {name,email,enrollment,password,confirm_password} = this.state
+    //const {name,email,enrollment,password,confirm_password} = this.state
     if (this.state.password !== this.state.confirm_password) {
       await this.setState({ msgConfirm_password : "A senha e confirmação de senha não correspondem" });
     }

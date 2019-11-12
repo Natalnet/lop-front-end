@@ -4,8 +4,6 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import apiCompiler from '../../../services/apiCompiler'
 import Swal from 'sweetalert2'
-
-import brace from 'brace';
 import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
@@ -19,7 +17,6 @@ import 'brace/theme/textmate';
 import 'brace/theme/solarized_dark';
 import 'brace/theme/solarized_light';
 import 'brace/theme/terminal';
-
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
@@ -29,10 +26,6 @@ import TableResults2 from '../../../components/ui/tables/tableResults2.component
 import TableIO from '../../../components/ui/tables/tableIO.component'
 import FormExercicio from '../../../components/ui/forms/formExercicio.component'
 import FormSelect2 from '../../../components/ui/forms/formSelect2.component'
-import styleEditor from '../../../'
-import imgLoading from '../../../assets/loading.gif'
-import imgLoading1 from '../../../assets/loading1.gif'
-import imgLoading2 from '../../../assets/loading2.gif'
 
 export default class Editor extends Component {
   constructor(props){
@@ -276,7 +269,7 @@ export default class Editor extends Component {
     if(this.state.redirect){
       return <Redirect to='/professor/exercicios' />
     }
-    const {percentualAcerto,response,redirect,status,difficulty,katexDescription,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
+    const {percentualAcerto,response,status,difficulty,katexDescription,savingQuestion,loadingReponse,title,description,inputs,outputs} = this.state
     const { language,theme,contentRes,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags,someErro } = this.state;
 
 

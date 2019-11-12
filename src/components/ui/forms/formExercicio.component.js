@@ -6,7 +6,7 @@ import {BlockMath } from 'react-katex';
 
 export default (props) =>{
 	const {title,description,inputs,outputs,katexDescription,status,difficulty,tags,defaultTags,loadingTags} = props
-	const {handleTitleChange,handleDescriptionChange,handlekatexDescription,handleStatus,handleDifficulty,handleInputsChange,handleTagsChangeTags} = props
+	const {handleStatus,handleDifficulty,handleTagsChangeTags} = props
 
   return(
           <div className="form-row">

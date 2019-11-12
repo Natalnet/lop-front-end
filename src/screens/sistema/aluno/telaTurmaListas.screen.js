@@ -1,12 +1,7 @@
 import React, { Component } from "react";
-import Teste from '../../../components/ui/modal/btnModal.component'
-
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
-import Swal from 'sweetalert2'
-import BtnModal from 'components/ui/modal/btnModal.component'
-import BotaoModal from "components/ui/modal/btnModalLista.component"
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";

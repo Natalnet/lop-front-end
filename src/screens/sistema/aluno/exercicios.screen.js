@@ -1,22 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-
 import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
-import {Redirect} from 'react-router-dom'
 import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
 const lista = {
     backgroundColor:"white"
 };
-const titulo = {
-    alignItems: 'center'
-};
-const botao = {
-    width: "100%"
-};
-
 
 export default class ExerciciosScreen extends Component {
     constructor(props){
@@ -97,7 +88,7 @@ export default class ExerciciosScreen extends Component {
 
 
     render() {
-        const {exercicios,showModal,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages} = this.state
+        const {exercicios,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages} = this.state
         return (
         <TemplateSistema active='exercicios'>
                 <div className="row" style={{marginBottom:'15px'}}>

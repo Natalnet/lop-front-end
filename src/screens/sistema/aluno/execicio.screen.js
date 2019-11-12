@@ -1,5 +1,4 @@
 import React, { Component,Fragment,createRef} from "react";
-import {Redirect} from 'react-router-dom'
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
 import axios from 'axios'
@@ -24,17 +23,9 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import TableResults from '../../../components/ui/tables/tableResults.component'
 import TableResults2 from '../../../components/ui/tables/tableResults2.component'
-
-import FormExercicio from '../../../components/ui/forms/formExercicio.component'
 import FormSelect from '../../../components/ui/forms/formSelect.component'
 import TemplateSistema from '../../../components/templates/sistema.template'
-import CardEnunciado from '../../../components/ui/card/cardEnunciadoExercicio.component'
-import imgLoading from '../../../assets/loading.gif'
-import imgLoading1 from '../../../assets/loading1.gif'
-import imgLoading2 from '../../../assets/loading2.gif'
 
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts
@@ -233,7 +224,7 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results,katexDescription} = this.state
+    const {response,someErro,percentualAcerto,loadingReponse,title,description,results,katexDescription} = this.state
     const { language,theme,contentRes,solution,loadingExercicio,userDifficulty,loadDifficulty,salvandoRascunho } = this.state;
 
     return (

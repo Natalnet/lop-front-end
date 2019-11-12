@@ -132,11 +132,11 @@ export default class HomeAlunoScreen extends Component {
     console.log('descriptions');
     const {descriptions} = this.state
     const index = descriptions.indexOf(id)
-    if(index==-1){
+    if(index===-1){
       await this.setState({descriptions:[id,...descriptions]})
     }
     else{
-      await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!=index)]})
+      await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!==index)]})
     }
   }
   async cancelarSolicitacao(idTurma){

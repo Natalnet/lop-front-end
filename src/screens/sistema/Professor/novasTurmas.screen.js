@@ -5,7 +5,6 @@ import { Redirect } from 'react-router-dom';
 import Select from 'react-select';
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import TemplateSistema from "components/templates/sistema.template";
@@ -13,15 +12,6 @@ import TemplateSistema from "components/templates/sistema.template";
 const botao = {
     marginTop: '10px',
     float: 'right'
-};
-const titulo = {
-    aligntodosProfessores: 'center'
-};
-const botao2 = {
-    float: 'right',
-    backgroundColor: "red",
-    borderColor: 'red',
-    color: 'white'
 };
 
 export default class NovasTurmasScreen extends Component {

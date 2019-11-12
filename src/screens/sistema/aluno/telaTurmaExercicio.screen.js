@@ -1,12 +1,10 @@
 import React, { Component,Fragment,createRef} from "react";
-import {Redirect} from 'react-router-dom'
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
 import axios from 'axios'
 import HTMLFormat from '../../../components/ui/htmlFormat'
 import Swal from 'sweetalert2'
 import apiCompiler from '../../../services/apiCompiler'
-import brace from 'brace';
 import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
@@ -24,18 +22,10 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import TableResults from '../../../components/ui/tables/tableResults.component'
 import TableResults2 from '../../../components/ui/tables/tableResults2.component'
-import { InlineMath, BlockMath } from 'react-katex';
-import FormExercicio from '../../../components/ui/forms/formExercicio.component'
+import { BlockMath } from 'react-katex';
 import FormSelect from '../../../components/ui/forms/formSelect.component'
 import TemplateSistema from '../../../components/templates/sistema.template'
-import CardEnunciado from '../../../components/ui/card/cardEnunciadoExercicio.component'
-import imgLoading from '../../../assets/loading.gif'
-import imgLoading1 from '../../../assets/loading1.gif'
-import imgLoading2 from '../../../assets/loading2.gif'
-
 
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts

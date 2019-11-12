@@ -2,7 +2,6 @@
 import React, { Component,Fragment } from "react";
 import { Link } from "react-router-dom";
 import NavPagination from "components/ui/navs/navPagination";
-
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import {Modal} from 'react-bootstrap'
 import 'katex/dist/katex.min.css';
@@ -111,7 +110,7 @@ export default class HomeListasScreen extends Component {
 
 
     render() {
-        const {listas,showModal,fieldFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,showModalInfo,questions} = this.state
+        const {listas,fieldFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,showModalInfo,questions} = this.state
         return (
         <TemplateSistema active='listas'>
                 <div className="row" style={{marginBottom:'15px'}}>
