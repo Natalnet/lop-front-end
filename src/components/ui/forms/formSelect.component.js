@@ -3,7 +3,7 @@ import imgLoading1 from '../../../assets/loading1.gif'
 
 export default (props) =>{
 	let {changeLanguage,changeTheme,executar,loadingReponse,languages} = props
-  languages = languages || ['javascript,cpp']
+  languages = languages || ['javascript','cpp']
   const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal']
   return(
     <Fragment>

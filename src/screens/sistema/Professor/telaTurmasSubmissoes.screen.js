@@ -266,7 +266,7 @@ export default class HomesubmissoesScreen extends Component {
                                         </td>
                                         <td>{submission.user.name}</td>
                                         <td>{submission.question.title}</td>
-                                        <td style={{color:`${submission.hitPercentage===100?'#0f0':'#f00'}`}}><b>{parseFloat(submission.hitPercentage)}%</b></td>
+                                        <td style={{color:`${parseFloat(submission.hitPercentage)===100?'#0f0':'#f00'}`}}><b>{parseFloat(submission.hitPercentage)}%</b></td>
                                         <td>{parseInt(submission.timeConsuming/1000/60)}min{parseInt((submission.timeConsuming/1000)%60)}seg</td>
                                         <td>{formataData(submission.dateSubmission)}</td>
                                         <td>
@@ -303,7 +303,6 @@ export default class HomesubmissoesScreen extends Component {
                       mode={submissao.language==='cpp'?'c_cpp':submissao.language}
                       readOnly={true}
                       width={'100%'}
-                      showGutter={false}
                       focus={false}
                       theme='monokai'
                       showPrintMargin={false}

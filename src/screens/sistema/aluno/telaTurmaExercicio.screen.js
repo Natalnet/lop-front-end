@@ -2,6 +2,7 @@ import React, { Component,Fragment,createRef} from "react";
 import {Redirect} from 'react-router-dom'
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
+import axios from 'axios'
 import HTMLFormat from '../../../components/ui/htmlFormat'
 import Swal from 'sweetalert2'
 import apiCompiler from '../../../services/apiCompiler'
@@ -215,11 +216,14 @@ export default class Editor extends Component {
   async saveSubmission({codigo,linguagem},hitPercentage,timeConsuming){
     const idQuestion = this.props.match.params.idExercicio
     const query = `?class=${this.props.match.params.id}`
+    const {data} = await axios('//api.ipify.org/?format=json')
     const request = {
       answer: codigo,
       language: linguagem,
       hitPercentage : hitPercentage,
-      timeConsuming : timeConsuming
+      timeConsuming : timeConsuming,
+      ip : data.ip,
+      environment:'desktop'
     }
     try{
       const response = await api.post(`/submission/question/${idQuestion}/store${query}`,request)
@@ -282,7 +286,7 @@ export default class Editor extends Component {
         :
         <Fragment>
         <div className='row' >
-          <div className ="col-7">
+          <div className ="col-12 col-md-7">
             <Card ref={this.cardEnunciadoRef}>
               <CardHead>
                 <CardTitle>
@@ -290,13 +294,15 @@ export default class Editor extends Component {
                 </CardTitle>
               </CardHead>
               <CardBody>
-                {description}
-                {katexDescription?[<br/>,<br/>,<BlockMath>{katexDescription}</BlockMath>]:''}                
+                <div className='row'> 
+                  {description}
+                </div>
+                {katexDescription?<BlockMath>{katexDescription}</BlockMath>:''}                
               </CardBody>
             </Card>
 
           </div>
-          <div className="col-5">
+          <div className="col-12 col-md-5">
             <Card ref={this.cardExemplos}>
               <CardHead>
                 <CardTitle>
