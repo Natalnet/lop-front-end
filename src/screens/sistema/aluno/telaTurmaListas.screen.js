@@ -9,7 +9,7 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 
-export default class Pagina extends Component {
+export default class Listas extends Component {
 
     constructor(props){
         super(props)
@@ -101,66 +101,20 @@ export default class Pagina extends Component {
                         return(
                         <Card key={lista.id}>
                             <CardHead>
-                                <div className="col-4">
+                                <div className="col-5">
                                     <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
                                 </div>
-                                <div className="progress col-8" style={{height: "20px"}}>
-                                    <div className="progress-bar" role="progressbar" style={{width: `${completed}%`}} aria-valuenow={completed} aria-valuemin="0" aria-valuemax="100">{completed}%</div>
+                                <div className="progress col-5" style={{height: "20px"}}>
+                                    <div className="progress-bar" role="progressbar" style={{width: `${completed}%`}} aria-valuenow={completed} aria-valuemin="0" aria-valuemax="100">
+                                        {completed}%
+                                    </div>
                                 </div>
                                 <CardOptions>
-                                    <i
-                                    title='Ver descrição'
-                                    style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                                    className={`fe fe-chevron-down`} 
-                                    data-toggle="collapse" data-target={'#collapse'+i} 
-                                    aria-expanded={false}
-                                    />
+                                    <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}`} className="btn btn-success mr-2">
+                                        Acessar <i className="fa fa-wpexplorer" />
+                                    </Link>
                                 </CardOptions>
                             </CardHead>
-                            <div className="collapse" id={'collapse'+i}>
-                            <CardBody>
-                                {lista.questions.map((question,j)=>
-                                <div key={question.id} className="col-12 col-md-6" style={{display: "inline-block"}}>
-                                <Card >
-                                        <CardHead>
-                                        <CardTitle>
-
-                                            <b>
-                                            {question.title}&nbsp;
-                                            {question.completed?
-                                                <i className="fa fa-check" style={{color:'#0f0'}}/>
-                                            :null}
-                                            </b>
-                                        </CardTitle>
-                                        <CardOptions>
-                                            <i
-                                            title='Ver descrição'
-                                            style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                                            className={`fe fe-chevron-down`} 
-                                            data-toggle="collapse" data-target={'#collapse2'+j+lista.id} 
-                                            aria-expanded={false}
-                                            />
-                                        </CardOptions>
-                                        </CardHead>
-                                        <div className="collapse" id={'collapse2'+j+lista.id}>
-                                            <CardBody>
-                                                {question.description}
-                                           </CardBody>
-                                        </div>
-                                        <CardFooter>
-
-                                            <span className="avatar avatar-cyan" title={`Você submeteu essa questão ${question.submission?question.submission.numSubmissions:0} vez(es)`}>
-                                                {question.submissions.length}
-                                            </span>
-                                            <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`} className="btn btn-success mr-2" style={{float:"right"}}>
-                                                    Acessar <i className="fa fa-wpexplorer" />
-                                            </Link>
-                                        </CardFooter>
-                                </Card>
-                                </div>
-                                )}
-                            </CardBody>
-                            </div>
                         </Card>
                         )
                     })
