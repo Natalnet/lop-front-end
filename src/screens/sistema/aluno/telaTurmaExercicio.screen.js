@@ -1,6 +1,7 @@
 import React, { Component,Fragment,createRef} from "react";
 //import PropTypes from "prop-types";
-import api from '../../../services/api'
+import api from '../../../services/api' 
+import { Link } from "react-router-dom";
 import axios from 'axios'
 import HTMLFormat from '../../../components/ui/htmlFormat'
 import Swal from 'sweetalert2'
@@ -263,18 +264,27 @@ export default class Editor extends Component {
 
     <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
         <div className='row'>
-        <div className ="col-12">
-          {loadingInfoTurma?
-              <div className="loader"  style={{margin:'0px auto'}}></div>
-              :
-              <h3><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
-          }
-        </div>
+          <div className ="col-12">
+            {loadingInfoTurma?
+                <div className="loader"  style={{margin:'0px auto'}}></div>
+                :
+                <h3><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+            }
+          </div>
         </div>
         {loadingExercicio?
           <div className="loader"  style={{margin:'0px auto'}}></div>
         :
         <Fragment>
+        <div className="row" style={{marginBottom:'15px'}}>
+            <div className="col-12">
+                <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${this.props.match.params.idLista}`} >
+                    <button className="btn btn-success mr-2">
+                     <i className="fa fa-arrow-left" /> Voltar à lista <i className="fa fa-file-text" />
+                    </button>
+                </Link>
+            </div>
+        </div>
         <div className='row' >
           <div className ="col-12 col-md-7">
             <Card ref={this.cardEnunciadoRef}>
