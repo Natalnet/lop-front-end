@@ -70,7 +70,6 @@ export default class Listas extends Component {
             })
 
         }catch(err){
-            this.setState({loandingLista:false})
             console.log(err)
         
         }
@@ -110,14 +109,14 @@ export default class Listas extends Component {
                                 <Card>
                                     <CardHead>
                                         <div className="col-4">
-                                            <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
+                                            <h4 style={{margin:'0px'}}><b>{lista && lista.title}</b></h4>
                                         </div>
                                         <div className="progress col-8" style={{height: "20px"}}>
                                             <div className="progress-bar" role="progressbar" style={{width: `${completed}%`}} aria-valuenow={completed} aria-valuemin="0" aria-valuemax="100">{completed}%</div>
                                         </div>
                                     </CardHead>
                                     <CardBody>
-                                        {lista.questions.map((question,j)=>
+                                        {lista && lista.questions.map((question,j)=>
                                         <div key={question.id} className="col-12 col-md-6" style={{display: "inline-block"}}>
                                         <Card >
                                             <CardHead>
@@ -135,12 +134,12 @@ export default class Listas extends Component {
                                                     title='Ver descrição'
                                                     style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
                                                     className={`fe fe-chevron-down`} 
-                                                    data-toggle="collapse" data-target={'#collapse2'+j+lista.id} 
+                                                    data-toggle="collapse" data-target={'#collapse2'+j+(lista && lista.id)} 
                                                     aria-expanded={false}
                                                     />
                                                 </CardOptions>
                                             </CardHead>
-                                                <div className="collapse" id={'collapse2'+j+lista.id}>
+                                                <div className="collapse" id={'collapse2'+j+(lista && lista.id)}>
                                                     <CardBody>
                                                         {question.description}
                                                    </CardBody>

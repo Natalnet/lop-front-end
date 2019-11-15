@@ -1,6 +1,7 @@
 import React, { Component,Fragment,createRef} from "react";
 //import PropTypes from "prop-types";
-import api from '../../../services/api' 
+import api from '../../../services/api'
+import findLocalIp from '../../../util/funçoesAuxiliares/findLocalIp'
 import { Link } from "react-router-dom";
 import axios from 'axios'
 import HTMLFormat from '../../../components/ui/htmlFormat'
@@ -207,16 +208,17 @@ export default class Editor extends Component {
   async saveSubmission({codigo,linguagem},hitPercentage,timeConsuming){
     const idQuestion = this.props.match.params.idExercicio
     const query = `?class=${this.props.match.params.id}`
-    const {data} = await axios('//api.ipify.org/?format=json')
-    const request = {
-      answer: codigo,
-      language: linguagem,
-      hitPercentage : hitPercentage,
-      timeConsuming : timeConsuming,
-      ip : data.ip,
-      environment:'desktop'
-    }
+
     try{
+      const macs = await findLocalIp(false)
+      const request = {
+        answer: codigo,
+        language: linguagem,
+        hitPercentage : hitPercentage,
+        timeConsuming : timeConsuming,
+        mac : macs[0],
+        environment:'desktop'
+      }
       const response = await api.post(`/submission/question/${idQuestion}/store${query}`,request)
       this.setState({tempo_inicial:new Date()})
     }

@@ -82,12 +82,13 @@ export default class HomesubmissoesScreen extends Component {
             if(loading) this.setState({loadingSubmissoes:true})
             const response = await api.get(`/class/${id}/submissions/page/${numPageAtual}?${query}`)
             console.log('todas submissoes:');
-            console.log(response.data);
+            console.log(response.data.docs);
             this.setState({
-                todasSubmissoes: response.data,
+                submissoes : [...response.data.docs],
+                totalItens : response.data.total,
+                totalPages : response.data.totalPages,
                 loadingSubmissoes:false
             })
-            this.applyPagination(response.data)
         }catch(err){
             this.setState({loadingSubmissoes:false})
             console.log(err);
@@ -97,11 +98,8 @@ export default class HomesubmissoesScreen extends Component {
         const io = socket("http://localhost:3001")
         const id = this.props.match.params.id
         io.emit('connectRoonSubmissionClass',id)//conectando à sala
-        io.on('SubmissionClass',async response=>{
-            await this.setState({
-                todasSubmissoes:[response,...this.state.todasSubmissoes]
-            })
-            this.applyPagination(this.state.todasSubmissoes)
+        io.on('SubmissionClass',response=>{
+            this.getSubmissoes(false)
         })
     }
     handleShowModalInfo(submissao){
@@ -114,29 +112,12 @@ export default class HomesubmissoesScreen extends Component {
     handleCloseshowModalInfo(e){
         this.setState({showModalInfo:false})
     }
-    applyPagination(arr){
-        const {numPageAtual } =this.state
-        const arrayPagined = arrayPaginate(arr,numPageAtual,14)
-        this.setState({
-            submissoes : arrayPagined.docs,
-            totalItens : arrayPagined.total,
-            totalPages : arrayPagined.totalPages,
-            loadingSubmissoes:false
-        })
-    }
     handlePage(e,numPage){
         e.preventDefault()
-        const {todasSubmissoes} = this.state
-        const submissoesPaginadas = arrayPaginate(todasSubmissoes,numPage,14)
-        console.log('handlePage');
-        console.log(submissoesPaginadas);
+        //console.log(numPage);
         this.setState({
-            numPageAtual:numPage,
-            submissoes : submissoesPaginadas.docs,
-            totalItens : submissoesPaginadas.total,
-            totalPages : submissoesPaginadas.totalPages,
-            loadingSubmissoes:false
-        })
+            numPageAtual:numPage
+        },()=>this.getSubmissoes())
     }
     handleSelectFieldFilter(e){
         console.log(e.target.value);
@@ -152,23 +133,14 @@ export default class HomesubmissoesScreen extends Component {
         
     }
     filterSeash(){
-        const {todasSubmissoes,fieldFilter, contentInputSeach,numPageAtual } =this.state
-        const submissoes = todasSubmissoes.filter(sub=>{
-            if(fieldFilter==='name')
-                return sub.user.name.toLowerCase().includes(contentInputSeach.toLowerCase())
-            else if(fieldFilter==='title')
-                return sub.question.title.toLowerCase().includes(contentInputSeach.toLowerCase())
-        })
-        this.applyPagination(submissoes)
+        this.getSubmissoes()
     }
     clearContentInputSeach(){
         this.setState({
-            contentInputSeach:'',
-        })
-        this.applyPagination(this.state.todasSubmissoes)
+            contentInputSeach:''
+        },()=>this.getSubmissoes())
+        
     }
-
-
     render() {
         const {submissoes,showModalInfo,fieldFilter,loadingSubmissoes,contentInputSeach,numPageAtual,totalPages,submissao,loadingInfoTurma,turma} = this.state
         return (

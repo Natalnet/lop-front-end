@@ -1,11 +1,11 @@
 import React, { Component,Fragment,createRef} from "react";
 //import PropTypes from "prop-types";
+import findLocalIp from '../../../util/funçoesAuxiliares/findLocalIp'
 import api from '../../../services/api'
-import axios from 'axios'
 import Swal from 'sweetalert2'
 import HTMLFormat from '../../../components/ui/htmlFormat'
 import apiCompiler from '../../../services/apiCompiler'
-import { InlineMath, BlockMath } from 'react-katex';
+import { BlockMath } from 'react-katex';
 import AceEditor from 'react-ace';
 import 'brace/mode/c_cpp';
 import 'brace/mode/javascript';
@@ -146,7 +146,7 @@ export default class Editor extends Component {
     const {solution,language,results} = this.state
     const request = {
       codigo : solution,
-      linguagem :language==='c_cpp'?'cpp':language,
+      linguagem :language,
       results : results
     }
     this.setState({loadingReponse:true})
@@ -173,16 +173,16 @@ export default class Editor extends Component {
 
   async saveSubmission({codigo,linguagem},hitPercentage,timeConsuming){
     const idQuestion = this.props.match.params.id
-    const {data} = await axios('//api.ipify.org/?format=json')
-    const request = {
-      answer: codigo,
-      language: linguagem,
-      hitPercentage : hitPercentage,
-      timeConsuming : timeConsuming,
-      ip : data.ip,
-      environment:'desktop'
-    }
     try{
+      const macs = await findLocalIp(false)
+      const request = {
+        answer: codigo,
+        language: linguagem,
+        hitPercentage : hitPercentage,
+        timeConsuming : timeConsuming,
+        mac : macs[0],
+        environment:'desktop'
+      }
       const response = await api.post(`/submission/question/${idQuestion}/store`,request)
       this.setState({tempo_inicial:new Date()})
     }
@@ -190,6 +190,7 @@ export default class Editor extends Component {
       this.setState({tempo_inicial:new Date()})
       console.log(err);
     }
+    
   }
 
 
@@ -245,7 +246,11 @@ export default class Editor extends Component {
                 <div className='row'> 
                   {description}
                 </div>
-                {katexDescription?<BlockMath>{katexDescription}</BlockMath>:''}                
+                {katexDescription?
+                  <BlockMath>{katexDescription}</BlockMath>
+                :
+                  ''
+                }                
               </CardBody>
             </Card>
 
@@ -319,7 +324,7 @@ export default class Editor extends Component {
             <div className ="col-12 col-md-7">
               <Card>
               <AceEditor
-                mode={language}
+                mode={language==='cpp'?'c_cpp':language}
                 theme={theme}
                 focus={false}
                 onChange={this.handleSolution.bind(this)}
