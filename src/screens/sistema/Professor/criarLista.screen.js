@@ -54,11 +54,12 @@ export default class CriarListaScreen extends Component {
             this.setState({loadingExercicios:true})
             const response = await api.get(`/question/page/${numPageAtual}?${query}`)
             console.log('exercicios:');
-            console.log(response.data.docs);
+            console.log(response.data);
             this.setState({
                 exercicios:[...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
+                numPageAtual : response.data.currentPage,
                 loadingExercicios:false
             })
         }catch(err){

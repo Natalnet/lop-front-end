@@ -64,14 +64,14 @@ export default class Pagina extends Component {
             if(loading) this.setState({loadingParticipantes:true})
             const response = await api.get(`/class/${id}/participants/page/${numPageAtual}`)
             console.log('participantes');
-            console.log(response.data.docs);
+            console.log(response.data);
             this.setState({
                 participantes:[...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
+                numPageAtual : response.data.currentPage,
                 loadingParticipantes:false,
             })
-            
         }
         catch(err){
             this.setState({loadingParticipantes:false,})

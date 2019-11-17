@@ -53,11 +53,12 @@ export default class HomeExerciciosScreen extends Component {
             this.setState({loadingExercicios:true})
             const response = await api.get(`/question/page/${numPageAtual}?${query}`)
             console.log('exercicios:');
-            console.log(response.data.docs);
+            console.log(response.data);
             this.setState({
                 exercicios : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
+                numPageAtual : response.data.currentPage,
                 loadingExercicios:false
             })
         }catch(err){
@@ -148,6 +149,8 @@ export default class HomeExerciciosScreen extends Component {
                             <tr>
                                 <th>Nome</th>
                                 <th>Código</th>
+                                
+                                <th>Submissões corretas</th>
                                 <th>Submissões</th>
                                 <th>Criado por</th>
                                 <th>Criado em</th>
@@ -180,15 +183,19 @@ export default class HomeExerciciosScreen extends Component {
                                     <tr key={index}>
                                         <td>{exercicio.title}</td>
                                         <td>{exercicio.code}</td>
-                                        <td>0{/*exercicio.executions.length*/}</td>
+                                        <td>{exercicio.submissions.countCorrects}</td>
+                                        <td>{exercicio.submissions.count}</td>
+
                                         <td>{exercicio.author.email}</td>
                                         <td>{formataData(exercicio.createdAt)}</td>
                                         <td>
                                             <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(exercicio)}>
                                                 <i className="fa fa-info"/>
                                             </button>
-                                            <Link to={`/professor/exercicios/${exercicio.id}/editar`} className="btn btn-success mr-2">
-                                                <i className="fe fe-edit" />
+                                            <Link to={`/professor/exercicios/${exercicio.id}/editar`}>
+                                                <button className="btn btn-success">
+                                                    <i className="fe fe-edit" />
+                                                </button>
                                             </Link>
                                         </td>
                                     </tr>

@@ -5,7 +5,6 @@ import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
 import api from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
-import arrayPaginate from "../../../util/funçoesAuxiliares/arrayPaginate";
 import SwalModal from "components/ui/modal/swalModal.component";
 import 'katex/dist/katex.min.css';
 import AceEditor from 'react-ace';
@@ -82,11 +81,12 @@ export default class HomesubmissoesScreen extends Component {
             if(loading) this.setState({loadingSubmissoes:true})
             const response = await api.get(`/class/${id}/submissions/page/${numPageAtual}?${query}`)
             console.log('todas submissoes:');
-            console.log(response.data.docs);
+            console.log(response.data);
             this.setState({
                 submissoes : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
+                numPageAtual : response.data.currentPage,
                 loadingSubmissoes:false
             })
         }catch(err){

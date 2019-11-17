@@ -64,11 +64,12 @@ export default class HomeAlunoScreen extends Component {
       if(loading) this.setState({loandingTurmasAbertas:true})
       const response = await api.get(`/class/open/page/${numPageAtual}?${query}`)
       console.log('turmas abertas:');
-      console.log(response.data.docs);
+      console.log(response.data);
       this.setState({
         turmasAbertas : response.data.docs,
         totalTumasAbertas : response.data.total,
         totalPages : response.data.totalPages,
+        numPageAtual : response.data.currentPage,
         loandingTurmasAbertas:false
       })
     }

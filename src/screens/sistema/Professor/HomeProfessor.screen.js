@@ -51,12 +51,13 @@ export default class TurmasScreen extends Component {
             if(loadingResponse) this.setState({loadingTurmas:true});
             const response = await api.get(`/user/class/page/${numPageAtual}?${query}`)
             console.log('minhas turmas');
-            console.log(response.data.docs)
+            console.log(response.data)
             //console.log(query);
             this.setState({
                 minhasTurmas : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
+                numPageAtual : response.data.currentPage,
                 loadingTurmas:false,
             })
         }catch(err){
@@ -141,11 +142,11 @@ export default class TurmasScreen extends Component {
                     
                         <Link 
                             to={'/professor/novasturmas'}
-                            className="btn btn-primary"
-                            type="button"
-                            style={botao}
+                         
                         >
-                            Nova Turma  <i className="fa fa-users" /> <i className="fa fa-plus-circle" />
+                            <button className="btn btn-primary" type="button" style={botao}>
+                                Nova Turma  <i className="fa fa-users" /> <i className="fa fa-plus-circle" />
+                            </button>
                         </Link>
                     
                 </div>
@@ -201,21 +202,23 @@ export default class TurmasScreen extends Component {
                                 </div>
                                 
                                 <CardFooter>
-                                    <span title={`${turma.users.length} participante(s)`}  className="avatar avatar-cyan mr-1">
-                                        {turma.users.length}
-                                    </span>
-                                    <span title={`${0} aluno(s) online`} className="avatar avatar-teal mr-1">
-                                        0
-                                    </span>
-                                    <span title={`${turma.solicitationsToClass.length} solicitação(ões)`} className="avatar avatar-red mr-1">
-                                        {turma.solicitationsToClass.length}
+                                    <span title={`${turma.usersCount} participante(s)`}  className="avatar avatar-cyan mr-1">
+                                        {turma.usersCount}
                                     </span>
 
-                                    <Link to={`/professor/turma/${turma.id}/editar`} style={botaoV} className="btn btn-success mr-2">
-                                        <i className="fa fa-edit" /> Editar
+                                    <span title={`${turma.solicitationsCount} solicitação(ões)`} className="avatar avatar-red mr-1">
+                                        {turma.solicitationsCount}
+                                    </span>
+
+                                    <Link to={`/professor/turma/${turma.id}/editar`} >
+                                        <button style={botaoV} className="btn btn-success mr-2">
+                                            <i className="fa fa-edit" /> Editar
+                                        </button>
                                     </Link>
-                                    <Link to={`/professor/turma/${turma.id}/participantes`} style={botaoV} className="btn btn-primary mr-2">
-                                        <i className="fe fe-corner-down-right" /> Entrar
+                                    <Link to={`/professor/turma/${turma.id}/participantes`} >
+                                        <button style={botaoV} className="btn btn-primary mr-2">
+                                            <i className="fe fe-corner-down-right" /> Entrar
+                                        </button>
                                     </Link>
                                 </CardFooter>
                                 

@@ -58,11 +58,12 @@ export default class HomeListasScreen extends Component {
             this.setState({loadingListas:true})
             const response = await api.get(`/listQuestion/page/${numPageAtual}?${query}`)
             console.log('listas');
-            console.log(response.data.docs);
+            console.log(response.data);
             this.setState({
                 listas : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
+                numPageAtual : response.data.currentPage,
                 loadingListas:false
             })
         }catch(err){
@@ -176,8 +177,8 @@ export default class HomeListasScreen extends Component {
                                 :
                                     listas.map((lista, index) => {
                                     return (
-                                    <Fragment>
-                                        <tr key={index}>
+                                    <Fragment key={index}>
+                                        <tr >
                                             <td>{lista.title}</td>
                                             <td>{lista.code}</td>
                                             <td>{formataData(lista.createdAt)}</td>

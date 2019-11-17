@@ -134,8 +134,9 @@ export default class NovasTurmasScreen extends Component {
         }
     };
     async getProfessores(){
+        let query = `?fields=id email&profile=PROFESSOR`
         try{
-            const response = await api.get('/user/get/professores')
+            const response = await api.get(`/user${query}`)
             this.setState({
                 todosProfessores:response.data.map(p=>{
                     return {

@@ -94,8 +94,11 @@ export default class NovasTurmasScreen extends Component {
 
 
     async getProfessores(){
+        let query = `?fields=id email&profile=PROFESSOR`
         try{
-            const response = await api.get('/user/get/professores')
+            const response = await api.get(`/user${query}`)
+            console.log('professores:');
+            console.log(response.data);
             await this.setState({
                 professoresSelecionados:[{
                     value:sessionStorage.getItem('user.id'),
