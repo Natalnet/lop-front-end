@@ -8,6 +8,7 @@ import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
+import {ProgressBar} from 'react-bootstrap'
 
 export default class Listas extends Component {
 
@@ -111,9 +112,7 @@ export default class Listas extends Component {
                                         <div className="col-4">
                                             <h4 style={{margin:'0px'}}><b>{lista && lista.title}</b></h4>
                                         </div>
-                                        <div className="progress col-8" style={{height: "20px"}}>
-                                            <div className="progress-bar" role="progressbar" style={{width: `${completed}%`}} aria-valuenow={completed} aria-valuemin="0" aria-valuemax="100">{completed}%</div>
-                                        </div>
+                                        <ProgressBar now={completed} label={`${completed}%`} style={{width:'100%'}} />
                                     </CardHead>
                                     <CardBody>
                                         {lista && lista.questions.map((question,j)=>

@@ -18,7 +18,6 @@ export default class ExerciciosScreen extends Component {
             showModal:false,
             loadingExercicios:false,
             fildFilter:'title',
-            contentInputSeach:'',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,

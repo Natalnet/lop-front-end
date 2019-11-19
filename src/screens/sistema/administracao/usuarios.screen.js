@@ -110,7 +110,7 @@ export default class HomeAdministradorScreen extends Component {
     }
   
   render() {
-    const {users,loadingUsers,numPageAtual,totalItens,totalPages,contentInputSeach,fieldFilter} = this.state
+    const {users,loadingUsers,numPageAtual,totalPages,contentInputSeach,fieldFilter} = this.state
     return (
       <AdministracaoTemplate active="home">
         <div className='row'>

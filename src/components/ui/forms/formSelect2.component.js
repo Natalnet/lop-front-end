@@ -1,5 +1,4 @@
 import React,{Fragment} from 'react'
-import imgLoading1 from '../../../assets/loading1.gif'
 
 export default (props) =>{
   let {changeLanguage,changeTheme,executar,loadingReponse} = props

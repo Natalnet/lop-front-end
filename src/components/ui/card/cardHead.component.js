@@ -10,8 +10,7 @@ import React, { Component } from "react";
 
 export default class CardHead extends Component {
   render() {
-  	const {children,center} = this.props
-  	const posicao = center?'auto':''
+  	const {children} = this.props
     return (
       <div className="card-header" >
         {children}

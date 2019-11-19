@@ -5,7 +5,7 @@
  * @Last Modified time: 2019-02-03 22:00:20
  */
 
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 
 import Swal from "sweetalert2";
 
@@ -26,10 +26,11 @@ import { perfis } from "config/enums/perfis.enum";
 export default class TemplateSistema extends Component {
   constructor(props) {
     super(props);
+    this.height = createRef() 
     this.state = {
       erros: [],
       keyErros: 0,
-      perfil: sessionStorage.getItem("user.profile")
+      perfil: sessionStorage.getItem("user.profile"),
     };
   }
 
@@ -83,11 +84,42 @@ export default class TemplateSistema extends Component {
     
     return arraySistemaPermisssao[0] === "sistema" ? arraySistemaPermisssao[1] : perfis.ALUNO;
   }
+
+  // footer(){
+  //   const teste = this.height.current
+  //   const teste2 = teste && teste.offsetHeight
+  //   console.log(teste2)
+  //   if(teste2>=180){
+  //     return(
+  //       <footer className="footer">
+  //         <div className="container">
+  //           <div style={{textAlign:"center"}}> 
+  //           Plataforma LOP. Universidade Federal do Rio Grande do Norte
+  //               2019.
+  //           </div>
+  //         </div>
+  //       </footer>
+  //     );
+  //   }
+  //   else{
+  //     return(
+  //       <footer className="footer" style={{position:'absolute', bottom:'0px', width:'100%'}}>
+  //         <div className="container">
+  //           <div style={{textAlign:"center"}}> 
+  //           Plataforma LOP. Universidade Federal do Rio Grande do Norte
+  //               2019.
+  //           </div>
+  //         </div>
+  //       </footer>
+  //     );
+  //   }
+  // }
+
   render() {
     return (
       <ErrorBoundary>
         <div className="page">
-          <div className="page-main">
+          <div className="page-main" ref={this.height}>
             <div className="header py-4">
               <div className="container">
                 <HeadPefilMenu />
@@ -102,6 +134,7 @@ export default class TemplateSistema extends Component {
               </div>
             </div>
           </div>
+          {/* {this.footer()} */}
           <footer className="footer">
             <div className="container">
               <div style={{textAlign:"center"}}> 
@@ -109,7 +142,7 @@ export default class TemplateSistema extends Component {
                   2019.
               </div>
             </div>
-          </footer>
+       </footer>
         </div>
       </ErrorBoundary>
     );

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import NavPagination from "components/ui/navs/navPagination";
-
+import Table from 'components/ui/tables/tableType1.component'
 export default class Pagina extends Component {
     constructor(props){
         super(props)
@@ -123,7 +123,7 @@ export default class Pagina extends Component {
                 </div>
                 <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-12">
-                     <table style={{backgroundColor:"white"}} className="table table-hover">
+                     <Table>
                         <thead> 
                             <tr>
                                 <th></th>
@@ -181,7 +181,7 @@ export default class Pagina extends Component {
                                 ))
                             }
                         </tbody>
-                    </table>
+                    </Table>
                     </div>
                 </div>
                 <div className='row'>

@@ -265,7 +265,7 @@ export default class Editor extends Component {
         handleOutputsChange={this.handleOutputsChange.bind(this)}
       />
       <div className='row'>
-        <div className="card" className ="col-12">
+        <div className="card col-12">
           <TableIO
             results={this.getResults()}
           />

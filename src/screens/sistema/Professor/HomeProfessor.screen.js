@@ -79,11 +79,11 @@ export default class TurmasScreen extends Component {
         console.log('descriptions');
         const {descriptions} = this.state
         const index = descriptions.indexOf(id)
-        if(index==-1){
+        if(index===-1){
             await this.setState({descriptions:[id,...descriptions]})
         }
         else{
-            await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!=index)]})
+            await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!==index)]})
         }
         
     }
@@ -129,7 +129,7 @@ export default class TurmasScreen extends Component {
 
     render() {
 
-        const {redirect,fieldFilter,loadingTurmas,contentInputSeach,minhasTurmas,numPageAtual,totalPages,descriptions} = this.state
+        const {fieldFilter,loadingTurmas,contentInputSeach,minhasTurmas,numPageAtual,totalPages,descriptions} = this.state
         const range = num => {
             let arr =[]
             for(let i=0;i<num;i++) arr.push(i);

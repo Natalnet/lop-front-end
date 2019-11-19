@@ -119,7 +119,7 @@ export default class CriarListaScreen extends Component {
 
     excluir(questao){
         this.setState({
-            selecionados:[...this.state.selecionados].filter(q=>q.id!=questao.id),
+            selecionados:[...this.state.selecionados].filter(q=>q.id!==questao.id),
             //exercicios: [...this.state.exercicios,questao]
         });
     };

@@ -170,7 +170,7 @@ export default class HomesubmissoesScreen extends Component {
                 </div>
                 <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-12">
-                     <table style={lista} className="table table-hover table-responsive">
+                     <table style={lista} className="table table-hover">
                         <thead>
                             <tr>
                                 <th></th>

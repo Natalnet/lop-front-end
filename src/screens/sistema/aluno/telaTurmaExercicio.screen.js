@@ -3,7 +3,6 @@ import React, { Component,Fragment,createRef} from "react";
 import api from '../../../services/api'
 import findLocalIp from '../../../util/funçoesAuxiliares/findLocalIp'
 import { Link } from "react-router-dom";
-import axios from 'axios'
 import HTMLFormat from '../../../components/ui/htmlFormat'
 import Swal from 'sweetalert2'
 import apiCompiler from '../../../services/apiCompiler'
@@ -211,6 +210,7 @@ export default class Editor extends Component {
 
     try{
       const macs = await findLocalIp(false)
+      console.log(macs)
       const request = {
         answer: codigo,
         language: linguagem,
@@ -259,8 +259,8 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {turma,response,redirect,someErro,percentualAcerto,loadingEditor,loadingReponse,title,description,inputs,outputs,results,katexDescription} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio ,loadingInfoTurma,userDifficulty,loadDifficulty,salvandoRascunho} = this.state;
+    const {turma,response,someErro,percentualAcerto,loadingReponse,title,description,results,katexDescription} = this.state
+    const { language,theme,contentRes,solution,loadingExercicio,loadingInfoTurma,userDifficulty,loadDifficulty,salvandoRascunho} = this.state;
 
     return (
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import { PrivateRoutes } from "./privateRoutes.util";
-import { Redirect ,Link} from 'react-router-dom';
+
 const exportRoutes = routes => {
   const routesMap = routes.map((route, index) => {
     if (route.private === false) {

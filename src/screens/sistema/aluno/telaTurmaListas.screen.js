@@ -5,10 +5,7 @@ import api from '../../../services/api'
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-
+import {ProgressBar} from 'react-bootstrap'
 export default class Listas extends Component {
 
     constructor(props){
@@ -99,16 +96,13 @@ export default class Listas extends Component {
                         const questionsCompleted = lista.questions.filter(q=>q.completed)
                         const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
                         return(
-                        <Card key={lista.id}>
+                        <Card key={lista.id} style={{margin:'2px'}}>
                             <CardHead>
                                 <div className="col-5">
                                     <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
                                 </div>
-                                <div className="progress col-5" style={{height: "20px"}}>
-                                    <div className="progress-bar" role="progressbar" style={{width: `${completed}%`}} aria-valuenow={completed} aria-valuemin="0" aria-valuemax="100">
-                                        {completed}%
-                                    </div>
-                                </div>
+                                <ProgressBar now={completed} label={`${completed}%`} style={{width:'45%'}} />
+                                
                                 <CardOptions>
                                     <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}`} className="btn btn-success mr-2">
                                         Acessar <i className="fa fa-wpexplorer" />

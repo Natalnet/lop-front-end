@@ -32,7 +32,6 @@ export default class HomeExerciciosScreen extends Component {
             showModal:false,
             loadingExercicios:false,
             fieldFilter:'title',
-            contentInputSeach:'',
             numPageAtual:1,
             totalItens:0,
             totalPages:0,

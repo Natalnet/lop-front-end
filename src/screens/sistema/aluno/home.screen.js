@@ -7,7 +7,6 @@
 
 import React, { Component } from "react";
 import {Link} from 'react-router-dom';
-
 import api from '../../../services/api'
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
@@ -50,14 +49,15 @@ export default class HomeAlunoScreen extends Component {
     }
   }
   async handleShowDescription(id){
+    this.state.teste = 'fe fe-chevron-down'
     console.log('descriptions');
     const {descriptions} = this.state
     const index = descriptions.indexOf(id)
-    if(index==-1){
+    if(index===-1){
       await this.setState({descriptions:[id,...descriptions]})
     }
     else{
-      await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!=index)]})
+      await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!==index)]})
     }
   }
 

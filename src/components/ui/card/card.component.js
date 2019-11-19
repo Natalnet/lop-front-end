@@ -8,7 +8,7 @@
 import React,{forwardRef} from "react";
 
 const Card = (props,ref)=>{
-  	const {loading,children,style} = props
+  	const {children,style} = props
     return (
     	<div className='row row-cards row-deck turma' ref={ref}>
     		<div className="col-12">

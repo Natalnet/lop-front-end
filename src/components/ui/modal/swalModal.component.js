@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
 export default (props) =>{
-	const {title,show,handleModal,children,width,loading} = props
+	const {title,show,handleModal,children,width} = props
 	const SwalReact = withReactContent(Swal)
 	if(show){
 		SwalReact.fire({

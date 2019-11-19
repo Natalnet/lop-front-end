@@ -16,7 +16,7 @@ const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) => {
     pc.onicecandidate = event => {
         if ( !event || !event.candidate ) {
             // All ICE candidates have been sent.
-            if ( ips.length == 0 )
+            if ( ips.length === 0 )
                 return reject('WebRTC disabled or restricted by browser');
 
             return resolve(ips);
@@ -26,7 +26,7 @@ const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) => {
         let [base,componentId,protocol,priority,ip,port,,type,...attr] = parts;
         let component = ['rtp', 'rtpc'];
 
-        if ( ! ips.some(e => e == ip) )
+        if ( ! ips.some(e => e === ip) )
             ips.push(ip);
 
         if ( ! logInfo )
