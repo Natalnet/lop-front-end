@@ -175,6 +175,8 @@ export default class Editor extends Component {
     const idQuestion = this.props.match.params.id
     try{
       const macs = await findLocalIp(false)
+      console.log('local ips:');
+      console.log(macs);
       const request = {
         answer: codigo,
         language: linguagem,

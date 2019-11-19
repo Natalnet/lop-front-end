@@ -57,7 +57,7 @@ export default class Pagina extends Component {
         const id = this.props.match.params.id
         try{
             if(loadingResponse) this.setState({loading:true})
-            const response = await api.get(`/class/${id}/solicitations`)
+            const response = await api.get(`/solicitation/class/${id}`)
             console.log('solicitações')
             console.log(response.data);
             this.setState({
@@ -92,7 +92,7 @@ export default class Pagina extends Component {
             allowEnterKey:false
           })
           Swal.showLoading()
-          const response = await api.post(`/class/${idTurma}/acceptSolicit/user/${idUser}`)
+          const response = await api.post(`/solicitation/class/${idTurma}/user/${idUser}/store`)
           //console.log(response);
           await this.removeSolicitacao(idUser)
           this.getSolicitacoes()
@@ -121,7 +121,7 @@ export default class Pagina extends Component {
             allowEnterKey:false
           })
           Swal.showLoading()
-          const response = await api.delete(`/class/${idTurma}/removeSolicitation/user/${idUser}`)
+          const response = await api.delete(`/solicitation/${idTurma}/user/${idUser}/delete`)
           console.log(response.data);
           this.getSolicitacoes()
           Swal.hideLoading()

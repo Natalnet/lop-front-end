@@ -42,7 +42,7 @@ export default class HomeAlunoScreen extends Component {
   async getTurmasSolicitadas(loading=true){
     try{
       if(loading) this.setState({loandingTurmasAbertas:true})
-      const response = await api.get('/user/solicitation/classes')
+      const response = await api.get('/solicitation')
       console.log('turmas solicitdas');
       console.log(response.data);
       this.setState({
@@ -106,7 +106,7 @@ export default class HomeAlunoScreen extends Component {
         allowEnterKey:false
       })
       Swal.showLoading()
-      const response = await api.post(`/user/solicit/class/${idClass}`)
+      const response = await api.post(`/solicitation/class/${idClass}/store`)
       console.log('solicitação:');
       console.log(response.data);
       await this.getTurmasSolicitadas(false)
@@ -151,7 +151,7 @@ export default class HomeAlunoScreen extends Component {
         allowEnterKey:false
       })
       Swal.showLoading()
-      const response = await api.delete(`/user/removeSolicitation/class/${idTurma}`)
+      const response = await api.delete(`/solicitation/class/${idTurma}/delete`)
       await this.getTurmasSolicitadas(false)
       this.getTurmasAbertas(false)
       Swal.hideLoading()
