@@ -36,7 +36,7 @@ export default class Editor extends Component {
     this.state = {
       editor:'',
       editorRes:'',
-      contentRes:"",
+      descriptionErro:"",
       language:'javascript',
       theme:'monokai',
       response:[],
@@ -49,7 +49,6 @@ export default class Editor extends Component {
       loadingReponse:false,
       loadingEditor:false,
       title:'',
-      someErro:false,
       description:'',
       inputs:'',
       outputs:'',
@@ -193,8 +192,7 @@ export default class Editor extends Component {
         loadingReponse:false,
         response:response.data.results,
         percentualAcerto:response.data.percentualAcerto,
-        contentRes:response.data.info,
-        someErro:response.data.someErro,
+        descriptionErro:response.data.descriptionErro,
       })
     }
     catch(err){
@@ -259,8 +257,8 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {turma,response,someErro,percentualAcerto,loadingReponse,title,description,results,katexDescription} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio,loadingInfoTurma,userDifficulty,loadDifficulty,salvandoRascunho} = this.state;
+    const {turma,response,percentualAcerto,loadingReponse,title,description,results,katexDescription} = this.state
+    const { language,theme,descriptionErro,solution,loadingExercicio,loadingInfoTurma,userDifficulty,loadDifficulty,salvandoRascunho} = this.state;
 
     return (
 
@@ -402,8 +400,7 @@ export default class Editor extends Component {
                 </CardHead>
                 <TableResults2 
                   response={response}
-                  descriptionErro={contentRes}
-                  erro={someErro}
+                  descriptionErro={descriptionErro}
                   percentualAcerto={percentualAcerto}
                 />
               </Card>

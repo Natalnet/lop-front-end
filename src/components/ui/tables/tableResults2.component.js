@@ -9,8 +9,8 @@ import CardBody from '../card/cardBody.component'
 
 export default props => {
 
-	const {response,erro,descriptionErro} = props
-      if(erro){
+	const {response,descriptionErro} = props
+      if(descriptionErro){
         return(
           <Card>
             <CardBody>

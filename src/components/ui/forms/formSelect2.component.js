@@ -10,7 +10,7 @@ export default (props) =>{
             <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
               <select className="form-control" onChange={changeLanguage}>
                 <option value = 'javascript' >JavaScript</option>
-                <option value = 'c_cpp'>C++</option>
+                <option value = 'cpp'>C++</option>
               </select>
              </div>
             <div className="col-4 col-md-2">

@@ -34,7 +34,7 @@ export default class Editor extends Component {
     this.state = {
       editor:'',
       editorRes:'',
-      contentRes:"",
+      descriptionErro:"",
       language:'javascript',
       theme:'monokai',
       response:[],
@@ -149,7 +149,7 @@ export default class Editor extends Component {
         this.setState({
           response:response.data.results,
           percentualAcerto:response.data.percentualAcerto,
-          contentRes:response.data.info,
+          descriptionErro:response.data.descriptionErro,
         })
       }
     }
@@ -223,7 +223,7 @@ export default class Editor extends Component {
       return <Redirect to='/professor/exercicios' />
     }
     const {percentualAcerto,status,difficulty,katexDescription,response,savingQuestion ,loadingEditor,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,contentRes,solution,tags,loadingTags,someErro } = this.state;
+    const { language,theme,descriptionErro,solution,tags,loadingTags } = this.state;
     
     if(loadingEditor){
       return(
@@ -317,8 +317,7 @@ export default class Editor extends Component {
                 </CardHead>
                 <TableResults2 
                   response={response}
-                  descriptionErro={contentRes}
-                  erro={someErro}
+                  descriptionErro={descriptionErro}
                   percentualAcerto={percentualAcerto}
                 />
               </Card>
