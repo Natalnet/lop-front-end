@@ -47,6 +47,13 @@ export default props => {
             </CardHead>
             <div className="collapse" id={'collapse'+i}>
               <CardBody>
+              {
+              teste.descriptionErro
+              ?
+                <HTMLFormat>
+                  {`${teste.descriptionErro}`}
+                </HTMLFormat>
+              :
                 <table className="table" wrap="off">
                   <tbody>
                     <tr>
@@ -73,6 +80,7 @@ export default props => {
                     </tr>
                   </tbody>
                 </table>
+              }
               </CardBody>
             </div>
           </Card>

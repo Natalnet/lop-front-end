@@ -5,7 +5,7 @@
  * @Last Modified time: 2019-02-11 02:49:17
  */
 
-import React, { Component } from "react";
+import React, { Component,Fragment } from "react";
 import {Link} from 'react-router-dom';
 import api from '../../../services/api'
 import TemplateSistema from "components/templates/sistema.template";
@@ -15,6 +15,8 @@ import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 export default class HomeAlunoScreen extends Component {
 
   constructor(props){
@@ -65,13 +67,13 @@ export default class HomeAlunoScreen extends Component {
     const {minhasTurmas,loadingTurmas,descriptions} = this.state
     return (
       <TemplateSistema active='home'>
-        <div className='row'>
+        <Row>
               {loadingTurmas?
                   <div className="loader"  style={{margin:'0px auto'}}></div>
               :
                   minhasTurmas.map((turma, index) => (
-                      <div key={index} className="col-6">
-                          <br></br>
+                    <Fragment key={index}>
+                      <Col xs={12} md={6} mt={15}>
                           <Card>
                             <CardHead>
                               <CardTitle>
@@ -100,12 +102,12 @@ export default class HomeAlunoScreen extends Component {
                                         <i className="fe fe-corner-down-right" /> Entrar
                                     </Link>
                                 </CardFooter>
-                                
                             </Card>
-                        </div>
+                        </Col>
+                      </Fragment>
                     ))
                 }
-        </div>
+        </Row>
       </TemplateSistema>
     );
   }

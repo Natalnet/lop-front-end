@@ -234,7 +234,7 @@ export default class Editor extends Component {
           <div className="loader"  style={{margin:'0px auto'}}></div>
         :
         <Fragment>
-        <div className='row' >
+        <div className='row' style={{marginBottom:'15px'}}>
           <div className ="col-12 col-md-7" >
             <Card ref={this.cardEnunciadoRef}>
               <CardHead>
@@ -243,7 +243,7 @@ export default class Editor extends Component {
                 </CardTitle>
               </CardHead>
               <CardBody>
-                <div className='row'> 
+                <div className='row' > 
                   {description}
                 </div>
                 {katexDescription?

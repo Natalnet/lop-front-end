@@ -276,7 +276,7 @@ export default class Editor extends Component {
           <div className="loader"  style={{margin:'0px auto'}}></div>
         :
         <Fragment>
-        <div className="row" style={{marginBottom:'15px'}}>
+        <div className="row" >
             <div className="col-12">
                 <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${this.props.match.params.idLista}`} >
                     <button className="btn btn-success mr-2">
@@ -285,7 +285,7 @@ export default class Editor extends Component {
                 </Link>
             </div>
         </div>
-        <div className='row' >
+        <div className='row'>
           <div className ="col-12 col-md-7">
             <Card ref={this.cardEnunciadoRef}>
               <CardHead>

@@ -10,7 +10,7 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import {ProgressBar} from 'react-bootstrap'
 
-export default class Listas extends Component {
+export default class Exercicios extends Component {
 
     constructor(props){
         super(props)
@@ -61,8 +61,9 @@ export default class Listas extends Component {
     }
     async getLista(){
         try{
+            const idClass = this.props.match.params.id
             const idLista = this.props.match.params.idLista
-            const response = await api.get(`/listQuestion/${idLista}`)
+            const response = await api.get(`/listQuestion/${idLista}/class/${idClass}`)
             console.log('listas');
             console.log(response.data);
             this.setState({
@@ -120,7 +121,6 @@ export default class Listas extends Component {
                                         <Card >
                                             <CardHead>
                                                 <CardTitle>
-
                                                     <b>
                                                     {question.title}&nbsp;
                                                     {question.completed?
