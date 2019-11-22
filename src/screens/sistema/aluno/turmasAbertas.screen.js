@@ -1,6 +1,6 @@
 
 
-import React, { Component } from "react";
+import React, { Component,Fragment } from "react";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
 
@@ -12,7 +12,10 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
-
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
+import Collapse from "components/ui/collapse/collapse.component";
+import ButtonToogle from "components/ui/collapse/buttonToogle.component";
 import NavPagination from "components/ui/navs/navPagination";
 import socket from 'socket.io-client'
 
@@ -129,17 +132,6 @@ export default class HomeAlunoScreen extends Component {
       //this.setState({solicitando:''})
     }
   }
-  async handleShowDescription(id){
-    console.log('descriptions');
-    const {descriptions} = this.state
-    const index = descriptions.indexOf(id)
-    if(index===-1){
-      await this.setState({descriptions:[id,...descriptions]})
-    }
-    else{
-      await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!==index)]})
-    }
-  }
   async cancelarSolicitacao(idTurma){
     const idUser = sessionStorage.getItem('user.id')
     try{
@@ -207,8 +199,8 @@ export default class HomeAlunoScreen extends Component {
     }
     return (
       <TemplateSistema active='turmasAbertas'>
-        <div className='row'>
-          <div className="col-12">
+        <Row mb={24}>
+          <Col xs={12}>
               <InputGroupo
                   placeholder={`Perquise pelo ${fieldFilter==='nome'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                   value={contentInputSeach}
@@ -219,47 +211,42 @@ export default class HomeAlunoScreen extends Component {
                   clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                   loading={loandingTurmasAbertas}                            
               />
-          </div>
-        </div>
-        <div className='row'>
+          </Col>
+        </Row>
+        <Row>
         {loandingTurmasAbertas?
           range(8).map((i) => (
-              <div key={i} className="col-6">
-                  <br></br>
+            <Fragment key={i}>
+              <Col xs={12} md={6}>
                   <Card>
                       <CardHead></CardHead>
                       <CardBody loading></CardBody>
                   </Card>
-              </div>
+              </Col>
+            </Fragment>
           ))
         :
           turmasAbertas.map((turma, index) => {
           return(
-                  <div key={index} className="col-12 col-md-6">
-                          <br></br>
+            <Fragment key={turma.id}>
+                  <Col xs={12} md={6}>
                           <Card>
                             <CardHead>
                               <CardTitle>
                                 <i className="fa fa-users" /><b> {turma.name} - {turma.year}.{turma.semester}</b>
                               </CardTitle>
                               <CardOptions>
-                                <i
-                                  title='Ver descrição'
-                                  style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                                  className={`fe fe-chevron-down`} 
-                                  onClick={(e)=>this.handleShowDescription(turma.id)}
-                                  data-toggle="collapse" data-target={'#collapse'+turma.id} 
-                                  aria-expanded={descriptions.includes(turma.id)}
+                                <ButtonToogle
+                                  id={'collapse'+turma.id}
+                                  title={'Ver descrição'}
                                 />
                               </CardOptions>
                               </CardHead>
-
-                                <div className="collapse" id={'collapse'+turma.id}>
-                                    <CardBody>
+                                <Collapse id={'collapse'+turma.id}>
+                                  <CardBody>
                                       {turma.description}
-                                    </CardBody>
-                                </div>
-                                
+                                  </CardBody>
+                                </Collapse>                                
                                 <CardFooter>
                                     <span className="badge badge-pill badge-success">
                                       Código: {turma.code}
@@ -276,21 +263,21 @@ export default class HomeAlunoScreen extends Component {
                                     }
                                 </CardFooter>   
                             </Card>
-                    </div>
-                
+                    </Col>
+              </Fragment>
             )}
           )
         }
-        </div>
-        <div className='row'>
-          <div className='col-12 text-center'>
+        </Row>        
+        <Row>
+          <Col xs={12} textCenter>
             <NavPagination
               totalPages={totalPages}
               pageAtual={numPageAtual}
               handlePage={this.handlePage}
             />
-          </div>
-        </div>
+          </Col>
+        </Row>
       </TemplateSistema>
     );
   }

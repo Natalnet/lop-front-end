@@ -17,6 +17,8 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import Collapse from "components/ui/collapse/collapse.component";
+import ButtonToogle from "components/ui/collapse/buttonToogle.component";
 export default class HomeAlunoScreen extends Component {
 
   constructor(props){
@@ -24,7 +26,6 @@ export default class HomeAlunoScreen extends Component {
     this.state = {
       minhasTurmas:[],
       loadingTurmas:false,
-      descriptions:[]
 
     }
     //this.handlePage=this.handlePage.bind(this)
@@ -50,21 +51,8 @@ export default class HomeAlunoScreen extends Component {
       console.log(err);
     }
   }
-  async handleShowDescription(id){
-    this.state.teste = 'fe fe-chevron-down'
-    console.log('descriptions');
-    const {descriptions} = this.state
-    const index = descriptions.indexOf(id)
-    if(index===-1){
-      await this.setState({descriptions:[id,...descriptions]})
-    }
-    else{
-      await this.setState({descriptions:[...descriptions.filter((desc,i)=>i!==index)]})
-    }
-  }
-
   render() {
-    const {minhasTurmas,loadingTurmas,descriptions} = this.state
+    const {minhasTurmas,loadingTurmas} = this.state
     return (
       <TemplateSistema active='home'>
         <Row>
@@ -73,30 +61,24 @@ export default class HomeAlunoScreen extends Component {
               :
                   minhasTurmas.map((turma, index) => (
                     <Fragment key={index}>
-                      <Col xs={12} md={6} mt={15}>
+                      <Col xs={12} md={6} >
                           <Card>
                             <CardHead>
                               <CardTitle>
                                 <i className="fa fa-users" /><b> {turma.name} - {turma.year}.{turma.semester || 1}</b>
                               </CardTitle>
                               <CardOptions>
-                                <i
-                                  title='Ver descrição'
-                                  style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                                  className={`fe fe-chevron-down`}
-                                  onClick={(e)=>this.handleShowDescription(turma.id)}
-                                  data-toggle="collapse" data-target={'#collapse'+turma.id} 
-                                  aria-expanded={descriptions.includes(turma.id)}
+                                <ButtonToogle
+                                  id={'collapse'+turma.id}
+                                  title={'Ver descrição'}
                                 />
                               </CardOptions>
                               </CardHead>
-
-                                <div className="collapse" id={'collapse'+turma.id}>
-                                    <CardBody>
-                                        {turma.description}
-                                    </CardBody>
-                                </div>
-                                
+                                <Collapse id={'collapse'+turma.id}>
+                                  <CardBody>
+                                      {turma.description}
+                                  </CardBody>
+                                </Collapse>
                                 <CardFooter>
                                     <Link to={`/aluno/turma/${turma.id}/dashboard`} style={{float: "right",}} className="btn btn-primary mr-2">
                                         <i className="fe fe-corner-down-right" /> Entrar
