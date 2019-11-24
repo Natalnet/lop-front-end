@@ -3,6 +3,8 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import NavPagination from "components/ui/navs/navPagination";
 import Table from 'components/ui/tables/tableType1.component'
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 export default class Pagina extends Component {
     constructor(props){
         super(props)
@@ -112,17 +114,17 @@ export default class Pagina extends Component {
         const {turma,participantes,loadingInfoTurma,loadingParticipantes,numPageAtual,totalPages} = this.state
         return (
         <TemplateSistema {...this.props} active={'participantes'} submenu={'telaTurmas'}>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
+                <Row mb={15}>
+                    <Col xs={12}>
                         {loadingInfoTurma?
                             <div className="loader"  style={{margin:'0px auto'}}></div>
                             :
                             <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
                         }
-                    </div>
-                </div>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
+                    </Col>
+                </Row>
+                <Row mb={15}>
+                    <Col xs={12}>
                      <Table>
                         <thead> 
                             <tr>
@@ -182,17 +184,17 @@ export default class Pagina extends Component {
                             }
                         </tbody>
                     </Table>
-                    </div>
-                </div>
-                <div className='row'>
-                    <div className='col-12 text-center'>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={12} textCenter>
                         <NavPagination
                           totalPages={totalPages}
                           pageAtual={numPageAtual}
                           handlePage={this.handlePage}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
         </TemplateSistema>
         )
     }

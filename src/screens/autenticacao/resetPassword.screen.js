@@ -24,6 +24,9 @@ export default class resetScreen extends Component {
       error: false
     };
   }
+  componentDidMount(){
+    document.title = "Recuperar Senha - Plataforma LOP";
+  }
   async send(e){
     e.preventDefault();
 
@@ -46,7 +49,7 @@ export default class resetScreen extends Component {
       const key = this.props.location.search;
       try{
         this.setState({loading:true})
-        const response = await api.put(`/auth/resetpassword${key}`, request)
+        await api.put(`/auth/resetpassword${key}`, request)
         this.setState({
           loading:false,
           msg:'',
@@ -56,12 +59,15 @@ export default class resetScreen extends Component {
           type: "success",
           title: `Congratulations`,
           text: `Senha alterada com sucesso.`,
-          confirmButtonText: "Voltar para tela de Login"
+          confirmButtonText: "Voltar para tela de Login",
+          allowOutsideClick:false,
+          allowEscapeKey:false,
+          allowEnterKey:false 
         }).then(result => {
           if (result.value) {
             return this.setState({ redirect: true });
           }
-        });
+        })
       }
       catch(err){
         console.log(Object.getOwnPropertyDescriptors(err))
@@ -71,12 +77,15 @@ export default class resetScreen extends Component {
           msg:false
         })
         if(err.message==='Request failed with status code 400'){
-          this.setState({msg:err.response.data})
+          this.setState({msg:err.response.data.msg})
           Swal.fire({
             type: "error",
             title: `Ops...`,
-            text: err.response.data,
-            confirmButtonText: "Ir para tela de 'recuperar senha'"
+            text: err.response.data.msg,
+            confirmButtonText: "Ir para tela de 'recuperar senha'",
+            allowOutsideClick:false,
+            allowEscapeKey:false,
+            allowEnterKey:false 
           }).then(result => {
             if (result.value) {
               return this.setState({ redirectLogin: true });
@@ -94,9 +103,6 @@ export default class resetScreen extends Component {
   };
 
   render() {
-    if (window.location.search.length < 45) {
-      return <Error404 />;
-    }
     if (this.state.redirectLogin) {
       return <Redirect to="/autenticacao/recuperar-senha" />;
     }

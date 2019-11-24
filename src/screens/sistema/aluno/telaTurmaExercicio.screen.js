@@ -27,6 +27,8 @@ import TableResults2 from '../../../components/ui/tables/tableResults2.component
 import { BlockMath } from 'react-katex';
 import FormSelect from '../../../components/ui/forms/formSelect.component'
 import TemplateSistema from '../../../components/templates/sistema.template'
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts
@@ -263,30 +265,30 @@ export default class Editor extends Component {
     return (
 
     <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
-        <div className='row'>
-          <div className ="col-12">
+        <Row mb={15}>
+          <Col xs={12}>
             {loadingInfoTurma?
                 <div className="loader"  style={{margin:'0px auto'}}></div>
                 :
-                <h3><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
             }
-          </div>
-        </div>
+          </Col>
+        </Row>
         {loadingExercicio?
-          <div className="loader"  style={{margin:'0px auto'}}></div>
+          <div className="loader" style={{margin:'0px auto'}}></div>
         :
         <Fragment>
-        <div className="row" >
-            <div className="col-12">
+        <Row mb={15}>
+            <Col xs={12}>
                 <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${this.props.match.params.idLista}`} >
                     <button className="btn btn-success mr-2">
                      <i className="fa fa-arrow-left" /> Voltar à lista <i className="fa fa-file-text" />
                     </button>
                 </Link>
-            </div>
-        </div>
-        <div className='row'>
-          <div className ="col-12 col-md-7">
+            </Col>
+        </Row>
+        <Row>
+          <Col xs={12} md={7}>
             <Card ref={this.cardEnunciadoRef}>
               <CardHead>
                 <CardTitle>
@@ -294,15 +296,15 @@ export default class Editor extends Component {
                 </CardTitle>
               </CardHead>
               <CardBody>
-                <div className='row'> 
+                <Row> 
                   {description}
-                </div>
+                </Row>
                 {katexDescription?<BlockMath>{katexDescription}</BlockMath>:''}                
               </CardBody>
             </Card>
 
-          </div>
-          <div className="col-12 col-md-5">
+          </Col>
+          <Col xs={12} md={5}>
             <Card ref={this.cardExemplos}>
               <CardHead>
                 <CardTitle>
@@ -334,9 +336,9 @@ export default class Editor extends Component {
                 </table>
             </CardBody>
             </Card>
-          </div>
-          </div>
-          <div className ="row" style={{marginBottom:"10px"}}>
+          </Col>
+          </Row>
+          <Row mb={10}>
               <FormSelect
                 loadingReponse={loadingReponse}
                 languages = {this.state.turma.languages}
@@ -345,7 +347,7 @@ export default class Editor extends Component {
                 executar={this.submeter.bind(this)}
               />
 
-            <div className="col-5 col-md-3">
+            <Col xs={5} md={3}>
                 <label htmlFor="rascunho">&nbsp;</label>
                 <button 
                   style={{width:"100%"}} 
@@ -354,8 +356,8 @@ export default class Editor extends Component {
                 >
                   <i className="fa fa-floppy-o"/>&nbsp;&nbsp; Salvar rascunho
                 </button>
-            </div>
-            <div className="col-5 col-md-2" style={{float:"right", marginLeft:"auto"}}>
+            </Col>
+            <Col xs={5} md={2}>
               <label htmlFor="selectDifficulty">Dificuldade: </label>
               <select defaultValue={userDifficulty} className="form-control"  id='selectDifficulty' disabled={loadDifficulty?'disabled':''} onChange={(e)=>this.handleDifficulty(e)} >
                 <option value =  {''} ></option>
@@ -365,10 +367,10 @@ export default class Editor extends Component {
                 <option value = 'Difícil' >Difícil</option>
                 <option value = 'Muito difícil' >Muito difícil</option>
               </select>
-            </div>
-          </div>
-         <div className='row'>
-           <div className ="col-12 col-md-7">
+            </Col>
+          </Row>
+          <Row>
+           <Col xs={12} md={7}>
               <Card>
               <AceEditor
                 mode={language==='cpp'?'c_cpp':language}
@@ -386,12 +388,11 @@ export default class Editor extends Component {
                 highlightActiveLine={true}
               />
               </Card>
-           </div>
-
-          <div className ="col-12 col-md-5">
-          {loadingReponse?
+           </Col>
+           <Col xs={12} md={5}> 
+            {loadingReponse?
               <div className="loader"  style={{margin:'0px auto'}}></div>
-           :
+            :
               <Card style={{minHeight:'500px'}}>
                 <CardHead>
                   <CardTitle>
@@ -404,9 +405,9 @@ export default class Editor extends Component {
                   percentualAcerto={percentualAcerto}
                 />
               </Card>
-          }
-          </div>
-        </div>
+            }
+          </Col>
+        </Row>
         </Fragment>
         }
         

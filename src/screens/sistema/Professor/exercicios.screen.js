@@ -148,9 +148,7 @@ export default class HomeExerciciosScreen extends Component {
                             <tr>
                                 <th>Nome</th>
                                 <th>Código</th>
-                                
-                                <th>Submissões corretas</th>
-                                <th>Submissões</th>
+                                <th>Submissões gerais (corretas/total)</th>
                                 <th>Criado por</th>
                                 <th>Criado em</th>
                                 <th></th>
@@ -182,8 +180,7 @@ export default class HomeExerciciosScreen extends Component {
                                     <tr key={index}>
                                         <td>{exercicio.title}</td>
                                         <td>{exercicio.code}</td>
-                                        <td>{exercicio.submissions.countCorrects}</td>
-                                        <td>{exercicio.submissions.count}</td>
+                                        <td>{`(${exercicio.submissions.countCorrects}/${exercicio.submissions.count})`}</td>
 
                                         <td>{exercicio.author.email}</td>
                                         <td>{formataData(exercicio.createdAt)}</td>

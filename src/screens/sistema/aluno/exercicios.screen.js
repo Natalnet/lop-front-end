@@ -4,6 +4,8 @@ import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
 import api from '../../../services/api'
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 import formataData from "../../../util/funçoesAuxiliares/formataData";
 const lista = {
     backgroundColor:"white"
@@ -90,13 +92,13 @@ export default class ExerciciosScreen extends Component {
         const {exercicios,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages} = this.state
         return (
         <TemplateSistema active='exercicios'>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
+                <Row mb={15}>
+                    <Col xs={12} >
                         <h3 style={{margin:'0px'}}> Listas de Exercícios</h3>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="mb-3 col-12">     
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={12} mb={15}>     
                         <InputGroup
                             placeholder={`Perquise pelo ${fildFilter==='title'?'Nome':fildFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
@@ -107,16 +109,16 @@ export default class ExerciciosScreen extends Component {
                             clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                             loading={loadingExercicios}                            
                         />
-                    </div>
-                </div>
-               <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
+                    </Col>
+                </Row>
+                <Row mb={15}>
+                    <Col xs={12}>
                         <table style={lista} className="table table-hover">
                             <thead>
                                 <tr>
                                     <th>Nome</th>
                                     <th>Código</th>
-                                    <th>Submissões</th>
+                                    <th>Submissões gerais (corretas/total)</th>
                                     <th>Criado por</th>
                                     <th>Criado em</th>
                                     <th></th>
@@ -148,7 +150,7 @@ export default class ExerciciosScreen extends Component {
                                         <tr key={index}>
                                             <td>{exercicio.title}</td>
                                             <td>{exercicio.code}</td>
-                                            <td>0{/*exercicio.executions.length*/}</td>
+                                            <td>{`(${exercicio.submissions.countCorrects}/${exercicio.submissions.count})`}</td>
                                             <td>{exercicio.author.email}</td>
                                             <td>{formataData(exercicio.createdAt)}</td>
                                             <td>
@@ -161,17 +163,17 @@ export default class ExerciciosScreen extends Component {
                                 }
                             </tbody>
                         </table>
-                    </div>
-                </div>
-                <div className='row'>
-                    <div className='col-12 text-center'>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={12} textCenter>
                         <NavPagination
                           totalPages={totalPages}
                           pageAtual={numPageAtual}
                           handlePage={this.handlePage}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
         </TemplateSistema>
         )
     }

@@ -8,6 +8,8 @@ import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 import {ProgressBar} from 'react-bootstrap'
 
 export default class Exercicios extends Component {
@@ -83,82 +85,88 @@ export default class Exercicios extends Component {
         const completed = lista && (questionsCompleted.length/lista.questions.length*100).toFixed(2)
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
-                    <div className="row" style={{marginBottom:'15px'}}>
-                        <div className="col-12">
+                    <Row mb={15}>
+                        <Col xs={12}>
                             {loadingInfoTurma?
                                 <div className="loader"  style={{margin:'0px auto'}}></div>
                                 :
                                 <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
                             }
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
                     {loandingLista
                     ?
                         <div className="loader"  style={{margin:'0px auto'}}></div>
                     :
                     <Fragment>
-                        <div className="row" style={{marginBottom:'15px'}}>
-                            <div className="col-12">
+                        <Row mb={15}>
+                            <Col xs={12}>
                                 <Link to={`/aluno/turma/${this.props.match.params.id}/listas`} >
                                     <button className="btn btn-success mr-2">
-                                     <i className="fa fa-arrow-left" /> Voltar para listas <i className="fa fa-file-text" />
+                                        <i className="fa fa-arrow-left" /> Voltar para listas <i className="fa fa-file-text" />
                                     </button>
                                 </Link>
-                            </div>
-                        </div>
-                        <div className="row" style={{marginBottom:'15px'}}>
-                            <div className="col-12">
+                            </Col>
+                        </Row>
+                        <Row mb={15}>
+                            <Col xs={12}>
                                 <Card>
                                     <CardHead>
-                                        <div className="col-4">
+                                        <Col xs={4} pl={0}>
                                             <h4 style={{margin:'0px'}}><b>{lista && lista.title}</b></h4>
-                                        </div>
+                                        </Col>
+                                        
                                         <ProgressBar now={completed} label={`${completed}%`} style={{width:'100%'}} />
+   
                                     </CardHead>
                                     <CardBody>
+                                        <Row>
                                         {lista && lista.questions.map((question,j)=>
-                                        <div key={question.id} className="col-12 col-md-6" style={{display: "inline-block"}}>
-                                        <Card >
-                                            <CardHead>
-                                                <CardTitle>
-                                                    <b>
-                                                    {question.title}&nbsp;
-                                                    {question.completed?
-                                                        <i className="fa fa-check" style={{color:'#0f0'}}/>
-                                                    :null}
-                                                    </b>
-                                                </CardTitle>
-                                                <CardOptions>
-                                                    <i
-                                                    title='Ver descrição'
-                                                    style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
-                                                    className={`fe fe-chevron-down`} 
-                                                    data-toggle="collapse" data-target={'#collapse2'+j+(lista && lista.id)} 
-                                                    aria-expanded={false}
-                                                    />
-                                                </CardOptions>
-                                            </CardHead>
-                                                <div className="collapse" id={'collapse2'+j+(lista && lista.id)}>
-                                                    <CardBody>
-                                                        {question.description}
-                                                   </CardBody>
-                                                </div>
-                                                <CardFooter>
-                                                    Suas submissões: {question.submissions.length}
+                                        <Fragment key={j}>
+                                            <Col xs={12} md={6}>
+                                                <Card >
+                                                    <CardHead>
+                                                        <CardTitle>
+                                                            <b>
+                                                            {question.title}&nbsp;
+                                                            {question.completed?
+                                                                <i className="fa fa-check" style={{color:'#0f0'}}/>
+                                                            :null}
+                                                            </b>
+                                                        </CardTitle>
+                                                        <CardOptions>
+                                                            <i
+                                                            title='Ver descrição'
+                                                            style={{color:'blue',cursor:'pointer',fontSize:'25px'}}
+                                                            className={`fe fe-chevron-down`} 
+                                                            data-toggle="collapse" data-target={'#collapse2'+j+(lista && lista.id)} 
+                                                            aria-expanded={false}
+                                                            />
+                                                        </CardOptions>
+                                                    </CardHead>
+                                                        <div className="collapse" id={'collapse2'+j+(lista && lista.id)}>
+                                                            <CardBody>
+                                                                {question.description}
+                                                           </CardBody>
+                                                        </div>
+                                                        <CardFooter>
+                                                            Suas submissões: {question.submissions.length}
 
-                                                    <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`} >
-                                                        <button className="btn btn-success mr-2" style={{float:"right"}}>
-                                                        Acessar <i className="fa fa-wpexplorer" />
-                                                        </button>
-                                                    </Link>
-                                                </CardFooter>
-                                        </Card>
-                                        </div>
+                                                            <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`} >
+                                                                <button className="btn btn-success mr-2" style={{float:"right"}}>
+                                                                Acessar <i className="fa fa-wpexplorer" />
+                                                                </button>
+                                                            </Link>
+                                                        </CardFooter>
+                                                </Card>
+                                            </Col>
+                                        </Fragment>
                                         )}
+                                        </Row>
                                     </CardBody>
                                 </Card>
-                            </div>
-                        </div>
+                            </Col>
+                        </Row>
                     </Fragment>
                     }
                     

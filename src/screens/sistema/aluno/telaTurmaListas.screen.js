@@ -6,6 +6,8 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import {ProgressBar} from 'react-bootstrap'
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 export default class Listas extends Component {
 
     constructor(props){
@@ -76,17 +78,17 @@ export default class Listas extends Component {
         const {loadingInfoTurma,turma,loandingListas,listas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
+                <Row mb={15}>
+                    <Col xs={12}>
                         {loadingInfoTurma?
                             <div className="loader"  style={{margin:'0px auto'}}></div>
                             :
                             <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
                         }
-                    </div>
-                </div>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
+                    </Col>
+                </Row>
+                <Row mb={15}>
+                    <Col xs={12}>
                     {loandingListas
                     ?
                         <div className="loader"  style={{margin:'0px auto'}}></div>
@@ -98,14 +100,16 @@ export default class Listas extends Component {
                         return(
                         <Card key={lista.id} style={{margin:'2px'}}>
                             <CardHead>
-                                <div className="col-5">
+                                <Col xs={5}>
                                     <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
-                                </div>
+                                </Col>
                                 <ProgressBar now={completed} label={`${completed}%`} style={{width:'45%'}} />
                                 
                                 <CardOptions>
-                                    <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}`} className="btn btn-success mr-2">
-                                        Acessar <i className="fa fa-wpexplorer" />
+                                    <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}`}>
+                                        <button className="btn btn-success">
+                                            Acessar <i className="fa fa-wpexplorer" />
+                                        </button>
                                     </Link>
                                 </CardOptions>
                             </CardHead>
@@ -113,8 +117,8 @@ export default class Listas extends Component {
                         )
                     })
                     }
-                    </div>
-                </div>
+                    </Col>
+                </Row>
         </TemplateSistema>
         )
     }

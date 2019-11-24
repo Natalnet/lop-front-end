@@ -28,6 +28,9 @@ export default class LoginScreen extends Component {
       msgConfirm_password:''
     };
   }
+  componentDidMount(){
+    document.title = "Realizar cadastro - Plataforma LOP";
+  }
   async register(e){
     e.preventDefault();
 

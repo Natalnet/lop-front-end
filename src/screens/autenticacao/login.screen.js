@@ -53,11 +53,11 @@ export default class LoginScreen extends Component {
         msg:''
       })
       if(err.message==='Request failed with status code 400'){
-        if(err.response.data==='O e-mail inserido não corresponde a nenhuma conta :('){
-          this.setState({msgEmail:err.response.data})
+        if(err.response.data.msg==='O e-mail inserido não corresponde a nenhuma conta :('){
+          this.setState({msgEmail:err.response.data.msg})
         }
-        else if(err.response.data==='Senha incorreta :('){
-          this.setState({msgPass:err.response.data})
+        else if(err.response.data.msg==='Senha incorreta :('){
+          this.setState({msgPass:err.response.data.msg})
         }
       }
       else{
