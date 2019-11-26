@@ -12,6 +12,6 @@ api.interceptors.request.use(async config =>{
 	}
 	return config
 })
-//export baseUrlBackend;
+export {baseUrlBackend};
 
 export default api;

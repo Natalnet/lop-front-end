@@ -12,6 +12,9 @@ import TelaTurmaParticipantes from '../screens/sistema/Professor/telaTurmaPartic
 import TelaTurmaProvas from '../screens/sistema/Professor/telaTurmaProvas.screen'
 import TelaTurmaSolicitacoes from '../screens/sistema/Professor/telaTurmasSolicitacoes.screen'
 import TelaTurmaLista from '../screens/sistema/Professor/telaTurmaListas.screen'
+import TurmaExercicio from '../screens/sistema/Professor/telaTurmaExercicio.screen'
+
+import TurmaExercicios from '../screens/sistema/Professor/telaTurmaExercicios.screen'
 import TelaTurmasDashboard from '../screens/sistema/Professor/telaTurmasDashboard.screen'
 
 import TelaTurmasSubmissoes from '../screens/sistema/Professor/telaTurmasSubmissoes.screen'
@@ -69,6 +72,18 @@ const routes = [
     {
         path: '/professor/turma/:id/listas',
         component: TelaTurmaLista,
+        private: true,
+        perfil: 'PROFESSOR'
+    },
+    {
+        path: "/professor/turma/:id/lista/:idLista",
+        component: TurmaExercicios,
+        private: true,
+        perfil: 'PROFESSOR'
+    },
+    {
+        path: "/professor/turma/:id/lista/:idLista/exercicio/:idExercicio",
+        component: TurmaExercicio,
         private: true,
         perfil: 'PROFESSOR'
     },

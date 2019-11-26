@@ -3,7 +3,7 @@ import socket from 'socket.io-client'
 import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
-import api from '../../../services/api'
+import api,{baseUrlBackend} from '../../../services/api'
 import formataData from "../../../util/funçoesAuxiliares/formataData";
 import SwalModal from "components/ui/modal/swalModal.component";
 import 'katex/dist/katex.min.css';
@@ -95,7 +95,7 @@ export default class HomesubmissoesScreen extends Component {
         }
     };
     getSubmissoesRealTime(){
-        const io = socket("http://localhost:3001")
+        const io = socket(baseUrlBackend)
         const id = this.props.match.params.id
         io.emit('connectRoonSubmissionClass',id)//conectando à sala
         io.on('SubmissionClass',response=>{

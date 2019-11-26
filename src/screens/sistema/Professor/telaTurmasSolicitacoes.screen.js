@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import Swal from 'sweetalert2'
 import socket from 'socket.io-client'
-import api from '../../../services/api'
+import api,{baseUrlBackend} from '../../../services/api'
 const lista = {
     backgroundColor:"white"
 };
@@ -75,7 +75,7 @@ export default class Pagina extends Component {
         }
     }
     getSolicitacoesRealTime(){
-        const io = socket("http://localhost:3001")
+        const io = socket(baseUrlBackend)
         const id = this.props.match.params.id
         io.emit('connectRoonRequestClass',id)//conectando à sala
         io.on('RequestsClass',response=>{

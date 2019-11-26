@@ -2,7 +2,8 @@ import React, { Component,Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
-import {Modal} from 'react-bootstrap'
+import { Link } from "react-router-dom";
+import {Modal,ProgressBar} from 'react-bootstrap'
 import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
 import NavPagination from "components/ui/navs/navPagination";
@@ -12,6 +13,9 @@ import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
+
 export default class Pagina extends Component {
 
     constructor(props){
@@ -191,11 +195,10 @@ export default class Pagina extends Component {
     }
     
     render() {
-        const {loadingInfoTurma,turma,todasListas,loandingTodasListas,totalPages,numPageAtual} = this.state
+        const {loadingInfoTurma,turma,todasListas,loandingTodasListas,totalPages,numPageAtual,listas} = this.state
         const {contentInputSeach,fieldFilter,showModalListas,questions,showModalInfo,loandingListas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
-            
                 <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-12">
                         {loadingInfoTurma?
@@ -208,45 +211,52 @@ export default class Pagina extends Component {
 
                 <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-3">
-                    <button className="btn btn-primary" onClick={()=>this.handleShowModalListas()}>
-                        Adicionar novas listas
+                    <button className={`btn btn-primary ${loandingListas && 'btn-loading'}`} onClick={()=>this.handleShowModalListas()}>
+                         Adicionar novas listas <i className="fa fa-plus-circle" />
                     </button>
                     </div>
                 </div>
-                
 
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
+                <Row mb={15}>
+                    
                     {loandingListas
                     ?
                         <div className="loader"  style={{margin:'0px auto'}}></div>
                     :
-                    
-                        <table  style={{backgroundColor:"white"}} className="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nome: </th>
-                                    <th>Codigo: </th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.listas.map((lista, index)=>(
-                                    <tr key={index}>
-                                       <td>{lista.title}</td>
-                                       <td>{lista.code}</td>
-                                       <td className="float-right">
-                                           <button className="btn btn-primary float-right" onClick={()=>this.handleShowModalInfo(lista.questions)}>
-                                                <i className="fa fa-info"/>
-                                           </button>
-                                       </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+
+                    listas.map((lista,i)=>{
+                        const questions = lista.questions
+                        const questionsCompleted = lista.questions.filter(q=>q.completed)
+                        const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
+                        return(
+                        <Col xs={12}>
+                        <Card key={lista.id} style={{margin:'2px'}}>
+                            <CardHead>
+                                <Col xs={5}>
+                                    <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
+                                </Col>
+                                <ProgressBar now={completed} label={`${completed}%`} style={{width:'45%'}} />
+                                
+                                <CardOptions>
+                                    <Link to={`/professor/turma/${this.props.match.params.id}/lista/${lista.id}`}>
+                                        <button className="btn btn-success">
+                                            Acessar <i className="fa fa-wpexplorer" />
+                                        </button>
+                                    </Link>
+                                </CardOptions>
+                            </CardHead>
+
+                        </Card>
+                        </Col>
+                        )
+                    })
                     }
-                    </div>
-                </div>
+                    
+                </Row>
+
+
+
+
             
 
                 <Modal
@@ -262,7 +272,7 @@ export default class Pagina extends Component {
                     </Modal.Header>
                     <Modal.Body>
                     <Fragment>
-                    <div className='row'>
+                    <Row mb={15}>
                         <div className=" col-12">     
                             <InputGroup
                                 placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
@@ -275,8 +285,7 @@ export default class Pagina extends Component {
                                 loading={loandingTodasListas}                            
                             />
                         </div>
-                    </div>
-                    <br/>
+                    </Row>
                     <div className="row">
                         {loandingTodasListas 
                         ?        

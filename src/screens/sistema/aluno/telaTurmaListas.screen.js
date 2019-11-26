@@ -88,7 +88,7 @@ export default class Listas extends Component {
                     </Col>
                 </Row>
                 <Row mb={15}>
-                    <Col xs={12}>
+                    
                     {loandingListas
                     ?
                         <div className="loader"  style={{margin:'0px auto'}}></div>
@@ -98,6 +98,7 @@ export default class Listas extends Component {
                         const questionsCompleted = lista.questions.filter(q=>q.completed)
                         const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
                         return(
+                        <Col xs={12}>
                         <Card key={lista.id} style={{margin:'2px'}}>
                             <CardHead>
                                 <Col xs={5}>
@@ -114,10 +115,11 @@ export default class Listas extends Component {
                                 </CardOptions>
                             </CardHead>
                         </Card>
+                        </Col>
                         )
                     })
                     }
-                    </Col>
+                    
                 </Row>
         </TemplateSistema>
         )

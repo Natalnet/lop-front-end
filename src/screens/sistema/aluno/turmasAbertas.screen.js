@@ -1,7 +1,7 @@
 
 
 import React, { Component,Fragment } from "react";
-import api from '../../../services/api'
+import api,{baseUrlBackend} from '../../../services/api'
 import Swal from 'sweetalert2'
 
 import TemplateSistema from "components/templates/sistema.template";
@@ -82,7 +82,7 @@ export default class HomeAlunoScreen extends Component {
     }
   }
   async getTurmasAbertasRealTime(){
-    const io = socket("http://localhost:3001")
+    const io = socket(baseUrlBackend)
     //console.log('id do usuario');
     //console.log(sessionStorage.getItem('user.id'));
     io.emit('connectRoonMyRequestsClass',sessionStorage.getItem('user.id'))

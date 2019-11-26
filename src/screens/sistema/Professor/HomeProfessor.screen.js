@@ -9,7 +9,7 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
-import api from '../../../services/api'
+import api,{baseUrlBackend} from '../../../services/api'
 import socket from 'socket.io-client'
 
 const botaoV = {
@@ -66,7 +66,7 @@ export default class TurmasScreen extends Component {
         }
     };
     getMinhasTurmasRealTime(){
-        const io = socket("http://localhost:3001")      
+        const io = socket(baseUrlBackend)      
         for(let turma of this.state.minhasTurmas){
             io.emit('connectRoonRequestClass',turma.id)//conectando à todas salas (minhas Turmas)
         }
