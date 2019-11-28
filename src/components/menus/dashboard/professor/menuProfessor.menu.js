@@ -41,7 +41,7 @@ export default class MenuProfessor extends Component {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/professor/provas" className={`nav-link ${this.props.active==='prova'?'active':''}`}>
+                  <Link to="/professor/provas" className={`nav-link ${this.props.active==='provas'?'active':''}`}>
                     <i className="fe fe-file" />
                     Provas
                   </Link>

@@ -2,10 +2,15 @@ import exportRoutes from 'util/routes/exportRoutes.util';
 import NovasTurmasScreen from 'screens/sistema/Professor/novasTurmas.screen';
 import HomeProfessorScreen from 'screens/sistema/Professor/HomeProfessor.screen';
 import ListasScreen from 'screens/sistema/Professor/listas.screen'
+import ProvaScreen from 'screens/sistema/Professor/provas.screen'
+
 import ExerciciosScreen from 'screens/sistema/Professor/exercicios.screen'
 import AtualizarexercicioScreen from 'screens/sistema/Professor/exercicios.editar.screen'
 
 import CriarListaScreen from 'screens/sistema/Professor/criarLista.screen'
+
+import CriarProvaScreen from 'screens/sistema/Professor/criarProva.screen'
+
 import CriarExercicioScreen from 'screens/sistema/Professor/criarExercicios.screen'
 import Erro401 from '../screens/erros/error401.screen';
 import TelaTurmaParticipantes from '../screens/sistema/Professor/telaTurmaParticipantes.screen'
@@ -40,6 +45,12 @@ const routes = [
         perfil: 'PROFESSOR'
     },
     {
+        path: '/professor/provas',
+        component: ProvaScreen,
+        private: true,
+        perfil: 'PROFESSOR'
+    },
+    {
         path: '/professor/exercicios',
         component: ExerciciosScreen,
         private: true,
@@ -55,6 +66,12 @@ const routes = [
     {
         path: '/professor/criarLista',
         component: CriarListaScreen,
+        private: true,
+        perfil: 'PROFESSOR'
+    },
+    {
+        path: '/professor/criarProva',
+        component: CriarProvaScreen,
         private: true,
         perfil: 'PROFESSOR'
     },
