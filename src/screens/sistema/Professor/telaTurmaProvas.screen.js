@@ -235,10 +235,12 @@ export default class Provas extends Component {
                                 <Col xs={5}>
                                     <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
                                 </Col>
-                                <ProgressBar now={completed} label={`${completed}%`} style={{width:'45%'}} />
                                 
                                 <CardOptions>
-                                    <Link to={`/professor/turma/${this.props.match.params.id}/lista/${lista.id}`}>
+                                    <button className="btn btn-secunday">
+                                        Submissões <i className="fa fa-wpexplorer" />
+                                    </button>
+                                    <Link to={`/professor/turma/${this.props.match.params.id}/prova/${lista.id}`}>
                                         <button className="btn btn-success">
                                             Acessar <i className="fa fa-wpexplorer" />
                                         </button>

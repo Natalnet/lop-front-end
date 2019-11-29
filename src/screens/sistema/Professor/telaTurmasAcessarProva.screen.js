@@ -17,7 +17,7 @@ export default class Exercicios extends Component {
     super(props);
     this.state = {
       redirect: false,
-      lista: null,
+      prova: null,
       loandingLista: true,
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
@@ -29,7 +29,7 @@ export default class Exercicios extends Component {
     await this.getInfoTurma();
     await this.getLista();
 
-    document.title = `${this.state.turma.name} - ${this.state.lista.title}`;
+    //document.title = `${this.state.turma.name} - ${this.state.prova.title}`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -60,30 +60,33 @@ export default class Exercicios extends Component {
   }
   async getLista() {
     try {
+      console.log("akii");
+      console.log(this.props.match.params);
       const idClass = this.props.match.params.id;
-      const idLista = this.props.match.params.idLista;
-      const response = await api.get(
-        `/listQuestion/${idLista}/class/${idClass}`
-      );
+      const idTest = this.props.match.params.idTest;
+      const response = await api.get(`/test/${idTest}/class/${idClass}`);
       console.log("listas");
       console.log(response.data);
       this.setState({
-        lista: response.data,
+        prova: response.data,
         loandingLista: false
       });
     } catch (err) {
       console.log(err);
     }
   }
+
+  RecolherProva = e => {};
+
   render() {
-    const { loadingInfoTurma, turma, loandingLista, lista } = this.state;
+    const { loadingInfoTurma, turma, loandingLista, prova } = this.state;
     const questionsCompleted =
-      lista && lista.questions.filter(q => q.completed);
+      prova && prova.questions.filter(q => q.completed);
     const completed =
-      lista &&
-      ((questionsCompleted.length / lista.questions.length) * 100).toFixed(2);
+      prova &&
+      ((questionsCompleted.length / prova.questions.length) * 100).toFixed(2);
     return (
-      <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
+      <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <Row mb={15}>
           <Col xs={12}>
             {loadingInfoTurma ? (
@@ -103,13 +106,63 @@ export default class Exercicios extends Component {
             <Row mb={15}>
               <Col xs={12}>
                 <Link
-                  to={`/professor/turma/${this.props.match.params.id}/listas`}
+                  to={`/professor/turma/${this.props.match.params.id}/provas`}
                 >
                   <button className="btn btn-success mr-2">
-                    <i className="fa fa-arrow-left" /> Voltar para listas{" "}
+                    <i className="fa fa-arrow-left" /> Voltar para as Provas{" "}
                     <i className="fa fa-file-text" />
                   </button>
                 </Link>
+                <button
+                  className="btn btn-danger mr-2"
+                  style={{ float: "right" }}
+                  data-toggle="modal"
+                  data-target="#ModalRecolherProva"
+                >
+                  Recolher Provas <i className="fa fa-file-text" />
+                </button>
+
+                <div
+                  class="modal fade"
+                  id="ModalRecolherProva"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-hidden="true"
+                >
+                  <div
+                    class="modal-dialog modal-dialog-centered"
+                    role="document"
+                  >
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Recolher Prova</h5>
+                        <button
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <label htmlFor="inputSenha">Senha:</label>
+                        <input
+                          id="inputSenha"
+                          type="password"
+                          value={this.state.password}
+                          className="form-control"
+                          placeholder="Senha para abrir a prova"
+                        />
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-danger">
+                          Recolher Prova
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </Col>
             </Row>
             <Row mb={15}>
@@ -118,7 +171,7 @@ export default class Exercicios extends Component {
                   <CardHead>
                     <Col xs={4} pl={0}>
                       <h4 style={{ margin: "0px" }}>
-                        <b>{lista && lista.title}</b>
+                        <b>{prova && prova.title}</b>
                       </h4>
                     </Col>
 
@@ -130,8 +183,8 @@ export default class Exercicios extends Component {
                   </CardHead>
                   <CardBody>
                     <Row>
-                      {lista &&
-                        lista.questions.map((question, j) => (
+                      {prova &&
+                        prova.questions.map((question, j) => (
                           <Fragment key={j}>
                             <Col xs={12} md={6}>
                               <Card>
@@ -158,7 +211,7 @@ export default class Exercicios extends Component {
                                       className={`fe fe-chevron-down`}
                                       data-toggle="collapse"
                                       data-target={
-                                        "#collapse2" + j + (lista && lista.id)
+                                        "#collapse2" + j + (prova && prova.id)
                                       }
                                       aria-expanded={false}
                                     />
@@ -166,14 +219,14 @@ export default class Exercicios extends Component {
                                 </CardHead>
                                 <div
                                   className="collapse"
-                                  id={"collapse2" + j + (lista && lista.id)}
+                                  id={"collapse2" + j + (prova && prova.id)}
                                 >
                                   <CardBody>{question.description}</CardBody>
                                 </div>
                                 <CardFooter>
                                   Suas submissões: {question.submissions.length}
                                   <Link
-                                    to={`/professor/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}
+                                    to={`/professor/turma/${this.props.match.params.id}/prova/${prova.id}/questao/${question.id}`}
                                   >
                                     <button
                                       className="btn btn-success mr-2"
