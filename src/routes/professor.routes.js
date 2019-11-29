@@ -26,7 +26,7 @@ import TelaTurmasSubmissoes from "../screens/sistema/Professor/telaTurmasSubmiss
 
 import EditarTurma from "../screens/sistema/Professor/editarTurma.screen";
 
-import RealizarProva from "../screens/sistema/Professor/telaTurmasAcessarQuestaoProva.screen";
+import RealizarQuestao from "../screens/sistema/Professor/telaTurmasAcessarQuestaoProva.screen";
 
 import QuestoesProva from "../screens/sistema/Professor/telaTurmasAcessarProva.screen";
 
@@ -147,7 +147,7 @@ const routes = [
   },
   {
     path: "/professor/turma/:id/prova/:idTest/questao/:idQuestions",
-    component: RealizarProva,
+    component: RealizarQuestao,
     private: true,
     perfil: "PROFESSOR"
   },

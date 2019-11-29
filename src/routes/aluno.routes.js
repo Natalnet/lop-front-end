@@ -16,6 +16,8 @@ import TurmasAbertasAlunoScreen from "screens/sistema/aluno/turmasAbertas.screen
 import TelaProvas from "../screens/sistema/aluno/telaTurmaProvas.screen";
 import QuestoesProva from "../screens/sistema/aluno/telaTurmasAcessarProva.screen";
 
+import RealizarQuestao from "../screens/sistema/aluno/telaTurmasAcessarQuestaoProva.screen";
+
 const routes = [
   {
     path: "/aluno",
@@ -87,6 +89,12 @@ const routes = [
   {
     path: "/aluno/turma/:id/prova/:idTest",
     component: QuestoesProva,
+    private: true,
+    perfil: "ALUNO"
+  },
+  {
+    path: "/aluno/turma/:id/prova/:idTest/questao/:idQuestions",
+    component: RealizarQuestao,
     private: true,
     perfil: "ALUNO"
   }
