@@ -2,6 +2,8 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
+import Swal from "sweetalert2";
+
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -18,7 +20,7 @@ export default class Exercicios extends Component {
     this.state = {
       redirect: false,
       prova: null,
-      loandingLista: true,
+      loandingProva: true,
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
       todasListas: []
@@ -26,8 +28,9 @@ export default class Exercicios extends Component {
   }
 
   async componentDidMount() {
+    document.title = "Professor - provas"
     await this.getInfoTurma();
-    await this.getLista();
+    await this.getProva();
 
     //document.title = `${this.state.turma.name} - ${this.state.prova.title}`;
   }
@@ -58,7 +61,7 @@ export default class Exercicios extends Component {
       this.setState({ loadingInfoTurma: false });
     }
   }
-  async getLista() {
+  async getProva() {
     try {
       console.log("akii");
       console.log(this.props.match.params);
@@ -69,17 +72,82 @@ export default class Exercicios extends Component {
       console.log(response.data);
       this.setState({
         prova: response.data,
-        loandingLista: false
+        loandingProva: false,
       });
     } catch (err) {
       console.log(err);
     }
   }
+  async aplicarProva(){
+    const idTest = this.props.match.params.idTest;
+    const query = `?idClass=${this.props.match.params.id}`
+    const request = {
+      status : "ABERTA"
+    }
+    try{
+        Swal.fire({
+          title: "Aplicando prova",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          allowEnterKey: false
+        });
+        Swal.showLoading();
+        await api.put(`/test/${idTest}/update${query}`,request)
+        const {prova} = this.state
+        prova.status = "ABERTA"
+        this.setState({prova})
+        Swal.hideLoading();
+        Swal.fire({
+          type: "success",
+          title: "Prova aplicada com sucesso!"
+        });
+    }
+    catch(err){
+      console.log(err);
+        Swal.hideLoading();
+        Swal.fire({
+          type: "error",
+          title: "Erro: Não foi possivel aplicar prova"
+        });
 
-  RecolherProva = e => {};
+    }
+  }
+  async recolherProva(){
+    const idTest = this.props.match.params.idTest;
+    const query = `?idClass=${this.props.match.params.id}`
+    const request = {
+      status : "FECHADA"
+    }
+    try{
+        Swal.fire({
+          title: "Recolhendo provas",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          allowEnterKey: false
+        });
+        Swal.showLoading();
+        await api.put(`/test/${idTest}/update${query}`,request)
+        const {prova} = this.state
+        prova.status = "FECHADA"
+        this.setState({prova})
+        Swal.hideLoading();
+        Swal.fire({
+          type: "success",
+          title: "Provas recolhidas com sucesso!"
+        });
+    }
+    catch(err){
+      console.log(err);
+        Swal.hideLoading();
+        Swal.fire({
+          type: "error",
+          title: "Erro: Não foi possivel recolher provas"
+        });
+    }
+  }
 
   render() {
-    const { loadingInfoTurma, turma, loandingLista, prova } = this.state;
+    const { loadingInfoTurma, turma, loandingProva, prova } = this.state;
     const questionsCompleted =
       prova && prova.questions.filter(q => q.completed);
     const completed =
@@ -99,7 +167,7 @@ export default class Exercicios extends Component {
             )}
           </Col>
         </Row>
-        {loandingLista ? (
+        {loandingProva ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>
@@ -113,39 +181,49 @@ export default class Exercicios extends Component {
                     <i className="fa fa-file-text" />
                   </button>
                 </Link>
-                <button
-                  className="btn btn-danger mr-2"
-                  style={{ float: "right" }}
-                  data-toggle="modal"
-                  data-target="#ModalRecolherProva"
-                >
-                  Recolher Provas <i className="fa fa-file-text" />
-                </button>
+                {prova.status==="FECHADA"
+                  ?
+                  <button
+                    className="btn btn-primary"
+                    style={{ float: "right" }}
+                    onClick={(e)=> this.aplicarProva()}
+                  >
+                    Aplicar prova <i className="fa fa-file-text" />
+                  </button>
+                  :
+                  <button
+                    className="btn btn-danger"
+                    style={{ float: "right" }}
+                    onClick={(e)=> this.recolherProva()}
+                  >
+                    Recolher Prova <i className="fa fa-file-text" />
+                  </button>
+                }
 
                 <div
-                  class="modal fade"
+                  className="modal fade"
                   id="ModalRecolherProva"
-                  tabindex="-1"
+                  tabIndex="-1"
                   role="dialog"
                   aria-hidden="true"
                 >
                   <div
-                    class="modal-dialog modal-dialog-centered"
+                    className="modal-dialog modal-dialog-centered"
                     role="document"
                   >
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">Recolher Prova</h5>
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h5 className="modal-title">Recolher Prova</h5>
                         <button
                           type="button"
-                          class="close"
+                          className="close"
                           data-dismiss="modal"
                           aria-label="Close"
                         >
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
-                      <div class="modal-body">
+                      <div className="modal-body">
                         <label htmlFor="inputSenha">Senha:</label>
                         <input
                           id="inputSenha"
@@ -155,8 +233,8 @@ export default class Exercicios extends Component {
                           placeholder="Senha para recolher a prova"
                         />
                       </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-danger">
+                      <div className="modal-footer">
+                        <button type="button" className="btn btn-danger">
                           Recolher Prova
                         </button>
                       </div>

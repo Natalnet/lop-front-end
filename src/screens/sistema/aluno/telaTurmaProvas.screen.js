@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
-import api from "../../../services/api";
+import api,{baseUrlBackend} from "../../../services/api";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { Modal, ProgressBar } from "react-bootstrap";
@@ -15,13 +15,14 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import socket from "socket.io-client";
 
 export default class Provas extends Component {
   constructor(props) {
     super(props);
     this.state = {
       redirect: false,
-      listas: [],
+      provas: [],
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
       loandingTodasListas: true,
@@ -41,11 +42,11 @@ export default class Provas extends Component {
 
   async componentDidMount() {
     this.getProvas();
-    this.getTodasProvas();
+    //this.getTodasProvas();
+    this.getProvasRealTime()
 
     await this.getInfoTurma();
     document.title = `${this.state.turma.name} - provas`;
-    //this.getTodasProvas()
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -80,10 +81,10 @@ export default class Provas extends Component {
     try {
       this.setState({ loandingListas: true });
       const response = await api.get(`/class/${id}/tests`);
-      console.log("listas");
+      console.log("provas");
       console.log(response.data);
       this.setState({
-        listas: [...response.data],
+        provas: [...response.data],
         loandingListas: false
       });
     } catch (err) {
@@ -113,6 +114,56 @@ export default class Provas extends Component {
     } catch (err) {
       this.setState({ loandingTodasListas: false });
       console.log(err);
+    }
+  }
+  getProvasRealTime(){
+    const io = socket(baseUrlBackend);
+    io.emit("connectRoonStatusTest",this.props.match.params.id);
+    io.on("changeStatusTest", reponse => {
+      let {provas} = this.state
+      provas = provas.map(prova=>{
+        const provaCopia = JSON.parse(JSON.stringify(prova))
+        if(reponse.idTest===prova.id){
+          provaCopia.status = reponse.status
+        }
+        return provaCopia
+      })
+      this.setState({provas})
+    })
+  }
+  async acessar(prova){
+    const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}` 
+    try{
+      if(sessionStorage.getItem('passwordTest')){
+        this.props.history.push(url)
+      }
+      else{
+        const {value} = await Swal.fire({
+          title:'Senha para acessar a prova',
+          input:'text',
+          confirmButtonText:'Acessar',
+          cancelButtonText:'Cancelar',
+          input: 'password',
+          showCancelButton: true,
+          inputValue:'',//valor inicial
+          inputValidator:(value)=>{
+            if(!value){
+              return 'Voçê precisa escrever algo!'
+            }
+            else if(value !== prova.password){
+              return "Senha incorreta :("
+            }
+          }
+        })
+        if(value){
+          sessionStorage.setItem('passwordTest',value)
+          this.props.history.push(url)
+        }
+      }
+
+    }
+    catch(err){
+
     }
   }
   handlePage(e, numPage) {
@@ -177,7 +228,7 @@ export default class Provas extends Component {
       loandingTodasListas,
       totalPages,
       numPageAtual,
-      listas
+      provas
     } = this.state;
     const {
       contentInputSeach,
@@ -206,9 +257,9 @@ export default class Provas extends Component {
           {loandingListas ? (
             <div className="loader" style={{ margin: "0px auto" }}></div>
           ) : (
-            listas.map((lista, i) => {
-              const questions = lista.questions;
-              const questionsCompleted = lista.questions.filter(
+            provas.map((prova, i) => {
+              const questions = prova.questions;
+              const questionsCompleted = prova.questions.filter(
                 q => q.completed
               );
               const completed = (
@@ -216,12 +267,13 @@ export default class Provas extends Component {
                 100
               ).toFixed(2);
               return (
+              <Fragment key={prova.id}>
                 <Col xs={12}>
-                  <Card key={lista.id} style={{ margin: "2px" }}>
+                  <Card key={prova.id} style={{ margin: "2px" }}>
                     <CardHead>
                       <Col xs={5}>
                         <h4 style={{ margin: "0px" }}>
-                          <b>{lista.title}</b>
+                          <b>{prova.title}</b>
                         </h4>
                       </Col>
                       <ProgressBar
@@ -230,41 +282,45 @@ export default class Provas extends Component {
                         style={{ width: "45%" }}
                       />
                       <CardOptions>
+                      {
+                        prova.status==="ABERTA"
+                      ?
                         <button
                           className="btn btn-success mr-2"
                           style={{ float: "right" }}
-                          data-toggle="modal"
-                          data-target="#ModalRecolherProva"
+                          onClick={()=>this.acessar(prova)}
                         >
                           Acessar <i className="fa fa-wpexplorer" />
                         </button>
+                      :null
+                      }
 
                         <div
-                          class="modal fade"
+                          className="modal fade"
                           id="ModalRecolherProva"
                           tabindex="-1"
                           role="dialog"
                           aria-hidden="true"
                         >
                           <div
-                            class="modal-dialog modal-dialog-centered"
+                            className="modal-dialog modal-dialog-centered"
                             role="document"
                           >
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title">
+                            <div className="modal-content">
+                              <div className="modal-header">
+                                <h5 className="modal-title">
                                   Senha para acessar a prova
                                 </h5>
                                 <button
                                   type="button"
-                                  class="close"
+                                  className="close"
                                   data-dismiss="modal"
                                   aria-label="Close"
                                 >
                                   <span aria-hidden="true">&times;</span>
                                 </button>
                               </div>
-                              <div class="modal-body">
+                              <div className="modal-body">
                                 <label htmlFor="inputSenha">
                                   <b>
                                     Para acessar a prova e necessário informar a
@@ -279,11 +335,11 @@ export default class Provas extends Component {
                                   placeholder="Senha para acessar prova"
                                 />
                               </div>
-                              <div class="modal-footer">
+                              <div className="modal-footer">
                                 <Link
-                                  to={`/aluno/turma/${this.props.match.params.id}/prova/${lista.id}`}
+                                  to={`/aluno/turma/${this.props.match.params.id}/prova/${prova.id}`}
                                 >
-                                  <button type="button" class="btn btn-success">
+                                  <button type="button" className="btn btn-success">
                                     Acessar Prova
                                   </button>
                                 </Link>
@@ -295,6 +351,7 @@ export default class Provas extends Component {
                     </CardHead>
                   </Card>
                 </Col>
+                </Fragment>
               );
             })
           )}
@@ -343,12 +400,12 @@ export default class Provas extends Component {
                 {loandingTodasListas ? (
                   <div className="loader" style={{ margin: "0px auto" }} />
                 ) : (
-                  todasListas.map((lista, index) => (
-                    <div key={index} className="col-6">
+                  todasListas.map((prova, index) => (
+                    <div key={prova.id} className="col-6">
                       <Card>
                         <CardHead>
                           <CardTitle>
-                            {`${lista.title} - ${lista.code}`}
+                            {`${prova.title} - ${prova.code}`}
                           </CardTitle>
                           <CardOptions>
                             <div
@@ -358,14 +415,14 @@ export default class Provas extends Component {
                             >
                               <button
                                 className="btn-primary btn"
-                                onClick={() => this.inserirProva(lista.id)}
+                                onClick={() => this.inserirProva(prova.id)}
                               >
                                 Adicionar
                               </button>
                               <button
                                 className="btn btn-primary"
                                 data-toggle="collapse"
-                                data-target={"#collapse" + lista.id}
+                                data-target={"#collapse" + prova.id}
                                 style={{ position: "relative" }}
                               >
                                 <i className="fe fe-chevron-down" />
@@ -373,13 +430,13 @@ export default class Provas extends Component {
                             </div>
                           </CardOptions>
                         </CardHead>
-                        <div className="collapse" id={"collapse" + lista.id}>
+                        <div className="collapse" id={"collapse" + prova.id}>
                           <CardBody>
                             <b>Questões: </b> <br />
                             <br />
-                            {lista.questions.map((questoes, index) => (
-                              <div key={index}>
-                                <p>{index + 1 + " - " + questoes.title}</p>
+                            {prova.questions.map((question, index) => (
+                              <div key={question.id}>
+                                <p>{index + 1 + " - " + question.title}</p>
                               </div>
                             ))}
                           </CardBody>

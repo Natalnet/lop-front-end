@@ -39,7 +39,7 @@ export default props =>{
                         <Link to={`/aluno/turma/${id}/provas`} className={`nav-link ${active==='provas'?'active':''}`}
                         >
                             <i className="fa fa-file-text-o" />
-                            Prova
+                            Provas
                         </Link>
                         </li>
                     </ul>

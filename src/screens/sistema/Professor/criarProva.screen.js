@@ -38,7 +38,6 @@ export default class criarProvaScreen extends Component {
       totalPages: 0,
       showModalInfo: false,
       question: "",
-      ProvaStatus: ""
     };
   }
 
@@ -71,12 +70,12 @@ export default class criarProvaScreen extends Component {
   }
 
   async criarProva(e) {
-    console.log("criar lista");
+    console.log("criar prva");
     e.preventDefault();
-    if (this.state.title === "") {
-      this.setState({ msg: "Informe o nome da turma" });
-    } else if (this.state.selecionados.length === 0) {
-      this.setState({ msg: "Selecione os professores" });
+    if (!this.state.title) {
+      this.setState({ msg: "Informe o nome da prova" });
+    } else if (!this.state.password) {
+      this.setState({ msg: "Informe uma senha" });
     } else {
       const requestInfo = {
         title: this.state.title,
@@ -180,10 +179,6 @@ export default class criarProvaScreen extends Component {
     );
   }
 
-  handleStatusProva = e => {
-    this.setState({ ProvaStatus: e.target.value });
-    console.log(this.state.ProvaStatus);
-  };
 
   render() {
     if (this.state.redirect) {
@@ -208,7 +203,7 @@ export default class criarProvaScreen extends Component {
           <CardBody>
             <form onSubmit={e => this.criarProva(e)}>
               <div className="form-row">
-                <div className="form-group col-5">
+                <div className="form-group col-6">
                   <label htmlFor="inputTitulo">Título</label>
                   <input
                     id="inputTitulo"
@@ -219,7 +214,7 @@ export default class criarProvaScreen extends Component {
                     placeholder="Título da prova:"
                   />
                 </div>
-                <div className="form-group col-5">
+                <div className="form-group col-6">
                   <label htmlFor="inputSenha">Senha:</label>
                   <input
                     id="inputSenha"
@@ -230,22 +225,11 @@ export default class criarProvaScreen extends Component {
                     placeholder="Senha para abrir a prova"
                   />
                 </div>
-                <div className="form-group col-2">
-                  <label htmlFor="inputSenha">Status:</label>
-                  <select
-                    className="form-control"
-                    id="selectDifficulty"
-                    onChange={e => this.handleStatusProva(e)}
-                  >
-                    <option value="Ativa">Ativa</option>
-                    <option value="Inativa">Inativa</option>
-                  </select>
-                </div>
               </div>
               <div className="row">
                 <div className="form-group col-12">
                   <InputGroupo
-                    placeholder={`Perquise pelo nome ou código...`}
+                    placeholder={`Perquise...`}
                     value={contentInputSeach}
                     handleContentInputSeach={this.handleContentInputSeach.bind(
                       this

@@ -106,61 +106,13 @@ export default class Exercicios extends Component {
             <Row mb={15}>
               <Col xs={12}>
                 <Link
-                  to={`/professor/turma/${this.props.match.params.id}/provas`}
+                  to={`/aluno/turma/${this.props.match.params.id}/provas`}
                 >
                   <button className="btn btn-success mr-2">
                     <i className="fa fa-arrow-left" /> Voltar para as Provas{" "}
                     <i className="fa fa-file-text" />
                   </button>
                 </Link>
-                <button
-                  className="btn btn-danger mr-2"
-                  style={{ float: "right" }}
-                  data-toggle="modal"
-                  data-target="#ModalEntregarProva"
-                >
-                  Entregar Prova <i className="fa fa-file-text" />
-                </button>
-
-                <div
-                  class="modal fade"
-                  id="ModalEntregarProva"
-                  tabindex="-1"
-                  role="dialog"
-                  aria-hidden="true"
-                >
-                  <div
-                    class="modal-dialog modal-dialog-centered"
-                    role="document"
-                  >
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">Entregar prova</h5>
-                        <button
-                          type="button"
-                          class="close"
-                          data-dismiss="modal"
-                          aria-label="Close"
-                        >
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <label htmlFor="inputSenha">
-                          <b>Tem certeza que deseja entregar a prova?</b>
-                        </label>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-danger">
-                          Não
-                        </button>
-                        <button type="button" class="btn btn-success">
-                          Sim
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </Col>
             </Row>
             <Row mb={15}>
@@ -224,7 +176,7 @@ export default class Exercicios extends Component {
                                 <CardFooter>
                                   Suas submissões: {question.submissions.length}
                                   <Link
-                                    to={`/professor/turma/${this.props.match.params.id}/prova/${prova.id}/questao/${question.id}`}
+                                    to={`/aluno/turma/${this.props.match.params.id}/prova/${prova.id}/questao/${question.id}`}
                                   >
                                     <button
                                       className="btn btn-success mr-2"

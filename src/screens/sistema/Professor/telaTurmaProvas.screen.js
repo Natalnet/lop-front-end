@@ -237,9 +237,6 @@ export default class Provas extends Component {
                                 </Col>
                                 
                                 <CardOptions>
-                                    <button className="btn btn-secunday">
-                                        Submissões <i className="fa fa-wpexplorer" />
-                                    </button>
                                     <Link to={`/professor/turma/${this.props.match.params.id}/prova/${lista.id}`}>
                                         <button className="btn btn-success">
                                             Acessar <i className="fa fa-wpexplorer" />
