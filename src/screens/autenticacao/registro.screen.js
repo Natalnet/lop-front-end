@@ -10,73 +10,73 @@ import { Link, Redirect } from "react-router-dom";
 import LogoLOP from "components/ui/logoLOP.component";
 
 export default class LoginScreen extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       showMenssageSendMail: false,
-      loading:false,
+      loading: false,
       name: "",
       enrollment: "",
       email: "",
       password: "",
       confirm_password: "",
       msg: "",
-      msgName:'',
-      msgEnrollment:'',
-      msgEmail:'',
-      msgPassoword:'',
-      msgConfirm_password:''
+      msgName: "",
+      msgEnrollment: "",
+      msgEmail: "",
+      msgPassoword: "",
+      msgConfirm_password: ""
     };
   }
-  componentDidMount(){
+  componentDidMount() {
     document.title = "Realizar cadastro - Plataforma LOP";
   }
-  async register(e){
+  async register(e) {
     e.preventDefault();
 
     //const {name,email,enrollment,password,confirm_password} = this.state
     if (this.state.password !== this.state.confirm_password) {
-      await this.setState({ msgConfirm_password : "A senha e confirmação de senha não correspondem" });
-    }
-    else{
+      await this.setState({
+        msgConfirm_password: "A senha e confirmação de senha não correspondem"
+      });
+    } else {
       const request = {
         name: this.state.name,
         email: this.state.email,
         password: this.state.password,
         enrollment: this.state.enrollment
       };
-      try{
-        this.setState({loading:true})
-        const response = await api.post("/auth/register", request)
+      try {
+        this.setState({ loading: true });
+        await api.post("/auth/register", request);
         await this.setState({
-          showMenssageSendMail:true,
-          loading:false
-        })
-      }
-      catch(err){
+          showMenssageSendMail: true,
+          loading: false
+        });
+      } catch (err) {
         await this.setState({
-          msgName:'',
-          msgEmail :'',
-          msgEnrollment:'',
-          msgPassoword:'',
-          msgConfirm_password:'',
-          msg:'',
-          loading:false
-        })        
-        if(err.message==='Request failed with status code 400'){
+          msgName: "",
+          msgEmail: "",
+          msgEnrollment: "",
+          msgPassoword: "",
+          msgConfirm_password: "",
+          msg: "",
+          loading: false
+        });
+        if (err.message === "Request failed with status code 400") {
           console.log(err.response.data);
-          for(let fieldErro of err.response.data){
-            if(fieldErro.field==="name"){
-              this.setState({msgName:fieldErro.msg})
+          for (let fieldErro of err.response.data) {
+            if (fieldErro.field === "name") {
+              this.setState({ msgName: fieldErro.msg });
             }
-            if(fieldErro.field==="email"){
-              this.setState({msgEmail:fieldErro.msg})
+            if (fieldErro.field === "email") {
+              this.setState({ msgEmail: fieldErro.msg });
             }
-            if(fieldErro.field==="enrollment"){
-              this.setState({msgEnrollment:fieldErro.msg})
+            if (fieldErro.field === "enrollment") {
+              this.setState({ msgEnrollment: fieldErro.msg });
             }
-            if(fieldErro.field==="password"){
-              this.setState({msgPassoword:fieldErro.msg})
+            if (fieldErro.field === "password") {
+              this.setState({ msgPassoword: fieldErro.msg });
             }
           }
           /*this.setState({
@@ -85,16 +85,11 @@ export default class LoginScreen extends Component {
             msgEnrollment:err.response.data.enrollment || '',
             msgPassoword:err.response.data.password || '',
           })*/
+        } else {
+          this.setState({ msg: "Falha na conexão com o servidor :(" });
         }
-        else{
-          this.setState({msg:'Falha na conexão com o servidor :('})
-        }
-
       }
     }
-  };
-  componentDidMount() {
-    document.title = "Realizar Cadastro - Plataforma LOP";
   }
   handleNomeChange = e => {
     this.setState({ name: e.target.value });
@@ -112,13 +107,27 @@ export default class LoginScreen extends Component {
     this.setState({ confirm_password: e.target.value });
   };
   render() {
-    if(this.state.redirect){
-      return <Redirect to="/"/>
+    if (this.state.redirect) {
+      return <Redirect to="/" />;
     }
-    const {name,email,enrollment,password,confirm_password,msg,loading} = this.state
-    const {msgName,msgEmail,msgEnrollment,msgPassoword,msgConfirm_password}=this.state
-    if(this.state.showMenssageSendMail){
-      return(
+    const {
+      name,
+      email,
+      enrollment,
+      password,
+      confirm_password,
+      msg,
+      loading
+    } = this.state;
+    const {
+      msgName,
+      msgEmail,
+      msgEnrollment,
+      msgPassoword,
+      msgConfirm_password
+    } = this.state;
+    if (this.state.showMenssageSendMail) {
+      return (
         <TemplateAutenticacao>
           <div className="alert alert-light" role="alert">
             <h4 className="alert-heading">Confirme seu cadastro!</h4>
@@ -127,11 +136,11 @@ export default class LoginScreen extends Component {
             </p>
           </div>
         </TemplateAutenticacao>
-        )
+      );
     }
     return (
       <TemplateAutenticacao>
-        <form className="card" onSubmit={(e)=> this.register(e)}>
+        <form className="card" onSubmit={e => this.register(e)}>
           <div className="card-body p-6">
             <LogoLOP />
             <span className="alert-danger">{msg}</span>
@@ -140,7 +149,7 @@ export default class LoginScreen extends Component {
               <label className="form-label">Nome</label>
               <input
                 type="text"
-                className={`form-control ${msgName && 'is-invalid'}`}
+                className={`form-control ${msgName && "is-invalid"}`}
                 placeholder="Digite seu nome"
                 value={name}
                 onChange={this.handleNomeChange}
@@ -152,7 +161,7 @@ export default class LoginScreen extends Component {
               <label className="form-label">Matrícula</label>
               <input
                 type="text"
-                className={`form-control ${msgEnrollment && 'is-invalid'}`}
+                className={`form-control ${msgEnrollment && "is-invalid"}`}
                 placeholder="Digite sua matrícula"
                 value={enrollment}
                 onChange={this.handleEnrollmentChange}
@@ -164,7 +173,7 @@ export default class LoginScreen extends Component {
               <label className="form-label">Endereço de e-mail</label>
               <input
                 type="email"
-                className={`form-control ${msgEmail && 'is-invalid'}`}
+                className={`form-control ${msgEmail && "is-invalid"}`}
                 placeholder="Digite seu e-mail"
                 value={email}
                 onChange={this.handleEmailChange}
@@ -176,7 +185,7 @@ export default class LoginScreen extends Component {
               <label className="form-label">Senha</label>
               <input
                 type="password"
-                className={`form-control ${msgPassoword && 'is-invalid'}`}
+                className={`form-control ${msgPassoword && "is-invalid"}`}
                 placeholder="**********"
                 value={password}
                 onChange={this.handlePasswordChange}
@@ -188,7 +197,8 @@ export default class LoginScreen extends Component {
               <label className="form-label">Confirme sua senha</label>
               <input
                 type="password"
-                className={`form-control ${msgConfirm_password && 'is-invalid'}`}
+                className={`form-control ${msgConfirm_password &&
+                  "is-invalid"}`}
                 placeholder="**********"
                 value={confirm_password}
                 onChange={this.handleConfirmPasswordChange}
@@ -198,7 +208,11 @@ export default class LoginScreen extends Component {
             </div>
 
             <div className="form-footer">
-              <button type="submit" className={`btn btn-primary btn-block ${loading && 'btn-loading'}`}>
+              <button
+                type="submit"
+                className={`btn btn-primary btn-block ${loading &&
+                  "btn-loading"}`}
+              >
                 Cadastrar
               </button>
             </div>

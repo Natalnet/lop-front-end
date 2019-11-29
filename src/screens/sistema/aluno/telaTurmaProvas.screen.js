@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import Swal from "sweetalert2";
+//import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { Modal, ProgressBar } from "react-bootstrap";
 import "katex/dist/katex.min.css";
