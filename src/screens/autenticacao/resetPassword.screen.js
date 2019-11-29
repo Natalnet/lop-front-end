@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import TemplateAutenticacao from "components/templates/autenticacao.template";
-//import Error404 from "screens/erros/error404.screen";
+import Error404 from "screens/erros/error404.screen";
 
 import { Redirect } from "react-router-dom";
 
@@ -11,22 +11,23 @@ import api from "../../services/api";
 import LogoLOP from "components/ui/logoLOP.component";
 
 export default class resetScreen extends Component {
-  constructor(props) {
-    super(props);
+
+  constructor(props){
+    super(props)
     this.state = {
       redirect: false,
       redirectLogin: false,
       msg: "",
       password: "",
-      loading: false,
+      loading:false,
       confirmpassword: "",
       error: false
     };
   }
-  componentDidMount() {
+  componentDidMount(){
     document.title = "Recuperar Senha - Plataforma LOP";
   }
-  async send(e) {
+  async send(e){
     e.preventDefault();
 
     if (this.state.password === "") {
@@ -46,55 +47,57 @@ export default class resetScreen extends Component {
         password: this.state.password
       };
       const key = this.props.location.search;
-      try {
-        this.setState({ loading: true });
-        await api.put(`/auth/resetpassword${key}`, request);
+      try{
+        this.setState({loading:true})
+        await api.put(`/auth/resetpassword${key}`, request)
         this.setState({
-          loading: false,
-          msg: "",
-          error: false
-        });
+          loading:false,
+          msg:'',
+          error:false
+        })
         Swal.fire({
           type: "success",
           title: `Congratulations`,
           text: `Senha alterada com sucesso.`,
           confirmButtonText: "Voltar para tela de Login",
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          allowEnterKey: false
+          allowOutsideClick:false,
+          allowEscapeKey:false,
+          allowEnterKey:false 
         }).then(result => {
           if (result.value) {
             return this.setState({ redirect: true });
           }
-        });
-      } catch (err) {
-        console.log(Object.getOwnPropertyDescriptors(err));
+        })
+      }
+      catch(err){
+        console.log(Object.getOwnPropertyDescriptors(err))
         this.setState({
-          loading: false,
-          error: true,
-          msg: false
-        });
-        if (err.message === "Request failed with status code 400") {
-          this.setState({ msg: err.response.data.msg });
+          loading:false,
+          error:true,
+          msg:false
+        })
+        if(err.message==='Request failed with status code 400'){
+          this.setState({msg:err.response.data.msg})
           Swal.fire({
             type: "error",
             title: `Ops...`,
             text: err.response.data.msg,
             confirmButtonText: "Ir para tela de 'recuperar senha'",
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            allowEnterKey: false
+            allowOutsideClick:false,
+            allowEscapeKey:false,
+            allowEnterKey:false 
           }).then(result => {
             if (result.value) {
               return this.setState({ redirectLogin: true });
             }
           });
-        } else {
-          this.setState({ msg: "Falha na conexão com o servidor :(" });
+        }
+        else{
+          this.setState({msg:'Falha na conexão com o servidor :('})
         }
       }
     }
-  }
+  };
   handleChange = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -107,14 +110,16 @@ export default class resetScreen extends Component {
       return <Redirect to="/" />;
     }
     console.log(this.props);
-    const { msg, error, password, loading } = this.state;
+    const {msg,error,password,confirmpassword,loading} = this.state
     return (
       <TemplateAutenticacao>
-        <form className="card" onSubmit={e => this.send(e)}>
+        <form className="card" onSubmit={(e) => this.send(e)}>
           <div className="card-body p-6">
             <LogoLOP />
             <div className="card-title">Restauração de Senha</div>
-            <span className={`alert-${error ? "danger" : "success"}`}>
+            <span
+              className={`alert-${error ? "danger" : "success"}`}
+            >
               {msg}
             </span>
             <div className="form-group">
@@ -122,7 +127,7 @@ export default class resetScreen extends Component {
               <input
                 type="password"
                 name="password"
-                className={`form-control ${error && "is-invalid"}`}
+                className={`form-control ${error && 'is-invalid'}`}
                 placeholder="****"
                 value={password}
                 onChange={this.handleChange}
@@ -134,7 +139,7 @@ export default class resetScreen extends Component {
               <input
                 type="password"
                 name="confirmpassword"
-                className={`form-control ${error && "is-invalid"}`}
+                className={`form-control ${error && 'is-invalid'}`}
                 placeholder="****"
                 value={this.state.confirmpassword}
                 onChange={this.handleChange}
@@ -142,11 +147,7 @@ export default class resetScreen extends Component {
               />
             </div>
             <div className="form-footer">
-              <button
-                type="submit"
-                className={`btn btn-primary btn-block ${loading &&
-                  "btn-loading"}`}
-              >
+              <button type="submit" className={`btn btn-primary btn-block ${loading && 'btn-loading'}`}>
                 Enviar
               </button>
             </div>

@@ -155,7 +155,10 @@ export default class Editor extends Component {
     };
     try {
       this.setState({ salvandoRascunho: true });
-      await api.post(`/draft/question/${idQuestion}/store`, request);
+      const response = await api.post(
+        `/draft/question/${idQuestion}/store`,
+        request
+      );
       this.setState({ salvandoRascunho: false });
       if (showMsg) {
         const Toast = Swal.mixin({
@@ -225,7 +228,7 @@ export default class Editor extends Component {
         mac: macs[0],
         environment: "desktop"
       };
-      await api.post(
+      const response = await api.post(
         `/submission/question/${idQuestion}/store${query}`,
         request
       );
@@ -253,7 +256,10 @@ export default class Editor extends Component {
     };
     try {
       this.setState({ loadDifficulty: true });
-      await api.post(`/difficulty/question/${idQuestion}/store`, request);
+      const response = await api.post(
+        `/difficulty/question/${idQuestion}/store`,
+        request
+      );
       this.setState({
         userDifficulty: userDifficulty,
         loadDifficulty: false
