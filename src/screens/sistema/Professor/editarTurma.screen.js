@@ -115,7 +115,7 @@ export default class NovasTurmasScreen extends Component {
             Swal.showLoading()
             try{
                 const idClass = this.props.match.params.id
-                const response = await api.put(`/class/${idClass}/update`, requestInfo)
+                await api.put(`/class/${idClass}/update`, requestInfo)
                 Swal.hideLoading()
                 Swal.fire({
                     type: 'success',

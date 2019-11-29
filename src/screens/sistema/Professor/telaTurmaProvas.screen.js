@@ -3,7 +3,7 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
 import { Link } from "react-router-dom";
-import {Modal,ProgressBar} from 'react-bootstrap'
+import {Modal} from 'react-bootstrap'
 import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
 import NavPagination from "components/ui/navs/navPagination";
@@ -89,7 +89,7 @@ export default class Provas extends Component {
               })
               Swal.showLoading()
               
-              const response = await api.post(`/class/${idTurma}/addTest/test/${idProva}`)
+              await api.post(`/class/${idTurma}/addTest/test/${idProva}`)
               await this.getTodasProvas()
               Swal.hideLoading()
               Swal.fire({
@@ -227,7 +227,7 @@ export default class Provas extends Component {
                     listas.map((lista,i)=>{
                         const questions = lista.questions
                         const questionsCompleted = lista.questions.filter(q=>q.completed)
-                        const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
+                        //const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
                         return(
                         <Col xs={12}>
                         <Card key={lista.id} style={{margin:'2px'}}>

@@ -89,7 +89,7 @@ export default class Pagina extends Component {
               })
               Swal.showLoading()
               
-              const response = await api.post(`/class/${idTurma}/addList/list/${idLista}`)
+              await api.post(`/class/${idTurma}/addList/list/${idLista}`)
               await this.getTodasListas()
               Swal.hideLoading()
               Swal.fire({

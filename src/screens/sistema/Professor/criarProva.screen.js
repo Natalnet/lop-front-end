@@ -91,7 +91,7 @@ export default class criarProvaScreen extends Component {
           allowEnterKey: false
         });
         Swal.showLoading();
-        const response = await api.post("/test/store", requestInfo);
+        await api.post("/test/store", requestInfo);
         Swal.hideLoading();
         Swal.fire({
           type: "success",

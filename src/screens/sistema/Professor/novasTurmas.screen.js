@@ -86,7 +86,7 @@ export default class NovasTurmasScreen extends Component {
       });
       Swal.showLoading();
       try {
-        const response = await api.post("/class/store", requestInfo);
+        await api.post("/class/store", requestInfo);
         Swal.hideLoading();
         Swal.fire({
           type: "success",

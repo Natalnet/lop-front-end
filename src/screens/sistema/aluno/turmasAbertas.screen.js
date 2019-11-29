@@ -1,8 +1,6 @@
-
-
-import React, { Component,Fragment } from "react";
-import api,{baseUrlBackend} from '../../../services/api'
-import Swal from 'sweetalert2'
+import React, { Component, Fragment } from "react";
+import api, { baseUrlBackend } from "../../../services/api";
+import Swal from "sweetalert2";
 
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
@@ -17,258 +15,279 @@ import Col from "components/ui/grid/col.component";
 import Collapse from "components/ui/collapse/collapse.component";
 import ButtonToogle from "components/ui/collapse/buttonToogle.component";
 import NavPagination from "components/ui/navs/navPagination";
-import socket from 'socket.io-client'
+import socket from "socket.io-client";
 
 export default class HomeAlunoScreen extends Component {
-
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
-      numPageAtual:1,
-      turmasAbertas:[],
-      totalPages:0,
-      turmasSolicitadas:[],
-      loandingTurmasAbertas:false,
-      descriptions:[],
-      contentInputSeach:'',
-      fieldFilter:'name',
-
-    }
-    this.handlePage=this.handlePage.bind(this)
+      numPageAtual: 1,
+      turmasAbertas: [],
+      totalPages: 0,
+      turmasSolicitadas: [],
+      loandingTurmasAbertas: false,
+      descriptions: [],
+      contentInputSeach: "",
+      fieldFilter: "name"
+    };
+    this.handlePage = this.handlePage.bind(this);
   }
   async componentDidMount() {
-    await this.getTurmasSolicitadas()
-    await this.getTurmasAbertas()
-    this.getTurmasAbertasRealTime()
+    await this.getTurmasSolicitadas();
+    await this.getTurmasAbertas();
+    this.getTurmasAbertasRealTime();
     document.title = "Início | LoP";
   }
-  async getTurmasSolicitadas(loading=true){
-    try{
-      if(loading) this.setState({loandingTurmasAbertas:true})
-      const response = await api.get('/solicitation')
-      console.log('turmas solicitdas');
+  async getTurmasSolicitadas(loading = true) {
+    try {
+      if (loading) this.setState({ loandingTurmasAbertas: true });
+      const response = await api.get("/solicitation");
+      console.log("turmas solicitdas");
       console.log(response.data);
       this.setState({
-        turmasSolicitadas:[...response.data],
+        turmasSolicitadas: [...response.data]
         //loandingTurmasAbertas:false
-      })
-    }
-    catch(err){
-      this.setState({loandingTurmasAbertas:false})
+      });
+    } catch (err) {
+      this.setState({ loandingTurmasAbertas: false });
       console.log(err);
     }
   }
-  async getTurmasAbertas(loading=true){
-    const {numPageAtual,contentInputSeach,fieldFilter} = this.state
-    let query = `include=${contentInputSeach}`
-    query += `&field=${fieldFilter}`
+  async getTurmasAbertas(loading = true) {
+    const { numPageAtual, contentInputSeach, fieldFilter } = this.state;
+    let query = `include=${contentInputSeach}`;
+    query += `&field=${fieldFilter}`;
     console.log(query);
-    try{
-      if(loading) this.setState({loandingTurmasAbertas:true})
-      const response = await api.get(`/class/open/page/${numPageAtual}?${query}`)
-      console.log('turmas abertas:');
+    try {
+      if (loading) this.setState({ loandingTurmasAbertas: true });
+      const response = await api.get(
+        `/class/open/page/${numPageAtual}?${query}`
+      );
+      console.log("turmas abertas:");
       console.log(response.data);
       this.setState({
-        turmasAbertas : response.data.docs,
-        totalTumasAbertas : response.data.total,
-        totalPages : response.data.totalPages,
-        numPageAtual : response.data.currentPage,
-        loandingTurmasAbertas:false
-      })
-    }
-    catch(err){
-      this.setState({loandingTurmasAbertas:false})
+        turmasAbertas: response.data.docs,
+        totalTumasAbertas: response.data.total,
+        totalPages: response.data.totalPages,
+        numPageAtual: response.data.currentPage,
+        loandingTurmasAbertas: false
+      });
+    } catch (err) {
+      this.setState({ loandingTurmasAbertas: false });
       console.log(err);
     }
   }
-  async getTurmasAbertasRealTime(){
-    const io = socket(baseUrlBackend)
+  async getTurmasAbertasRealTime() {
+    const io = socket(baseUrlBackend);
     //console.log('id do usuario');
     //console.log(sessionStorage.getItem('user.id'));
-    io.emit('connectRoonMyRequestsClass',sessionStorage.getItem('user.id'))
-    io.on('MyRequestsClass',async response=>{
-      await this.getTurmasSolicitadas(false)
-      this.getTurmasAbertas(false)
-    })
+    io.emit("connectRoonMyRequestsClass", sessionStorage.getItem("user.id"));
+    io.on("MyRequestsClass", async response => {
+      await this.getTurmasSolicitadas(false);
+      this.getTurmasAbertas(false);
+    });
   }
-  async handlePage(e,numPage){
-    e.preventDefault()
+  async handlePage(e, numPage) {
+    e.preventDefault();
     console.log(numPage);
-    await this.setState({numPageAtual:numPage})
-    await this.getTurmasSolicitadas()
-    this.getTurmasAbertas()
+    await this.setState({ numPageAtual: numPage });
+    await this.getTurmasSolicitadas();
+    this.getTurmasAbertas();
   }
-  async solicitarAcesso(idClass){
+  async solicitarAcesso(idClass) {
     console.log(idClass);
-    try{
+    try {
       //this.setState({solicitando:'disabled'})
       Swal.fire({
-        title:'Processando solicitação',
-        allowOutsideClick:false,
-        allowEscapeKey:false,
-        allowEnterKey:false
-      })
-      Swal.showLoading()
-      const response = await api.post(`/solicitation/class/${idClass}/store`)
-      console.log('solicitação:');
+        title: "Processando solicitação",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      Swal.showLoading();
+      const response = await api.post(`/solicitation/class/${idClass}/store`);
+      console.log("solicitação:");
       console.log(response.data);
-      await this.getTurmasSolicitadas(false)
-      this.getTurmasAbertas(false)
-      
-      Swal.hideLoading()
+      await this.getTurmasSolicitadas(false);
+      this.getTurmasAbertas(false);
+
+      Swal.hideLoading();
       Swal.fire({
-          type: 'success',
-          title: 'Solicitação feita com sucesso!',
-      })
+        type: "success",
+        title: "Solicitação feita com sucesso!"
+      });
       //this.setState({solicitando:''})
-    }
-    catch(err){
-      Swal.hideLoading()
+    } catch (err) {
+      Swal.hideLoading();
 
       Swal.fire({
-          type: 'error',
-          title: 'ops... Falha ao tentar fazer solicitação',
-      })
+        type: "error",
+        title: "ops... Falha ao tentar fazer solicitação"
+      });
       //this.setState({solicitando:''})
     }
   }
-  async cancelarSolicitacao(idTurma){
-    const idUser = sessionStorage.getItem('user.id')
-    try{
+  async cancelarSolicitacao(idTurma) {
+    sessionStorage.getItem("user.id");
+    try {
       //this.setState({solicitando:'disabled'})
       Swal.fire({
-        title:'Cancelando Solicitação',
-        allowOutsideClick:false,
-        allowEscapeKey:false,
-        allowEnterKey:false
-      })
-      Swal.showLoading()
-      const response = await api.delete(`/solicitation/class/${idTurma}/delete`)
-      await this.getTurmasSolicitadas(false)
-      this.getTurmasAbertas(false)
-      Swal.hideLoading()
+        title: "Cancelando Solicitação",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      Swal.showLoading();
+      await api.delete(`/solicitation/class/${idTurma}/delete`);
+      await this.getTurmasSolicitadas(false);
+      this.getTurmasAbertas(false);
+      Swal.hideLoading();
       Swal.fire({
-          type: 'success',
-          title: 'Solicitação cancelada!',
-      })
+        type: "success",
+        title: "Solicitação cancelada!"
+      });
       //console.log(response);
 
-      await this.setState({solicitando:''})
-    }
-    catch(err){
-      Swal.hideLoading()
+      await this.setState({ solicitando: "" });
+    } catch (err) {
+      Swal.hideLoading();
       Swal.fire({
-          type: 'error',
-          title: 'ops... Erro ao cancelar solicitação',
-      })
+        type: "error",
+        title: "ops... Erro ao cancelar solicitação"
+      });
       //this.setState({solicitando:''})
-
-    } 
+    }
   }
-  async handleContentInputSeach(e){
+  async handleContentInputSeach(e) {
     console.log(e.target.value);
     this.setState({
-        contentInputSeach:e.target.value
-    })
-        
+      contentInputSeach: e.target.value
+    });
   }
-  async filterSeash(e){
-    await this.getTurmasSolicitadas()
-    this.getTurmasAbertas()
+  async filterSeash(e) {
+    await this.getTurmasSolicitadas();
+    this.getTurmasAbertas();
   }
-  async handleSelectFieldFilter(e){
+  async handleSelectFieldFilter(e) {
     console.log(e.target.value);
     this.setState({
-      fieldFilter:e.target.value
-    })
+      fieldFilter: e.target.value
+    });
   }
-  async clearContentInputSeach(){
+  async clearContentInputSeach() {
     this.setState({
-        contentInputSeach:''
-    })
-    await this.getTurmasSolicitadas()
-    this.getTurmasAbertas()
+      contentInputSeach: ""
+    });
+    await this.getTurmasSolicitadas();
+    this.getTurmasAbertas();
   }
 
   render() {
-    const {totalPages,numPageAtual,turmasSolicitadas,turmasAbertas,loandingTurmasAbertas,descriptions,fieldFilter,contentInputSeach} = this.state
+    const {
+      totalPages,
+      numPageAtual,
+      turmasSolicitadas,
+      turmasAbertas,
+      loandingTurmasAbertas,
+      fieldFilter,
+      contentInputSeach
+    } = this.state;
     const range = num => {
-        let arr =[]
-        for(let i=0;i<num;i++) arr.push(i);
-        return arr
-    }
+      let arr = [];
+      for (let i = 0; i < num; i++) arr.push(i);
+      return arr;
+    };
     return (
-      <TemplateSistema active='turmasAbertas'>
+      <TemplateSistema active="turmasAbertas">
         <Row mb={24}>
           <Col xs={12}>
-              <InputGroupo
-                  placeholder={`Perquise pelo ${fieldFilter==='nome'?'Nome':fieldFilter==='code'?'Código':'...'}`}
-                  value={contentInputSeach}
-                  handleContentInputSeach={this.handleContentInputSeach.bind(this)}
-                  filterSeash={this.filterSeash.bind(this)}
-                  handleSelect={this.handleSelectFieldFilter.bind(this)}
-                  options={ [{value:'name',content:'Nome'},{value:'code',content:'Código'}] }
-                  clearContentInputSeach={this.clearContentInputSeach.bind(this)}
-                  loading={loandingTurmasAbertas}                            
-              />
+            <InputGroupo
+              placeholder={`Perquise pelo ${
+                fieldFilter === "nome"
+                  ? "Nome"
+                  : fieldFilter === "code"
+                  ? "Código"
+                  : "..."
+              }`}
+              value={contentInputSeach}
+              handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+              filterSeash={this.filterSeash.bind(this)}
+              handleSelect={this.handleSelectFieldFilter.bind(this)}
+              options={[
+                { value: "name", content: "Nome" },
+                { value: "code", content: "Código" }
+              ]}
+              clearContentInputSeach={this.clearContentInputSeach.bind(this)}
+              loading={loandingTurmasAbertas}
+            />
           </Col>
         </Row>
         <Row>
-        {loandingTurmasAbertas?
-          range(8).map((i) => (
-            <Fragment key={i}>
-              <Col xs={12} md={6}>
-                  <Card>
+          {loandingTurmasAbertas
+            ? range(8).map(i => (
+                <Fragment key={i}>
+                  <Col xs={12} md={6}>
+                    <Card>
                       <CardHead></CardHead>
                       <CardBody loading></CardBody>
-                  </Card>
-              </Col>
-            </Fragment>
-          ))
-        :
-          turmasAbertas.map((turma, index) => {
-          return(
-            <Fragment key={turma.id}>
-                  <Col xs={12} md={6}>
-                          <Card>
-                            <CardHead>
-                              <CardTitle>
-                                <i className="fa fa-users" /><b> {turma.name} - {turma.year}.{turma.semester}</b>
-                              </CardTitle>
-                              <CardOptions>
-                                <ButtonToogle
-                                  id={'collapse'+turma.id}
-                                  title={'Ver descrição'}
-                                />
-                              </CardOptions>
-                              </CardHead>
-                                <Collapse id={'collapse'+turma.id}>
-                                  <CardBody>
-                                      {turma.description}
-                                  </CardBody>
-                                </Collapse>                                
-                                <CardFooter>
-                                    <span className="badge badge-pill badge-success">
-                                      Código: {turma.code}
-                                    </span>
-                                    {turmasSolicitadas.map(t=>t.id).includes(turma.id)
-                                    ?
-                                     <button onClick={()=>this.cancelarSolicitacao(turma.id)} className="btn btn-danger" style={{float: "right"}}>
-                                      Cancelar solicitação <i className="fa fa-users" /> -
-                                     </button>
-                                     :
-                                     <button onClick={()=>this.solicitarAcesso(turma.id)} className="btn btn-primary" style={{float: "right"}}>
-                                      Solicitar Acesso <i className="fa fa-users" /> +
-                                     </button>
-                                    }
-                                </CardFooter>   
-                            </Card>
+                    </Card>
+                  </Col>
+                </Fragment>
+              ))
+            : turmasAbertas.map((turma, index) => {
+                return (
+                  <Fragment key={turma.id}>
+                    <Col xs={12} md={6}>
+                      <Card>
+                        <CardHead>
+                          <CardTitle>
+                            <i className="fa fa-users" />
+                            <b>
+                              {" "}
+                              {turma.name} - {turma.year}.{turma.semester}
+                            </b>
+                          </CardTitle>
+                          <CardOptions>
+                            <ButtonToogle
+                              id={"collapse" + turma.id}
+                              title={"Ver descrição"}
+                            />
+                          </CardOptions>
+                        </CardHead>
+                        <Collapse id={"collapse" + turma.id}>
+                          <CardBody>{turma.description}</CardBody>
+                        </Collapse>
+                        <CardFooter>
+                          <span className="badge badge-pill badge-success">
+                            Código: {turma.code}
+                          </span>
+                          {turmasSolicitadas
+                            .map(t => t.id)
+                            .includes(turma.id) ? (
+                            <button
+                              onClick={() => this.cancelarSolicitacao(turma.id)}
+                              className="btn btn-danger"
+                              style={{ float: "right" }}
+                            >
+                              Cancelar solicitação <i className="fa fa-users" />{" "}
+                              -
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => this.solicitarAcesso(turma.id)}
+                              className="btn btn-primary"
+                              style={{ float: "right" }}
+                            >
+                              Solicitar Acesso <i className="fa fa-users" /> +
+                            </button>
+                          )}
+                        </CardFooter>
+                      </Card>
                     </Col>
-              </Fragment>
-            )}
-          )
-        }
-        </Row>        
+                  </Fragment>
+                );
+              })}
+        </Row>
         <Row>
           <Col xs={12} textCenter>
             <NavPagination
