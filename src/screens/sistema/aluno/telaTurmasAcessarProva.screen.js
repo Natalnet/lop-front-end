@@ -117,14 +117,14 @@ export default class Exercicios extends Component {
                   className="btn btn-danger mr-2"
                   style={{ float: "right" }}
                   data-toggle="modal"
-                  data-target="#ModalRecolherProva"
+                  data-target="#ModalEntregarProva"
                 >
-                  Recolher Provas <i className="fa fa-file-text" />
+                  Entregar Prova <i className="fa fa-file-text" />
                 </button>
 
                 <div
                   class="modal fade"
-                  id="ModalRecolherProva"
+                  id="ModalEntregarProva"
                   tabindex="-1"
                   role="dialog"
                   aria-hidden="true"
@@ -135,7 +135,7 @@ export default class Exercicios extends Component {
                   >
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title">Recolher Prova</h5>
+                        <h5 class="modal-title">Entregar prova</h5>
                         <button
                           type="button"
                           class="close"
@@ -146,18 +146,16 @@ export default class Exercicios extends Component {
                         </button>
                       </div>
                       <div class="modal-body">
-                        <label htmlFor="inputSenha">Senha:</label>
-                        <input
-                          id="inputSenha"
-                          type="password"
-                          value={this.state.password}
-                          className="form-control"
-                          placeholder="Senha para recolher a prova"
-                        />
+                        <label htmlFor="inputSenha">
+                          <b>Tem certeza que deseja entregar a prova?</b>
+                        </label>
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-danger">
-                          Recolher Prova
+                          Não
+                        </button>
+                        <button type="button" class="btn btn-success">
+                          Sim
                         </button>
                       </div>
                     </div>
