@@ -22,14 +22,14 @@ export default class Provas extends Component {
         super(props)
         this.state = {
             redirect: false,
-            listas: [],
+            provas: [],
             loadingInfoTurma:true,
             turma:JSON.parse(sessionStorage.getItem('turma')) || '',
-            loandingTodasListas:true,
-            loandingListas:false,
-            showModalListas:false,
+            loandingTodasProvas:true,
+            loandingProvas:false,
+            showModalProvas:false,
             showModalInfo:false,
-            todasListas: [],
+            todasprovas: [],
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
@@ -107,22 +107,62 @@ export default class Provas extends Component {
           })
         } 
     }
-
+    async removerProva(prova){
+        const idTest = prova.id
+        console.log(prova);
+        const idTurma = this.props.match.params.id
+        try{
+            const {value} = await Swal.fire({
+                title: `Tem certeza que quer remover "${prova.title}" da turma?`,
+                //text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, remover prova!',
+                cancelButtonText:'Não, cancelar!'
+            })
+            if(!value) return null
+            Swal.fire({
+                title:'Removendo prova',
+                allowOutsideClick:false,
+                allowEscapeKey:false,
+                allowEnterKey:false
+            })
+            Swal.showLoading()
+            await api.delete(`/class/${idTurma}/remove/test/${idTest}`)
+            const {provas} = this.state
+            this.getTodasProvas()
+            this.setState({provas:provas.filter(prova=>prova.id!==idTest)})
+            Swal.hideLoading()
+            Swal.fire({
+                type: 'success',
+                title: 'Prova removido com sucesso!',
+            })
+        }
+        catch(err){
+          Swal.hideLoading()
+          Swal.fire({
+              type: 'error',
+              title: 'ops... Prova não pôde ser removido',
+          })
+        }
+    }
     async getProvas(){
         const id = this.props.match.params.id
         try{
             
-            this.setState({loandingListas:true})
+            this.setState({loandingProvas:true})
             const response = await api.get(`/class/${id}/tests`)
-            console.log('listas');
+            console.log('provas');
             console.log(response.data);
             this.setState({
-                listas:[...response.data],
-                loandingListas:false,
+                provas:[...response.data],
+                loandingProvas:false,
             })
 
         }catch(err){
-            this.setState({loandingListas:false})
+            this.setState({loandingProvas:false})
             console.log(err)
         
         }
@@ -133,19 +173,19 @@ export default class Provas extends Component {
         let query = `include=${contentInputSeach.trim()}`
         query += `&field=${fieldFilter}`
         try{
-            this.setState({loandingTodasListas:true})
+            this.setState({loandingTodasProvas:true})
             const id = this.props.match.params.id
             const response = await api.get(`/test/class/${id}/page/${numPageAtual}?${query}`)
-            console.log('todasListas');
+            console.log('todasprovas');
             console.log(response.data.docs);
             this.setState({
-                todasListas:[...response.data.docs],
+                todasprovas:[...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
-                loandingTodasListas:false
+                loandingTodasProvas:false
             })
         }catch(err){
-            this.setState({loandingTodasListas:false})
+            this.setState({loandingTodasProvas:false})
             console.log(err)
         
         }
@@ -166,11 +206,11 @@ export default class Provas extends Component {
     handleCloseshowModalInfo(e){
         this.setState({showModalInfo:false})
     }
-    handleShowModalListas(e){
-        this.setState({showModalListas:true})
+    handleshowModalProvas(e){
+        this.setState({showModalProvas:true})
     }
-    handleCloseshowModalListas(e){
-        this.setState({showModalListas:false})
+    handleCloseshowModalProvas(e){
+        this.setState({showModalProvas:false})
     }
 
     handleSelectFieldFilter(e){
@@ -195,8 +235,8 @@ export default class Provas extends Component {
     }
     
     render() {
-        const {loadingInfoTurma,turma,todasListas,loandingTodasListas,totalPages,numPageAtual,listas} = this.state
-        const {contentInputSeach,fieldFilter,showModalListas,questions,showModalInfo,loandingListas} = this.state
+        const {loadingInfoTurma,turma,todasprovas,loandingTodasProvas,totalPages,numPageAtual,provas} = this.state
+        const {contentInputSeach,fieldFilter,showModalProvas,questions,showModalInfo,loandingProvas} = this.state
         return (
         <TemplateSistema {...this.props} active={'provas'} submenu={'telaTurmas'}>
                 <div className="row" style={{marginBottom:'15px'}}>
@@ -211,7 +251,7 @@ export default class Provas extends Component {
 
                 <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-3">
-                    <button className={`btn btn-primary ${loandingListas && 'btn-loading'}`} onClick={()=>this.handleShowModalListas()}>
+                    <button className={`btn btn-primary ${loandingProvas && 'btn-loading'}`} onClick={()=>this.handleshowModalProvas()}>
                          Adicionar novas provas <i className="fa fa-plus-circle" />
                     </button>
                     </div>
@@ -219,34 +259,39 @@ export default class Provas extends Component {
 
                 <Row mb={15}>
                     
-                    {loandingListas
+                    {loandingProvas
                     ?
                         <div className="loader"  style={{margin:'0px auto'}}></div>
                     :
 
-                    listas.map((lista,i)=>{
-                        const questions = lista.questions
-                        const questionsCompleted = lista.questions.filter(q=>q.completed)
+                    provas.map((prova,i)=>{
+                        const questions = prova.questions
+                        const questionsCompleted = prova.questions.filter(q=>q.completed)
                         //const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
                         return(
+                        <Fragment key={prova.id}>
                         <Col xs={12}>
-                        <Card key={lista.id} style={{margin:'2px'}}>
+                        <Card key={prova.id} style={{margin:'2px'}}>
                             <CardHead>
                                 <Col xs={5}>
-                                    <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
+                                    <h4 style={{margin:'0px'}}><b>{prova.title}</b></h4>
                                 </Col>
                                 
                                 <CardOptions>
-                                    <Link to={`/professor/turma/${this.props.match.params.id}/prova/${lista.id}`}>
-                                        <button className="btn btn-success">
+                                    <Link to={`/professor/turma/${this.props.match.params.id}/prova/${prova.id}`}>
+                                        <button className="btn btn-success mr-2">
                                             Acessar <i className="fa fa-wpexplorer" />
                                         </button>
                                     </Link>
+                                    <button className="btn btn-danger" onClick={()=>this.removerProva(prova)}>
+                                        <i className="fa fa-trash "/>
+                                    </button>
                                 </CardOptions>
                             </CardHead>
 
                         </Card>
                         </Col>
+                        </Fragment>
                         )
                     })
                     }
@@ -259,7 +304,7 @@ export default class Provas extends Component {
             
 
                 <Modal
-                  show={showModalListas} onHide={this.handleCloseshowModalListas.bind(this)}
+                  show={showModalProvas} onHide={this.handleCloseshowModalProvas.bind(this)}
                   size="lg"
                   aria-labelledby="contained-modal-title-vcenter"
                   centered
@@ -281,30 +326,30 @@ export default class Provas extends Component {
                                 handleSelect={this.handleSelectFieldFilter.bind(this)}
                                 options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
                                 clearContentInputSeach={this.clearContentInputSeach.bind(this)}
-                                loading={loandingTodasListas}                            
+                                loading={loandingTodasProvas}                            
                             />
                         </div>
                     </Row>
                     <div className="row">
-                        {loandingTodasListas 
+                        {loandingTodasProvas 
                         ?        
                             <div className="loader" style={{margin:'0px auto'}}/>
                         :
                             
-                            todasListas.map((lista,index)=>(
+                            todasprovas.map((prova,index)=>(
                                 <div key={index} className="col-6"> 
                                     <Card>
                                         <CardHead>
                                             <CardTitle>
-                                                {`${lista.title} - ${lista.code}`} 
+                                                {`${prova.title} - ${prova.code}`} 
                                             </CardTitle>
                                             <CardOptions>
 
                                                 <div className="btn-group  float-right" role="group" aria-label="Exemplo básico">
-                                                    <button className="btn-primary btn" onClick={()=>this.inserirProva(lista.id)} >Adicionar</button>
+                                                    <button className="btn-primary btn" onClick={()=>this.inserirProva(prova.id)} >Adicionar</button>
                                                         <button
                                                             className ="btn btn-primary"
-                                                            data-toggle="collapse" data-target={'#collapse'+lista.id}
+                                                            data-toggle="collapse" data-target={'#collapse'+prova.id}
                                                             style={{position: "relative"}}
                                                         >
                                                         <i className="fe fe-chevron-down"/>
@@ -312,10 +357,10 @@ export default class Provas extends Component {
                                                 </div>
                                             </CardOptions>
                                         </CardHead>
-                                        <div className="collapse" id={'collapse'+lista.id}>
+                                        <div className="collapse" id={'collapse'+prova.id}>
                                             <CardBody>
                                                 <b>Questões: </b> <br/><br/>
-                                                {lista.questions.map((questoes, index)=>(
+                                                {prova.questions.map((questoes, index)=>(
                                                     <div key={index}>
                                                         <p>{index+1+" - "+questoes.title}</p>
                                                     </div>
@@ -340,7 +385,7 @@ export default class Provas extends Component {
                 </Fragment>
                 </Modal.Body>
               <Modal.Footer>
-                <button className="btn btn-primary" onClick={this.handleCloseshowModalListas.bind(this)}>Fechar</button>
+                <button className="btn btn-primary" onClick={this.handleCloseshowModalProvas.bind(this)}>Fechar</button>
               </Modal.Footer>
             </Modal>
 

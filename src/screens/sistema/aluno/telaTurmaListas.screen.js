@@ -1,13 +1,15 @@
-import React, { Component } from "react";
+import React, { Component,Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
-import api from '../../../services/api'
+import api,{baseUrlBackend} from '../../../services/api'
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import {ProgressBar} from 'react-bootstrap'
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import socket from "socket.io-client";
+
 export default class Listas extends Component {
 
     constructor(props){
@@ -24,6 +26,7 @@ export default class Listas extends Component {
 
     async componentDidMount() {
         this.getListas()
+        this.getListasRealTime()
         await this.getInfoTurma()
         document.title = `${this.state.turma.name} - listas`;
     }
@@ -72,9 +75,24 @@ export default class Listas extends Component {
             console.log(err)
         
         }
-    };
-    render() {
+    }
+    getListasRealTime(){
+        const io = socket(baseUrlBackend);
+        io.emit("connectRoonClass", this.props.match.params.id);
         
+        io.on("addListToClass", response =>{
+            let {listas} = this.state
+            this.setState({listas: [...listas,response]})
+        });
+        io.on("removeListFromClass", response =>{
+            let {listas} = this.state
+            this.setState({
+                listas: listas.filter(lista=>lista.id!==response.id)
+            })
+        });
+
+    }
+    render() {
         const {loadingInfoTurma,turma,loandingListas,listas} = this.state
         return (
         <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
@@ -98,6 +116,7 @@ export default class Listas extends Component {
                         const questionsCompleted = lista.questions.filter(q=>q.completed)
                         const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
                         return(
+                        <Fragment key={lista.id}>
                         <Col xs={12}>
                         <Card key={lista.id} style={{margin:'2px'}}>
                             <CardHead>
@@ -116,6 +135,7 @@ export default class Listas extends Component {
                             </CardHead>
                         </Card>
                         </Col>
+                        </Fragment>
                         )
                     })
                     }

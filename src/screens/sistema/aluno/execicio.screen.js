@@ -180,15 +180,15 @@ export default class Editor extends Component {
   async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming) {
     const idQuestion = this.props.match.params.id;
     try {
-      const macs = await findLocalIp(false);
+      const ip = await findLocalIp(false);
       console.log("local ips:");
-      console.log(macs);
+      console.log(ip);
       const request = {
         answer: codigo,
         language: linguagem,
         hitPercentage: hitPercentage,
         timeConsuming: timeConsuming,
-        mac: macs[0],
+        ip: ip[0],
         environment: "desktop"
       };
       await api.post(`/submission/question/${idQuestion}/store`, request);

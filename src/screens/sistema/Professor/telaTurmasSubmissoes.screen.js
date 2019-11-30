@@ -97,7 +97,7 @@ export default class HomesubmissoesScreen extends Component {
     getSubmissoesRealTime(){
         const io = socket(baseUrlBackend)
         const id = this.props.match.params.id
-        io.emit('connectRoonSubmissionClass',id)//conectando à sala
+        io.emit('connectRoonClass',id)//conectando à sala
         io.on('SubmissionClass',response=>{
             this.getSubmissoes(false)
         })

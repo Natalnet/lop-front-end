@@ -46,7 +46,7 @@ export default class Pagina extends Component {
 
         await this.getInfoTurma()
         document.title = `${this.state.turma.name} - listas`;
-        //this.getTodasListas()
+        this.getTodasListas()
     }
      async getInfoTurma(){
         const id = this.props.match.params.id
@@ -107,27 +107,46 @@ export default class Pagina extends Component {
           })
         } 
     }
-
-    async getListas(){
-        const id = this.props.match.params.id
+    async removerLista(list){
+        const idList = list.id
+        const idTurma = this.props.match.params.id
         try{
-            
-            this.setState({loandingListas:true})
-            const response = await api.get(`/class/${id}/lists`)
-            console.log('listas');
-            console.log(response.data);
-            this.setState({
-                listas:[...response.data],
-                loandingListas:false,
+            const {value} = await Swal.fire({
+                title: `Tem certeza que quer remover "${list.title}" da turma?`,
+                //text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, remover lista!',
+                cancelButtonText:'Não, cancelar!'
             })
-
-        }catch(err){
-            this.setState({loandingListas:false})
-            console.log(err)
-        
+            if(!value) return null
+            Swal.fire({
+                title:'Removendo lista',
+                allowOutsideClick:false,
+                allowEscapeKey:false,
+                allowEnterKey:false
+            })
+            Swal.showLoading()
+            await api.delete(`/class/${idTurma}/remove/list/${idList}`)
+            const {listas} = this.state
+            this.getTodasListas()
+            this.setState({listas:listas.filter(lista=>lista.id!==idList)})
+            Swal.hideLoading()
+            Swal.fire({
+                type: 'success',
+                title: 'Lista removido com sucesso!',
+            })
         }
-    };
-
+        catch(err){
+          Swal.hideLoading()
+          Swal.fire({
+              type: 'error',
+              title: 'ops... Lista não pôde ser removido',
+          })
+        }
+    }
     async getTodasListas(){
         const {numPageAtual,contentInputSeach,fieldFilter} = this.state
         let query = `include=${contentInputSeach.trim()}`
@@ -150,6 +169,27 @@ export default class Pagina extends Component {
         
         }
     };
+    async getListas(){
+        const id = this.props.match.params.id
+        try{
+            
+            this.setState({loandingListas:true})
+            const response = await api.get(`/class/${id}/lists`)
+            console.log('listas');
+            console.log(response.data);
+            this.setState({
+                listas:[...response.data],
+                loandingListas:false,
+            })
+
+        }catch(err){
+            this.setState({loandingListas:false})
+            console.log(err)
+        
+        }
+    };
+
+
     handlePage(e,numPage){
         e.preventDefault()
         //console.log(numPage);
@@ -239,10 +279,13 @@ export default class Pagina extends Component {
                                 
                                 <CardOptions>
                                     <Link to={`/professor/turma/${this.props.match.params.id}/lista/${lista.id}`}>
-                                        <button className="btn btn-success">
+                                        <button className="btn btn-success mr-2">
                                             Acessar <i className="fa fa-wpexplorer" />
                                         </button>
                                     </Link>
+                                    <button className="btn btn-danger" onClick={()=>this.removerLista(lista)}>
+                                        <i className="fa fa-trash "/>
+                                    </button>
                                 </CardOptions>
                             </CardHead>
 

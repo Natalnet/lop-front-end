@@ -218,14 +218,14 @@ export default class Editor extends Component {
     const query = `?class=${this.props.match.params.id}`;
 
     try {
-      const macs = await findLocalIp(false);
-      console.log(macs);
+      const ip = await findLocalIp(false);
+      console.log(ip);
       const request = {
         answer: codigo,
         language: linguagem,
         hitPercentage: hitPercentage,
         timeConsuming: timeConsuming,
-        mac: macs[0],
+        ip: ip[0],
         environment: "desktop"
       };
       const response = await api.post(

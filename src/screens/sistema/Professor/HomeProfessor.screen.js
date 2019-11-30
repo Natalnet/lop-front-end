@@ -68,7 +68,7 @@ export default class TurmasScreen extends Component {
     getMinhasTurmasRealTime(){
         const io = socket(baseUrlBackend)      
         for(let turma of this.state.minhasTurmas){
-            io.emit('connectRoonRequestClass',turma.id)//conectando à todas salas (minhas Turmas)
+            io.emit('connectRoonClass',turma.id)//conectando à todas salas (minhas Turmas)
         }
         io.on('RequestsClass',async response=>{
             console.log(response);

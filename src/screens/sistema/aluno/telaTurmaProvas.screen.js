@@ -118,7 +118,8 @@ export default class Provas extends Component {
   }
   getProvasRealTime(){
     const io = socket(baseUrlBackend);
-    io.emit("connectRoonStatusTest",this.props.match.params.id);
+    io.emit("connectRoonClass",this.props.match.params.id);
+
     io.on("changeStatusTest", reponse => {
       let {provas} = this.state
       provas = provas.map(prova=>{
@@ -130,6 +131,16 @@ export default class Provas extends Component {
       })
       this.setState({provas})
     })
+    io.on("addTestToClass", response =>{
+      let {provas} = this.state
+      this.setState({provas: [...provas,response]})
+    });
+    io.on("removeTestFromClass", response =>{
+      let {provas} = this.state
+      this.setState({
+          provas: provas.filter(prova=>prova.id!==response.id)
+      })
+    });
   }
   async acessar(prova){
     const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}` 
@@ -148,7 +159,7 @@ export default class Provas extends Component {
           inputValue:'',//valor inicial
           inputValidator:(value)=>{
             if(!value){
-              return 'Voçê precisa escrever algo!'
+              return 'Você precisa escrever algo!'
             }
             else if(value !== prova.password){
               return "Senha incorreta :("

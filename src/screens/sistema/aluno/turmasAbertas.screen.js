@@ -79,9 +79,8 @@ export default class HomeAlunoScreen extends Component {
   }
   async getTurmasAbertasRealTime() {
     const io = socket(baseUrlBackend);
-    //console.log('id do usuario');
-    //console.log(sessionStorage.getItem('user.id'));
-    io.emit("connectRoonMyRequestsClass", sessionStorage.getItem("user.id"));
+    io.emit("connectRoonUser", sessionStorage.getItem("user.id"));
+
     io.on("MyRequestsClass", async response => {
       await this.getTurmasSolicitadas(false);
       this.getTurmasAbertas(false);

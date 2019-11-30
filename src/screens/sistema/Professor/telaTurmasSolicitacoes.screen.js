@@ -72,11 +72,16 @@ export default class Pagina extends Component {
   }
   getSolicitacoesRealTime() {
     const io = socket(baseUrlBackend);
+    console.log(io);
     const id = this.props.match.params.id;
-    io.emit("connectRoonRequestClass", id); //conectando à sala
+    io.emit("connectRoonClass", id); //conectando à sala
+    
     io.on("RequestsClass", response => {
+      console.log('no socket');
+      console.log(response);
       this.getSolicitacoes(false);
-    });
+    })
+    
   }
   async aceitaSolicitacao(idUser) {
     const idTurma = this.props.match.params.id;

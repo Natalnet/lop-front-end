@@ -181,8 +181,6 @@ export default class Editor extends Component {
       linguagem :language,
       results : results
     }
-    console.log('codigo aparado');
-    console.log(request.codigo);
     this.setState({loadingReponse:true})
     try{
       this.salvaRascunho()
@@ -209,14 +207,15 @@ export default class Editor extends Component {
     const query = `?class=${this.props.match.params.id}`
 
     try{
-      const macs = await findLocalIp(false)
-      console.log(macs)
+      const ip = await findLocalIp(false)
+      console.log('ip');
+      console.log(ip)
       const request = {
         answer: codigo,
         language: linguagem,
         hitPercentage : hitPercentage,
         timeConsuming : timeConsuming,
-        mac : macs[0],
+        ip : ip[0],
         environment:'desktop'
       }
       const response = await api.post(`/submission/question/${idQuestion}/store${query}`,request)
