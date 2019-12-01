@@ -93,7 +93,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/turma/:id/prova/:idTest/questao/:idQuestions",
+    path: "/aluno/turma/:id/prova/:idTest/questao/:idExercicio",
     component: RealizarQuestao,
     private: true,
     perfil: "ALUNO"

@@ -59,7 +59,8 @@ export default class Editor extends Component {
       loadingExercicio: true,
       userDifficulty: "",
       loadDifficulty: false,
-      salvandoRascunho: false
+      salvandoRascunho: false,
+      char_change_number:0,
     };
     this.cardEnunciadoRef = createRef();
     this.cardExemplos = createRef();
@@ -67,9 +68,9 @@ export default class Editor extends Component {
 
   async componentDidMount() {
     this.setState({ tempo_inicial: new Date() });
-    console.log("props");
-    console.log(this.props);
+    
     await this.getExercicio();
+    this.salvaAcesso()
     this.appStyles();
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
@@ -97,6 +98,20 @@ export default class Editor extends Component {
         cardExemplos.setAttribute("style", `height:${heightCardExemplos}px`);
     }
   }
+  async salvaAcesso(){
+    const ip = await findLocalIp(false);
+    const idQuestion = this.props.match.params.id;
+    const request = {
+      ip : ip[0],
+      environment:'desktop',
+    }
+    try{
+      await api.post(`/access/question/${idQuestion}/store`,request)
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
   async getExercicio() {
     const id = this.props.match.params.id;
     const query = `?exclude=solution`;
@@ -111,8 +126,9 @@ export default class Editor extends Component {
         katexDescription: response.data.katexDescription || "",
         difficulty: response.data.difficulty,
         userDifficulty: response.data.userDifficulty || "",
-        solution: response.data.questionDraft || "",
-        loadingExercicio: false
+        solution: response.data.questionDraft?response.data.questionDraft.answer:'',
+        char_change_number:response.data.questionDraft?response.data.questionDraft.char_change_number:0,
+        loadingExercicio: false, 
       });
     } catch (err) {
       this.setState({ loadingExercicio: false });
@@ -120,8 +136,10 @@ export default class Editor extends Component {
   }
   async salvaRascunho(showMsg = true) {
     const idQuestion = this.props.match.params.id;
+    const {solution,char_change_number} = this.state
     const request = {
-      answer: this.state.solution
+      answer: solution,
+      char_change_number,
     };
     try {
       this.setState({ salvandoRascunho: true });
@@ -147,11 +165,11 @@ export default class Editor extends Component {
   async submeter(e) {
     e.preventDefault();
     const timeConsuming = new Date() - this.state.tempo_inicial;
-    const { solution, language, results } = this.state;
+    const { solution, language, results,char_change_number } = this.state;
     const request = {
       codigo: solution,
       linguagem: language,
-      results: results
+      results: results,
     };
     this.setState({ loadingReponse: true });
     try {
@@ -160,7 +178,8 @@ export default class Editor extends Component {
       this.saveSubmission(
         request,
         response.data.percentualAcerto,
-        timeConsuming
+        timeConsuming,
+        char_change_number
       );
       console.log("sumbissão: ");
       console.log(response.data);
@@ -177,7 +196,7 @@ export default class Editor extends Component {
     }
   }
 
-  async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming) {
+  async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming,char_change_number) {
     const idQuestion = this.props.match.params.id;
     try {
       const ip = await findLocalIp(false);
@@ -189,7 +208,8 @@ export default class Editor extends Component {
         hitPercentage: hitPercentage,
         timeConsuming: timeConsuming,
         ip: ip[0],
-        environment: "desktop"
+        environment: "desktop",
+        char_change_number,
       };
       await api.post(`/submission/question/${idQuestion}/store`, request);
       this.setState({ tempo_inicial: new Date() });
@@ -206,7 +226,10 @@ export default class Editor extends Component {
     await this.setState({ theme: e.target.value });
   }
   handleSolution(newValue) {
-    this.setState({ solution: newValue });
+    this.setState({ 
+      solution: newValue,
+      char_change_number:this.state.char_change_number+1,
+    });
   }
   async handleDifficulty(e) {
     const userDifficulty = e.target ? e.target.value : "";
@@ -256,7 +279,7 @@ export default class Editor extends Component {
           <Fragment>
             <Row mb={15}>
               <Col xs={12}>
-                <Link to="/aluno/aluno/exercicios">
+                <Link to="/aluno/exercicios">
                   <button className="btn btn-success mr-2">
                     <i className="fa fa-arrow-left" /> Voltar aos exercícios{" "}
                     <i className="fa fa-file-text" />

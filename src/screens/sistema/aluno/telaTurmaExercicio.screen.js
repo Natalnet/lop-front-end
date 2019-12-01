@@ -62,198 +62,234 @@ export default class Editor extends Component {
       userDifficulty:'',
       loadDifficulty:false,
       salvandoRascunho:false,
+      char_change_number:0,
     }
     this.cardEnunciadoRef = createRef()
     this.cardExemplos = createRef()
   }
 
   async componentDidMount() {
-    this.setState({tempo_inicial:new Date()})
-    await this.getInfoTurma()
-    await this.getExercicio()
-    this.appStyles()
-    document.title = `${this.state.title}`
+    this.setState({ tempo_inicial: new Date() });
+    await this.getInfoTurma();
+    await this.getExercicio();
+    this.salvaAcesso();
+    this.appStyles();
+    document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
-    setInterval(function(){ this.salvaRascunho(false) }.bind(this), 60000);
+    setInterval(
+      function() {
+        this.salvaRascunho(false);
+      }.bind(this),
+      60000
+    );
   }
-  appStyles(){
-    const cardEnunciado = this.cardEnunciadoRef.current
-    const cardExemplos = this.cardExemplos.current
-    const heightCardEnunciado = cardEnunciado && cardEnunciado.offsetHeight 
-    const heightCardExemplos = cardExemplos && cardExemplos.offsetHeight 
-    if(heightCardEnunciado>heightCardExemplos){
-      cardEnunciado && cardEnunciado.setAttribute("style",`height:${heightCardEnunciado}px`);
-      cardExemplos && cardExemplos.setAttribute("style",`height:${heightCardEnunciado}px`);
-    }
-    else{
-      cardEnunciado && cardEnunciado.setAttribute("style",`height:${heightCardExemplos}px`);
-      cardExemplos && cardExemplos.setAttribute("style",`height:${heightCardExemplos}px`);
+  appStyles() {
+    const cardEnunciado = this.cardEnunciadoRef.current;
+    const cardExemplos = this.cardExemplos.current;
+    const heightCardEnunciado = cardEnunciado && cardEnunciado.offsetHeight;
+    const heightCardExemplos = cardExemplos && cardExemplos.offsetHeight;
+    if (heightCardEnunciado > heightCardExemplos) {
+      cardEnunciado &&
+        cardEnunciado.setAttribute("style", `height:${heightCardEnunciado}px`);
+      cardExemplos &&
+        cardExemplos.setAttribute("style", `height:${heightCardEnunciado}px`);
+    } else {
+      cardEnunciado &&
+        cardEnunciado.setAttribute("style", `height:${heightCardExemplos}px`);
+      cardExemplos &&
+        cardExemplos.setAttribute("style", `height:${heightCardExemplos}px`);
     }
   }
-     async getInfoTurma(){
-        const id = this.props.match.params.id
-        const {turma} = this.state
-        if(!turma || (turma && turma.id!==id)){
-            console.log('dentro do if');
-            try{
-                const response = await api.get(`/class/${id}`)
-                const turmaData = {
-                    id:response.data.id,
-                    name:response.data.name,
-                    year:response.data.year,
-                    semester:response.data.semester,
-                    languages:response.data.languages
-                }
-                this.setState({
-                    turma:turmaData,
-                    loadingInfoTurma:false,
-                })
-                sessionStorage.setItem('turma',JSON.stringify(turmaData))
-            }
-            catch(err){
-                this.setState({loadingInfoTurma:false})
-                console.log(err);
-            }
-        }
-        else{
-            this.setState({loadingInfoTurma:false})
-        }
-    }
-  async getExercicio(){
-    const id = this.props.match.params.idExercicio
-    const query = `?exclude=solution`
-    try{
-
-      const response = await api.get(`/question/${id}${query}`)
-      console.log('questão');
-      console.log(response.data);
-      this.setState({
-        results : [...response.data.results],
-        title : response.data.title,
-        description : response.data.description,
-        katexDescription:response.data.katexDescription || '',
-        difficulty:response.data.difficulty,
-        userDifficulty:response.data.userDifficulty || '',
-        solution:response.data.questionDraft || '',
-        loadingExercicio:false
-      })
-
-    }
-    catch(err){
-      this.setState({loadingExercicio:false})
-    } 
-  }
-  async salvaRascunho(showMsg=true){
-    const idQuestion = this.props.match.params.idExercicio
+  async salvaAcesso(){
+    const ip = await findLocalIp(false);
+    const idQuestion = this.props.match.params.idExercicio;
     const request = {
-      answer:this.state.solution
+      ip : ip[0],
+      environment:'desktop',
     }
     try{
-      this.setState({salvandoRascunho:true})
-      const response = await api.post(`/draft/question/${idQuestion}/store`,request)
-      this.setState({salvandoRascunho:false})
-      if(showMsg){
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-        })
-        Toast.fire({
-          icon: 'success',
-          title: 'Rascunho salvo com sucesso!'
-        })
-      }
+      await api.post(`/access/question/${idQuestion}/store`,request)
     }
     catch(err){
       console.log(err);
-      this.setState({salvandoRascunho:false})
     }
   }
-  async submeter(e){
-    e.preventDefault()
-    const timeConsuming = new Date() - this.state.tempo_inicial
-    const {solution,language,results} = this.state
-    console.log('solution:');
-    console.log(solution);
-    const request = {
-      codigo : solution,
-      linguagem :language,
-      results : results
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    const { turma } = this.state;
+    if (!turma || (turma && turma.id !== id)) {
+      console.log("dentro do if");
+      try {
+        const response = await api.get(`/class/${id}`);
+        const turmaData = {
+          id: response.data.id,
+          name: response.data.name,
+          year: response.data.year,
+          semester: response.data.semester,
+          languages: response.data.languages
+        };
+        this.setState({
+          turma: turmaData,
+          loadingInfoTurma: false
+        });
+        sessionStorage.setItem("turma", JSON.stringify(turmaData));
+      } catch (err) {
+        this.setState({ loadingInfoTurma: false });
+        console.log(err);
+      }
+    } else {
+      this.setState({ loadingInfoTurma: false });
     }
-    console.log('codigo aparado');
-    console.log(request.codigo);
-    this.setState({loadingReponse:true})
-    try{
-      this.salvaRascunho()
-      const response = await apiCompiler.post('/submission/exec',request)
-      this.saveSubmission(request,response.data.percentualAcerto,timeConsuming)
-      console.log('sumbissão: ');
+  }
+  async getExercicio() {
+    console.log("aki");
+    console.log(this.props.match.params);
+    const id = this.props.match.params.idExercicio;
+    const query = `?exclude=solution`;
+    try {
+      const response = await api.get(`/question/${id}${query}`);
+      console.log("questão");
       console.log(response.data);
       this.setState({
-        loadingReponse:false,
-        response:response.data.results,
-        percentualAcerto:response.data.percentualAcerto,
-        descriptionErro:response.data.descriptionErro,
-      })
+        results: [...response.data.results],
+        title: response.data.title,
+        description: response.data.description,
+        katexDescription: response.data.katexDescription || "",
+        difficulty: response.data.difficulty,
+        userDifficulty: response.data.userDifficulty || "",
+        solution: response.data.questionDraft?response.data.questionDraft.answer:'',
+        char_change_number:response.data.questionDraft?response.data.questionDraft.char_change_number:0,
+        loadingExercicio: false,
+      });
+    } catch (err) {
+      this.setState({ loadingExercicio: false });
     }
-    catch(err){
-      Object.getOwnPropertyDescriptors(err)
-      this.setState({loadingReponse:false})
-      alert('erro na conexão com o servidor')
-    }
-    
   }
-  async saveSubmission({codigo,linguagem},hitPercentage,timeConsuming){
-    const idQuestion = this.props.match.params.idExercicio
-    const query = `?class=${this.props.match.params.id}`
+  async salvaRascunho(showMsg = true) {
+    const idQuestion = this.props.match.params.idExercicio;
+    const {solution,char_change_number} = this.state
+    const request = {
+      answer: solution,
+      char_change_number,
+    };
+    try {
+      this.setState({ salvandoRascunho: true });
+      const response = await api.post(
+        `/draft/question/${idQuestion}/store`,
+        request
+      );
+      this.setState({ salvandoRascunho: false });
+      if (showMsg) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000
+        });
+        Toast.fire({
+          icon: "success",
+          title: "Rascunho salvo com sucesso!"
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      this.setState({ salvandoRascunho: false });
+    }
+  }
+  async submeter(e) {
+    e.preventDefault();
+    const timeConsuming = new Date() - this.state.tempo_inicial;
+    const { solution, language, results ,char_change_number} = this.state;
+    console.log("solution:");
+    console.log(solution);
+    const request = {
+      codigo: solution,
+      linguagem: language,
+      results: results,
+    };
+    console.log("codigo aparado");
+    console.log(request.codigo);
+    this.setState({ loadingReponse: true });
+    try {
+      this.salvaRascunho();
+      const response = await apiCompiler.post("/submission/exec", request);
+      this.saveSubmission(
+        request,
+        response.data.percentualAcerto,
+        timeConsuming,
+        char_change_number
+      );
+      console.log("sumbissão: ");
+      console.log(response.data);
+      this.setState({
+        loadingReponse: false,
+        response: response.data.results,
+        percentualAcerto: response.data.percentualAcerto,
+        descriptionErro: response.data.descriptionErro
+      });
+    } catch (err) {
+      Object.getOwnPropertyDescriptors(err);
+      this.setState({ loadingReponse: false });
+      alert("erro na conexão com o servidor");
+    }
+  }
+  async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming,char_change_number) {
+    const idQuestion = this.props.match.params.idExercicio;
+    const query = `?class=${this.props.match.params.id}`;
 
-    try{
-      const ip = await findLocalIp(false)
-      console.log(ip)
+    try {
+      const ip = await findLocalIp(false);
+      console.log(ip);
       const request = {
         answer: codigo,
         language: linguagem,
-        hitPercentage : hitPercentage,
-        timeConsuming : timeConsuming,
-        ip : ip[0],
-        environment:'desktop'
-      }
-      const response = await api.post(`/submission/question/${idQuestion}/store${query}`,request)
-      this.setState({tempo_inicial:new Date()})
-    }
-    catch(err){
-      this.setState({tempo_inicial:new Date()})
+        hitPercentage: hitPercentage,
+        timeConsuming: timeConsuming,
+        ip: ip[0],
+        environment: "desktop",
+        char_change_number
+      };
+      const response = await api.post(
+        `/submission/question/${idQuestion}/store${query}`,
+        request
+      );
+      this.setState({ tempo_inicial: new Date() });
+    } catch (err) {
+      this.setState({ tempo_inicial: new Date() });
       console.log(err);
     }
   }
 
-  async changeLanguage(e){
-    await this.setState({language:e.target.value})
+  async changeLanguage(e) {
+    await this.setState({ language: e.target.value });
   }
-  async changeTheme(e){
-    await this.setState({theme:e.target.value})
-
+  async changeTheme(e) {
+    await this.setState({ theme: e.target.value });
   }
-  handleSolution(newValue){
-    this.setState({solution:newValue})
+  handleSolution(newValue) {
+    this.setState({ 
+      solution: newValue,
+      char_change_number:this.state.char_change_number+1,
+    });
   }
-  async handleDifficulty(e){
-    const userDifficulty = e.target?e.target.value:''
-    const idQuestion = this.props.match.params.idExercicio
+  async handleDifficulty(e) {
+    const userDifficulty = e.target ? e.target.value : "";
+    const idQuestion = this.props.match.params.idExercicio;
     const request = {
-      userDifficulty:userDifficulty
-    }
-    try{
-      this.setState({loadDifficulty:true})
-      const response = await api.post(`/difficulty/question/${idQuestion}/store`,request)
-      this.setState({ 
-        userDifficulty:userDifficulty,
-        loadDifficulty:false
-      })
-    }
-    catch(err){
-      this.setState({loadDifficulty:false})
+      userDifficulty: userDifficulty
+    };
+    try {
+      this.setState({ loadDifficulty: true });
+      const response = await api.post(
+        `/difficulty/question/${idQuestion}/store`,
+        request
+      );
+      this.setState({
+        userDifficulty: userDifficulty,
+        loadDifficulty: false
+      });
+    } catch (err) {
+      this.setState({ loadDifficulty: false });
       console.log(err);
     }
   }

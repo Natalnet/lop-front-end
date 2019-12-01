@@ -27,7 +27,7 @@ export default class HomeProvasScreen extends Component {
     super(props);
     this.state = {
       contentInputSeach: "",
-      listas: [],
+      provas: [],
       questions: [],
       showModal: false,
       loadingProvas: false,
@@ -57,7 +57,7 @@ export default class HomeProvasScreen extends Component {
       console.log("provas");
       console.log(response.data);
       this.setState({
-        listas: [...response.data.docs],
+        provas: [...response.data.docs],
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
@@ -117,7 +117,7 @@ export default class HomeProvasScreen extends Component {
 
   render() {
     const {
-      listas,
+      provas,
       fieldFilter,
       loadingProvas,
       contentInputSeach,
@@ -130,7 +130,7 @@ export default class HomeProvasScreen extends Component {
       <TemplateSistema active="provas">
         <div className="row" style={{ marginBottom: "15px" }}>
           <div className="col-12">
-            <h3 style={{ margin: "0px" }}> Listas de Exercícios</h3>
+            <h3 style={{ margin: "0px" }}> provas de Exercícios</h3>
           </div>
         </div>
         <div className="row" style={{ marginBottom: "15px" }}>
@@ -170,6 +170,7 @@ export default class HomeProvasScreen extends Component {
                 <tr>
                   <th>Nome</th>
                   <th>Código</th>
+                  <th>Senha</th>
                   <th>Criado em</th>
                   <th className="text-center"></th>
                 </tr>
@@ -191,18 +192,19 @@ export default class HomeProvasScreen extends Component {
                     </td>
                   </tr>
                 ) : (
-                  listas.map((lista, index) => {
+                  provas.map((prova, index) => {
                     return (
                       <Fragment key={index}>
                         <tr>
-                          <td>{lista.title}</td>
-                          <td>{lista.code}</td>
-                          <td>{formataData(lista.createdAt)}</td>
+                          <td>{prova.title}</td>
+                          <td>{prova.code}</td>
+                          <td>{prova.password}</td>
+                          <td>{formataData(prova.createdAt)}</td>
                           <td className="text-center">
                             <button
                               className="btn btn-primary float-right"
                               onClick={() =>
-                                this.handleShowModalInfo(lista.questions)
+                                this.handleShowModalInfo(prova.questions)
                               }
                             >
                               <i className="fa fa-info" />

@@ -61,7 +61,8 @@ export default class Editor extends Component {
       loadingExercicio: true,
       userDifficulty: "",
       loadDifficulty: false,
-      salvandoRascunho: false
+      salvandoRascunho: false,
+      char_change_number:0,
     };
     this.cardEnunciadoRef = createRef();
     this.cardExemplos = createRef();
@@ -71,6 +72,7 @@ export default class Editor extends Component {
     this.setState({ tempo_inicial: new Date() });
     await this.getInfoTurma();
     await this.getExercicio();
+    this.salvaAcesso();
     this.appStyles();
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
@@ -96,6 +98,20 @@ export default class Editor extends Component {
         cardEnunciado.setAttribute("style", `height:${heightCardExemplos}px`);
       cardExemplos &&
         cardExemplos.setAttribute("style", `height:${heightCardExemplos}px`);
+    }
+  }
+  async salvaAcesso(){
+    const ip = await findLocalIp(false);
+    const idQuestion = this.props.match.params.idExercicio;
+    const request = {
+      ip : ip[0],
+      environment:'desktop',
+    }
+    try{
+      await api.post(`/access/question/${idQuestion}/store`,request)
+    }
+    catch(err){
+      console.log(err);
     }
   }
   async getInfoTurma() {
@@ -128,7 +144,7 @@ export default class Editor extends Component {
   async getExercicio() {
     console.log("aki");
     console.log(this.props.match.params);
-    const id = this.props.match.params.idQuestions;
+    const id = this.props.match.params.idExercicio;
     const query = `?exclude=solution`;
     try {
       const response = await api.get(`/question/${id}${query}`);
@@ -141,8 +157,9 @@ export default class Editor extends Component {
         katexDescription: response.data.katexDescription || "",
         difficulty: response.data.difficulty,
         userDifficulty: response.data.userDifficulty || "",
-        solution: response.data.questionDraft || "",
-        loadingExercicio: false
+        solution: response.data.questionDraft?response.data.questionDraft.answer:'',
+        char_change_number:response.data.questionDraft?response.data.questionDraft.char_change_number:0,
+        loadingExercicio: false,
       });
     } catch (err) {
       this.setState({ loadingExercicio: false });
@@ -150,8 +167,10 @@ export default class Editor extends Component {
   }
   async salvaRascunho(showMsg = true) {
     const idQuestion = this.props.match.params.idExercicio;
+    const {solution,char_change_number} = this.state
     const request = {
-      answer: this.state.solution
+      answer: solution,
+      char_change_number,
     };
     try {
       this.setState({ salvandoRascunho: true });
@@ -180,13 +199,13 @@ export default class Editor extends Component {
   async submeter(e) {
     e.preventDefault();
     const timeConsuming = new Date() - this.state.tempo_inicial;
-    const { solution, language, results } = this.state;
+    const { solution, language, results ,char_change_number} = this.state;
     console.log("solution:");
     console.log(solution);
     const request = {
       codigo: solution,
       linguagem: language,
-      results: results
+      results: results,
     };
     console.log("codigo aparado");
     console.log(request.codigo);
@@ -197,7 +216,8 @@ export default class Editor extends Component {
       this.saveSubmission(
         request,
         response.data.percentualAcerto,
-        timeConsuming
+        timeConsuming,
+        char_change_number
       );
       console.log("sumbissão: ");
       console.log(response.data);
@@ -213,7 +233,7 @@ export default class Editor extends Component {
       alert("erro na conexão com o servidor");
     }
   }
-  async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming) {
+  async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming,char_change_number) {
     const idQuestion = this.props.match.params.idExercicio;
     const query = `?class=${this.props.match.params.id}`;
 
@@ -226,7 +246,8 @@ export default class Editor extends Component {
         hitPercentage: hitPercentage,
         timeConsuming: timeConsuming,
         ip: ip[0],
-        environment: "desktop"
+        environment: "desktop",
+        char_change_number
       };
       const response = await api.post(
         `/submission/question/${idQuestion}/store${query}`,
@@ -246,7 +267,10 @@ export default class Editor extends Component {
     await this.setState({ theme: e.target.value });
   }
   handleSolution(newValue) {
-    this.setState({ solution: newValue });
+    this.setState({ 
+      solution: newValue,
+      char_change_number:this.state.char_change_number+1,
+    });
   }
   async handleDifficulty(e) {
     const userDifficulty = e.target ? e.target.value : "";
