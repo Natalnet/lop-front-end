@@ -18,18 +18,16 @@ export default class Exercicios extends Component {
     this.state = {
       redirect: false,
       prova: null,
-      loandingLista: true,
+      loandingProva: true,
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
-      todasListas: []
     };
   }
 
   async componentDidMount() {
     await this.getInfoTurma();
-    await this.getLista();
-
-    //document.title = `${this.state.turma.name} - ${this.state.prova.title}`;
+    await this.getProva();
+    
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -58,19 +56,24 @@ export default class Exercicios extends Component {
       this.setState({ loadingInfoTurma: false });
     }
   }
-  async getLista() {
+  async getProva() {
     try {
-      console.log("akii");
-      console.log(this.props.match.params);
       const idClass = this.props.match.params.id;
       const idTest = this.props.match.params.idTest;
       const response = await api.get(`/test/${idTest}/class/${idClass}`);
-      console.log("listas");
+      console.log("provas");
       console.log(response.data);
-      this.setState({
-        prova: response.data,
-        loandingLista: false
-      });
+      if(response.data.status==="FECHADA"){
+        this.props.history.push(`/aluno/turma/${idClass}/provas`)
+        return null
+      }
+      else{
+        this.setState({
+          prova: response.data,
+          loandingProva: false
+        });
+        document.title = `${this.state.turma.name} - ${response.data.title}`;
+      }
     } catch (err) {
       console.log(err);
     }
@@ -79,7 +82,7 @@ export default class Exercicios extends Component {
   RecolherProva = e => {};
 
   render() {
-    const { loadingInfoTurma, turma, loandingLista, prova } = this.state;
+    const { loadingInfoTurma, turma, loandingProva, prova } = this.state;
     const questionsCompleted =
       prova && prova.questions.filter(q => q.completed);
     const completed =
@@ -99,7 +102,7 @@ export default class Exercicios extends Component {
             )}
           </Col>
         </Row>
-        {loandingLista ? (
+        {loandingProva ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>

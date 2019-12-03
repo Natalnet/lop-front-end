@@ -1,6 +1,7 @@
 import React, { Component, Fragment, createRef } from "react";
 //import PropTypes from "prop-types";
-import api from "../../../services/api";
+import api,{baseUrlBackend} from "../../../services/api";
+import socket from "socket.io-client";
 import findLocalIp from "../../../util/funçoesAuxiliares/findLocalIp";
 import { Link } from "react-router-dom";
 import HTMLFormat from "../../../components/ui/htmlFormat";
@@ -63,15 +64,19 @@ export default class Editor extends Component {
       loadDifficulty: false,
       salvandoRascunho: false,
       char_change_number:0,
+      status:''
     };
     this.cardEnunciadoRef = createRef();
     this.cardExemplos = createRef();
   }
 
   async componentDidMount() {
-    this.setState({ tempo_inicial: new Date() });
+    
     await this.getInfoTurma();
+    await this.getProva()
     await this.getExercicio();
+    this.setState({ tempo_inicial: new Date() });
+    this.getProvasRealTime()
     this.salvaAcesso();
     this.appStyles();
     document.title = `${this.state.title}`;
@@ -141,6 +146,28 @@ export default class Editor extends Component {
       this.setState({ loadingInfoTurma: false });
     }
   }
+  async getProva() {
+    try {
+      const idClass = this.props.match.params.id;
+      const idTest = this.props.match.params.idTest;
+      const response = await api.get(`/test/${idTest}/class/${idClass}`);
+      if(response.data.status==="FECHADA"){
+        this.props.history.push(`/aluno/turma/${idClass}/provas`)
+        return null
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  getProvasRealTime(){
+    const io = socket(baseUrlBackend);
+    io.emit("connectRoonClass",this.props.match.params.id);
+
+    io.on("changeStatusTest", reponse => {
+      let {provas} = this.state
+      this.setState({status:reponse.status})
+    })
+  }
   async getExercicio() {
     console.log("aki");
     console.log(this.props.match.params);
@@ -198,6 +225,13 @@ export default class Editor extends Component {
   }
   async submeter(e) {
     e.preventDefault();
+    if(this.state.status==="FECHADA"){
+      Swal.fire({
+        type: "error",
+        title: "O professor recolheu a prova! :'("
+      });
+      return null
+    }
     const timeConsuming = new Date() - this.state.tempo_inicial;
     const { solution, language, results ,char_change_number} = this.state;
     console.log("solution:");

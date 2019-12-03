@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api,{baseUrlBackend} from "../../../services/api";
 import Swal from "sweetalert2";
+import bcrypt from 'bcryptjs'
 import { Link } from "react-router-dom";
 import { Modal, ProgressBar } from "react-bootstrap";
 import "katex/dist/katex.min.css";
@@ -25,26 +26,16 @@ export default class Provas extends Component {
       provas: [],
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
-      loandingTodasListas: true,
       loandingListas: false,
-      showModalListas: false,
-      showModalInfo: false,
+
       todasListas: [],
-      numPageAtual: 1,
-      totalItens: 0,
-      totalPages: 0,
-      contentInputSeach: "",
-      fieldFilter: "title",
-      questions: [],
       password: ""
     };
   }
 
   async componentDidMount() {
     this.getProvas();
-    //this.getTodasProvas();
     this.getProvasRealTime()
-
     await this.getInfoTurma();
     document.title = `${this.state.turma.name} - provas`;
   }
@@ -93,29 +84,6 @@ export default class Provas extends Component {
     }
   }
 
-  async getTodasProvas() {
-    const { numPageAtual, contentInputSeach, fieldFilter } = this.state;
-    let query = `include=${contentInputSeach.trim()}`;
-    query += `&field=${fieldFilter}`;
-    try {
-      this.setState({ loandingTodasListas: true });
-      const id = this.props.match.params.id;
-      const response = await api.get(
-        `/test/class/${id}/page/${numPageAtual}?${query}`
-      );
-      console.log("todasListas");
-      console.log(response.data.docs);
-      this.setState({
-        todasListas: [...response.data.docs],
-        totalItens: response.data.total,
-        totalPages: response.data.totalPages,
-        loandingTodasListas: false
-      });
-    } catch (err) {
-      this.setState({ loandingTodasListas: false });
-      console.log(err);
-    }
-  }
   getProvasRealTime(){
     const io = socket(baseUrlBackend);
     io.emit("connectRoonClass",this.props.match.params.id);
@@ -167,7 +135,9 @@ export default class Provas extends Component {
           }
         })
         if(value){
-          sessionStorage.setItem('passwordTest',value)
+          //gera hash da senha
+          const hashCode = value.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)
+          sessionStorage.setItem('passwordTest',hashCode)
           this.props.history.push(url)
         }
       }
@@ -177,76 +147,18 @@ export default class Provas extends Component {
 
     }
   }
-  handlePage(e, numPage) {
-    e.preventDefault();
-    //console.log(numPage);
-    this.setState(
-      {
-        numPageAtual: numPage
-      },
-      () => this.getTodasProvas()
-    );
-  }
-  handleShowModalInfo(questions) {
-    this.setState({
-      showModalInfo: true,
-      questions: [...questions]
-    });
-  }
-  handleCloseshowModalInfo(e) {
-    this.setState({ showModalInfo: false });
-  }
-  handleShowModalListas(e) {
-    this.setState({ showModalListas: true });
-  }
-  handleCloseshowModalListas(e) {
-    this.setState({ showModalListas: false });
-  }
 
-  handleSelectFieldFilter(e) {
-    console.log(e.target.value);
-    this.setState(
-      {
-        fieldFilter: e.target.value
-      } /*,()=>this.getTodasProvas()*/
-    );
-  }
-
-  handleContentInputSeach(e) {
-    this.setState(
-      {
-        contentInputSeach: e.target.value
-      } /*,()=>this.getTodasProvas()*/
-    );
-  }
-  filterSeash() {
-    this.getTodasProvas();
-  }
-  clearContentInputSeach() {
-    this.setState(
-      {
-        contentInputSeach: ""
-      },
-      () => this.getTodasProvas()
-    );
-  }
 
   render() {
     const {
       loadingInfoTurma,
       turma,
       todasListas,
-      loandingTodasListas,
-      totalPages,
-      numPageAtual,
       provas
     } = this.state;
     const {
       contentInputSeach,
       fieldFilter,
-      showModalListas,
-      questions,
-      showModalInfo,
       loandingListas
     } = this.state;
     return (
@@ -305,59 +217,6 @@ export default class Provas extends Component {
                         </button>
                       :null
                       }
-
-                        <div
-                          className="modal fade"
-                          id="ModalRecolherProva"
-                          tabindex="-1"
-                          role="dialog"
-                          aria-hidden="true"
-                        >
-                          <div
-                            className="modal-dialog modal-dialog-centered"
-                            role="document"
-                          >
-                            <div className="modal-content">
-                              <div className="modal-header">
-                                <h5 className="modal-title">
-                                  Senha para acessar a prova
-                                </h5>
-                                <button
-                                  type="button"
-                                  className="close"
-                                  data-dismiss="modal"
-                                  aria-label="Close"
-                                >
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div className="modal-body">
-                                <label htmlFor="inputSenha">
-                                  <b>
-                                    Para acessar a prova e necessário informar a
-                                    Senha:
-                                  </b>
-                                </label>
-                                <input
-                                  id="inputSenha"
-                                  type="password"
-                                  value={this.state.password}
-                                  className="form-control"
-                                  placeholder="Senha para acessar prova"
-                                />
-                              </div>
-                              <div className="modal-footer">
-                                <Link
-                                  to={`/aluno/turma/${this.props.match.params.id}/prova/${prova.id}`}
-                                >
-                                  <button type="button" className="btn btn-success">
-                                    Acessar Prova
-                                  </button>
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
                       </CardOptions>
                     </CardHead>
                   </Card>
@@ -367,170 +226,6 @@ export default class Provas extends Component {
             })
           )}
         </Row>
-
-        <Modal
-          show={showModalListas}
-          onHide={this.handleCloseshowModalListas.bind(this)}
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-        >
-          <Modal.Header>
-            <Modal.Title id="contained-modal-title-vcenter">Provas</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Fragment>
-              <Row mb={15}>
-                <div className=" col-12">
-                  <InputGroup
-                    placeholder={`Perquise pelo ${
-                      fieldFilter === "title"
-                        ? "Nome"
-                        : fieldFilter === "code"
-                        ? "Código"
-                        : "..."
-                    }`}
-                    value={contentInputSeach}
-                    handleContentInputSeach={this.handleContentInputSeach.bind(
-                      this
-                    )}
-                    filterSeash={this.filterSeash.bind(this)}
-                    handleSelect={this.handleSelectFieldFilter.bind(this)}
-                    options={[
-                      { value: "title", content: "Nome" },
-                      { value: "code", content: "Código" }
-                    ]}
-                    clearContentInputSeach={this.clearContentInputSeach.bind(
-                      this
-                    )}
-                    loading={loandingTodasListas}
-                  />
-                </div>
-              </Row>
-              <div className="row">
-                {loandingTodasListas ? (
-                  <div className="loader" style={{ margin: "0px auto" }} />
-                ) : (
-                  todasListas.map((prova, index) => (
-                    <div key={prova.id} className="col-6">
-                      <Card>
-                        <CardHead>
-                          <CardTitle>
-                            {`${prova.title} - ${prova.code}`}
-                          </CardTitle>
-                          <CardOptions>
-                            <div
-                              className="btn-group  float-right"
-                              role="group"
-                              aria-label="Exemplo básico"
-                            >
-                              <button
-                                className="btn-primary btn"
-                                onClick={() => this.inserirProva(prova.id)}
-                              >
-                                Adicionar
-                              </button>
-                              <button
-                                className="btn btn-primary"
-                                data-toggle="collapse"
-                                data-target={"#collapse" + prova.id}
-                                style={{ position: "relative" }}
-                              >
-                                <i className="fe fe-chevron-down" />
-                              </button>
-                            </div>
-                          </CardOptions>
-                        </CardHead>
-                        <div className="collapse" id={"collapse" + prova.id}>
-                          <CardBody>
-                            <b>Questões: </b> <br />
-                            <br />
-                            {prova.questions.map((question, index) => (
-                              <div key={question.id}>
-                                <p>{index + 1 + " - " + question.title}</p>
-                              </div>
-                            ))}
-                          </CardBody>
-                        </div>
-                      </Card>
-                    </div>
-                  ))
-                )}
-              </div>
-              <div className="row">
-                <div className="col-12 text-center">
-                  <NavPagination
-                    totalPages={totalPages}
-                    pageAtual={numPageAtual}
-                    handlePage={this.handlePage.bind(this)}
-                  />
-                </div>
-              </div>
-            </Fragment>
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              className="btn btn-primary"
-              onClick={this.handleCloseshowModalListas.bind(this)}
-            >
-              Fechar
-            </button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal
-          show={showModalInfo}
-          onHide={this.handleCloseshowModalInfo.bind(this)}
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-        >
-          <Modal.Header>
-            <Modal.Title id="contained-modal-title-vcenter">
-              Questões
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="row">
-              {questions.map((questao, index) => (
-                <div key={index} className="col-6">
-                  <Card>
-                    <CardHead>
-                      <CardTitle>{questao.title}</CardTitle>
-                      <CardOptions>
-                        <button
-                          className="btn btn-primary"
-                          data-toggle="collapse"
-                          data-target={"#collapse" + questao.id}
-                          style={{ position: "relative" }}
-                        >
-                          <i className="fe fe-chevron-down" />
-                        </button>
-                      </CardOptions>
-                    </CardHead>
-                    <div className="collapse" id={"collapse" + questao.id}>
-                      <CardBody>
-                        <b>Descrição: </b>
-                        <p>{questao.description}</p>
-                        <br />
-                        <BlockMath>{questao.katexDescription || ""}</BlockMath>
-                        <br />
-                      </CardBody>
-                    </div>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              className="btn btn-primary"
-              onClick={this.handleCloseshowModalInfo.bind(this)}
-            >
-              Fechar
-            </button>
-          </Modal.Footer>
-        </Modal>
       </TemplateSistema>
     );
   }

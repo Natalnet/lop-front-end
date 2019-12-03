@@ -30,6 +30,7 @@ export default class HomesubmissoesScreen extends Component {
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
+            docsPerPage:15,
             submissao:'',
 
         }
@@ -74,12 +75,13 @@ export default class HomesubmissoesScreen extends Component {
     }
     async getSubmissoes(loading=true){
         const id = this.props.match.params.id
-        const {numPageAtual,contentInputSeach,fieldFilter} = this.state
-        let query = `include=${contentInputSeach.trim()}`
+        const {numPageAtual,contentInputSeach,fieldFilter,docsPerPage} = this.state
+        let query = `?include=${contentInputSeach.trim()}`
         query += `&field=${fieldFilter}`
+        query += `&docsPerPage=${docsPerPage}`
         try{
             if(loading) this.setState({loadingSubmissoes:true})
-            const response = await api.get(`/class/${id}/submissions/page/${numPageAtual}?${query}`)
+            const response = await api.get(`/class/${id}/submissions/page/${numPageAtual}${query}`)
             console.log('todas submissoes:');
             console.log(response.data);
             this.setState({
@@ -99,7 +101,23 @@ export default class HomesubmissoesScreen extends Component {
         const id = this.props.match.params.id
         io.emit('connectRoonClass',id)//conectando à sala
         io.on('SubmissionClass',response=>{
-            this.getSubmissoes(false)
+            console.log('socket response');
+            console.log(response);
+            const {numPageAtual,submissoes,docsPerPage} = this.state
+            if(numPageAtual===1){
+                console.log('estado');
+                let sub = [...submissoes]
+                if(submissoes.length===docsPerPage){
+                    sub.pop()
+                }
+                sub = [response,...sub]
+                this.setState({submissoes:sub})
+            }
+            else{
+                this.getSubmissoes(false)
+            }
+
+            
         })
     }
     handleShowModalInfo(submissao){
