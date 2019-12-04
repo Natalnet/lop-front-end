@@ -23,7 +23,13 @@ export default class Exercicios extends Component {
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
     };
   }
-
+    componentWillMount(){
+        const idClass = this.props.match.params.id
+        const turmas = JSON.parse(sessionStorage.getItem('user.classes'))
+        const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
+        if(turmas && !turmas.includes(idClass))
+            this.props.history.push(`/${profile}`)
+    }
   async componentDidMount() {
     await this.getInfoTurma();
     await this.getProva();

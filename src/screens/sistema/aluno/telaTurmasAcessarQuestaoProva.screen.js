@@ -69,7 +69,13 @@ export default class Editor extends Component {
     this.cardEnunciadoRef = createRef();
     this.cardExemplos = createRef();
   }
-
+    componentWillMount(){
+        const idClass = this.props.match.params.id
+        const turmas = JSON.parse(sessionStorage.getItem('user.classes'))
+        const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
+        if(turmas && !turmas.includes(idClass))
+            this.props.history.push(`/${profile}`)
+    }
   async componentDidMount() {
     
     await this.getInfoTurma();

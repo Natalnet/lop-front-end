@@ -33,7 +33,7 @@ export default class HomeAlunoScreen extends Component {
  
   componentDidMount() {
     this.getInfoUser()
-    document.title = "Sistema Aluno - Plataforma LOP";
+    document.title = "Plataforma LOP";
   }
   async getInfoUser(){
     try{
@@ -41,10 +41,13 @@ export default class HomeAlunoScreen extends Component {
       const response = await api.get('/user/classes')
       console.log('minhas turmas');
       console.log(response.data)
+      const minhasTurmas = [...response.data]
+      sessionStorage.setItem('user.classes',JSON.stringify(minhasTurmas.map(t=>t.id)))
       this.setState({
-        minhasTurmas:[...response.data],
+        minhasTurmas,
         loadingTurmas:false
       })
+      
     }
     catch(err){
       this.setState({loadingTurmas:false})
