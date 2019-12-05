@@ -1,8 +1,10 @@
-import React, { Component } from "react";
+import React, { Component,Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
 import NavPagination from "components/ui/navs/navPagination";
+import { Link } from "react-router-dom";
+
 
 export default class Pagina extends Component {
     constructor(props){
@@ -213,14 +215,19 @@ export default class Pagina extends Component {
                                         <td>{user.enrollment}</td>
                                         <td>{user.profile}</td>
                                         <td>
-                                            <button className="btn btn-primary mr-2">
-                                                <i className="fa fa-info"/>
-                                            </button>
 
-                                            {user.profile!=="PROFESSOR" && 
-                                            <button className="btn btn-danger" onClick={()=>this.removerParticipante(user)}>
-                                                <i className="fa fa-trash "/>
-                                            </button>
+
+                                            {user.profile!=="PROFESSOR" &&
+                                            <Fragment> 
+                                                <Link to={`/professor/turma/${this.props.match.params.id}/participantes/${user.id}/listas`}>
+                                                    <button className="btn btn-primary mr-2">
+                                                        <i className="fa fa-info"/>
+                                                    </button>
+                                                </Link>
+                                                <button className="btn btn-danger" onClick={()=>this.removerParticipante(user)}>
+                                                    <i className="fa fa-trash "/>
+                                                </button>
+                                            </Fragment>
                                             }
                                         </td>
                                     </tr>

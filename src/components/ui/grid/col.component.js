@@ -1,7 +1,7 @@
 import React from 'react'
 
 export default (props)=>{
-	let {children,mt,mr,mb,ml,pt,pr,pb,pl,xs,xl,sm,md,lg,textCenter} = props
+	let {children,mt,mr,mb,ml,pt,pr,pb,pl,xs,xl,sm,md,lg,textCenter,textLeft,textRight} = props
 	pl = typeof pl ==="number"?pl:12
 	pr = typeof pr ==="number"?pr:12
 	const colStyle = {
@@ -15,6 +15,8 @@ export default (props)=>{
 	grid+=md?` col-md-${md}`:''
 	grid+=lg?` col-lg-${lg}`:''
 	grid+=textCenter?' text-center':''
+	grid+=textLeft?' text-left':''
+	grid+=textRight?' text-right':''
 	return(
 		<div className={grid} style={colStyle}>
 			{children}
