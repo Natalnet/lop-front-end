@@ -14,11 +14,9 @@ import CriarProvaScreen from "screens/sistema/Professor/criarProva.screen";
 import CriarExercicioScreen from "screens/sistema/Professor/criarExercicios.screen";
 import Erro401 from "../screens/erros/error401.screen";
 import TelaTurmaParticipantes from "../screens/sistema/Professor/telaTurmaParticipantes.screen";
-
 import TelaTurmaParticipantesListas from "../screens/sistema/Professor/telaTurmaParticipantesListas.screen.js";
-
-import TelaTurmaParticipantesExercicios from "../screens/sistema/Professor/telaTurmaParticipantesExercicios.screen.js";
-
+import TelaTurmaParticipantesLista from "../screens/sistema/Professor/telaTurmaParticipantesLista.screen.js";
+import TelaTurmaParticipantesProva from "../screens/sistema/Professor/telaTurmaParticipantesProva.screen.js";
 import TelaTurmaProvas from "../screens/sistema/Professor/telaTurmaProvas.screen";
 import TelaTurmaSolicitacoes from "../screens/sistema/Professor/telaTurmasSolicitacoes.screen";
 import TelaTurmaLista from "../screens/sistema/Professor/telaTurmaListas.screen";
@@ -128,7 +126,13 @@ const routes = [
   },
   {
     path: "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicios",
-    component: TelaTurmaParticipantesExercicios,
+    component: TelaTurmaParticipantesLista,
+    private: true,
+    perfil: "PROFESSOR"
+  }, 
+  {
+    path: "/professor/turma/:id/participantes/:idUser/provas/:idProva/exercicios",
+    component: TelaTurmaParticipantesProva,
     private: true,
     perfil: "PROFESSOR"
   },  

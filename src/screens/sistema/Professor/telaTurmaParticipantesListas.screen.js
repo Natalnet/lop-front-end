@@ -84,7 +84,6 @@ export default class Listas extends Component {
         <TemplateSistema {...this.props} active={'participantes'} submenu={'telaTurmas'}>
             <Fragment>
                 <Row mb={15}>
-                    
                         {loadingInfoTurma || loandingListas?
                             
                             <div className="loader"  style={{margin:'0px auto'}}></div>
@@ -158,22 +157,22 @@ export default class Listas extends Component {
                         </Col>
                     </Row>
                     <Row mb={15}>
-                        {provas.map((lista,i)=>{
-                            const questions = lista.questions
-                            const questionsCompleted = lista.questions.filter(q=>q.completed)
+                        {provas.map((prova,i)=>{
+                            const questions = prova.questions
+                            const questionsCompleted = prova.questions.filter(q=>q.completed)
                             const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
                             return(
-                            <Fragment key={lista.id}>
+                            <Fragment key={prova.id}>
                             <Col xs={12}>
-                            <Card key={lista.id} style={{margin:'2px'}}>
+                            <Card key={prova.id} style={{margin:'2px'}}>
                                 <CardHead>
                                     <Col xs={5}>
-                                        <h4 style={{margin:'0px'}}><b>{lista.title}</b></h4>
+                                        <h4 style={{margin:'0px'}}><b>{prova.title}</b></h4>
                                     </Col>
                                     <ProgressBar now={completed} label={`${completed}%`} style={{width:'45%'}} />
                                     
                                     <CardOptions>
-                                        <Link to={``}>
+                                        <Link to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario.id}/provas/${prova.id}/exercicios`}>
                                             <button className="btn btn-success">
                                                 Acessar <i className="fa fa-wpexplorer" />
                                             </button>

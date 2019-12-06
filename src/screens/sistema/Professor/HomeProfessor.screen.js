@@ -167,7 +167,7 @@ export default class TurmasScreen extends Component {
                 {loadingTurmas?
                     range(8).map((i) => (
                         <div key={i} className="col-12 col-md-6">
-                            <br></br>
+                            
                             <Card>
                                 <CardHead></CardHead>
                                 <CardBody loading></CardBody>
