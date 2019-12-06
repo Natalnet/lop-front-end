@@ -62,7 +62,7 @@ export default class Editor extends Component {
       userDifficulty: "",
       loadDifficulty: false,
       salvandoRascunho: false,
-      char_change_number:0,
+      char_change_number: 0
     };
     this.cardEnunciadoRef = createRef();
     this.cardExemplos = createRef();
@@ -100,17 +100,16 @@ export default class Editor extends Component {
         cardExemplos.setAttribute("style", `height:${heightCardExemplos}px`);
     }
   }
-  async salvaAcesso(){
+  async salvaAcesso() {
     const ip = await findLocalIp(false);
     const idQuestion = this.props.match.params.idExercicio;
     const request = {
-      ip : ip[0],
-      environment:'desktop',
-    }
-    try{
-      await api.post(`/access/question/${idQuestion}/store`,request)
-    }
-    catch(err){
+      ip: ip[0],
+      environment: "desktop"
+    };
+    try {
+      await api.post(`/access/question/${idQuestion}/store`, request);
+    } catch (err) {
       console.log(err);
     }
   }
@@ -157,9 +156,13 @@ export default class Editor extends Component {
         katexDescription: response.data.katexDescription || "",
         difficulty: response.data.difficulty,
         userDifficulty: response.data.userDifficulty || "",
-        solution: response.data.questionDraft?response.data.questionDraft.answer:'',
-        char_change_number:response.data.questionDraft?response.data.questionDraft.char_change_number:0,
-        loadingExercicio: false,
+        solution: response.data.questionDraft
+          ? response.data.questionDraft.answer
+          : "",
+        char_change_number: response.data.questionDraft
+          ? response.data.questionDraft.char_change_number
+          : 0,
+        loadingExercicio: false
       });
     } catch (err) {
       this.setState({ loadingExercicio: false });
@@ -167,10 +170,10 @@ export default class Editor extends Component {
   }
   async salvaRascunho(showMsg = true) {
     const idQuestion = this.props.match.params.idExercicio;
-    const {solution,char_change_number} = this.state
+    const { solution, char_change_number } = this.state;
     const request = {
       answer: solution,
-      char_change_number,
+      char_change_number
     };
     try {
       this.setState({ salvandoRascunho: true });
@@ -199,13 +202,13 @@ export default class Editor extends Component {
   async submeter(e) {
     e.preventDefault();
     const timeConsuming = new Date() - this.state.tempo_inicial;
-    const { solution, language, results ,char_change_number} = this.state;
+    const { solution, language, results, char_change_number } = this.state;
     console.log("solution:");
     console.log(solution);
     const request = {
       codigo: solution,
       linguagem: language,
-      results: results,
+      results: results
     };
     console.log("codigo aparado");
     console.log(request.codigo);
@@ -233,7 +236,12 @@ export default class Editor extends Component {
       alert("erro na conexão com o servidor");
     }
   }
-  async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming,char_change_number) {
+  async saveSubmission(
+    { codigo, linguagem },
+    hitPercentage,
+    timeConsuming,
+    char_change_number
+  ) {
     const idQuestion = this.props.match.params.idExercicio;
     const query = `?class=${this.props.match.params.id}`;
 
@@ -267,9 +275,9 @@ export default class Editor extends Component {
     await this.setState({ theme: e.target.value });
   }
   handleSolution(newValue) {
-    this.setState({ 
+    this.setState({
       solution: newValue,
-      char_change_number:this.state.char_change_number+1,
+      char_change_number: this.state.char_change_number + 1
     });
   }
   async handleDifficulty(e) {

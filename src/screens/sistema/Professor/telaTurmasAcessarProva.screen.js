@@ -28,7 +28,7 @@ export default class Exercicios extends Component {
   }
 
   async componentDidMount() {
-    document.title = "Professor - provas"
+    document.title = "Professor - provas";
     await this.getInfoTurma();
     await this.getProva();
 
@@ -72,77 +72,74 @@ export default class Exercicios extends Component {
       console.log(response.data);
       this.setState({
         prova: response.data,
-        loandingProva: false,
+        loandingProva: false
       });
     } catch (err) {
       console.log(err);
     }
   }
-  async aplicarProva(){
+  async aplicarProva() {
     const idTest = this.props.match.params.idTest;
-    const query = `?idClass=${this.props.match.params.id}`
+    const query = `?idClass=${this.props.match.params.id}`;
     const request = {
-      status : "ABERTA"
-    }
-    try{
-        Swal.fire({
-          title: "Aplicando prova",
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          allowEnterKey: false
-        });
-        Swal.showLoading();
-        await api.put(`/test/${idTest}/update${query}`,request)
-        const {prova} = this.state
-        prova.status = "ABERTA"
-        this.setState({prova})
-        Swal.hideLoading();
-        Swal.fire({
-          type: "success",
-          title: "Prova aplicada com sucesso!"
-        });
-    }
-    catch(err){
+      status: "ABERTA"
+    };
+    try {
+      Swal.fire({
+        title: "Aplicando prova",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      Swal.showLoading();
+      await api.put(`/test/${idTest}/update${query}`, request);
+      const { prova } = this.state;
+      prova.status = "ABERTA";
+      this.setState({ prova });
+      Swal.hideLoading();
+      Swal.fire({
+        type: "success",
+        title: "Prova aplicada com sucesso!"
+      });
+    } catch (err) {
       console.log(err);
-        Swal.hideLoading();
-        Swal.fire({
-          type: "error",
-          title: "Erro: Não foi possivel aplicar prova"
-        });
-
+      Swal.hideLoading();
+      Swal.fire({
+        type: "error",
+        title: "Erro: Não foi possivel aplicar prova"
+      });
     }
   }
-  async recolherProva(){
+  async recolherProva() {
     const idTest = this.props.match.params.idTest;
-    const query = `?idClass=${this.props.match.params.id}`
+    const query = `?idClass=${this.props.match.params.id}`;
     const request = {
-      status : "FECHADA"
-    }
-    try{
-        Swal.fire({
-          title: "Recolhendo provas",
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          allowEnterKey: false
-        });
-        Swal.showLoading();
-        await api.put(`/test/${idTest}/update${query}`,request)
-        const {prova} = this.state
-        prova.status = "FECHADA"
-        this.setState({prova})
-        Swal.hideLoading();
-        Swal.fire({
-          type: "success",
-          title: "Provas recolhidas com sucesso!"
-        });
-    }
-    catch(err){
+      status: "FECHADA"
+    };
+    try {
+      Swal.fire({
+        title: "Recolhendo provas",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      Swal.showLoading();
+      await api.put(`/test/${idTest}/update${query}`, request);
+      const { prova } = this.state;
+      prova.status = "FECHADA";
+      this.setState({ prova });
+      Swal.hideLoading();
+      Swal.fire({
+        type: "success",
+        title: "Provas recolhidas com sucesso!"
+      });
+    } catch (err) {
       console.log(err);
-        Swal.hideLoading();
-        Swal.fire({
-          type: "error",
-          title: "Erro: Não foi possivel recolher provas"
-        });
+      Swal.hideLoading();
+      Swal.fire({
+        type: "error",
+        title: "Erro: Não foi possivel recolher provas"
+      });
     }
   }
 
@@ -181,24 +178,23 @@ export default class Exercicios extends Component {
                     <i className="fa fa-file-text" />
                   </button>
                 </Link>
-                {prova.status==="FECHADA"
-                  ?
+                {prova.status === "FECHADA" ? (
                   <button
                     className="btn btn-primary"
                     style={{ float: "right" }}
-                    onClick={(e)=> this.aplicarProva()}
+                    onClick={e => this.aplicarProva()}
                   >
                     Aplicar prova <i className="fa fa-file-text" />
                   </button>
-                  :
+                ) : (
                   <button
                     className="btn btn-danger"
                     style={{ float: "right" }}
-                    onClick={(e)=> this.recolherProva()}
+                    onClick={e => this.recolherProva()}
                   >
                     Recolher Prova <i className="fa fa-file-text" />
                   </button>
-                }
+                )}
 
                 <div
                   className="modal fade"
