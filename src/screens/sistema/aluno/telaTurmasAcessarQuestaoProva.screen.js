@@ -4,6 +4,7 @@ import api,{baseUrlBackend} from "../../../services/api";
 import socket from "socket.io-client";
 import findLocalIp from "../../../util/funçoesAuxiliares/findLocalIp";
 import { Link } from "react-router-dom";
+import generateHash from '../../../util/funçoesAuxiliares/generateHash'
 import HTMLFormat from "../../../components/ui/htmlFormat";
 import Swal from "sweetalert2";
 import apiCompiler from "../../../services/apiCompiler";
@@ -157,7 +158,10 @@ export default class Editor extends Component {
       const idClass = this.props.match.params.id;
       const idTest = this.props.match.params.idTest;
       const response = await api.get(`/test/${idTest}/class/${idClass}`);
-      if(response.data.status==="FECHADA"){
+      const prova = response.data
+      const password = sessionStorage.getItem(`passwordTest-${prova.id}`)
+      const hashCode = `${generateHash(prova.password)}-${prova.id}`
+      if(prova.status==="FECHADA" || !password || password!==hashCode){
         this.props.history.push(`/aluno/turma/${idClass}/provas`)
         return null
       }
@@ -174,6 +178,7 @@ export default class Editor extends Component {
       this.setState({status:reponse.status})
     })
   }
+  
   async getExercicio() {
     console.log("aki");
     console.log(this.props.match.params);

@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
+import generateHash from '../../../util/funçoesAuxiliares/generateHash'
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -31,8 +32,8 @@ export default class Exercicios extends Component {
             this.props.history.push(`/${profile}`)
     }
   async componentDidMount() {
-    await this.getInfoTurma();
-    await this.getProva();
+    this.getInfoTurma();
+    this.getProva();
     
   }
   async getInfoTurma() {
@@ -66,16 +67,19 @@ export default class Exercicios extends Component {
     try {
       const idClass = this.props.match.params.id;
       const idTest = this.props.match.params.idTest;
+
       const response = await api.get(`/test/${idTest}/class/${idClass}`);
       console.log("provas");
       console.log(response.data);
-      if(response.data.status==="FECHADA"){
+      const prova = response.data
+      const password = sessionStorage.getItem(`passwordTest-${prova.id}`)
+      const hashCode = `${generateHash(prova.password)}-${prova.id}`
+      if(prova.status==="FECHADA" || !password || password!==hashCode){
         this.props.history.push(`/aluno/turma/${idClass}/provas`)
-        return null
       }
       else{
         this.setState({
-          prova: response.data,
+          prova,
           loandingProva: false
         });
         document.title = `${this.state.turma.name} - ${response.data.title}`;

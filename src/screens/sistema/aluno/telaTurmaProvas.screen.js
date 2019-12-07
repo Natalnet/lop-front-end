@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api,{baseUrlBackend} from "../../../services/api";
 import Swal from "sweetalert2";
-import bcrypt from 'bcryptjs'
+import generateHash from '../../../util/funçoesAuxiliares/generateHash'
 import { Link } from "react-router-dom";
 import { Modal, ProgressBar } from "react-bootstrap";
 import "katex/dist/katex.min.css";
@@ -118,9 +118,11 @@ export default class Provas extends Component {
     });
   }
   async acessar(prova){
-    const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}` 
+    const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}`
+    const password = sessionStorage.getItem(`passwordTest-${prova.id}`)
+    const hashCode = `${generateHash(prova.password)}-${prova.id}`
     try{
-      if(sessionStorage.getItem('passwordTest')){
+      if(password && password===hashCode){
         this.props.history.push(url)
       }
       else{
@@ -143,15 +145,14 @@ export default class Provas extends Component {
         })
         if(value){
           //gera hash da senha
-          const hashCode = value.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)
-          sessionStorage.setItem('passwordTest',hashCode)
+          sessionStorage.setItem(`passwordTest-${prova.id}`,hashCode)
           this.props.history.push(url)
         }
       }
 
     }
     catch(err){
-
+      console.log(err);
     }
   }
 
