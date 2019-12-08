@@ -17,6 +17,8 @@ import TelaTurmaParticipantes from "../screens/sistema/Professor/telaTurmaPartic
 import TelaTurmaParticipantesListas from "../screens/sistema/Professor/telaTurmaParticipantesListas.screen.js";
 import TelaTurmaParticipantesLista from "../screens/sistema/Professor/telaTurmaParticipantesLista.screen.js";
 import TelaTurmaParticipantesProva from "../screens/sistema/Professor/telaTurmaParticipantesProva.screen.js";
+import TelaTurmaParticipantesListaSubmissoes from "../screens/sistema/Professor/telaTurmaParticipantesListaSubmissoes.screen.js";
+import TelaTurmaParticipantesProvaSubmissoes from "../screens/sistema/Professor/telaTurmaParticipantesProvaSubmissoes.screen.js";
 import TelaTurmaProvas from "../screens/sistema/Professor/telaTurmaProvas.screen";
 import TelaTurmaSolicitacoes from "../screens/sistema/Professor/telaTurmasSolicitacoes.screen";
 import TelaTurmaLista from "../screens/sistema/Professor/telaTurmaListas.screen";
@@ -135,7 +137,19 @@ const routes = [
     component: TelaTurmaParticipantesProva,
     private: true,
     perfil: "PROFESSOR"
-  },  
+  }, 
+  {
+    path: "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicio/:idExercicio",
+    component: TelaTurmaParticipantesListaSubmissoes,
+    private: true,
+    perfil: "PROFESSOR"
+  },
+  {
+    path: "/professor/turma/:id/participantes/:idUser/provas/:idProva/exercicio/:idExercicio",
+    component: TelaTurmaParticipantesProvaSubmissoes,
+    private: true,
+    perfil: "PROFESSOR"
+  },
   {
     path: "/professor/turma/:id/provas",
     component: TelaTurmaProvas,

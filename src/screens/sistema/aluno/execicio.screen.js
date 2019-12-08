@@ -211,7 +211,10 @@ export default class Editor extends Component {
         environment: "desktop",
         char_change_number,
       };
-      await api.post(`/submission/question/${idQuestion}/store`, request);
+      await api.post(
+        `/submission/question/${idQuestion}/list/${null}/test/${null}/class/${null}/store`,
+        request
+      );      
       this.setState({ tempo_inicial: new Date() });
     } catch (err) {
       this.setState({ tempo_inicial: new Date() });

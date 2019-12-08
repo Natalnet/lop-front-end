@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import socket from "socket.io-client";
+import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
 import api, { baseUrlBackend } from "../../../services/api";
 import formataData from "../../../util/funçoesAuxiliares/formataData";
 import SwalModal from "components/ui/modal/swalModal.component";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 import "katex/dist/katex.min.css";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
@@ -21,12 +24,11 @@ export default class HomesubmissoesScreen extends Component {
     super(props);
     this.state = {
       loadingInfoTurma: true,
-      contentInputSeach: "",
       submissoes: [],
+      usuario : null,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
       showModal: false,
       loadingSubmissoes: false,
-      fieldFilter: "name",
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
@@ -37,7 +39,6 @@ export default class HomesubmissoesScreen extends Component {
   }
   async componentDidMount() {
     this.getSubmissoes();
-    this.getSubmissoesRealTime();
     await this.getInfoTurma();
     document.title = `${this.state.turma.name} - Submissões`;
   }
@@ -69,20 +70,18 @@ export default class HomesubmissoesScreen extends Component {
     }
   }
   async getSubmissoes(loading = true) {
-    const id = this.props.match.params.id;
+    const {id,idProva,idExercicio,idUser} = this.props.match.params;
+    console.log('ir prova');
+    console.log(idProva);
     const {
       numPageAtual,
-      contentInputSeach,
-      fieldFilter,
       docsPerPage
     } = this.state;
-    let query = `?include=${contentInputSeach.trim()}`;
-    query += `&field=${fieldFilter}`;
-    query += `&docsPerPage=${docsPerPage}`;
+    let query = `?docsPerPage=${docsPerPage}`;
     try {
       if (loading) this.setState({ loadingSubmissoes: true });
       const response = await api.get(
-        `/submissions/class/${id}/page/${numPageAtual}${query}`
+        `/submissions/class/${id}/user/${idUser}/test/${idProva}/question/${idExercicio}/page/${numPageAtual}${query}`
       );
       console.log("todas submissoes:");
       console.log(response.data);
@@ -91,33 +90,13 @@ export default class HomesubmissoesScreen extends Component {
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
-        loadingSubmissoes: false
+        loadingSubmissoes: false,
+        usuario : response.data.user
       });
     } catch (err) {
       this.setState({ loadingSubmissoes: false });
       console.log(err);
     }
-  }
-  getSubmissoesRealTime() {
-    const io = socket(baseUrlBackend);
-    const id = this.props.match.params.id;
-    io.emit("connectRoonClass", id); //conectando à sala
-    io.on("SubmissionClass", response => {
-      console.log("socket response");
-      console.log(response);
-      const { numPageAtual, submissoes, docsPerPage } = this.state;
-      if (numPageAtual === 1) {
-        console.log("estado");
-        let sub = [...submissoes];
-        if (submissoes.length === docsPerPage) {
-          sub.pop();
-        }
-        sub = [response, ...sub];
-        this.setState({ submissoes: sub });
-      } else {
-        this.getSubmissoes(false);
-      }
-    });
   }
   handleShowModalInfo(submissao) {
     //console.log(question);
@@ -139,25 +118,8 @@ export default class HomesubmissoesScreen extends Component {
       () => this.getSubmissoes()
     );
   }
-  handleSelectFieldFilter(e) {
-    console.log(e.target.value);
-    this.setState(
-      {
-        fieldFilter: e.target.value
-      } /*,()=>this.getSubmissoes()*/
-    );
-  }
 
-  handleContentInputSeach(e) {
-    this.setState(
-      {
-        contentInputSeach: e.target.value
-      } /*,()=>this.getSubmissoes()*/
-    );
-  }
-  filterSeash() {
-    this.getSubmissoes();
-  }
+ 
   clearContentInputSeach() {
     this.setState(
       {
@@ -177,60 +139,49 @@ export default class HomesubmissoesScreen extends Component {
       totalPages,
       submissao,
       loadingInfoTurma,
-      turma
+      turma,
+      usuario,
     } = this.state;
     return (
       <TemplateSistema
-        active="submissoes"
+        active="participantes"
         {...this.props}
         submenu={"telaTurmas"}
       >
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
-            {loadingInfoTurma ? (
+        <Row mb={15}>
+            {loadingInfoTurma || loadingSubmissoes?(
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma.name} - {turma.year}.{turma.semester || 1}
-              </h3>
+                <Col xs={12}>
+                    <h3 style={{ margin: "0px" }}>
+                      <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
+                      {turma.name} - {turma.year}.{turma.semester || 1} | {usuario.name} - {usuario.enrollment}
+                    </h3>
+                </Col>
             )}
-          </div>
-        </div>
-        <div className="row">
-          <div className="mb-3 col-12">
-            <InputGroup
-              placeholder={`Perquise pelo ${
-                fieldFilter === "name"
-                  ? "nome do aluno"
-                  : fieldFilter === "title"
-                  ? "nome da questão"
-                  : "..."
-              }`}
-              value={contentInputSeach}
-              handleContentInputSeach={this.handleContentInputSeach.bind(this)}
-              filterSeash={this.filterSeash.bind(this)}
-              handleSelect={this.handleSelectFieldFilter.bind(this)}
-              options={[
-                { value: "name", content: "Aluno" },
-                { value: "title", content: "Questão" }
-              ]}
-              clearContentInputSeach={this.clearContentInputSeach.bind(this)}
-              loading={loadingSubmissoes}
-            />
-          </div>
-        </div>
+        </Row>
+        <Row mb={15}>
+          <Col xs={12}>
+            <Link
+              to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/provas/${this.props.match.params.idProva}/exercicios`}
+            >
+              <button className="btn btn-success mr-2">
+                <i className="fa fa-arrow-left" /> Voltar para prova{" "}
+                <i className="fa fa-file-text" />
+              </button>
+            </Link>
+          </Col>
+        </Row>
         <div className="row" style={{ marginBottom: "15px" }}>
           <div className="col-12">
-            <table style={lista} className="table table-hover table-responsive">
+            <table style={lista} className="table table-hover">
               <thead>
                 <tr>
                   <th></th>
-                  <th>Nome</th>
-                  <th>Questão</th>
                   <th>Percentual de acerto</th>
                   <th>Tempo gasto</th>
                   <th>ip</th>
+                  <th>N° de variações de caractéres</th>
                   <th>Ambiente</th>
                   <th>Submetido em</th>
                   <th></th>
@@ -239,9 +190,7 @@ export default class HomesubmissoesScreen extends Component {
               <tbody>
                 {loadingSubmissoes ? (
                   <tr>
-                    <td>
-                      <div className="loader" />
-                    </td>
+
                     <td>
                       <div className="loader" />
                     </td>
@@ -276,8 +225,6 @@ export default class HomesubmissoesScreen extends Component {
                           }}
                         />
                       </td>
-                      <td>{submission.user.name}</td>
-                      <td>{submission.question.title}</td>
                       <td
                         style={{
                           color: `${
@@ -294,6 +241,7 @@ export default class HomesubmissoesScreen extends Component {
                         {parseInt((submission.timeConsuming / 1000) % 60)}seg
                       </td>
                       <td>{submission.ip}</td>
+                      <td>{submission.char_change_number}</td>
                       <td>{submission.environment}</td>
                       <td>{formataData(submission.createdAt)}</td>
                       <td>

@@ -234,8 +234,7 @@ export default class Editor extends Component {
     }
   }
   async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming,char_change_number) {
-    const idQuestion = this.props.match.params.idExercicio;
-    const query = `?class=${this.props.match.params.id}`;
+    const {id,idLista,idExercicio} = this.props.match.params;
 
     try {
       const ip = await findLocalIp(false);
@@ -249,8 +248,8 @@ export default class Editor extends Component {
         environment: "desktop",
         char_change_number
       };
-      const response = await api.post(
-        `/submission/question/${idQuestion}/store${query}`,
+      await api.post(
+        `/submission/question/${idExercicio}/list/${idLista}/test/${null}/class/${id}/store`,
         request
       );
       this.setState({ tempo_inicial: new Date() });

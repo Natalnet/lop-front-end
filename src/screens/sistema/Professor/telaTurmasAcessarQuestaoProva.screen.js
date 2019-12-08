@@ -242,8 +242,7 @@ export default class Editor extends Component {
     timeConsuming,
     char_change_number
   ) {
-    const idQuestion = this.props.match.params.idExercicio;
-    const query = `?class=${this.props.match.params.id}`;
+    const {id,idTest,idExercicio} = this.props.match.params;
 
     try {
       const ip = await findLocalIp(false);
@@ -257,8 +256,8 @@ export default class Editor extends Component {
         environment: "desktop",
         char_change_number
       };
-      const response = await api.post(
-        `/submission/question/${idQuestion}/store${query}`,
+      await api.post(
+        `/submission/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}/store`,
         request
       );
       this.setState({ tempo_inicial: new Date() });

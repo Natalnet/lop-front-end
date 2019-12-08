@@ -61,7 +61,7 @@ export default class Listas extends Component {
         try{
             const id = this.props.match.params.id
             const idUser = this.props.match.params.idUser
-            const response = await api.get(`/class/${id}/participants/${idUser}`)
+            const response = await api.get(`/class/${id}/participants/${idUser}/lists`)
             console.log('listas');
             console.log(response.data);
             this.setState({
@@ -88,15 +88,12 @@ export default class Listas extends Component {
                             
                             <div className="loader"  style={{margin:'0px auto'}}></div>
                         :
-                        <Fragment>
-                        <Col xs={6}>
-                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
-
+                        <Col xs={12}>
+                            <h3 style={{ margin: "0px" }}>
+                              <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
+                              {turma.name} - {turma.year}.{turma.semester || 1} | {usuario.name} - {usuario.enrollment}
+                            </h3>
                         </Col>
-                        <Col xs={6} textRight>
-                            <h4 style={{margin:'0px'}}> {usuario.name} - {usuario.enrollment}</h4>
-                        </Col>
-                        </Fragment>
                         }
                     
                 </Row>

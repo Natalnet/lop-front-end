@@ -90,17 +90,12 @@ export default class Exercicios extends Component {
             {loadingInfoTurma || loandingLista?(
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <Fragment>
-                <Col xs={6}>
+                <Col xs={12}>
                     <h3 style={{ margin: "0px" }}>
                       <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                      {turma.name} - {turma.year}.{turma.semester || 1}
+                      {turma.name} - {turma.year}.{turma.semester || 1} | {usuario.name} - {usuario.enrollment}
                     </h3>
                 </Col>
-                <Col xs={6} textRight>
-                    <h4 style={{margin:'0px'}}> {usuario.name} - {usuario.enrollment}</h4>
-                </Col>
-              </Fragment>
             )}
         </Row>
         <Row mb={15}>
@@ -180,9 +175,9 @@ export default class Exercicios extends Component {
                                   <CardBody>{question.description}</CardBody>
                                 </div>
                                 <CardFooter>
-                                  Suas submissões: {question.submissions.length}
+                                  Submissões: {question.submissions.length}
                                   <Link
-                                    to={`/professor/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}
+                                    to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas/${lista.id}/exercicio/${question.id}`}
                                   >
                                     <button
                                       className="btn btn-success mr-2"
