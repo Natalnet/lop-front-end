@@ -49,6 +49,7 @@ export default class Editor extends Component {
       difficulty: "Médio",
       solution: "",
       results: [],
+      prova:null,
       tempo_inicial: null,
       loadingReponse: false,
       loadingEditor: false,
@@ -164,6 +165,8 @@ export default class Editor extends Component {
       if(prova.status==="FECHADA" || !password || password!==hashCode){
         this.props.history.push(`/aluno/turma/${idClass}/provas`)
         return null
+      }else{
+        this.setState({prova})
       }
     } catch (err) {
       console.log(err);
@@ -341,6 +344,7 @@ export default class Editor extends Component {
   render() {
     const {
       turma,
+      prova,
       response,
       percentualAcerto,
       loadingReponse,
@@ -514,6 +518,7 @@ export default class Editor extends Component {
                     </CardHead>
                     <TableResults2
                       response={response}
+                      showAllTestCases = {prova && prova.showAllTestCases}
                       descriptionErro={descriptionErro}
                       percentualAcerto={percentualAcerto}
                     />

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component,Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
@@ -9,6 +9,8 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 import api, { baseUrlBackend } from "../../../services/api";
 import socket from "socket.io-client";
 
@@ -152,17 +154,17 @@ export default class TurmasScreen extends Component {
     };
     return (
       <TemplateSistema active="home">
-        <div className="row">
-          <div className="col-3">
+        <Row mb={24}>
+          <Col xs={3}>
             <Link to={"/professor/novasturmas"}>
               <button className="btn btn-primary" type="button" style={botao}>
                 Nova Turma <i className="fa fa-users" />{" "}
                 <i className="fa fa-plus-circle" />
               </button>
             </Link>
-          </div>
+          </Col>
 
-          <div className="col-9">
+          <Col xs={9}>
             <InputGroupo
               placeholder={`Perquise pelo ${
                 fieldFilter === "nome"
@@ -182,20 +184,23 @@ export default class TurmasScreen extends Component {
               clearContentInputSeach={this.clearContentInputSeach.bind(this)}
               loading={loadingTurmas}
             />
-          </div>
-
+          </Col>
+        </Row>
+        <Row mb={24}>
           {loadingTurmas
             ? range(8).map(i => (
-                <div key={i} className="col-12 col-md-6">
+              <Fragment key={i}>
+                <Col xs={12} md={6}>
                   <Card>
                     <CardHead></CardHead>
                     <CardBody loading></CardBody>
                   </Card>
-                </div>
+                </Col>
+              </Fragment>
               ))
             : minhasTurmas.map((turma, index) => (
-                <div key={index} className="col-12 col-md-6">
-                  <br></br>
+              <Fragment key={turma.id}>
+                <Col xs={12} md={6}>
                   <Card>
                     <CardHead>
                       <CardTitle>
@@ -252,18 +257,19 @@ export default class TurmasScreen extends Component {
                       </Link>
                     </CardFooter>
                   </Card>
-                </div>
+                </Col>
+                </Fragment>
               ))}
-        </div>
-        <div className="row">
-          <div className="col-12 text-center">
+        </Row>
+        <Row>
+          <Col xs={12} textCenter>
             <NavPagination
               totalPages={totalPages}
               pageAtual={numPageAtual}
               handlePage={this.handlePage}
             />
-          </div>
-        </div>
+          </Col>
+        </Row>
       </TemplateSistema>
     );
   }

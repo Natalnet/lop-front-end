@@ -32,6 +32,7 @@ export default class criarProvaScreen extends Component {
       fildFilter: "title",
       title: "",
       password: "",
+      showAllTestCases:false,
       loadingExercicios: false,
       numPageAtual: 1,
       totalItens: 0,
@@ -72,15 +73,17 @@ export default class criarProvaScreen extends Component {
   async criarProva(e) {
     console.log("criar prva");
     e.preventDefault();
-    if (!this.state.title) {
+    const {title,password,showAllTestCases,selecionados} = this.state
+    if (!title) {
       this.setState({ msg: "Informe o nome da prova" });
-    } else if (!this.state.password) {
+    } else if (!password) {
       this.setState({ msg: "Informe uma senha" });
     } else {
       const requestInfo = {
-        title: this.state.title,
-        password: this.state.password,
-        questions: this.state.selecionados.map(q => q.id)
+        title,
+        password,
+        questions: selecionados.map(q => q.id),
+        showAllTestCases,
       };
       try {
         Swal.fire({
@@ -140,6 +143,10 @@ export default class criarProvaScreen extends Component {
   handlePasswordChange(e) {
     this.setState({ password: e.target.value });
   }
+
+  handleshowAllTestCasesChange(e) {
+    this.setState({ showAllTestCases: e.target.value });
+  } 
 
   handlePage(e, numPage) {
     e.preventDefault();
@@ -203,7 +210,7 @@ export default class criarProvaScreen extends Component {
           <CardBody>
             <form onSubmit={e => this.criarProva(e)}>
               <div className="form-row">
-                <div className="form-group col-6">
+                <div className="form-group col-12 col-md-4 ">
                   <label htmlFor="inputTitulo">Título</label>
                   <input
                     id="inputTitulo"
@@ -214,7 +221,7 @@ export default class criarProvaScreen extends Component {
                     placeholder="Título da prova:"
                   />
                 </div>
-                <div className="form-group col-6">
+                <div className="form-group col-12 col-md-4">
                   <label htmlFor="inputSenha">Senha:</label>
                   <input
                     id="inputSenha"
@@ -224,6 +231,19 @@ export default class criarProvaScreen extends Component {
                     className="form-control"
                     placeholder="Senha para abrir a prova"
                   />
+                </div>
+                <div className="form-group col-12 col-md-4">
+                  <label htmlFor="select">casos de teste</label>
+                  <select
+                    id="select"
+                    defaultValue={this.state.showAllTestCases}
+                    onChange={e => this.handleshowAllTestCasesChange(e)}
+                    className="form-control"
+  
+                  >
+                    <option value={false}>Mostrar apenas primeiro</option>
+                    <option value={true}>Mostrar todos</option>
+                  </select>
                 </div>
               </div>
               <div className="row">

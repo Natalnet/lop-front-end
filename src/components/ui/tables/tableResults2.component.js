@@ -9,7 +9,9 @@ import CardBody from '../card/cardBody.component'
 
 export default props => {
 
-	const {response,descriptionErro} = props
+	const {response,descriptionErro,showAllTestCases} = props
+  
+      let rows = showAllTestCases?response:response.filter((r,i)=>i===0)
       if(descriptionErro){
         return(
           <Card>
@@ -23,7 +25,7 @@ export default props => {
       }
 	    return(
         <Fragment>
-        {response.map((teste,i)=>
+        {rows.map((teste,i)=>
           <Card key={i}>
             <CardHead>
               <CardTitle>

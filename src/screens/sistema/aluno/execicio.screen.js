@@ -410,6 +410,7 @@ export default class Editor extends Component {
                     </CardHead>
                     <TableResults2
                       response={response}
+                      showAllTestCases={true}
                       descriptionErro={descriptionErro}
                       percentualAcerto={percentualAcerto}
                     />
