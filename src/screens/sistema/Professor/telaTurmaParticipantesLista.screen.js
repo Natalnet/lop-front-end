@@ -10,7 +10,7 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import { ProgressBar } from "react-bootstrap";
+import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
 
 export default class Exercicios extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ export default class Exercicios extends Component {
     this.state = {
       redirect: false,
       lista: null,
-      usuario:null,
+      usuario: null,
       loandingLista: true,
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
@@ -61,8 +61,7 @@ export default class Exercicios extends Component {
   }
   async getLista() {
     try {
-     
-      const {id,idLista,idUser} = this.props.match.params
+      const { id, idLista, idUser } = this.props.match.params;
       const response = await api.get(
         `/listQuestion/${idLista}/class/${id}/user/${idUser}`
       );
@@ -78,25 +77,36 @@ export default class Exercicios extends Component {
     }
   }
   render() {
-    const { loadingInfoTurma, turma, loandingLista, lista , usuario} = this.state;
+    const {
+      loadingInfoTurma,
+      turma,
+      loandingLista,
+      lista,
+      usuario
+    } = this.state;
     const questionsCompleted =
       lista && lista.questions.filter(q => q.completed);
     const completed =
       lista &&
       ((questionsCompleted.length / lista.questions.length) * 100).toFixed(2);
     return (
-      <TemplateSistema {...this.props} active={"participantes"} submenu={"telaTurmas"}>
+      <TemplateSistema
+        {...this.props}
+        active={"participantes"}
+        submenu={"telaTurmas"}
+      >
         <Row mb={15}>
-            {loadingInfoTurma || loandingLista?(
-              <div className="loader" style={{ margin: "0px auto" }}></div>
-            ) : (
-                <Col xs={12}>
-                    <h3 style={{ margin: "0px" }}>
-                      <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                      {turma.name} - {turma.year}.{turma.semester || 1} | {usuario.name} - {usuario.enrollment}
-                    </h3>
-                </Col>
-            )}
+          {loadingInfoTurma || loandingLista ? (
+            <div className="loader" style={{ margin: "0px auto" }}></div>
+          ) : (
+            <Col xs={12}>
+              <h3 style={{ margin: "0px" }}>
+                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
+                {turma.name} - {turma.year}.{turma.semester || 1} |{" "}
+                {usuario.name} - {usuario.enrollment}
+              </h3>
+            </Col>
+          )}
         </Row>
         <Row mb={15}>
           <Col xs={12}>
@@ -110,12 +120,11 @@ export default class Exercicios extends Component {
             </Link>
           </Col>
         </Row>
-        
+
         {loandingLista ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>
-
             <Row mb={15}>
               <Col xs={12}>
                 <Card>
@@ -127,10 +136,9 @@ export default class Exercicios extends Component {
                     </Col>
 
                     <ProgressBar
-                      now={completed}
-                      label={`${completed}%`}
-                      style={{ width: "100%" }}
-                    />
+                      porcentagem={completed}
+                      largura={100}
+                    ></ProgressBar>
                   </CardHead>
                   <CardBody>
                     <Row>
@@ -183,7 +191,8 @@ export default class Exercicios extends Component {
                                       className="btn btn-success mr-2"
                                       style={{ float: "right" }}
                                     >
-                                      Ver submissões <i className="fa fa-wpexplorer" />
+                                      Ver submissões{" "}
+                                      <i className="fa fa-wpexplorer" />
                                     </button>
                                   </Link>
                                 </CardFooter>

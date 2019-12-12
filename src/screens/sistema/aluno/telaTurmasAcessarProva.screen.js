@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import generateHash from '../../../util/funçoesAuxiliares/generateHash'
+import generateHash from "../../../util/funçoesAuxiliares/generateHash";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -11,7 +11,7 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import { ProgressBar } from "react-bootstrap";
+import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
 
 export default class Exercicios extends Component {
   constructor(props) {
@@ -21,20 +21,19 @@ export default class Exercicios extends Component {
       prova: null,
       loandingProva: true,
       loadingInfoTurma: true,
-      turma: JSON.parse(sessionStorage.getItem("turma")) || "",
+      turma: JSON.parse(sessionStorage.getItem("turma")) || ""
     };
   }
-    componentWillMount(){
-        const idClass = this.props.match.params.id
-        const turmas = JSON.parse(sessionStorage.getItem('user.classes'))
-        const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
-        if(turmas && !turmas.includes(idClass))
-            this.props.history.push(`/${profile}`)
-    }
+  componentWillMount() {
+    const idClass = this.props.match.params.id;
+    const turmas = JSON.parse(sessionStorage.getItem("user.classes"));
+    const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase();
+    if (turmas && !turmas.includes(idClass))
+      this.props.history.push(`/${profile}`);
+  }
   async componentDidMount() {
     this.getInfoTurma();
     this.getProva();
-    
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -71,13 +70,12 @@ export default class Exercicios extends Component {
       const response = await api.get(`/test/${idTest}/class/${idClass}`);
       console.log("provas");
       console.log(response.data);
-      const prova = response.data
-      const password = sessionStorage.getItem(`passwordTest-${prova.id}`)
-      const hashCode = `${generateHash(prova.password)}-${prova.id}`
-      if(prova.status==="FECHADA" || !password || password!==hashCode){
-        this.props.history.push(`/aluno/turma/${idClass}/provas`)
-      }
-      else{
+      const prova = response.data;
+      const password = sessionStorage.getItem(`passwordTest-${prova.id}`);
+      const hashCode = `${generateHash(prova.password)}-${prova.id}`;
+      if (prova.status === "FECHADA" || !password || password !== hashCode) {
+        this.props.history.push(`/aluno/turma/${idClass}/provas`);
+      } else {
         this.setState({
           prova,
           loandingProva: false
@@ -118,9 +116,7 @@ export default class Exercicios extends Component {
           <Fragment>
             <Row mb={15}>
               <Col xs={12}>
-                <Link
-                  to={`/aluno/turma/${this.props.match.params.id}/provas`}
-                >
+                <Link to={`/aluno/turma/${this.props.match.params.id}/provas`}>
                   <button className="btn btn-success mr-2">
                     <i className="fa fa-arrow-left" /> Voltar para as Provas{" "}
                     <i className="fa fa-file-text" />
@@ -139,10 +135,9 @@ export default class Exercicios extends Component {
                     </Col>
 
                     <ProgressBar
-                      now={completed}
-                      label={`${completed}%`}
-                      style={{ width: "100%" }}
-                    />
+                      porcentagem={completed}
+                      largura={100}
+                    ></ProgressBar>
                   </CardHead>
                   <CardBody>
                     <Row>

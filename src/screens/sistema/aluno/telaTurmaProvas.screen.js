@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
-import api,{baseUrlBackend} from "../../../services/api";
+import api, { baseUrlBackend } from "../../../services/api";
 import Swal from "sweetalert2";
-import generateHash from '../../../util/funçoesAuxiliares/generateHash'
+import generateHash from "../../../util/funçoesAuxiliares/generateHash";
 import { Link } from "react-router-dom";
-import { Modal, ProgressBar } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import NavPagination from "components/ui/navs/navPagination";
@@ -17,6 +17,7 @@ import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import socket from "socket.io-client";
+import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
 
 export default class Provas extends Component {
   constructor(props) {
@@ -33,16 +34,16 @@ export default class Provas extends Component {
     };
   }
 
-  componentWillMount(){
-      const idClass = this.props.match.params.id
-      const turmas = JSON.parse(sessionStorage.getItem('user.classes'))
-      const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
-      if(turmas && !turmas.includes(idClass))
-        this.props.history.push(`/${profile}`)
+  componentWillMount() {
+    const idClass = this.props.match.params.id;
+    const turmas = JSON.parse(sessionStorage.getItem("user.classes"));
+    const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase();
+    if (turmas && !turmas.includes(idClass))
+      this.props.history.push(`/${profile}`);
   }
   async componentDidMount() {
     this.getProvas();
-    this.getProvasRealTime()
+    this.getProvasRealTime();
     await this.getInfoTurma();
     document.title = `${this.state.turma.name} - provas`;
   }
@@ -91,84 +92,70 @@ export default class Provas extends Component {
     }
   }
 
-  getProvasRealTime(){
+  getProvasRealTime() {
     const io = socket(baseUrlBackend);
-    io.emit("connectRoonClass",this.props.match.params.id);
+    io.emit("connectRoonClass", this.props.match.params.id);
 
     io.on("changeStatusTest", reponse => {
-      let {provas} = this.state
-      provas = provas.map(prova=>{
-        const provaCopia = JSON.parse(JSON.stringify(prova))
-        if(reponse.idTest===prova.id){
-          provaCopia.status = reponse.status
+      let { provas } = this.state;
+      provas = provas.map(prova => {
+        const provaCopia = JSON.parse(JSON.stringify(prova));
+        if (reponse.idTest === prova.id) {
+          provaCopia.status = reponse.status;
         }
-        return provaCopia
-      })
-      this.setState({provas})
-    })
-    io.on("addTestToClass", response =>{
-      let {provas} = this.state
-      this.setState({provas: [...provas,response]})
+        return provaCopia;
+      });
+      this.setState({ provas });
     });
-    io.on("removeTestFromClass", response =>{
-      let {provas} = this.state
+    io.on("addTestToClass", response => {
+      let { provas } = this.state;
+      this.setState({ provas: [...provas, response] });
+    });
+    io.on("removeTestFromClass", response => {
+      let { provas } = this.state;
       this.setState({
-          provas: provas.filter(prova=>prova.id!==response.id)
-      })
+        provas: provas.filter(prova => prova.id !== response.id)
+      });
     });
   }
-  async acessar(prova){
-    const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}`
-    const password = sessionStorage.getItem(`passwordTest-${prova.id}`)
-    const hashCode = `${generateHash(prova.password)}-${prova.id}`
-    try{
-      if(password && password===hashCode){
-        this.props.history.push(url)
-      }
-      else{
-        const {value} = await Swal.fire({
-          title:'Senha para acessar a prova',
-          input:'text',
-          confirmButtonText:'Acessar',
-          cancelButtonText:'Cancelar',
-          input: 'password',
+  async acessar(prova) {
+    const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}`;
+    const password = sessionStorage.getItem(`passwordTest-${prova.id}`);
+    const hashCode = `${generateHash(prova.password)}-${prova.id}`;
+    try {
+      if (password && password === hashCode) {
+        this.props.history.push(url);
+      } else {
+        const { value } = await Swal.fire({
+          title: "Senha para acessar a prova",
+          input: "text",
+          confirmButtonText: "Acessar",
+          cancelButtonText: "Cancelar",
+          input: "password",
           showCancelButton: true,
-          inputValue:'',//valor inicial
-          inputValidator:(value)=>{
-            if(!value){
-              return 'Você precisa escrever algo!'
-            }
-            else if(value !== prova.password){
-              return "Senha incorreta :("
+          inputValue: "", //valor inicial
+          inputValidator: value => {
+            if (!value) {
+              return "Você precisa escrever algo!";
+            } else if (value !== prova.password) {
+              return "Senha incorreta :(";
             }
           }
-        })
-        if(value){
+        });
+        if (value) {
           //gera hash da senha
-          sessionStorage.setItem(`passwordTest-${prova.id}`,hashCode)
-          this.props.history.push(url)
+          sessionStorage.setItem(`passwordTest-${prova.id}`, hashCode);
+          this.props.history.push(url);
         }
       }
-
-    }
-    catch(err){
+    } catch (err) {
       console.log(err);
     }
   }
 
-
   render() {
-    const {
-      loadingInfoTurma,
-      turma,
-      todasListas,
-      provas
-    } = this.state;
-    const {
-      contentInputSeach,
-      fieldFilter,
-      loandingListas
-    } = this.state;
+    const { loadingInfoTurma, turma, todasListas, provas } = this.state;
+    const { contentInputSeach, fieldFilter, loandingListas } = this.state;
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <div className="row" style={{ marginBottom: "15px" }}>
@@ -198,37 +185,31 @@ export default class Provas extends Component {
                 100
               ).toFixed(2);
               return (
-              <Fragment key={prova.id}>
-                <Col xs={12}>
-                  <Card key={prova.id} style={{ margin: "2px" }}>
-                    <CardHead>
-                      <Col xs={5}>
-                        <h4 style={{ margin: "0px" }}>
-                          <b>{prova.title}</b>
-                        </h4>
-                      </Col>
-                      <ProgressBar
-                        now={completed}
-                        label={`${completed}%`}
-                        style={{ width: "45%" }}
-                      />
-                      <CardOptions>
-                      {
-                        prova.status==="ABERTA"
-                      ?
-                        <button
-                          className="btn btn-success mr-2"
-                          style={{ float: "right" }}
-                          onClick={()=>this.acessar(prova)}
-                        >
-                          Acessar <i className="fa fa-wpexplorer" />
-                        </button>
-                      :null
-                      }
-                      </CardOptions>
-                    </CardHead>
-                  </Card>
-                </Col>
+                <Fragment key={prova.id}>
+                  <Col xs={12}>
+                    <Card key={prova.id} style={{ margin: "2px" }}>
+                      <CardHead>
+                        <Col xs={5}>
+                          <h4 style={{ margin: "0px" }}>
+                            <b>{prova.title}</b>
+                          </h4>
+                        </Col>
+                        <ProgressBar porcentagem={completed}></ProgressBar>
+
+                        <CardOptions>
+                          {prova.status === "ABERTA" ? (
+                            <button
+                              className="btn btn-success mr-2"
+                              style={{ float: "right" }}
+                              onClick={() => this.acessar(prova)}
+                            >
+                              Acessar <i className="fa fa-wpexplorer" />
+                            </button>
+                          ) : null}
+                        </CardOptions>
+                      </CardHead>
+                    </Card>
+                  </Col>
                 </Fragment>
               );
             })

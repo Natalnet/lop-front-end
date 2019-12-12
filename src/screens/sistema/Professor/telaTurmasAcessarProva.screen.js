@@ -12,7 +12,7 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import { ProgressBar } from "react-bootstrap";
+import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
 
 export default class Exercicios extends Component {
   constructor(props) {
@@ -250,10 +250,9 @@ export default class Exercicios extends Component {
                     </Col>
 
                     <ProgressBar
-                      now={completed}
-                      label={`${completed}%`}
-                      style={{ width: "100%" }}
-                    />
+                      porcentagem={completed}
+                      largura={100}
+                    ></ProgressBar>
                   </CardHead>
                   <CardBody>
                     <Row>
