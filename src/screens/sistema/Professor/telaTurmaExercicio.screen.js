@@ -142,12 +142,10 @@ export default class Editor extends Component {
     }
   }
   async getExercicio() {
-    console.log("aki");
-    console.log(this.props.match.params);
-    const id = this.props.match.params.idExercicio;
+    const {id,idLista,idExercicio} = this.props.match.params;
     const query = `?exclude=solution`;
     try {
-      const response = await api.get(`/question/${id}${query}`);
+      const response = await api.get(`/question/${idExercicio}/list/${idLista}/test/${null}/class/${id}${query}`);
       console.log("questão");
       console.log(response.data);
       this.setState({
@@ -166,7 +164,7 @@ export default class Editor extends Component {
     }
   }
   async salvaRascunho(showMsg = true) {
-    const idQuestion = this.props.match.params.idExercicio;
+    const {id,idLista,idExercicio} = this.props.match.params;
     const {solution,char_change_number} = this.state
     const request = {
       answer: solution,
@@ -174,10 +172,8 @@ export default class Editor extends Component {
     };
     try {
       this.setState({ salvandoRascunho: true });
-      const response = await api.post(
-        `/draft/question/${idQuestion}/store`,
-        request
-      );
+      await api.post(`/draft/question/${idExercicio}/list/${idLista}/test/${null}/class/${id}/store`, request);
+
       this.setState({ salvandoRascunho: false });
       if (showMsg) {
         const Toast = Swal.mixin({

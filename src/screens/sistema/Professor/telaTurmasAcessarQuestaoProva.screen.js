@@ -141,12 +141,10 @@ export default class Editor extends Component {
     }
   }
   async getExercicio() {
-    console.log("aki");
-    console.log(this.props.match.params);
-    const id = this.props.match.params.idExercicio;
+    const {id,idTest,idExercicio} = this.props.match.params;
     const query = `?exclude=solution`;
     try {
-      const response = await api.get(`/question/${id}${query}`);
+      const response = await api.get(`/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}${query}`);
       console.log("questão");
       console.log(response.data);
       this.setState({
@@ -156,31 +154,25 @@ export default class Editor extends Component {
         katexDescription: response.data.katexDescription || "",
         difficulty: response.data.difficulty,
         userDifficulty: response.data.userDifficulty || "",
-        solution: response.data.questionDraft
-          ? response.data.questionDraft.answer
-          : "",
-        char_change_number: response.data.questionDraft
-          ? response.data.questionDraft.char_change_number
-          : 0,
-        loadingExercicio: false
+        solution: response.data.questionDraft?response.data.questionDraft.answer:'',
+        char_change_number:response.data.questionDraft?response.data.questionDraft.char_change_number:0,
+        loadingExercicio: false,
       });
     } catch (err) {
       this.setState({ loadingExercicio: false });
     }
   }
   async salvaRascunho(showMsg = true) {
-    const idQuestion = this.props.match.params.idExercicio;
-    const { solution, char_change_number } = this.state;
+    const {id,idTest,idExercicio} = this.props.match.params;
+    const {solution,char_change_number} = this.state
     const request = {
       answer: solution,
-      char_change_number
+      char_change_number,
     };
     try {
       this.setState({ salvandoRascunho: true });
-      const response = await api.post(
-        `/draft/question/${idQuestion}/store`,
-        request
-      );
+      await api.post(`/draft/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}/store`, request);
+
       this.setState({ salvandoRascunho: false });
       if (showMsg) {
         const Toast = Swal.mixin({

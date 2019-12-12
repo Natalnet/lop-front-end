@@ -113,10 +113,10 @@ export default class Editor extends Component {
     }
   }
   async getExercicio() {
-    const id = this.props.match.params.id;
+    const idQuestion = this.props.match.params.id;
     const query = `?exclude=solution`;
     try {
-      const response = await api.get(`/question/${id}${query}`);
+      const response = await api.get(`/question/${idQuestion}/list/${null}/test/${null}/class/${null}${query}`);
       console.log("questão");
       console.log(response.data);
       this.setState({
@@ -131,7 +131,8 @@ export default class Editor extends Component {
         loadingExercicio: false, 
       });
     } catch (err) {
-      this.setState({ loadingExercicio: false });
+      console.log(err);
+      //this.setState({ loadingExercicio: false });
     }
   }
   async salvaRascunho(showMsg = true) {
@@ -143,7 +144,8 @@ export default class Editor extends Component {
     };
     try {
       this.setState({ salvandoRascunho: true });
-      await api.post(`/draft/question/${idQuestion}/store`, request);
+
+      await api.post(`/draft/question/${idQuestion}/list/${null}/test/${null}/class/${null}/store`, request);
       this.setState({ salvandoRascunho: false });
       if (showMsg) {
         const Toast = Swal.mixin({
