@@ -113,7 +113,7 @@ export default class HomeExerciciosScreen extends Component {
             
                 <div className="row" style={{marginBottom:'15px'}}>
                     <div className="col-12">
-                        <h3 style={{margin:'0px'}}> Listas de Exercícios</h3>
+                        <h3 style={{margin:'0px'}}> Exercícios</h3>
                     </div>
                 </div>
                 <div className="row" style={{marginBottom:'15px'}}>

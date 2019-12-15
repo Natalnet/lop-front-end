@@ -17,8 +17,8 @@ export default class Exercicios extends Component {
     super(props);
     this.state = {
       redirect: false,
-      lista: null,
-      usuario: null,
+      lista: '',
+      usuario: '',
       loandingLista: true,
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
@@ -29,8 +29,8 @@ export default class Exercicios extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
     await this.getLista();
-
-    document.title = `${this.state.turma.name} - ${this.state.lista.title}`;
+    const {turma,lista} = this.state
+    document.title = `${turma && turma.name} - ${lista && lista.title}`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -84,11 +84,9 @@ export default class Exercicios extends Component {
       lista,
       usuario
     } = this.state;
-    const questionsCompleted =
-      lista && lista.questions.filter(q => q.completed);
-    const completed =
-      lista &&
-      ((questionsCompleted.length / lista.questions.length) * 100).toFixed(2);
+    const questions = lista && lista.questions
+    const questionsCompleted = lista && lista.questions.filter(q => q.completed);
+
     return (
       <TemplateSistema
         {...this.props}
@@ -102,8 +100,8 @@ export default class Exercicios extends Component {
             <Col xs={12}>
               <h3 style={{ margin: "0px" }}>
                 <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma.name} - {turma.year}.{turma.semester || 1} |{" "}
-                {usuario.name} - {usuario.enrollment}
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} |{" "}
+                {usuario && usuario.name} - {usuario && usuario.enrollment}
               </h3>
             </Col>
           )}
@@ -135,10 +133,13 @@ export default class Exercicios extends Component {
                       </h4>
                     </Col>
 
-                    <ProgressBar
-                      porcentagem={completed}
-                      largura={100}
-                    ></ProgressBar>
+                    <ProgressBar 
+                      numQuestions={lista && questions.length}
+                      numQuestionsCompleted={lista && questionsCompleted.length}
+                      dateBegin={lista && lista.classHasListQuestion.createdAt}
+                      dateEnd={lista && lista.classHasListQuestion.submissionDeadline}
+                      width={100}
+                    />
                   </CardHead>
                   <CardBody>
                     <Row>
@@ -185,7 +186,7 @@ export default class Exercicios extends Component {
                                 <CardFooter>
                                   Submissões: {question.submissions.length}
                                   <Link
-                                    to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas/${lista.id}/exercicio/${question.id}`}
+                                    to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas/${lista && lista.id}/exercicio/${question.id}`}
                                   >
                                     <button
                                       className="btn btn-success mr-2"

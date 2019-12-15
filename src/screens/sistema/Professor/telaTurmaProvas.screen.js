@@ -15,6 +15,7 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
 
 export default class Provas extends Component {
 
@@ -43,9 +44,9 @@ export default class Provas extends Component {
 
         this.getProvas()
         this.getTodasProvas()
-
         await this.getInfoTurma()
-        document.title = `${this.state.turma.name} - provas`;
+        const {turma} = this.state
+        document.title = `${turma && turma.name} - provas`;
         //this.getTodasProvas()
     }
      async getInfoTurma(){
@@ -244,7 +245,7 @@ export default class Provas extends Component {
                         {loadingInfoTurma?
                             <div className="loader"  style={{margin:'0px auto'}}></div>
                             :
-                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}</h3>
                         }
                     </div>
                 </div>
@@ -276,6 +277,11 @@ export default class Provas extends Component {
                                 <Col xs={5}>
                                     <h4 style={{margin:'0px'}}><b>{prova.title}</b></h4>
                                 </Col>
+                                <ProgressBar 
+                                  numQuestions={questions.length}
+                                  numQuestionsCompleted={questionsCompleted.length}
+                                  dateBegin={prova.classHasTest.createdAt}
+                                />
                                 
                                 <CardOptions>
                                     <Link to={`/professor/turma/${this.props.match.params.id}/prova/${prova.id}`}>

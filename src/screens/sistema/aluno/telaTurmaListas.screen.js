@@ -26,8 +26,6 @@ export default class Listas extends Component {
     const idClass = this.props.match.params.id;
     const turmas = JSON.parse(sessionStorage.getItem("user.classes"));
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase();
-    console.log("turmas");
-    console.log(turmas);
     if (turmas && !turmas.includes(idClass))
       this.props.history.push(`/${profile}`);
   }
@@ -35,7 +33,8 @@ export default class Listas extends Component {
     this.getListas();
     this.getListasRealTime();
     await this.getInfoTurma();
-    document.title = `${this.state.turma.name} - listas`;
+    const {turma} = this.state
+    document.title = `${turma && turma.name} - listas`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -105,7 +104,7 @@ export default class Listas extends Component {
             ) : (
               <h3 style={{ margin: "0px" }}>
                 <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma.name} - {turma.year}.{turma.semester || 1}
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
               </h3>
             )}
           </Col>
@@ -119,10 +118,6 @@ export default class Listas extends Component {
               const questionsCompleted = lista.questions.filter(
                 q => q.completed
               );
-              const completed = (
-                (questionsCompleted.length / questions.length) *
-                100
-              ).toFixed(2);
               return (
                 <Fragment key={lista.id}>
                   <Col xs={12}>
@@ -133,7 +128,12 @@ export default class Listas extends Component {
                             <b>{lista.title}</b>
                           </h4>
                         </Col>
-                        <ProgressBar porcentagem={completed}></ProgressBar>
+                        <ProgressBar 
+                          numQuestions={questions.length}
+                          numQuestionsCompleted={questionsCompleted.length}
+                          dateBegin={lista.classHasListQuestion.createdAt}
+                          dateEnd={lista.classHasListQuestion.submissionDeadline}
+                        />
 
                         <CardOptions>
                           <Link

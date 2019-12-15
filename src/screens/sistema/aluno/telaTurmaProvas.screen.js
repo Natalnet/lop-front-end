@@ -180,10 +180,6 @@ export default class Provas extends Component {
               const questionsCompleted = prova.questions.filter(
                 q => q.completed
               );
-              const completed = (
-                (questionsCompleted.length / questions.length) *
-                100
-              ).toFixed(2);
               return (
                 <Fragment key={prova.id}>
                   <Col xs={12}>
@@ -194,8 +190,11 @@ export default class Provas extends Component {
                             <b>{prova.title}</b>
                           </h4>
                         </Col>
-                        <ProgressBar porcentagem={completed}></ProgressBar>
-
+                        <ProgressBar 
+                          numQuestions={questions.length}
+                          numQuestionsCompleted={questionsCompleted.length}
+                          dateBegin={prova.classHasTest.createdAt}
+                        />
                         <CardOptions>
                           {prova.status === "ABERTA" ? (
                             <button

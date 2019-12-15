@@ -31,8 +31,8 @@ export default class Exercicios extends Component {
     document.title = "Professor - provas";
     await this.getInfoTurma();
     await this.getProva();
-
-    //document.title = `${this.state.turma.name} - ${this.state.prova.title}`;
+    const {turma,prova} = this.state
+    document.title = `${turma && turma.name} - ${prova && prova.title}`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -145,11 +145,9 @@ export default class Exercicios extends Component {
 
   render() {
     const { loadingInfoTurma, turma, loandingProva, prova } = this.state;
-    const questionsCompleted =
-      prova && prova.questions.filter(q => q.completed);
-    const completed =
-      prova &&
-      ((questionsCompleted.length / prova.questions.length) * 100).toFixed(2);
+    const questions = prova && prova.questions
+    const questionsCompleted = prova && prova.questions.filter(q => q.completed);
+
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <Row mb={15}>
@@ -159,7 +157,7 @@ export default class Exercicios extends Component {
             ) : (
               <h3 style={{ margin: "0px" }}>
                 <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma.name} - {turma.year}.{turma.semester || 1}
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
               </h3>
             )}
           </Col>
@@ -178,7 +176,7 @@ export default class Exercicios extends Component {
                     <i className="fa fa-file-text" />
                   </button>
                 </Link>
-                {prova.status === "FECHADA" ? (
+                {prova && prova.status === "FECHADA" ? (
                   <button
                     className="btn btn-primary"
                     style={{ float: "right" }}
@@ -248,11 +246,13 @@ export default class Exercicios extends Component {
                         <b>{prova && prova.title}</b>
                       </h4>
                     </Col>
+                    <ProgressBar 
+                      numQuestions={prova && questions.length}
+                      numQuestionsCompleted={prova && questionsCompleted.length}
+                      dateBegin={prova && prova.classHasTest.createdAt}
+                      width={100}
+                    />
 
-                    <ProgressBar
-                      porcentagem={completed}
-                      largura={100}
-                    ></ProgressBar>
                   </CardHead>
                   <CardBody>
                     <Row>
@@ -299,7 +299,7 @@ export default class Exercicios extends Component {
                                 <CardFooter>
                                   Suas submissões: {question.submissions.length}
                                   <Link
-                                    to={`/professor/turma/${this.props.match.params.id}/prova/${prova.id}/questao/${question.id}`}
+                                    to={`/professor/turma/${this.props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}`}
                                   >
                                     <button
                                       className="btn btn-success mr-2"

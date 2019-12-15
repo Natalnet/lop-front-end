@@ -40,7 +40,8 @@ export default class HomesubmissoesScreen extends Component {
   async componentDidMount() {
     this.getSubmissoes();
     await this.getInfoTurma();
-    document.title = `${this.state.turma.name} - Submissões`;
+    const {turma} = this.state
+    document.title = `${turma && turma.name} - Submissões`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -155,7 +156,7 @@ export default class HomesubmissoesScreen extends Component {
                 <Col xs={12}>
                     <h3 style={{ margin: "0px" }}>
                       <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                      {turma.name} - {turma.year}.{turma.semester || 1} | {usuario.name} - {usuario.enrollment}
+                      {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} | {usuario && usuario.name} - {usuario && usuario.enrollment}
                     </h3>
                 </Col>
             )}

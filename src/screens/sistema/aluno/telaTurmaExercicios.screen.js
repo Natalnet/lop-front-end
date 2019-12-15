@@ -17,7 +17,7 @@ export default class Exercicios extends Component {
     super(props);
     this.state = {
       redirect: false,
-      lista: null,
+      lista: "",
       loandingLista: true,
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
@@ -34,8 +34,8 @@ export default class Exercicios extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
     await this.getLista();
-
-    document.title = `${this.state.turma.name} - ${this.state.lista.title}`;
+    const {turma,lista} = this.state
+    document.title = `${turma && turma.name} - ${lista && lista.title}`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -83,11 +83,9 @@ export default class Exercicios extends Component {
   }
   render() {
     const { loadingInfoTurma, turma, loandingLista, lista } = this.state;
-    const questionsCompleted =
-      lista && lista.questions.filter(q => q.completed);
-    const completed =
-      lista &&
-      ((questionsCompleted.length / lista.questions.length) * 100).toFixed(2);
+    const questions = lista && lista.questions
+    const questionsCompleted = lista && lista.questions.filter(q => q.completed);
+     
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
         <Row mb={15}>
@@ -97,7 +95,7 @@ export default class Exercicios extends Component {
             ) : (
               <h3 style={{ margin: "0px" }}>
                 <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma.name} - {turma.year}.{turma.semester || 1}
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
               </h3>
             )}
           </Col>
@@ -125,10 +123,13 @@ export default class Exercicios extends Component {
                         <b>{lista && lista.title}</b>
                       </h4>
                     </Col>
-                    <ProgressBar
-                      porcentagem={completed}
-                      largura={100}
-                    ></ProgressBar>
+                    <ProgressBar 
+                      numQuestions={lista && questions.length}
+                      numQuestionsCompleted={lista && questionsCompleted.length}
+                      dateBegin={lista && lista.classHasListQuestion.createdAt}
+                      dateEnd={lista && lista.classHasListQuestion.submissionDeadline}
+                      width={100}
+                    />
                   </CardHead>
                   <CardBody>
                     <Row>

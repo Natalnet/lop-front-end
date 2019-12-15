@@ -2,6 +2,8 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
+import Swal from "sweetalert2";
+import { Modal } from "react-bootstrap";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -10,7 +12,7 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import { ProgressBar } from "react-bootstrap";
+import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
 
 export default class Exercicios extends Component {
   constructor(props) {
@@ -19,7 +21,10 @@ export default class Exercicios extends Component {
       redirect: false,
       lista: null,
       loandingLista: true,
+      showModalDate:false,
       loadingInfoTurma: true,
+      loadingDateLimit:false,
+      dateLimit:'',
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
       todasListas: []
     };
@@ -28,8 +33,8 @@ export default class Exercicios extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
     await this.getLista();
-
-    document.title = `${this.state.turma.name} - ${this.state.lista.title}`;
+    const {turma,lista} = this.state
+    document.title = `${turma && turma.name} - ${lista && lista.title}`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -65,25 +70,81 @@ export default class Exercicios extends Component {
       const response = await api.get(
         `/listQuestion/${idLista}/class/${idClass}`
       );
-      console.log("listas");
+      console.log("lista");
       console.log(response.data);
+      const lista = response.data
+      let dateLimit = ''
+      if(lista.classHasListQuestion.submissionDeadline){
+        dateLimit = new Date(lista.classHasListQuestion.submissionDeadline)
+        const yarn = dateLimit.getFullYear()
+        const month = dateLimit.getMonth()+1
+        const day = dateLimit.getDate()
+        dateLimit = `${yarn}-${month<10?'0'+month:month}-${day<10?'0'+day:day}`
+      }
+      console.log('dateLimit');
+      console.log(dateLimit);
       this.setState({
-        lista: response.data,
+        lista,
+        dateLimit,
         loandingLista: false
       });
     } catch (err) {
       console.log(err);
     }
   }
+
+  async addDateLimit(list){
+    const idClass = this.props.match.params.id;
+    const idList = list.id
+    const query = `?idList=${idList}&idClass=${idClass}`
+    const {dateLimit} = this.state
+    if(dateLimit){
+      const request = {
+        submissionDeadline:dateLimit
+      }
+      try{
+        this.setState({loadingDateLimit:true})
+        await api.put(`/classHasListQuestion/update${query}`,request)
+        this.handleCloseShowModalDate()
+        this.setState({loadingDateLimit:false})
+        this.getLista()
+        Swal.fire({
+          type: "success",
+          title: "Data limite para submissoões adicionada com sucesso!"
+        });
+      }
+      catch(err){
+        console.log(err);
+        this.setState({loadingDateLimit:false})
+        Swal.fire({
+          type: "error",
+          title: "ops... data limite não pôde ser adicionada"
+        });
+      }
+    }
+  }
+  changeDate(e){
+    console.log('data');
+    console.log(e.target.value);
+    this.setState({dateLimit: e.target.value})
+  }
+  handleShowModalDate(){
+      this.setState({
+          showModalDate:true,
+      })
+  }
+  handleCloseShowModalDate(e){
+      this.setState({showModalDate:false})
+  }
   render() {
-    const { loadingInfoTurma, turma, loandingLista, lista } = this.state;
+    const { loadingInfoTurma, turma,loadingDateLimit,showModalDate,dateLimit, loandingLista, lista } = this.state;
+    const questions = lista && lista.questions
     const questionsCompleted =
       lista && lista.questions.filter(q => q.completed);
-    const completed =
-      lista &&
-      ((questionsCompleted.length / lista.questions.length) * 100).toFixed(2);
+
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
+        <>
         <Row mb={15}>
           <Col xs={12}>
             {loadingInfoTurma ? (
@@ -91,27 +152,43 @@ export default class Exercicios extends Component {
             ) : (
               <h3 style={{ margin: "0px" }}>
                 <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma.name} - {turma.year}.{turma.semester || 1}
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
               </h3>
             )}
           </Col>
         </Row>
+        <Row mb={15}>
+          <Col xs={6}>
+            <Link
+              to={`/professor/turma/${this.props.match.params.id}/listas`}
+            >
+              <button className="btn btn-success mr-2">
+                <i className="fa fa-arrow-left" /> Voltar para listas{" "}
+                <i className="fa fa-file-text" />
+              </button>
+            </Link>
+          </Col>
+          <Col xs={6}>
+            <button
+              className={`btn btn-primary ${loandingLista && 'btn-loading'}`}
+              style={{float:'right'}}
+              onClick={()=>this.handleShowModalDate()}
+            >
+              {lista && dateLimit?
+                'Editar data limite para submissões'
+                :
+                'Adicionar data limite para submmissões'
+              }
+            </button>
+          </Col>
+        </Row>
+
+        </>
         {loandingLista ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>
-            <Row mb={15}>
-              <Col xs={12}>
-                <Link
-                  to={`/professor/turma/${this.props.match.params.id}/listas`}
-                >
-                  <button className="btn btn-success mr-2">
-                    <i className="fa fa-arrow-left" /> Voltar para listas{" "}
-                    <i className="fa fa-file-text" />
-                  </button>
-                </Link>
-              </Col>
-            </Row>
+
             <Row mb={15}>
               <Col xs={12}>
                 <Card>
@@ -121,12 +198,13 @@ export default class Exercicios extends Component {
                         <b>{lista && lista.title}</b>
                       </h4>
                     </Col>
-
-                    <ProgressBar
-                      now={completed}
-                      label={`${completed}%`}
-                      style={{ width: "100%" }}
-                    />
+                    <ProgressBar 
+                      numQuestions={lista && questions.length}
+                      numQuestionsCompleted={lista && questionsCompleted.length}
+                      dateBegin={lista && lista.classHasListQuestion.createdAt}
+                      dateEnd={lista && lista.classHasListQuestion.submissionDeadline}
+                      width={100}
+                    />                  
                   </CardHead>
                   <CardBody>
                     <Row>
@@ -173,7 +251,7 @@ export default class Exercicios extends Component {
                                 <CardFooter>
                                   Suas submissões: {question.submissions.length}
                                   <Link
-                                    to={`/professor/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}
+                                    to={`/professor/turma/${this.props.match.params.id}/lista/${lista && lista.id}/exercicio/${question.id}`}
                                   >
                                     <button
                                       className="btn btn-success mr-2"
@@ -192,6 +270,41 @@ export default class Exercicios extends Component {
                 </Card>
               </Col>
             </Row>
+
+            <Modal
+              show={showModalDate}
+              onHide={this.handleCloseShowModalDate.bind(this)}
+              size="lg"
+              aria-labelledby="contained-modal-title"
+              centered
+            >
+              <Modal.Header>
+                <Modal.Title id="contained-modal-title">
+                  {`Adicionar data limite para as submissões na lista '${lista && lista.title}'`} 
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Row>
+                  <Col xs={12} textCenter>
+                    <input type='date' value={dateLimit} onChange={(e)=>this.changeDate(e)}/> - 23:59:59
+                  </Col>
+                </Row>
+              </Modal.Body>
+              <Modal.Footer>
+                <button
+                  className={`btn btn-primary ${loadingDateLimit && 'btn-loading'}`}
+                  onClick={()=>this.addDateLimit(lista)}
+                >
+                  Adicionar
+                </button>
+                <button
+                  className={`btn btn-danger  ${loadingDateLimit && 'btn-loading'}`}
+                  onClick={this.handleCloseShowModalDate.bind(this)}
+                >
+                  Não adicionar data limite
+                </button>
+              </Modal.Footer>
+            </Modal>
           </Fragment>
         )}
       </TemplateSistema>

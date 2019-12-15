@@ -15,7 +15,7 @@ import "brace/mode/c_cpp";
 import "brace/mode/javascript";
 import "brace/theme/monokai";
 
-const lista = {
+const table = {
   backgroundColor: "white"
 };
 
@@ -25,7 +25,8 @@ export default class HomesubmissoesScreen extends Component {
     this.state = {
       loadingInfoTurma: true,
       submissoes: [],
-      usuario : null,
+      usuario : '',
+      lista: '',
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
       showModal: false,
       loadingSubmissoes: false,
@@ -40,7 +41,8 @@ export default class HomesubmissoesScreen extends Component {
   async componentDidMount() {
     this.getSubmissoes();
     await this.getInfoTurma();
-    document.title = `${this.state.turma.name} - Submissões`;
+    const {turma} = this.state 
+    document.title = `${turma && turma.name} - Submissões`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -89,7 +91,8 @@ export default class HomesubmissoesScreen extends Component {
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
         loadingSubmissoes: false,
-        usuario : response.data.user
+        usuario : response.data.user,
+        lista :response.data.list 
       });
     } catch (err) {
       this.setState({ loadingSubmissoes: false });
@@ -139,6 +142,7 @@ export default class HomesubmissoesScreen extends Component {
       loadingInfoTurma,
       turma,
       usuario,
+      lista,
     } = this.state;
     return (
       <TemplateSistema
@@ -153,7 +157,7 @@ export default class HomesubmissoesScreen extends Component {
                 <Col xs={12}>
                     <h3 style={{ margin: "0px" }}>
                       <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                      {turma.name} - {turma.year}.{turma.semester || 1} | {usuario.name} - {usuario.enrollment}
+                      {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} | {usuario && usuario.name} - {usuario && usuario.enrollment} | {lista && lista.title}
                     </h3>
                 </Col>
             )}
@@ -172,7 +176,7 @@ export default class HomesubmissoesScreen extends Component {
         </Row>
         <div className="row" style={{ marginBottom: "15px" }}>
           <div className="col-12">
-            <table style={lista} className="table table-hover">
+            <table style={table} className="table table-hover">
               <thead>
                 <tr>
                   <th></th>
@@ -241,7 +245,16 @@ export default class HomesubmissoesScreen extends Component {
                       <td>{submission.ip}</td>
                       <td>{submission.char_change_number}</td>
                       <td>{submission.environment}</td>
-                      <td>{formataData(submission.createdAt)}</td>
+                      <td
+                        style={{
+                            color:`${
+                              submission.submissionDeadline && new Date(submission.submissionDeadline) < new Date(submission.createdAt)
+                              ?'#f00':'#0f0'
+                            }`
+                        }}
+                      >
+                        <b>{formataData(submission.createdAt)}</b>
+                      </td>
                       <td>
                         <button
                           className="btn btn-primary mr-2"
@@ -272,6 +285,7 @@ export default class HomesubmissoesScreen extends Component {
           title={submissao && submissao.question.description}
           handleModal={this.handleCloseshowModalInfo.bind(this)}
           width={"100%"}
+          
         >
           <div className="row">
             <div className="col-12 offset-md-2 col-md-8 text-center">

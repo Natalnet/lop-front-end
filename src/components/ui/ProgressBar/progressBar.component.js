@@ -1,45 +1,48 @@
 import React from "react";
+import formataData from '../../../util/funçoesAuxiliares/formataData'
 
 export default props => {
-  let cor;
-  if (props.porcentagem < 30) {
+  let {numQuestions,numQuestionsCompleted,width,dateBegin,dateEnd} = props
+  const percentage = numQuestions && numQuestionsCompleted && (
+    (numQuestionsCompleted / numQuestions) *
+    100
+  ).toFixed(2)
+  let cor; 
+  if (percentage < 30) {
     cor = "bg-red";
-  } else if (props.porcentagem >= 30 && props.porcentagem < 70) {
+  } else if (percentage >= 30 && percentage < 70) {
     cor = "bg-yellow";
   } else {
     cor = "bg-green";
   }
 
   let largura;
-  if (props.largura) {
-    largura = props.largura;
+  if (width) {
+    largura = width;
   } else {
     largura = 45;
   }
 
-  let date;
-  if (props.data !== true) {
-    date = "Jun 11, 2015 - Jul 10, 2015";
-  } else {
-    date = props.data;
-  }
+
   return (
     <div style={{ width: largura + "%" }}>
       <div className="clearfix">
         <div className="float-left">
-          {console.log(largura)}
-          <strong>{props.porcentagem + "%"}</strong>
+          <strong>{`${percentage}% (${numQuestionsCompleted} de ${numQuestions})`}</strong>
         </div>
         <div className="float-right">
-          <small className="text-muted">{date}</small>
+          <small className="text-muted">
+            {dateBegin?formataData(dateBegin).split(' - ')[0]:''}
+            {dateEnd?` - ${formataData(dateEnd).split(' - ')[0]}`:''}
+          </small>
         </div>
       </div>
       <div className="progress progress-xs">
         <div
           className={("progress-bar", cor)}
           role="progressbar"
-          style={{ width: props.porcentagem + "%" }}
-          aria-valuenow={props.porcentagem}
+          style={{ width: percentage + "%" }}
+          aria-valuenow={percentage}
           aria-valuemin="0"
           aria-valuemax="100"
         ></div>

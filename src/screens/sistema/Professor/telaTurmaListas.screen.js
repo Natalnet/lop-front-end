@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
-import { BlockMath } from "react-katex";
 import NavPagination from "components/ui/navs/navPagination";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import Card from "components/ui/card/card.component";
@@ -23,13 +22,16 @@ export default class Pagina extends Component {
     this.state = {
       redirect: false,
       listas: [],
+      list:'',
       loadingInfoTurma: true,
+      loadingDateLimit:false,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
       loandingTodasListas: true,
       loandingListas: false,
       showModalListas: false,
-      showModalInfo: false,
+      showModalDate: false,
       todasListas: [],
+      dateLimit:'',
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
@@ -44,7 +46,8 @@ export default class Pagina extends Component {
     this.getTodasListas();
 
     await this.getInfoTurma();
-    document.title = `${this.state.turma.name} - listas`;
+    const {turma} = this.state
+    document.title = `${turma && turma.name} - listas`;
     this.getTodasListas();
   }
   async getInfoTurma() {
@@ -75,8 +78,10 @@ export default class Pagina extends Component {
     }
   }
 
-  async inserirLista(idLista) {
-    const idTurma = this.props.match.params.id;
+  async inserirLista(lista) {
+    const {id} = this.props.match.params;
+    const idLista = lista.id
+    const query = `?idClass=${id}&idList=${idLista}`
     try {
       Swal.fire({
         title: "Adicionando lista",
@@ -86,25 +91,30 @@ export default class Pagina extends Component {
       });
       Swal.showLoading();
 
-      await api.post(`/class/${idTurma}/addList/list/${idLista}`);
-      await this.getTodasListas();
+      await api.post(`/classHasListQuestion/store${query}`);
+      this.handleCloseshowModalListas()
       Swal.hideLoading();
       Swal.fire({
         type: "success",
-        title: "Lista Adicionada com Sucesso!"
+        title: "Lista adicionada com sucesso!"
       });
+      
       this.getListas();
+      this.handleShowModalDate(lista);
     } catch (err) {
+      console.log(err);
       Swal.hideLoading();
       Swal.fire({
         type: "error",
-        title: "ops... Lista não pôde ser adicionado"
+        title: "ops... Lista não pôde ser adicionada"
       });
     }
   }
   async removerLista(list) {
-    const idList = list.id;
-    const idTurma = this.props.match.params.id;
+    
+    const idClass = this.props.match.params.id;
+    const idList = list.id
+    const query = `?idList=${idList}&idClass=${idClass}`
     try {
       const { value } = await Swal.fire({
         title: `Tem certeza que quer remover "${list.title}" da turma?`,
@@ -124,20 +134,20 @@ export default class Pagina extends Component {
         allowEnterKey: false
       });
       Swal.showLoading();
-      await api.delete(`/class/${idTurma}/remove/list/${idList}`);
+      await api.delete(`/classHasListQuestion/delete${query}`);
       const { listas } = this.state;
       this.getTodasListas();
       this.setState({ listas: listas.filter(lista => lista.id !== idList) });
       Swal.hideLoading();
       Swal.fire({
         type: "success",
-        title: "Lista removido com sucesso!"
+        title: "Lista removida com sucesso!"
       });
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
         type: "error",
-        title: "ops... Lista não pôde ser removido"
+        title: "ops... Lista não pôde ser removida"
       });
     }
   }
@@ -180,6 +190,59 @@ export default class Pagina extends Component {
       console.log(err);
     }
   }
+  async addDateLimit(list){
+    const idClass = this.props.match.params.id;
+    const idList = list.id
+    const query = `?idList=${idList}&idClass=${idClass}`
+    const {dateLimit} = this.state
+    if(dateLimit){
+      const request = {
+        submissionDeadline:dateLimit
+      }
+      try{
+        this.setState({loadingDateLimit:true})
+        await api.put(`/classHasListQuestion/update${query}`,request)
+        this.getListas()
+        this.handleCloseShowModalDate()
+        this.setState({loadingDateLimit:false})
+        Swal.fire({
+          type: "success",
+          title: "Data limite para submissoões adicionada com sucesso!"
+        });
+      }
+      catch(err){
+        console.log(err);
+        this.setState({loadingDateLimit:false})
+        Swal.fire({
+          type: "error",
+          title: "ops... data limite não pôde ser adicionada"
+        });
+      }
+    }
+  }
+  changeDate(e){
+    console.log('data');
+    console.log(e.target.value);
+    this.setState({dateLimit: e.target.value})
+  }
+
+  handleShowModalDate(list){
+      console.log(list);
+      this.setState({
+          list:list,
+          showModalDate:true,
+      })
+  }
+  handleCloseShowModalDate(e){
+      this.setState({showModalDate:false})
+  }
+  handleShowModalListas(e) {
+    this.setState({ showModalListas: true });
+  }
+  handleCloseshowModalListas(e) {
+    this.setState({ showModalListas: false });
+  }
+
 
   handlePage(e, numPage) {
     e.preventDefault();
@@ -191,21 +254,7 @@ export default class Pagina extends Component {
       () => this.getTodasListas()
     );
   }
-  handleShowModalInfo(questions) {
-    this.setState({
-      showModalInfo: true,
-      questions: [...questions]
-    });
-  }
-  handleCloseshowModalInfo(e) {
-    this.setState({ showModalInfo: false });
-  }
-  handleShowModalListas(e) {
-    this.setState({ showModalListas: true });
-  }
-  handleCloseshowModalListas(e) {
-    this.setState({ showModalListas: false });
-  }
+
 
   handleSelectFieldFilter(e) {
     console.log(e.target.value);
@@ -239,6 +288,9 @@ export default class Pagina extends Component {
     const {
       loadingInfoTurma,
       turma,
+      list,
+      showModalDate,
+      loadingDateLimit,
       todasListas,
       loandingTodasListas,
       totalPages,
@@ -250,7 +302,6 @@ export default class Pagina extends Component {
       fieldFilter,
       showModalListas,
       questions,
-      showModalInfo,
       loandingListas
     } = this.state;
     return (
@@ -262,7 +313,7 @@ export default class Pagina extends Component {
             ) : (
               <h3 style={{ margin: "0px" }}>
                 <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma.name} - {turma.year}.{turma.semester || 1}
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
               </h3>
             )}
           </div>
@@ -288,11 +339,9 @@ export default class Pagina extends Component {
               const questionsCompleted = lista.questions.filter(
                 q => q.completed
               );
-              const completed = (
-                (questionsCompleted.length / questions.length) *
-                100
-              ).toFixed(2);
+
               return (
+                <Fragment key={lista.id}>
                 <Col xs={12}>
                   <Card key={lista.id} style={{ margin: "2px" }}>
                     <CardHead>
@@ -301,8 +350,12 @@ export default class Pagina extends Component {
                           <b>{lista.title}</b>
                         </h4>
                       </Col>
-                      <ProgressBar porcentagem={completed}></ProgressBar>
-
+                      <ProgressBar 
+                        numQuestions={questions.length}
+                        numQuestionsCompleted={questionsCompleted.length}
+                        dateBegin={lista.classHasListQuestion.createdAt}
+                        dateEnd={lista.classHasListQuestion.submissionDeadline}
+                      />
                       <CardOptions>
                         <Link
                           to={`/professor/turma/${this.props.match.params.id}/lista/${lista.id}`}
@@ -321,6 +374,7 @@ export default class Pagina extends Component {
                     </CardHead>
                   </Card>
                 </Col>
+                </Fragment>
               );
             })
           )}
@@ -370,7 +424,7 @@ export default class Pagina extends Component {
                   <div className="loader" style={{ margin: "0px auto" }} />
                 ) : (
                   todasListas.map((lista, index) => (
-                    <div key={index} className="col-6">
+                    <div key={index} className="col-12">
                       <Card>
                         <CardHead>
                           <CardTitle>
@@ -384,7 +438,7 @@ export default class Pagina extends Component {
                             >
                               <button
                                 className="btn-primary btn"
-                                onClick={() => this.inserirLista(lista.id)}
+                                onClick={() => this.inserirLista(lista)}
                               >
                                 Adicionar
                               </button>
@@ -435,60 +489,42 @@ export default class Pagina extends Component {
             </button>
           </Modal.Footer>
         </Modal>
-
         <Modal
-          show={showModalInfo}
-          onHide={this.handleCloseshowModalInfo.bind(this)}
+          show={showModalDate}
+          onHide={this.handleCloseShowModalDate.bind(this)}
           size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
+          aria-labelledby="contained-modal-title"
           centered
         >
           <Modal.Header>
-            <Modal.Title id="contained-modal-title-vcenter">
-              Questões
+            <Modal.Title id="contained-modal-title">
+              {`Adicionar data limite para as submissões na lista '${list.title}'`} 
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div className="row">
-              {questions.map((questao, index) => (
-                <div key={index} className="col-6">
-                  <Card>
-                    <CardHead>
-                      <CardTitle>{questao.title}</CardTitle>
-                      <CardOptions>
-                        <button
-                          className="btn btn-primary"
-                          data-toggle="collapse"
-                          data-target={"#collapse" + questao.id}
-                          style={{ position: "relative" }}
-                        >
-                          <i className="fe fe-chevron-down" />
-                        </button>
-                      </CardOptions>
-                    </CardHead>
-                    <div className="collapse" id={"collapse" + questao.id}>
-                      <CardBody>
-                        <b>Descrição: </b>
-                        <p>{questao.description}</p>
-                        <br />
-                        <BlockMath>{questao.katexDescription || ""}</BlockMath>
-                        <br />
-                      </CardBody>
-                    </div>
-                  </Card>
-                </div>
-              ))}
-            </div>
+            <Row>
+              <Col xs={12} textCenter>
+                <input type='date' onChange={(e)=>this.changeDate(e)}/> - 23:59:59
+              </Col>
+            </Row>
           </Modal.Body>
           <Modal.Footer>
             <button
-              className="btn btn-primary"
-              onClick={this.handleCloseshowModalInfo.bind(this)}
+              className={`btn btn-primary ${loadingDateLimit && 'btn-loading'}`}
+              onClick={()=>this.addDateLimit(list)}
             >
-              Fechar
+              Adicionar
+            </button>
+            <button
+              className={`btn btn-danger  ${loadingDateLimit && 'btn-loading'}`}
+              onClick={this.handleCloseShowModalDate.bind(this)}
+            >
+              Não adicionar data limite
             </button>
           </Modal.Footer>
         </Modal>
+
+
       </TemplateSistema>
     );
   }

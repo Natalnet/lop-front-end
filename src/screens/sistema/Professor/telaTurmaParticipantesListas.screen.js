@@ -25,7 +25,8 @@ export default class Listas extends Component {
   async componentDidMount() {
     this.getListas();
     await this.getInfoTurma();
-    document.title = `${this.state.turma.name} - listas`;
+    const {turma} = this.state
+    document.title = `${turma && turma.name} - listas`;
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -97,8 +98,8 @@ export default class Listas extends Component {
               <Col xs={12}>
                 <h3 style={{ margin: "0px" }}>
                   <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                  {turma.name} - {turma.year}.{turma.semester || 1} |{" "}
-                  {usuario.name} - {usuario.enrollment}
+                  {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} |{" "}
+                  {usuario && usuario.name} - {usuario && usuario.enrollment}
                 </h3>
               </Col>
             )}
@@ -131,10 +132,6 @@ export default class Listas extends Component {
                   const questionsCompleted = lista.questions.filter(
                     q => q.completed
                   );
-                  const completed = (
-                    (questionsCompleted.length / questions.length) *
-                    100
-                  ).toFixed(2);
                   return (
                     <Fragment key={lista.id}>
                       <Col xs={12}>
@@ -145,8 +142,12 @@ export default class Listas extends Component {
                                 <b>{lista.title}</b>
                               </h4>
                             </Col>
-                            <ProgressBar porcentagem={completed}></ProgressBar>
-
+                            <ProgressBar 
+                              numQuestions={questions.length}
+                              numQuestionsCompleted={questionsCompleted.length}
+                              dateBegin={lista.classHasListQuestion.createdAt}
+                              dateEnd={lista.classHasListQuestion.submissionDeadline}
+                            />
                             <CardOptions>
                               <Link
                                 to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario.id}/listas/${lista.id}/exercicios`}
@@ -174,10 +175,7 @@ export default class Listas extends Component {
                   const questionsCompleted = prova.questions.filter(
                     q => q.completed
                   );
-                  const completed = (
-                    (questionsCompleted.length / questions.length) *
-                    100
-                  ).toFixed(2);
+
                   return (
                     <Fragment key={prova.id}>
                       <Col xs={12}>
@@ -188,8 +186,11 @@ export default class Listas extends Component {
                                 <b>{prova.title}</b>
                               </h4>
                             </Col>
-                            <ProgressBar porcentagem={completed}></ProgressBar>
-
+                            <ProgressBar 
+                              numQuestions={questions.length}
+                              numQuestionsCompleted={questionsCompleted.length}
+                              dateBegin={prova.classHasTest.createdAt}
+                            />
                             <CardOptions>
                               <Link
                                 to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario.id}/provas/${prova.id}/exercicios`}

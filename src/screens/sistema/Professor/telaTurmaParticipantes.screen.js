@@ -25,8 +25,8 @@ export default class Pagina extends Component {
     async componentDidMount() {
         this.getParticipantes()
         await this.getInfoTurma()
-        document.title = `${this.state.turma.name} - listas`;
-        
+        const {turma} = this.state
+        document.title = `${turma && turma.name} - participantes`;        
     }
      async getInfoTurma(){
         const id = this.props.match.params.id
@@ -159,7 +159,7 @@ export default class Pagina extends Component {
                         {loadingInfoTurma?
                             <div className="loader"  style={{margin:'0px auto'}}></div>
                             :
-                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma.name} - {turma.year}.{turma.semester || 1}</h3>
+                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}</h3>
                         }
                     </div>
                 </div>
