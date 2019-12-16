@@ -76,7 +76,6 @@ export default (props) =>{
               <label>Saídas para testes: </label>
               <textarea onChange={props.handleOutputsChange} style={{height:'150px'}} className="form-control" wrap="off" value={outputs}></textarea> 
             </div>
-         
           </div>
 
 	)

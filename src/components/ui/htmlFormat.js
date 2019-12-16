@@ -4,7 +4,6 @@ import React,{Fragment} from 'react'
 export default props => {
 	let children = props.children || ''
 	children = children.toString().split('')
-
 	return(
 		<Fragment>
 			{

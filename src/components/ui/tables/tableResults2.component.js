@@ -12,8 +12,7 @@ export default props => {
 	const {response,descriptionErro,showAllTestCases} = props
   
       let rows = showAllTestCases?response:response.filter((r,i)=>i===0)
-      console.log('----rows----');
-      console.log(rows);
+  
       if(descriptionErro){
         return(
           <Card>

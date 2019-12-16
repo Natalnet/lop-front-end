@@ -1,4 +1,4 @@
-import React, { Component} from "react";
+import React, { Component,Fragment} from "react";
 import {Redirect} from 'react-router-dom'
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
@@ -24,7 +24,9 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import TableResults2 from '../../../components/ui/tables/tableResults2.component'
 import TableIO from '../../../components/ui/tables/tableIO.component'
-import FormExercicio from '../../../components/ui/forms/formExercicio.component'
+import Select from 'react-select';
+import 'katex/dist/katex.min.css';
+import {BlockMath } from 'react-katex';
 import FormSelect2 from '../../../components/ui/forms/formSelect2.component'
 
 export default class Editor extends Component {
@@ -33,6 +35,7 @@ export default class Editor extends Component {
     this.state = {
       editor:'',
       editorRes:'',
+      descriptionErro:"",
       contentRes:"",
       language:'javascript',
       theme:'monokai',
@@ -46,8 +49,14 @@ export default class Editor extends Component {
       loadingEditor:false,
       title:'',
       description:'',
-      inputs:'',
-      outputs:'',
+      tests:[{
+        inputs:'',
+        output:'',
+        msgInputs:'',
+        msgOutput:'',
+      }],
+      msgTitle:'',
+      msgDescription:'',
       percentualAcerto:'',
       tags:[],
       tagsSelecionadas:[],
@@ -85,16 +94,14 @@ export default class Editor extends Component {
       this.setState({loadingExercicio:true})
       const response = await api.get(`/question/${id}`)
       //console.log(response.data);
-      const [inputs,outputs] = this.getInputsAndOutpus(response.data.results)
       this.setState({
         title : response.data.title,
         description : response.data.description,
         katexDescription:response.data.katexDescription || '',
+        tests:response.data.results,
         status:response.data.status,
         difficulty:response.data.difficulty,
         solution:response.data.solution,
-        inputs:inputs,
-        outputs:outputs,
         loadingExercicio:false,
         tagsSelecionadas:response.data.tags.map(tag=>{
           return {
@@ -110,25 +117,31 @@ export default class Editor extends Component {
       console.log(Object.getOwnPropertyDescriptors(err));
     } 
   }
+  handleNumTest(action){
+    let {tests} = this.state
+    if(action==='+'){
+      tests = [...tests,{
+        inputs:'',
+        output:'',
+        msgInputs:'',
+        msgOutput:'',
+      }]
+    }
+    else{
+      if(tests.length===1) return null
+      else{
+        tests.pop()
+      }
+    }
+    this.setState({
+      tests:[...tests]
+    })
+  }
   async handleTagsChangeTags(tags){
     console.log(tags);
     this.setState({
         tagsSelecionadas:tags || []
     })
-  }
-  getInputsAndOutpus(results){
-    let inputs=[]
-    let output=[]
-     console.log('results');
-    for(let i=0 ; i<results.length ; i++ ){
-      console.log(results[i]);
-      inputs.push(results[i].inputs.slice(0,-1).split('\n').join(','))
-      output.push(results[i].output.split('\n').join('|'))
-    }
-    inputs = inputs.join('\n')
-    output = output.join('\n')
-    console.log(inputs);
-    return [inputs,output]
   }
   async handleTitleChange(e){
       this.setState({
@@ -155,15 +168,17 @@ export default class Editor extends Component {
       difficulty:e.target.value
     })
   }
-  async handleInputsChange(e){
-      this.setState({
-        inputs:e.target.value
-      })
+  handleInputsChange(e,i){
+    const inputs = e.target.value
+    const {tests} = this.state
+    tests[i].inputs = inputs
+    this.setState({tests:tests})
   }
-  async handleOutputsChange(e){
-      this.setState({
-        outputs:e.target.value
-      })
+  handleOutputChange(e,i){
+    const output = e.target.value
+    const {tests} = this.state
+    tests[i].output = output
+    this.setState({tests:tests})
   }
   async changeLanguage(e){
     await this.setState({language:e.target.value})
@@ -175,16 +190,34 @@ export default class Editor extends Component {
   handleSolution(newValue){
     this.setState({solution:newValue})
   }
+  isTestEmpty(results){
+     let isTestEmpty = false
+     const testsChecked = results.map(test=>{
+        if(!test.inputs || !test.output) isTestEmpty = true
+          return {
+            inputs:test.inputs.replace(/\s+$/,''),
+            output:test.output.replace(/\s+$/,'').replace(/\n+$/,''),
+            msgInputs:!test.inputs?'Este campo obrigatório':'',
+            msgOutput:!test.output?'Este campo obrigatório':''
+        }
+     })
+     this.setState({tests:testsChecked})
+     return isTestEmpty;
+  }
+
   async executar(e){
     e.preventDefault()
-    const {solution,language} = this.state
+    let {tests,solution,language} = this.state
+    if(this.isTestEmpty(tests)) return null
+    const results = this.rTrimAll(tests)
     const request = {
       codigo : solution,
       linguagem :language,
-      results : this.getResults()
+      results, 
     }
-    this.setState({loadingReponse:true})
+    
     try{
+      this.setState({loadingReponse:true})
       const response = await apiCompiler.post('/submission/exec',request)
       this.setState({ loadingReponse:false})
       console.log(response.data);
@@ -192,7 +225,7 @@ export default class Editor extends Component {
         this.setState({
           response:response.data.results,
           percentualAcerto:response.data.percentualAcerto,
-          contentRes:response.data.info,
+          descriptionErro:response.data.descriptionErro,
         })
       }
     }
@@ -203,22 +236,27 @@ export default class Editor extends Component {
     }
     
   }
-  getResults(){
-    const {inputs,outputs} = this.state
-    const entradas = inputs.split('\n').map(input => input.trim())
-    const saidas = outputs.split('\n').map(input => input.replace(/\s+$/,''))
-    console.log('saidas: '+saidas);
-    const resultados = []
-    for(let i=0 ; i<entradas.length ; i++ ){
-      resultados.push({
-        inputs: entradas[i]?entradas[i].split(',').map(i=>i.trim()).map(entrada => entrada+'\n').join(''):'',
-        output: saidas[i]?saidas[i].split('|').map(saida => saida.replace(/\s+$/,'')).join('\n').replace(/\n+$/,''):''
-      })
-    }
-    return resultados
+
+  rTrimAll(tests){
+    console.log('antes do Rtrim');
+    console.log(tests);
+
+    const results =  tests.map(test=>{
+      return {
+        inputs:test.inputs.split('\\n').map(test=>test.replace(/\s+$/,'')).join('\n'),
+        output:test.output.split('\\n').join('\n').replace(/\s+$/,'').replace(/\n+$/,'')
+      }
+    })
+    console.log('depois do em RTrim');
+    console.log(results);
+    return results
   }
   async updateQuestion(e){
     const id = this.props.match.params.id
+    e.preventDefault()
+    let {tests,title,description,tagsSelecionadas,solution,status,difficulty,katexDescription} = this.state
+    if(this.isTestEmpty(tests)) return null
+    const results = this.rTrimAll(tests)
     Swal.fire({
       title:'Atualizando questão',
       allowOutsideClick:false,
@@ -226,17 +264,16 @@ export default class Editor extends Component {
       allowEnterKey:false
     })
     Swal.showLoading()
-    console.log('katexDescription:');
-    console.log(this.state.katexDescription);
+
     const request = {
-      title : this.state.title,
-      description : this.state.description,
-      katexDescription:this.state.katexDescription,
-      status:this.state.status,
-      difficulty:this.state.difficulty,
-      solution:this.state.solution,
-      tags:this.state.tagsSelecionadas.map(tag=>tag.value),
-      results : this.getResults()
+      title,
+      description,
+      tags : tagsSelecionadas.map(tag=>tag.value),
+      katexDescription,
+      status,
+      difficulty,
+      solution,
+      results,
     }
     try{
       this.setState({savingQuestion:true})
@@ -254,6 +291,25 @@ export default class Editor extends Component {
       console.log(response.data)
     }
     catch(err){
+     await this.setState({
+        msgTitle:'',
+        msgDescription:'',
+      })
+      if(err.response.status===400){
+          for(let fieldErro of err.response.data){
+            if(fieldErro.field==="title"){
+              this.setState({msgTitle:fieldErro.msg})
+            }
+            if(fieldErro.field==="description"){
+              this.setState({msgDescription:fieldErro.msg})
+            }
+          }
+      }
+      Swal.hideLoading()
+      Swal.fire({
+          type: 'error',
+          title: 'ops... Questão não pôde ser salva',
+      })
       Swal.hideLoading()
       Swal.fire({
           type: 'error',
@@ -270,53 +326,162 @@ export default class Editor extends Component {
       return <Redirect to='/professor/exercicios' />
     }
     const {percentualAcerto,response,status,difficulty,katexDescription,savingQuestion,loadingReponse,title,description,inputs,outputs} = this.state
-    const { language,theme,contentRes,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags,someErro } = this.state;
+    const { tests,language,theme,contentRes,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags,msgTitle,msgDescription,descriptionErro } = this.state;
 
-
+    
     return (
     <TemplateSistema active='exercicios'>
     <Card>
       <CardHead>
           <CardTitle center>
-            <i className="fa fa-edit"></i> Atualizar questão
+            <i className="fa fa-code"></i> Nova questão
           </CardTitle>
       </CardHead>
       <CardBody loading={loadingExercicio}>
-      <FormExercicio
-        title={title}
-        description={description}
-        inputs={inputs}
-        outputs={outputs}
-        katexDescription={katexDescription}
-        status={status}
-        difficulty={difficulty}
-        loadingReponse={loadingReponse}
-        tags={tags}
-        defaultTags={tagsSelecionadas}
-        loadingTags={loadingTags}
-        handleTagsChangeTags={this.handleTagsChangeTags.bind(this)}
-        handleTitleChange={this.handleTitleChange.bind(this)}
-        handleDescriptionChange={this.handleDescriptionChange.bind(this)}
-        handlekatexDescription={this.handlekatexDescription.bind(this)}
-        handleStatus={this.handleStatus.bind(this)}
-        handleDifficulty={this.handleDifficulty.bind(this)}
-        handleInputsChange={this.handleInputsChange.bind(this)}
-        handleOutputsChange={this.handleOutputsChange.bind(this)}
-      />
+      <form onSubmit={e => this.updateQuestion(e)} >
+        <div className="form-row">
+          <div className="form-group col-md-12">
+            <label>Título: </label>
+            <input
+              type="text"
+              onChange={(e)=>this.handleTitleChange(e)} 
+              className={`form-control ${msgTitle && 'is-invalid'}`} 
+              placeholder="Digite o título da questão..." 
+              value={title}
+              required
+            />
+            <div className="invalid-feedback">{msgTitle}</div>
+          </div>
+          <div className="form-group col-md-12">
+            <label>Enunciado:</label>
+            <textarea 
+              onChange={(e)=>this.handleDescriptionChange(e)} 
+              style={{height:'150px'}} 
+              className={`form-control ${msgDescription && 'is-invalid'}`}  
+              value={description}
+              required
+            >
+            </textarea> 
+            <div className="invalid-feedback">{msgDescription}</div>
+          </div>
+          <div className="form-group col-md-6">
+            <label htmlFor="selectStatus">Status da questão: </label>
+            <select className="form-control" defaultValue={status} id='selectStatus' onChange={(e)=>this.handleStatus(e)}>
+              <option value='PÚBLICA'>Pública (para uso em listas)</option>
+              <option value='PRIVADA'>Oculta (para uso em provas)</option>
+            </select>
+          </div>
+          <div className="form-group col-md-6">
+            <label htmlFor="selectDifficulty">Dificuldade </label>
+            <select className="form-control" defaultValue={difficulty} id='selectDifficulty' onChange={(e)=>this.handleDifficulty(e)}>
+              <option value = 'Muito fácil' >Muito fácil</option>
+              <option value = 'Fácil' >Fácil</option>
+              <option value = 'Médio' >Médio</option>
+              <option value = 'Difícil' >Difícil</option>
+              <option value = 'Muito difícil' >Muito difícil</option>
+            </select>
+          </div>
+          <div className="form-group col-12">
+            <label>Tags </label>
+              <Select
+              style={{boxShadow: "white"}}
+              options={tags || []}
+              isMulti
+              isLoading={loadingTags}
+              closeMenuOnSelect={false}
+              onChange={this.handleTagsChangeTags.bind(this)}
+              />
+          </div>
+          <div className="form-group col-md-6">
+            <label>
+            Katex: &nbsp;
+            <a href='https://katex.org/docs/supported.html#operators' className="badge badge-info" target='_blank'>
+              <i className="fa fa-info-circle"/> &nbsp;
+              Ver documentação
+              </a>
+            </label>
+            <textarea 
+              onChange={(e)=>this.handlekatexDescription(e)} 
+              style={{height:'150px'}} 
+              className="form-control" 
+              value={katexDescription}
+            >
+              </textarea> 
+          </div>
+          <div className="col-md-6" >
+            <label>Saída Katex:</label>
+            <div className="alert alert-info" role="alert" style={{height:'150px'}}>
+              <BlockMath>
+              {katexDescription}
+              </BlockMath>
+            </div>
+          </div>
+          {/*teste*/}
+          <div className="form-group col-md-12">      
+            <label className="mr-2">Entradas para testes: </label>
+            <button onClick={()=>this.handleNumTest('+')} type="button" className="btn btn-primary btn-sm mr-2">
+              <i className="fe fe-plus"/>
+            </button>
+            <button onClick={()=>this.handleNumTest('-')} type="button" className="btn btn-sm btn-danger">
+              <i className="fe fe-minus"/>
+            </button>
+          </div>
+            {tests.map((test,i)=>{
+              return(
+                <Fragment key={i}>
+                  
+                  <div className="form-group col-12 col-md-6" style={{border:'1px solid #00f'}}>
+                  <div className="form-group col-12">
+                    <label>teste {i+1}</label>
+                  </div>
+                  <div className="form-group col-12">
+                    <label>entrada(s) (cada entrada deve vir acompanahada de um \n)</label>
+                      <input
+                        type="text"
+                        onChange={(e)=>this.handleInputsChange(e,i)} 
+                        className={`form-control ${!tests[i].inputs && tests[i].msgInputs?'is-invalid':''}`}
+                        placeholder="Ex: 12\n16.4\nOlá mundo!\n"
+                        value={tests[i].inputs}
+                        required
+                      />
+                      <div className="invalid-feedback">{!tests[i].inputs && tests[i].msgInputs?tests[i].msgInputs:''}</div>
+                  </div>
+                  <div className="form-group col-12">
+                    <label>saída</label>
+                      <textarea 
+                        onChange={(e)=>this.handleOutputChange(e,i)} 
+                        style={{minHeight:'38px',height:'38px',width:'100%'}}
+                        className={`form-control ${!tests[i].output && tests[i].msgOutput?'is-invalid':''}`}
+                        wrap="off"
+                        placeholder="EX1: 34.89; EX2: Eh maior"
+                        value={tests[i].output}
+                        required
+                      >
+                      </textarea>
+                      <div className="invalid-feedback">{!tests[i].output && tests[i].msgOutput?tests[i].msgOutput:''}</div>
+                  </div>
+                  
+                </div>
+                
+                </Fragment>
+              )
+              })
+            }
+        </div>
       <div className='row'>
         <div className="card col-12">
           <TableIO
-            results={this.getResults()}
+            results={this.rTrimAll(tests)}
           />
         </div>
       </div>
       <div className ="row" style={{marginBottom:"10px"}}>
-      <FormSelect2
-        loadingReponse={loadingReponse}
-        changeLanguage={this.changeLanguage.bind(this)}
-        changeTheme={this.changeTheme.bind(this)}
-        executar={this.executar.bind(this)}
-      />
+        <FormSelect2
+          loadingReponse={loadingReponse}
+          changeLanguage={this.changeLanguage.bind(this)}
+          changeTheme={this.changeTheme.bind(this)}
+          executar={this.executar.bind(this)}
+        />
       </div>
           <div className='row'>
             <div className='col-12 col-md-7'>
@@ -356,20 +521,19 @@ export default class Editor extends Component {
                 </CardHead>
                 <TableResults2 
                   response={response}
-                  descriptionErro={contentRes}
-                  erro={someErro}
+                  showAllTestCases={true}
+                  descriptionErro={descriptionErro}
                   percentualAcerto={percentualAcerto}
                 />
               </Card>
           }
           </div>
-          </div>
+        </div>
+          <button type='submit' className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
+            <i className="fa fa-save"></i> Salvar
+          </button> 
+        </form>
         </CardBody>
-        <CardFooter loading={loadingExercicio}>
-          <button onClick={e => this.updateQuestion(e)} className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
-            <i className="fa fa-save"></i> Atualizar
-          </button>         
-        </CardFooter>
       </Card>
     </TemplateSistema>
     );

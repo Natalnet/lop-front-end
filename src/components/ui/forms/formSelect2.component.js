@@ -25,7 +25,7 @@ export default (props) =>{
             </div>
             <div className="col-4 col-md-3">
                 <label htmlFor="selectDifficul">&nbsp;</label>
-                <button style={{width:"100%"}} className={`btn btn-primary ${loadingReponse && 'btn-loading'}`} onClick={executar}>
+                <button type='button' style={{width:"100%"}} className={`btn btn-primary ${loadingReponse && 'btn-loading'}`} onClick={executar}>
                   <i className="fa fa-play" /> &nbsp;&nbsp; Testar
                 </button>
             </div>
