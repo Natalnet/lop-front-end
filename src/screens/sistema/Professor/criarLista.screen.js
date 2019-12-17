@@ -9,6 +9,7 @@ import NavPagination from "components/ui/navs/navPagination";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
+import TableIO from 'components/ui/tables/tableIO.component'
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
@@ -47,11 +48,12 @@ export default class CriarListaScreen extends Component {
 
   async getExercicios() {
     let { contentInputSeach, numPageAtual, fildFilter } = this.state;
-    let query = `include=${contentInputSeach.trim()}`;
-    query += `&fild=${fildFilter}`;
+    let query = `?include=${contentInputSeach.trim()}`;
+    query += `&field=${fildFilter}`;
+
     try {
       this.setState({ loadingExercicios: true });
-      const response = await api.get(`/question/page/${numPageAtual}?${query}`);
+      const response = await api.get(`/question/page/${numPageAtual}${query}`);
       console.log("exercicios:");
       console.log(response.data);
       this.setState({
@@ -68,43 +70,47 @@ export default class CriarListaScreen extends Component {
   }
 
   async criarLista(e) {
-    console.log("criar lista");
     e.preventDefault();
-    if (this.state.title === "") {
-      this.setState({ msg: "Informe o nome da turma" });
-    } else if (this.state.selecionados.length === 0) {
-      this.setState({ msg: "Selecione os professores" });
-    } else {
-      const requestInfo = {
-        title: this.state.title,
-        questions: this.state.selecionados.map(q => q.id)
-      };
-      try {
-        Swal.fire({
-          title: "Criando lista",
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          allowEnterKey: false
-        });
-        Swal.showLoading();
-        await api.post("/listQuestion/store", requestInfo);
-        Swal.hideLoading();
-        Swal.fire({
-          type: "success",
-          title: "Lista criada com sucesso!"
-        });
-        this.setState({ redirect: true });
-      } catch (err) {
-        Swal.hideLoading();
-        Swal.fire({
-          type: "error",
-          title: "Erro: Não foi possivel criar lista"
-        });
+    const {title,selecionados} = this.state
+    let msg=""
+    msg += !title?"Informe o título da turma<br/>":"" ;
+    msg += selecionados.length === 0? "Escolha pelo menos um exercício<br/>":"";
+    if(msg){
+      Swal.fire({
+        type: "error",
+        title: "Erro: Não foi possivel criar lista",
+        html:  msg
+      });
+      return null
+    }
+    const requestInfo = {
+      title,
+      questions: selecionados.map(q => q.id)
+    };
+    try {
+      Swal.fire({
+        title: "Criando lista",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      Swal.showLoading();
+      await api.post("/listQuestion/store", requestInfo);
+      Swal.hideLoading();
+      Swal.fire({
+        type: "success",
+        title: "Lista criada com sucesso!"
+      });
+      this.setState({ redirect: true });
+    }catch (err) {
+      Swal.hideLoading();
+      Swal.fire({
+        type: "error",
+        title: "Erro: Não foi possivel criar lista"
+      });
         this.setState({ msg: "Erro: Não foi possivel Criar a lista" });
-      }
     }
   }
-
   selecionar(questao) {
     this.setState({
       selecionados: [...this.state.selecionados, questao]
@@ -199,6 +205,7 @@ export default class CriarListaScreen extends Component {
                   <input
                     id="inputTitulo"
                     type="text"
+                    required
                     value={this.state.name}
                     onChange={e => this.handleTitleChange(e)}
                     className="form-control"
@@ -228,7 +235,6 @@ export default class CriarListaScreen extends Component {
               </div>
               <div className="row">
                 <div className="form-group col-12">
-                  <label>Selecione as questões</label>
                   <table
                     className="table table-hover"
                     style={{ borderTopRightRadius: "10%", marginBottom: "0px" }}
@@ -237,7 +243,7 @@ export default class CriarListaScreen extends Component {
                       <tr>
                         <th>Nome</th>
                         <th>Código</th>
-                        <th>Submissões</th>
+                        <th>Submissões gerais (corretas/total)</th>
                         <th>Criado por</th>
                         <th>Criado em</th>
                         <th></th>
@@ -268,7 +274,7 @@ export default class CriarListaScreen extends Component {
                             <tr key={questao.id}>
                               <td>{questao.title}</td>
                               <td>{questao.code}</td>
-                              <td>0{/*exercicio.executions.length*/}</td>
+                              <td>{`(${questao.submissions.countCorrects}/${questao.submissions.count})`}</td>
                               <td>{questao.author.email}</td>
                               <td>{formataData(questao.createdAt)}</td>
                               <td>
@@ -326,7 +332,7 @@ export default class CriarListaScreen extends Component {
                       <tr>
                         <th>Nome</th>
                         <th>Código</th>
-                        <th>Exaecuções</th>
+                        <th>Submissões gerais (corretas/total)</th>
                         <th>Criado por</th>
                         <th>Criado em</th>
                         <th></th>
@@ -337,7 +343,7 @@ export default class CriarListaScreen extends Component {
                         <tr key={index}>
                           <td>{questao.title}</td>
                           <td>{questao.code}</td>
-                          <td>0{/*exercicio.executions.length*/}</td>
+                          <td>{`(${questao.submissions.countCorrects}/${questao.submissions.count})`}</td>
                           <td>{questao.author.email}</td>
                           <td>{formataData(questao.createdAt)}</td>
                           <td>
@@ -380,10 +386,19 @@ export default class CriarListaScreen extends Component {
               <CardHead>
                 <CardTitle>{question.title}</CardTitle>
               </CardHead>
-              <CardBody>
-                {question.description}
-                <BlockMath>{question.katexDescription || ""}</BlockMath>
-              </CardBody>
+                <CardBody>
+                    <b>Descrição: </b> <br/>
+                    {question.description}
+                    <BlockMath>{question.katexDescription|| ''}</BlockMath>
+                    <br/>
+                    <div className="row">
+                        <div className ="col-12">
+                          <TableIO
+                            results={question.results || []}
+                          />
+                        </div>
+                    </div>
+                </CardBody>
             </Card>
           </SwalModal>
         </Card>

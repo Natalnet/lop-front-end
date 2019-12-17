@@ -84,66 +84,57 @@ export default class NovasTurmasScreen extends Component {
   }
   async atualizarTurma(event) {
     event.preventDefault();
-    console.log(
-      " nome: " +
-        this.state.name +
-        "\n ano: " +
-        this.state.year +
-        "\n semestre: " +
-        this.state.semester +
-        "\n descriçao: " +
-        this.state.description +
-        "\n Status: " +
-        this.state.state +
-        "\n professores: " +
-        this.state.professoresSelecionados
-    );
-    if (this.state.name === "") {
-      this.setState({ msg: "Informe o nome da turma" });
-    } else if (
-      this.state.year === "" ||
-      this.state.year > 2020 ||
-      this.state.year < 2010
-    ) {
-      this.setState({ msg: "Informe o ano" });
-    } else if (this.state.professoresSelecionados.length === 0) {
-      this.setState({ msg: "Selecione os professores" });
-    } else {
-      const requestInfo = {
-        name: this.state.name,
-        year: this.state.year,
-        semester: this.state.semester,
-        description: this.state.description,
-        state: this.state.state,
-        professores: this.state.professoresSelecionados.map(p => p.id),
-        languages: this.state.linguagensSelecionadas.map(l => l.value)
-      };
+    let {name,year,semester,description,state,linguagensSelecionadas,professoresSelecionados}=this.state
+    let msg=""
+    msg += !name?"Informe o nome da turma<br/>":"" ;
+    msg += !description?"Informe a descrição da turma<br/>":"" ;
+    msg += professoresSelecionados.length === 0? "Escolha pelo menos um professor<br/>":"";
+    msg += linguagensSelecionadas.length === 0? "Escolha pelo menos uma linguagen<br/>":"";
+    
+    if(msg){
       Swal.fire({
-        title: "Atualizando turma",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        allowEnterKey: false
+        type: "error",
+        title: "Erro: Não foi possivel cadastrar a Turma",
+        html:  msg
       });
-      Swal.showLoading();
-      try {
-        const idClass = this.props.match.params.id;
-        await api.put(`/class/${idClass}/update`, requestInfo);
-        Swal.hideLoading();
-        Swal.fire({
-          type: "success",
-          title: "Turma atualizada com sucesso!"
-        });
-        this.setState({ redirect: true });
-      } catch (err) {
-        Swal.hideLoading();
-        Swal.fire({
-          type: "error",
-          title: "Erro: Não foi possivel cadastrar a Turma"
-        });
-        this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });
-      }
+      return null
+    }
+    const requestInfo = {
+      name,
+      year,
+      semester,
+      description,
+      state,
+      professores:professoresSelecionados.map(p => p.id),
+      languages: linguagensSelecionadas.map(l => l.value)
+    };
+    Swal.fire({
+      title: "Atualizando turma",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    Swal.showLoading();
+    try {
+      const idClass = this.props.match.params.id;
+      await api.put(`/class/${idClass}/update`, requestInfo);
+      Swal.hideLoading();
+      Swal.fire({
+        type: "success",
+        title: "Turma atualizada com sucesso!"
+      });
+      this.setState({ redirect: true });
+    } 
+    catch (err) {
+      Swal.hideLoading();
+      Swal.fire({
+        type: "error",
+        title: "Erro: Não foi possivel cadastrar a Turma"
+      });
+      this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" }); 
     }
   }
+
   async getProfessores() {
     let query = `?fields=id email&profile=PROFESSOR`;
     try {
@@ -213,6 +204,7 @@ export default class NovasTurmasScreen extends Component {
                     <input
                       id="name"
                       type="text"
+                      required
                       className="form-control"
                       placeholder="Nome de turma"
                       value={this.state.name}
@@ -257,10 +249,10 @@ export default class NovasTurmasScreen extends Component {
                   </div>
 
                   <div className="form-group col-4">
-                    <label htmlFor="exampleFormControlSelect1">Status</label>
+                    <label htmlFor="exampleFormControlSelect2">Status</label>
                     <select
                       className="form-control"
-                      id="exampleFormControlSelect1"
+                      id="exampleFormControlSelect2"
                       defaultValue={this.state.state}
                       onChange={this.handleStateChange}
                     >
@@ -276,10 +268,11 @@ export default class NovasTurmasScreen extends Component {
                     <textarea
                       className="form-control"
                       id="Descricao"
+                      required
                       rows="5"
                       value={this.state.description}
                       onChange={this.handleDescriptionChange}
-                    ></textarea>
+                    />
                   </div>
                 </div>
 

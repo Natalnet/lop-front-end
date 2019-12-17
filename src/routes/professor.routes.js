@@ -1,39 +1,39 @@
 import exportRoutes from "util/routes/exportRoutes.util";
-import NovasTurmasScreen from "screens/sistema/Professor/novasTurmas.screen";
-import HomeProfessorScreen from "screens/sistema/Professor/HomeProfessor.screen";
-import ListasScreen from "screens/sistema/Professor/listas.screen";
-import ProvaScreen from "screens/sistema/Professor/provas.screen";
+import NovasTurmasScreen from "screens/sistema/professor/novasTurmas.screen";
+import HomeProfessorScreen from "screens/sistema/professor/HomeProfessor.screen";
+import ListasScreen from "screens/sistema/professor/listas.screen";
+import ProvaScreen from "screens/sistema/professor/provas.screen";
 
-import ExerciciosScreen from "screens/sistema/Professor/exercicios.screen";
-import AtualizarexercicioScreen from "screens/sistema/Professor/exercicios.editar.screen";
+import ExerciciosScreen from "screens/sistema/professor/exercicios.screen";
+import AtualizarexercicioScreen from "screens/sistema/professor/exercicios.editar.screen";
 
-import CriarListaScreen from "screens/sistema/Professor/criarLista.screen";
+import CriarListaScreen from "screens/sistema/professor/criarLista.screen";
 
-import CriarProvaScreen from "screens/sistema/Professor/criarProva.screen";
+import CriarProvaScreen from "screens/sistema/professor/criarProva.screen";
 
-import CriarExercicioScreen from "screens/sistema/Professor/criarExercicios.screen";
+import CriarExercicioScreen from "screens/sistema/professor/criarExercicios.screen";
 import Erro401 from "../screens/erros/error401.screen";
-import TelaTurmaParticipantes from "../screens/sistema/Professor/telaTurmaParticipantes.screen";
-import TelaTurmaParticipantesListas from "../screens/sistema/Professor/telaTurmaParticipantesListas.screen.js";
-import TelaTurmaParticipantesLista from "../screens/sistema/Professor/telaTurmaParticipantesLista.screen.js";
-import TelaTurmaParticipantesProva from "../screens/sistema/Professor/telaTurmaParticipantesProva.screen.js";
-import TelaTurmaParticipantesListaSubmissoes from "../screens/sistema/Professor/telaTurmaParticipantesListaSubmissoes.screen.js";
-import TelaTurmaParticipantesProvaSubmissoes from "../screens/sistema/Professor/telaTurmaParticipantesProvaSubmissoes.screen.js";
-import TelaTurmaProvas from "../screens/sistema/Professor/telaTurmaProvas.screen";
-import TelaTurmaSolicitacoes from "../screens/sistema/Professor/telaTurmasSolicitacoes.screen";
-import TelaTurmaLista from "../screens/sistema/Professor/telaTurmaListas.screen";
-import TurmaExercicio from "../screens/sistema/Professor/telaTurmaExercicio.screen";
+import TelaTurmaParticipantes from "../screens/sistema/professor/telaTurmaParticipantes.screen";
+import TelaTurmaParticipantesListas from "../screens/sistema/professor/telaTurmaParticipantesListas.screen.js";
+import TelaTurmaParticipantesLista from "../screens/sistema/professor/telaTurmaParticipantesLista.screen.js";
+import TelaTurmaParticipantesProva from "../screens/sistema/professor/telaTurmaParticipantesProva.screen.js";
+import TelaTurmaParticipantesListaSubmissoes from "../screens/sistema/professor/telaTurmaParticipantesListaSubmissoes.screen.js";
+import TelaTurmaParticipantesProvaSubmissoes from "../screens/sistema/professor/telaTurmaParticipantesProvaSubmissoes.screen.js";
+import TelaTurmaProvas from "../screens/sistema/professor/telaTurmaProvas.screen";
+import TelaTurmaSolicitacoes from "../screens/sistema/professor/telaTurmasSolicitacoes.screen";
+import TelaTurmaLista from "../screens/sistema/professor/telaTurmaListas.screen";
+import TurmaExercicio from "../screens/sistema/professor/telaTurmaExercicio.screen";
 
-import TurmaExercicios from "../screens/sistema/Professor/telaTurmaExercicios.screen";
-import TelaTurmasDashboard from "../screens/sistema/Professor/telaTurmasDashboard.screen";
+import TurmaExercicios from "../screens/sistema/professor/telaTurmaExercicios.screen";
+import TelaTurmasDashboard from "../screens/sistema/professor/telaTurmasDashboard.screen";
 
-import TelaTurmasSubmissoes from "../screens/sistema/Professor/telaTurmasSubmissoes.screen";
+import TelaTurmasSubmissoes from "../screens/sistema/professor/telaTurmasSubmissoes.screen";
 
-import EditarTurma from "../screens/sistema/Professor/editarTurma.screen";
+import EditarTurma from "../screens/sistema/professor/editarTurma.screen";
 
-import RealizarQuestao from "../screens/sistema/Professor/telaTurmasAcessarQuestaoProva.screen";
+import RealizarQuestao from "../screens/sistema/professor/telaTurmasAcessarQuestaoProva.screen";
 
-import QuestoesProva from "../screens/sistema/Professor/telaTurmasAcessarProva.screen";
+import QuestoesProva from "../screens/sistema/professor/telaTurmasAcessarProva.screen";
 
 const routes = [
   {

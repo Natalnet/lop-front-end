@@ -408,7 +408,7 @@ export default class Editor extends Component {
                     <label>saída</label>
                       <textarea 
                         onChange={(e)=>this.handleOutputChange(e,i)} 
-                        style={{minHeight:'38px',height:'38px',width:'100%'}}
+                        style={{minHeight:'38px',height:'90px',width:'100%'}}
                         className={`form-control ${!tests[i].output && tests[i].msgOutput?'is-invalid':''}`}
                         wrap="off"
                         placeholder="EX1: 34.89; EX2: Eh maior"

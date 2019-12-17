@@ -98,7 +98,7 @@ export default class Editor extends Component {
         title : response.data.title,
         description : response.data.description,
         katexDescription:response.data.katexDescription || '',
-        tests:response.data.results,
+        tests:this.appInputFormat(response.data.results),
         status:response.data.status,
         difficulty:response.data.difficulty,
         solution:response.data.solution,
@@ -220,6 +220,7 @@ export default class Editor extends Component {
       this.setState({loadingReponse:true})
       const response = await apiCompiler.post('/submission/exec',request)
       this.setState({ loadingReponse:false})
+      console.log('resposta do servidor');
       console.log(response.data);
       if(response.status===200){
         this.setState({
@@ -236,19 +237,27 @@ export default class Editor extends Component {
     }
     
   }
-
+  appInputFormat(tests){
+      return tests.map(test=>{
+          return {
+            inputs:test.inputs.split('\n').join('\\n'),
+            output:test.output,
+            msgInputs:'',
+            msgOutput:''
+          }
+      })
+  }
   rTrimAll(tests){
-    console.log('antes do Rtrim');
-    console.log(tests);
-
+    /*console.log('antes do Rtrim');
+    console.log(tests);*/
     const results =  tests.map(test=>{
       return {
         inputs:test.inputs.split('\\n').map(test=>test.replace(/\s+$/,'')).join('\n'),
         output:test.output.split('\\n').join('\n').replace(/\s+$/,'').replace(/\n+$/,'')
       }
     })
-    console.log('depois do em RTrim');
-    console.log(results);
+    /*console.log('depois do em RTrim');
+    console.log(results);*/
     return results
   }
   async updateQuestion(e){
@@ -385,6 +394,7 @@ export default class Editor extends Component {
             <label>Tags </label>
               <Select
               style={{boxShadow: "white"}}
+              defaultValue={tagsSelecionadas}
               options={tags || []}
               isMulti
               isLoading={loadingTags}
@@ -450,7 +460,7 @@ export default class Editor extends Component {
                     <label>saída</label>
                       <textarea 
                         onChange={(e)=>this.handleOutputChange(e,i)} 
-                        style={{minHeight:'38px',height:'38px',width:'100%'}}
+                        style={{minHeight:'38px',height:'90px',width:'100%'}}
                         className={`form-control ${!tests[i].output && tests[i].msgOutput?'is-invalid':''}`}
                         wrap="off"
                         placeholder="EX1: 34.89; EX2: Eh maior"
