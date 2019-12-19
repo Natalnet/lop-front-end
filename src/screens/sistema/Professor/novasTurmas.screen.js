@@ -17,7 +17,7 @@ const botao = {
 export default class NovasTurmasScreen extends Component {
   state = {
     redirect: false,
-    name: "",
+    name:"",
     year: new Date().getFullYear().toString(),
     semester: new Date().getMonth() < 6 ? "1" : "2",
     description: "",
@@ -44,64 +44,53 @@ export default class NovasTurmasScreen extends Component {
   }
   async cadastro(event) {
     event.preventDefault();
-    console.log(
-      " nome: " +
-        this.state.name +
-        "\n ano: " +
-        this.state.year +
-        "\n semestre: " +
-        this.state.semester +
-        "\n descriçao: " +
-        this.state.description +
-        "\n Status: " +
-        this.state.state +
-        "\n professores: " +
-        this.state.professoresSelecionados
-    );
-    if (this.state.name === "") {
-      this.setState({ msg: "Informe o nome da turma" });
-    } else if (
-      this.state.year === "" ||
-      this.state.year > 2020 ||
-      this.state.year < 2010
-    ) {
-      this.setState({ msg: "Informe o ano" });
-    } else if (this.state.professoresSelecionados.length === 0) {
-      this.setState({ msg: "Selecione os professores" });
-    } else {
-      const requestInfo = {
-        name: this.state.name,
-        year: this.state.year,
-        semester: this.state.semester,
-        description: this.state.description,
-        state: this.state.state,
-        professores: this.state.professoresSelecionados.map(p => p.id),
-        languages: this.state.linguagensSelecionadas.map(l => l.value)
-      };
+    let {name,year,semester,description,state,linguagensSelecionadas,professoresSelecionados}=this.state
+    let msg=""
+    msg += !name?"Informe o nome da turma<br/>":"" ;
+    msg += !description?"Informe a descrição da turma<br/>":"" ;
+    msg += professoresSelecionados.length === 0? "Escolha pelo menos um professor<br/>":"";
+    msg += linguagensSelecionadas.length === 0? "Escolha pelo menos uma linguagen<br/>":"";
+    
+    if(msg){
       Swal.fire({
-        title: "Criando turma",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        allowEnterKey: false
+        type: "error",
+        title: "Erro: Não foi possivel cadastrar a Turma",
+        html:  msg
       });
-      Swal.showLoading();
-      try {
-        await api.post("/class/store", requestInfo);
-        Swal.hideLoading();
-        Swal.fire({
-          type: "success",
-          title: "Turma criada com sucesso!"
-        });
-        this.setState({ redirect: true });
-      } catch (err) {
-        Swal.hideLoading();
-        Swal.fire({
-          type: "error",
-          title: "Erro: Não foi possivel cadastrar a Turma"
-        });
-        this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });
-      }
+      return null
     }
+    const requestInfo = {
+      name,
+      year,
+      semester,
+      description,
+      state,
+      professores:professoresSelecionados.map(p => p.id),
+      languages: linguagensSelecionadas.map(l => l.value)
+    };
+    Swal.fire({
+      title: "Criando turma",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false
+    });
+    Swal.showLoading();
+    try {
+      await api.post("/class/store", requestInfo);
+      Swal.hideLoading();
+      Swal.fire({
+        type: "success",
+        title: "Turma criada com sucesso!"
+      });
+      this.setState({ redirect: true });
+    } catch (err) {
+      Swal.hideLoading();
+      Swal.fire({
+        type: "error",
+        title: "Erro: Não foi possivel cadastrar a Turma"
+      });
+    }
+    
   }
 
   async getProfessores() {
@@ -136,17 +125,17 @@ export default class NovasTurmasScreen extends Component {
     }
   }
 
-  handleNameChange = e => {
+  handleNameChange(e){
     this.setState({ name: e.target.value });
   };
-  handleYearChange = e => {
+  handleYearChange(e){
     this.setState({ year: e.target.value });
   };
-  handleSemesterChange = e => {
+  handleSemesterChange(e){
     this.setState({ semester: e.target.value });
   };
 
-  handleDescriptionChange = e => {
+  handleDescriptionChange(e){
     this.setState({ description: e.target.value });
   };
   handleStateChange = e => {
@@ -166,6 +155,7 @@ export default class NovasTurmasScreen extends Component {
     if (this.state.redirect) {
       return <Redirect to="/professor" />;
     }
+    const {name} = this.state
     return (
       <TemplateSistema active="home">
         <Card>
@@ -181,10 +171,11 @@ export default class NovasTurmasScreen extends Component {
                   <input
                     id="name"
                     type="text"
+                    required
                     className="form-control"
                     placeholder="Nome de turma"
-                    value={this.state.name}
-                    onChange={this.handleNameChange}
+                    value={name}
+                    onChange={(e)=>this.handleNameChange(e)}
                   />
                 </div>
               </div>
@@ -195,7 +186,7 @@ export default class NovasTurmasScreen extends Component {
                     className="form-control"
                     id="exampleFormControlSelect0"
                     defaultValue={this.state.year}
-                    onChange={this.handleYearChange}
+                    onChange={(e)=>this.handleYearChange(e)}
                   >
                     {[
                       new Date().getFullYear() - 1,
@@ -215,7 +206,7 @@ export default class NovasTurmasScreen extends Component {
                     className="form-control"
                     id="exampleFormControlSelect1"
                     defaultValue={this.state.semester}
-                    onChange={this.handleSemesterChange}
+                    onChange={(e)=>this.handleSemesterChange(e)}
                   >
                     <option value="1">1ºSemestre</option>
                     <option value="2">2ºSemestre</option>
@@ -223,10 +214,10 @@ export default class NovasTurmasScreen extends Component {
                 </div>
 
                 <div className="form-group col-4">
-                  <label htmlFor="exampleFormControlSelect1">Status</label>
+                  <label htmlFor="exampleFormControlSelect2">Status</label>
                   <select
                     className="form-control"
-                    id="exampleFormControlSelect1"
+                    id="exampleFormControlSelect2"
                     defaultValue={this.state.state}
                     onChange={this.handleStateChange}
                   >
@@ -242,8 +233,9 @@ export default class NovasTurmasScreen extends Component {
                     className="form-control"
                     id="Descricao"
                     rows="5"
+                    required
                     value={this.state.description}
-                    onChange={this.handleDescriptionChange}
+                    onChange={(e)=>this.handleDescriptionChange(e)}
                   ></textarea>
                 </div>
               </div>
