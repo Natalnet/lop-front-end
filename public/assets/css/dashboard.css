@@ -4369,6 +4369,12 @@ input[type="button"].btn-block {
   padding: 1.5rem;
 }
 
+.card-body1 {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  height: 77px;
+}
+
 .card-title {
   margin-bottom: 1.5rem;
 }
@@ -4397,6 +4403,13 @@ input[type="button"].btn-block {
   border-bottom: 1px solid rgba(0, 40, 100, 0.12);
 }
 
+.card-header1 {
+  padding: 0rem 0rem;
+  margin-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 40, 100, 0.12);
+}
+
 .card-header:first-child {
   border-radius: calc(3px - 1px) calc(3px - 1px) 0 0;
 }
@@ -4409,6 +4422,12 @@ input[type="button"].btn-block {
   padding: 1.5rem 1.5rem;
   background-color: rgba(0, 0, 0, 0.03);
   border-top: 1px solid rgba(0, 40, 100, 0.12);
+}
+
+.card-footer1 {
+  padding: 0rem 0rem;
+  border-top: 1px solid rgba(0, 40, 100, 0.12);
+  height: 45px;
 }
 
 .card-footer:last-child {
@@ -13033,6 +13052,13 @@ a.icon:hover {
   flex: 1 1 auto;
   margin: 0;
   padding: 1.5rem 1.5rem;
+  position: relative;
+}
+
+.card-body1 {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  margin: 0;
   position: relative;
 }
 
