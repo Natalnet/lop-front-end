@@ -4,11 +4,11 @@ import Swal from "sweetalert2";
 
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
+import CardHead from "components/ui/card/TurmasAbertasAlunos/cardHead.component";
+import CardOptions from "components/ui/card/TurmasAbertasAlunos/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
+import CardBody from "components/ui/card/TurmasAbertasAlunos/cardBody.component";
+import CardFooter from "components/ui/card/TurmasAbertasAlunos/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -238,35 +238,34 @@ export default class HomeAlunoScreen extends Component {
                   <Fragment key={turma.id}>
                     <Col xs={12} md={6}>
                       <Card>
-                        <CardHead>
-                          <CardTitle>
-                            <i className="fa fa-users" />
-                            <b>
-                              {" "}
-                              {turma.name} - {turma.year}.{turma.semester}
-                            </b>
-                          </CardTitle>
-                          <CardOptions>
-                            <ButtonToogle
-                              id={"collapse" + turma.id}
-                              title={"Ver descrição"}
-                            />
-                          </CardOptions>
-                        </CardHead>
-                        <Collapse id={"collapse" + turma.id}>
-                          <CardBody>{turma.description}</CardBody>
-                        </Collapse>
+                        <CardHead
+                          name={turma.name}
+                          code={turma.code}
+                          semestre={turma.semester}
+                          ano={turma.year}
+                        />
+                        <div className="row">
+                          <div className="col-3">
+                            <CardOptions linguagens={turma.languages} />
+                          </div>
+                          <div className="col-9" style={{ paddingLeft: "0px" }}>
+                            {console.log(turma.description)}
+                            <CardBody description={turma.description} />
+                          </div>
+                        </div>
                         <CardFooter>
-                          <span className="badge badge-pill badge-success">
-                            Código: {turma.code}
-                          </span>
                           {turmasSolicitadas
                             .map(t => t.id)
                             .includes(turma.id) ? (
                             <button
                               onClick={() => this.cancelarSolicitacao(turma.id)}
                               className="btn btn-danger"
-                              style={{ float: "right" }}
+                              style={{
+                                float: "right",
+                                margin: "2px",
+                                backgroundColor: "",
+                                borderColor: ""
+                              }}
                             >
                               Cancelar solicitação <i className="fa fa-users" />{" "}
                               -
@@ -275,7 +274,12 @@ export default class HomeAlunoScreen extends Component {
                             <button
                               onClick={() => this.solicitarAcesso(turma.id)}
                               className="btn btn-primary"
-                              style={{ float: "right" }}
+                              style={{
+                                float: "right",
+                                margin: "2px",
+                                backgroundColor: "#2FB0C6",
+                                borderColor: "#2FB0C6"
+                              }}
                             >
                               Solicitar Acesso <i className="fa fa-users" /> +
                             </button>
@@ -299,4 +303,30 @@ export default class HomeAlunoScreen extends Component {
       </TemplateSistema>
     );
   }
+}
+
+{
+  /* <CardFooter>
+
+{turmasSolicitadas
+  .map(t => t.id)
+  .includes(turma.id) ? (
+  <button
+    onClick={() => this.cancelarSolicitacao(turma.id)}
+    className="btn btn-danger"
+    style={{ float: "right" }}
+  >
+    Cancelar solicitação <i className="fa fa-users" />{" "}
+    -
+  </button>
+) : (
+  <button
+    onClick={() => this.solicitarAcesso(turma.id)}
+    className="btn btn-primary"
+    style={{ float: "right" }}
+  >
+    Solicitar Acesso <i className="fa fa-users" /> +
+  </button>
+)}
+</CardFooter> */
 }

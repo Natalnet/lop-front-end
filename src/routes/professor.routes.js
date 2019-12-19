@@ -34,7 +34,6 @@ import EditarTurma from "../screens/sistema/professor/editarTurma.screen";
 import RealizarQuestao from "../screens/sistema/professor/telaTurmasAcessarQuestaoProva.screen";
 
 import QuestoesProva from "../screens/sistema/professor/telaTurmasAcessarProva.screen";
-
 const routes = [
   {
     path: "/professor/novasturmas",
@@ -127,25 +126,29 @@ const routes = [
     perfil: "PROFESSOR"
   },
   {
-    path: "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicios",
+    path:
+      "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicios",
     component: TelaTurmaParticipantesLista,
     private: true,
     perfil: "PROFESSOR"
-  }, 
+  },
   {
-    path: "/professor/turma/:id/participantes/:idUser/provas/:idProva/exercicios",
+    path:
+      "/professor/turma/:id/participantes/:idUser/provas/:idProva/exercicios",
     component: TelaTurmaParticipantesProva,
     private: true,
     perfil: "PROFESSOR"
-  }, 
+  },
   {
-    path: "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicio/:idExercicio",
+    path:
+      "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicio/:idExercicio",
     component: TelaTurmaParticipantesListaSubmissoes,
     private: true,
     perfil: "PROFESSOR"
   },
   {
-    path: "/professor/turma/:id/participantes/:idUser/provas/:idProva/exercicio/:idExercicio",
+    path:
+      "/professor/turma/:id/participantes/:idUser/provas/:idProva/exercicio/:idExercicio",
     component: TelaTurmaParticipantesProvaSubmissoes,
     private: true,
     perfil: "PROFESSOR"

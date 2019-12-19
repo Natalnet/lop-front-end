@@ -128,6 +128,7 @@ export default class HomeAlunoScreen extends Component {
         <div style={{ marginBottom: "20px" }}>
           <Col xs={12}>
             <InputGroupo
+              style={{ padding: "0px" }}
               placeholder={`Perquise pelo ${
                 fieldFilter === "nome"
                   ? "Nome"

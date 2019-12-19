@@ -1,12 +1,12 @@
-import React, { Component,Fragment } from "react";
+import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
+import CardHead from "components/ui/card/TurmasProfessor/cardHead.component";
+import CardOptions from "components/ui/card/TurmasProfessor/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
+import CardBody from "components/ui/card/TurmasProfessor/cardBody.component";
+import CardFooter from "components/ui/card/TurmasProfessor/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
 import Row from "components/ui/grid/row.component";
@@ -189,75 +189,41 @@ export default class TurmasScreen extends Component {
         <Row mb={24}>
           {loadingTurmas
             ? range(8).map(i => (
-              <Fragment key={i}>
-                <Col xs={12} md={6}>
-                  <Card>
-                    <CardHead></CardHead>
-                    <CardBody loading></CardBody>
-                  </Card>
-                </Col>
-              </Fragment>
+                <Fragment key={i}>
+                  <Col xs={12} md={6}>
+                    <Card>
+                      <CardHead></CardHead>
+                      <CardBody loading></CardBody>
+                    </Card>
+                  </Col>
+                </Fragment>
               ))
             : minhasTurmas.map((turma, index) => (
-              <Fragment key={turma.id}>
-                <Col xs={12} md={6}>
-                  <Card>
-                    <CardHead>
-                      <CardTitle>
-                        <i className="fa fa-users" />{" "}
-                        <b>
-                          {turma.name} - {turma.year}.{turma.semester || 1}
-                        </b>
-                      </CardTitle>
-                      <CardOptions>
-                        <i
-                          title="Ver descrição"
-                          style={{
-                            color: "blue",
-                            cursor: "pointer",
-                            fontSize: "25px"
-                          }}
-                          className={`fe fe-chevron-down`}
-                          onClick={e => this.handleShowDescription(turma.id)}
-                          data-toggle="collapse"
-                          data-target={"#collapse" + turma.id}
-                          aria-expanded={descriptions.includes(turma.id)}
-                        />
-                      </CardOptions>
-                    </CardHead>
-
-                    <div className="collapse" id={"collapse" + turma.id}>
-                      <CardBody>{turma.description}</CardBody>
-                    </div>
-
-                    <CardFooter>
-                      <span
-                        title={`${turma.usersCount} participante(s)`}
-                        className="avatar avatar-cyan mr-1"
-                      >
-                        {turma.usersCount}
-                      </span>
-
-                      <span
-                        title={`${turma.solicitationsCount} solicitação(ões)`}
-                        className="avatar avatar-red mr-1"
-                      >
-                        {turma.solicitationsCount}
-                      </span>
-
-                      <Link to={`/professor/turma/${turma.id}/editar`}>
-                        <button style={botaoV} className="btn btn-success mr-2">
-                          <i className="fa fa-edit" /> Editar
-                        </button>
-                      </Link>
-                      <Link to={`/professor/turma/${turma.id}/participantes`}>
-                        <button style={botaoV} className="btn btn-primary mr-2">
-                          <i className="fe fe-corner-down-right" /> Entrar
-                        </button>
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                </Col>
+                <Fragment key={turma.id}>
+                  <Col xs={12} md={6}>
+                    <Card>
+                      <CardHead
+                        name={turma.name}
+                        code={turma.code}
+                        semestre={turma.semester}
+                        ano={turma.year}
+                      />
+                      <div className="row">
+                        <div className="col-3">
+                          <CardOptions linguagens={turma.languages} />
+                        </div>
+                        <div className="col-9" style={{ paddingLeft: "0px" }}>
+                          <CardBody description={turma.description} />
+                        </div>
+                      </div>
+                      <CardFooter
+                        idTurma={turma.id}
+                        participantes={turma.usersCount}
+                        solicitacoes={turma.solicitationsCount}
+                        status={turma.state}
+                      />
+                    </Card>
+                  </Col>
                 </Fragment>
               ))}
         </Row>
@@ -273,4 +239,33 @@ export default class TurmasScreen extends Component {
       </TemplateSistema>
     );
   }
+}
+
+{
+  /* <CardFooter>
+<span
+  title={`${turma.usersCount} participante(s)`}
+  className="avatar avatar-cyan mr-1"
+>
+  {turma.usersCount}
+</span>
+
+<span
+  title={`${turma.solicitationsCount} solicitação(ões)`}
+  className="avatar avatar-red mr-1"
+>
+  {turma.solicitationsCount}
+</span>
+
+<Link to={`/professor/turma/${turma.id}/editar`}>
+  <button style={botaoV} className="btn btn-success mr-2">
+    <i className="fa fa-edit" /> Editar
+  </button>
+</Link>
+<Link to={`/professor/turma/${turma.id}/participantes`}>
+  <button style={botaoV} className="btn btn-primary mr-2">
+    <i className="fe fe-corner-down-right" /> Entrar
+  </button>
+</Link>
+</CardFooter> */
 }
