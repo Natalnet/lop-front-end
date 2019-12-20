@@ -67,8 +67,9 @@ export default class Exercicios extends Component {
     try {
       const idClass = this.props.match.params.id;
       const idLista = this.props.match.params.idLista;
+      let query = `?idClass=${idClass}`
       const response = await api.get(
-        `/listQuestion/${idLista}/class/${idClass}`
+        `/listQuestion/${idLista}${query}`
       );
       console.log("lista");
       console.log(response.data);
@@ -139,8 +140,7 @@ export default class Exercicios extends Component {
   render() {
     const { loadingInfoTurma, turma,loadingDateLimit,showModalDate,dateLimit, loandingLista, lista } = this.state;
     const questions = lista && lista.questions
-    const questionsCompleted =
-      lista && lista.questions.filter(q => q.completed);
+    const questionsCompleted = lista && lista.questions.filter(q => q.completedSumissionsConunt>0);
 
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
@@ -249,7 +249,7 @@ export default class Exercicios extends Component {
                                   <CardBody>{question.description}</CardBody>
                                 </div>
                                 <CardFooter>
-                                  Suas submissões: {question.submissions.length}
+                                  Suas submissões: {question.submissionsCount}
                                   <Link
                                     to={`/professor/turma/${this.props.match.params.id}/lista/${lista && lista.id}/exercicio/${question.id}`}
                                   >

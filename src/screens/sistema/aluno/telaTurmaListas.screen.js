@@ -115,9 +115,7 @@ export default class Listas extends Component {
           ) : (
             listas.map((lista, i) => {
               const questions = lista.questions;
-              const questionsCompleted = lista.questions.filter(
-                q => q.completed
-              );
+              const questionsCompleted = lista.questions.filter(q => q.completedSumissionsCount>0)
               return (
                 <Fragment key={lista.id}>
                   <Col xs={12}>

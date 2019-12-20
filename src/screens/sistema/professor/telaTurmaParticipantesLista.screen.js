@@ -62,9 +62,9 @@ export default class Exercicios extends Component {
   async getLista() {
     try {
       const { id, idLista, idUser } = this.props.match.params;
-      const response = await api.get(
-        `/listQuestion/${idLista}/class/${id}/user/${idUser}`
-      );
+      let query = `?idClass=${id}`
+      query += `&idUser=${idUser}`
+      const response = await api.get(`/listQuestion/${idLista}${query}`);
       console.log("listas");
       console.log(response.data);
       this.setState({
@@ -85,7 +85,7 @@ export default class Exercicios extends Component {
       usuario
     } = this.state;
     const questions = lista && lista.questions
-    const questionsCompleted = lista && lista.questions.filter(q => q.completed);
+    const questionsCompleted = lista && lista.questions.filter(q => q.completedSumissionsCount>0);
 
     return (
       <TemplateSistema
@@ -152,7 +152,7 @@ export default class Exercicios extends Component {
                                   <CardTitle>
                                     <b>
                                       {question.title}&nbsp;
-                                      {question.completed ? (
+                                      {question.correctSumissionsCount>0 ? (
                                         <i
                                           className="fa fa-check"
                                           style={{ color: "#0f0" }}
@@ -184,7 +184,7 @@ export default class Exercicios extends Component {
                                   <CardBody>{question.description}</CardBody>
                                 </div>
                                 <CardFooter>
-                                  Submissões: {question.submissions.length}
+                                  Submissões: {question.submissionsCount}
                                   <Link
                                     to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas/${lista && lista.id}/exercicio/${question.id}`}
                                   >

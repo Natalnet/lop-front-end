@@ -68,8 +68,9 @@ export default class Exercicios extends Component {
     try {
       const idClass = this.props.match.params.id;
       const idLista = this.props.match.params.idLista;
+      let query = `?idClass=${idClass}`
       const response = await api.get(
-        `/listQuestion/${idLista}/class/${idClass}`
+        `/listQuestion/${idLista}${query}`
       );
       console.log("listas");
       console.log(response.data);
@@ -84,7 +85,7 @@ export default class Exercicios extends Component {
   render() {
     const { loadingInfoTurma, turma, loandingLista, lista } = this.state;
     const questions = lista && lista.questions
-    const questionsCompleted = lista && lista.questions.filter(q => q.completed);
+    const questionsCompleted = lista && lista.questions.filter(q => q.completedSumissionsCount>0);
      
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
@@ -142,7 +143,7 @@ export default class Exercicios extends Component {
                                   <CardTitle>
                                     <b>
                                       {question.title}&nbsp;
-                                      {question.completed ? (
+                                      {question.correctSumissionsCount>0 ? (
                                         <i
                                           className="fa fa-check"
                                           style={{ color: "#0f0" }}
@@ -174,7 +175,7 @@ export default class Exercicios extends Component {
                                   <CardBody>{question.description}</CardBody>
                                 </div>
                                 <CardFooter>
-                                  Suas submissões: {question.submissions.length}
+                                  Suas submissões: {question.submissionsCount}
                                   <Link
                                     to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}
                                   >

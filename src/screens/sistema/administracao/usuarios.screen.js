@@ -37,7 +37,8 @@ export default class HomeAdministradorScreen extends Component {
           users:[...response.data.docs],
           totalItens : response.data.total,
           totalPages : response.data.totalPages,
-          loadingUsers:false
+          numPageAtual : response.data.currentPage,
+          loadingUsers : false
       })
     }
     catch(err){

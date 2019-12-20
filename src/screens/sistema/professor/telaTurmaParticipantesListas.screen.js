@@ -129,9 +129,7 @@ export default class Listas extends Component {
               <Row mb={15}>
                 {listas.map((lista, i) => {
                   const questions = lista.questions;
-                  const questionsCompleted = lista.questions.filter(
-                    q => q.completed
-                  );
+                  const questionsCompleted = lista.questions.filter(q => q.completedSumissionsCount>0);
                   return (
                     <Fragment key={lista.id}>
                       <Col xs={12}>
@@ -172,9 +170,7 @@ export default class Listas extends Component {
               <Row mb={15}>
                 {provas.map((prova, i) => {
                   const questions = prova.questions;
-                  const questionsCompleted = prova.questions.filter(
-                    q => q.completed
-                  );
+                  const questionsCompleted = prova.questions.filter(q => q.completedSumissionsCount>0);
 
                   return (
                     <Fragment key={prova.id}>
