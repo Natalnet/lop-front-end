@@ -64,17 +64,16 @@ export default class Exercicios extends Component {
   }
   async getProva() {
     try {
-      const idClass = this.props.match.params.id;
-      const idTest = this.props.match.params.idTest;
-
-      const response = await api.get(`/test/${idTest}/class/${idClass}`);
+      const {id,idTest} = this.props.match.params;
+      let query = `?idClass=${id}`
+      const response = await api.get(`/test/${idTest}${query}`);
       console.log("provas");
       console.log(response.data);
       const prova = response.data;
       const password = sessionStorage.getItem(`passwordTest-${prova && prova.id}`);
       const hashCode = `${generateHash(prova && prova.password)}-${prova && prova.id}`;
-      if ((prova && prova.status === "FECHADA") || !password || password !== hashCode) {
-        this.props.history.push(`/aluno/turma/${idClass}/provas`);
+      if ((prova && prova.status === "FECHADA") || (!password) || (password !== hashCode)) {
+        this.props.history.push(`/aluno/turma/${id}/provas`);
       } else {
         this.setState({
           prova,
@@ -93,7 +92,7 @@ export default class Exercicios extends Component {
   render() {
     const { loadingInfoTurma, turma, loandingProva, prova } = this.state;
     const questions = prova && prova.questions
-    const questionsCompleted = prova && prova.questions.filter(q => q.completed);
+    const questionsCompleted = prova && prova.questions.filter(q => q.correctSumissionsCount>0);
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <Row mb={15}>
@@ -149,7 +148,7 @@ export default class Exercicios extends Component {
                                   <CardTitle>
                                     <b>
                                       {question.title}&nbsp;
-                                      {question.completed ? (
+                                      {question.correctSumissionsCount > 0 ? (
                                         <i
                                           className="fa fa-check"
                                           style={{ color: "#0f0" }}
@@ -181,7 +180,7 @@ export default class Exercicios extends Component {
                                   <CardBody>{question.description}</CardBody>
                                 </div>
                                 <CardFooter>
-                                  Suas submissões: {question.submissions.length}
+                                  Suas submissões: {question.submissionsCount}
                                   <Link
                                     to={`/aluno/turma/${this.props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}`}
                                   >

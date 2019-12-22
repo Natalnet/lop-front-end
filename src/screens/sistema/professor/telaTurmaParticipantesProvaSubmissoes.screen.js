@@ -78,12 +78,17 @@ export default class HomesubmissoesScreen extends Component {
       numPageAtual,
       docsPerPage
     } = this.state;
-    let query = `?docsPerPage=${docsPerPage}`;
+    let query = `?idClass=${id}`;
+    query += `&idTest=${idProva}`;
+    query += `&idQuestion=${idExercicio}`;
+    query += `&idUser=${idUser}`;
+    query += `&docsPerPage=${docsPerPage}`;
     try {
       if (loading) this.setState({ loadingSubmissoes: true });
-      const response = await api.get(
+      const response = await api.get(`/submissions/page/${numPageAtual}${query}`);
+      /*const response = await api.get(
         `/submissions/class/${id}/user/${idUser}/test/${idProva}/question/${idExercicio}/page/${numPageAtual}${query}`
-      );
+      );*/
       console.log("todas submissoes:");
       console.log(response.data);
       this.setState({

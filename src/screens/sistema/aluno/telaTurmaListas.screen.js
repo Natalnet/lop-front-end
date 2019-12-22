@@ -66,7 +66,9 @@ export default class Listas extends Component {
   async getListas() {
     try {
       const id = this.props.match.params.id;
-      const response = await api.get(`/class/${id}/lists`);
+      let query = `?idClass=${id}`
+      const response = await api.get(`/listQuestion${query}`);
+    
       console.log("listas");
       console.log(response.data);
       this.setState({

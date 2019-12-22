@@ -17,13 +17,15 @@ export default class Listas extends Component {
       listas: [],
       provas: [],
       user: {},
-      loandingListas: true,
+      loandingListas: false,
+      loandingProvas: false,
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || ""
     };
   }
   async componentDidMount() {
     this.getListas();
+    this.getProvas()
     await this.getInfoTurma();
     const {turma} = this.state
     document.title = `${turma && turma.name} - listas`;
@@ -56,16 +58,16 @@ export default class Listas extends Component {
   }
   async getListas() {
     try {
-      const id = this.props.match.params.id;
-      const idUser = this.props.match.params.idUser;
-      const response = await api.get(
-        `/class/${id}/participants/${idUser}/lists`
-      );
+      const {id,idUser} = this.props.match.params;
+      let query = `?idClass=${id}`
+      query += `&idUser=${idUser}`
+      this.setState({ loandingListas: true });
+      const response = await api.get(`/listQuestion${query}`);
+      //const response = await api.get(`/class/${id}/participants/${idUser}/lists`);
       console.log("listas");
       console.log(response.data);
       this.setState({
         listas: [...response.data.lists],
-        provas: [...response.data.tests],
         usuario: response.data.user,
         loandingListas: false
       });
@@ -75,11 +77,32 @@ export default class Listas extends Component {
     }
   }
 
+  async getProvas() {
+    try {
+      const {id,idUser} = this.props.match.params;
+      let query = `?idClass=${id}`
+      query += `&idUser=${idUser}`
+      this.setState({ loandingProvas: true });
+      const response = await api.get(`/test${query}`);
+      console.log("listas");
+      console.log(response.data);
+      this.setState({
+        provas: [...response.data.tests],
+        usuario: response.data.user,
+        loandingProvas: false
+      });
+    } catch (err) {
+      this.setState({ loandingProvas: false });
+      console.log(err);
+    }
+  }
+
   render() {
     const {
       loadingInfoTurma,
       turma,
       loandingListas,
+      loandingProvas,
       listas,
       provas,
       usuario
@@ -92,7 +115,7 @@ export default class Listas extends Component {
       >
         <Fragment>
           <Row mb={15}>
-            {loadingInfoTurma || loandingListas ? (
+            {loadingInfoTurma || loandingListas || loandingProvas? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
               <Col xs={12}>
@@ -148,7 +171,7 @@ export default class Listas extends Component {
                             />
                             <CardOptions>
                               <Link
-                                to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario.id}/listas/${lista.id}/exercicios`}
+                                to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario && usuario.id}/listas/${lista.id}/exercicios`}
                               >
                                 <button className="btn btn-success">
                                   Acessar <i className="fa fa-wpexplorer" />

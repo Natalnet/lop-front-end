@@ -28,8 +28,6 @@ export default class Provas extends Component {
       loadingInfoTurma: true,
       turma: JSON.parse(sessionStorage.getItem("turma")) || "",
       loandingListas: false,
-
-      todasListas: [],
       password: ""
     };
   }
@@ -77,9 +75,10 @@ export default class Provas extends Component {
 
   async getProvas() {
     const id = this.props.match.params.id;
+    let query = `?idClass=${id}`
     try {
       this.setState({ loandingListas: true });
-      const response = await api.get(`/class/${id}/tests`);
+      const response = await api.get(`/test${query}`);
       console.log("provas");
       console.log(response.data);
       this.setState({
@@ -154,8 +153,8 @@ export default class Provas extends Component {
   }
 
   render() {
-    const { loadingInfoTurma, turma, todasListas, provas } = this.state;
-    const { contentInputSeach, fieldFilter, loandingListas } = this.state;
+    const { loadingInfoTurma, turma, provas } = this.state;
+    const {  loandingListas } = this.state;
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <div className="row" style={{ marginBottom: "15px" }}>
@@ -177,9 +176,7 @@ export default class Provas extends Component {
           ) : (
             provas.map((prova, i) => {
               const questions = prova.questions;
-              const questionsCompleted = prova.questions.filter(
-                q => q.completed
-              );
+              const questionsCompleted = prova.questions.filter(q => q.completedSumissionsCount>0);
               return (
                 <Fragment key={prova.id}>
                   <Col xs={12}>

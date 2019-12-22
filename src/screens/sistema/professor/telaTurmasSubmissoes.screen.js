@@ -77,15 +77,15 @@ export default class HomesubmissoesScreen extends Component {
       fieldFilter,
       docsPerPage
     } = this.state;
-    let query = `?include=${contentInputSeach.trim()}`;
+    let query = `?idClass=${id}`;
+    query += `&include=${contentInputSeach.trim()}`
+    query += `&profile=ALUNO`;
     query += `&field=${fieldFilter}`;
     query += `&docsPerPage=${docsPerPage}`;
     try {
       if (loading) this.setState({ loadingSubmissoes: true });
-      const response = await api.get(
-        `/submissions/class/${id}/page/${numPageAtual}${query}`
-      );
-      console.log("todas submissoes:");
+      const response = await api.get(`/submissions/page/${numPageAtual}${query}`);
+      console.log("submissoes:");
       console.log(response.data);
       this.setState({
         submissoes: [...response.data.docs],

@@ -21,31 +21,46 @@ export default class HomeAlunoScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      numPageAtual: 1,
       turmasAbertas: [],
+      minhasTurmas: [],
+      loadingMinhasTurmas:false,
       totalPages: 0,
-      turmasSolicitadas: [],
+      solicitaçoes: [],
       loandingTurmasAbertas: false,
       descriptions: [],
-      contentInputSeach: "",
-      fieldFilter: "name"
+      code: "",
+      fieldFilter: "code"
     };
-    this.handlePage = this.handlePage.bind(this);
   }
   async componentDidMount() {
-    await this.getTurmasSolicitadas();
-    await this.getTurmasAbertas();
+    await this.getMinhasTurmas()
     this.getTurmasAbertasRealTime();
     document.title = "Início | LoP";
   }
-  async getTurmasSolicitadas(loading = true) {
+  async getMinhasTurmas(loading=true) {
+    let query = `?myClasses=yes`
+    try {
+      if(loading) this.setState({ loadingMinhasTurmas: true });
+      const response = await api.get(`/class${query}`);
+      console.log("minhas turmas",response.data);
+      this.setState({
+        minhasTurmas: [...response.data],
+        loadingMinhasTurmas: false
+      });
+    } catch (err) {
+      this.setState({ loadingMinhasTurmas: false });
+      console.log(err);
+    }
+  }
+  async getSolicitaçoes(loading = true) {
+    let query = `?mySolicitations=yes`
     try {
       if (loading) this.setState({ loandingTurmasAbertas: true });
-      const response = await api.get("/solicitation");
-      console.log("turmas solicitdas");
+      const response = await api.get(`/solicitation${query}`);
+      console.log("minhas soicitações");
       console.log(response.data);
       this.setState({
-        turmasSolicitadas: [...response.data]
+        solicitaçoes: [...response.data]
         //loandingTurmasAbertas:false
       });
     } catch (err) {
@@ -54,22 +69,18 @@ export default class HomeAlunoScreen extends Component {
     }
   }
   async getTurmasAbertas(loading = true) {
-    const { numPageAtual, contentInputSeach, fieldFilter } = this.state;
-    let query = `include=${contentInputSeach}`;
-    query += `&field=${fieldFilter}`;
-    console.log(query);
+    const {code,minhasTurmas} = this.state;
+    let query = `?code=${code || 'null'}`;
+    query += `&state=ATIVA`
+    query += `&idNotIn=${minhasTurmas.map(t=>t.id).join(" ")}`
+    
     try {
       if (loading) this.setState({ loandingTurmasAbertas: true });
-      const response = await api.get(
-        `/class/open/page/${numPageAtual}?${query}`
-      );
-      console.log("turmas abertas:");
+      const response = await api.get(`/class${query}`);
+      console.log("turmas:");
       console.log(response.data);
       this.setState({
-        turmasAbertas: response.data.docs,
-        totalTumasAbertas: response.data.total,
-        totalPages: response.data.totalPages,
-        numPageAtual: response.data.currentPage,
+        turmasAbertas: response.data,
         loandingTurmasAbertas: false
       });
     } catch (err) {
@@ -82,16 +93,11 @@ export default class HomeAlunoScreen extends Component {
     io.emit("connectRoonUser", sessionStorage.getItem("user.id"));
 
     io.on("MyRequestsClass", async response => {
-      await this.getTurmasSolicitadas(false);
-      this.getTurmasAbertas(false);
+      await this.getMinhasTurmas(false);
+      await this.getSolicitaçoes(false);
+      await this.getTurmasAbertas(false);
+
     });
-  }
-  async handlePage(e, numPage) {
-    e.preventDefault();
-    console.log(numPage);
-    await this.setState({ numPageAtual: numPage });
-    await this.getTurmasSolicitadas();
-    this.getTurmasAbertas();
   }
   async solicitarAcesso(idClass) {
     console.log(idClass);
@@ -107,7 +113,7 @@ export default class HomeAlunoScreen extends Component {
       const response = await api.post(`/solicitation/class/${idClass}/store`);
       console.log("solicitação:");
       console.log(response.data);
-      await this.getTurmasSolicitadas(false);
+      await this.getSolicitaçoes(false);
       this.getTurmasAbertas(false);
 
       Swal.hideLoading();
@@ -138,7 +144,7 @@ export default class HomeAlunoScreen extends Component {
       });
       Swal.showLoading();
       await api.delete(`/solicitation/class/${idTurma}/delete`);
-      await this.getTurmasSolicitadas(false);
+      await this.getSolicitaçoes(false);
       this.getTurmasAbertas(false);
       Swal.hideLoading();
       Swal.fire({
@@ -157,14 +163,14 @@ export default class HomeAlunoScreen extends Component {
       //this.setState({solicitando:''})
     }
   }
-  async handleContentInputSeach(e) {
+  async handleCode(e) {
     console.log(e.target.value);
     this.setState({
-      contentInputSeach: e.target.value
+      code: e.target.value
     });
   }
   async filterSeash(e) {
-    await this.getTurmasSolicitadas();
+    await this.getSolicitaçoes();
     this.getTurmasAbertas();
   }
   async handleSelectFieldFilter(e) {
@@ -173,70 +179,55 @@ export default class HomeAlunoScreen extends Component {
       fieldFilter: e.target.value
     });
   }
-  async clearContentInputSeach() {
+  async clearcode() {
     this.setState({
-      contentInputSeach: ""
+      code: ""
     });
-    await this.getTurmasSolicitadas();
+    await this.getSolicitaçoes();
     this.getTurmasAbertas();
   }
 
   render() {
     const {
-      totalPages,
-      numPageAtual,
-      turmasSolicitadas,
+      solicitaçoes,
       turmasAbertas,
       loandingTurmasAbertas,
-      fieldFilter,
-      contentInputSeach
+      loadingMinhasTurmas,
+      code
     } = this.state;
     const range = num => {
       let arr = [];
-      for (let i = 0; i < num; i++) arr.push(i);
+      for (let i = 0; i < num; i++) arr = [...arr,i];
       return arr;
     };
     return (
       <TemplateSistema active="turmasAbertas">
         <Row mb={24}>
           <Col xs={12}>
+              <p>Perquise turmas abertas pelo código</p>
+          </Col>
+          {loadingMinhasTurmas?
+            <div className="loader" style={{ margin: "0px auto" }}></div>
+          :
+          <Col xs={12}>
             <InputGroupo
-              placeholder={`Perquise pelo ${
-                fieldFilter === "nome"
-                  ? "Nome"
-                  : fieldFilter === "code"
-                  ? "Código"
-                  : "..."
-              }`}
-              value={contentInputSeach}
-              handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+              placeholder={`Perquise pelo Código`}
+              value={code}
+              handleContentInputSeach ={this.handleCode.bind(this)}
               filterSeash={this.filterSeash.bind(this)}
               handleSelect={this.handleSelectFieldFilter.bind(this)}
-              options={[
-                { value: "name", content: "Nome" },
-                { value: "code", content: "Código" }
-              ]}
-              clearContentInputSeach={this.clearContentInputSeach.bind(this)}
+              options={[{ value: "code", content: "Código" }]}
+              clearcode={this.clearcode.bind(this)}
               loading={loandingTurmasAbertas}
             />
           </Col>
+        }
         </Row>
         <Row>
-          {loandingTurmasAbertas
-            ? range(8).map(i => (
-                <Fragment key={i}>
-                  <Col xs={12} md={6}>
-                    <Card>
-                      <CardHead></CardHead>
-                      <CardBody loading></CardBody>
-                    </Card>
-                  </Col>
-                </Fragment>
-              ))
-            : turmasAbertas.map((turma, index) => {
+          {turmasAbertas.map((turma) => {
                 return (
                   <Fragment key={turma.id}>
-                    <Col xs={12} md={6}>
+                    <Col xs={12}>
                       <Card>
                         <CardHead
                           name={turma.name}
@@ -254,8 +245,8 @@ export default class HomeAlunoScreen extends Component {
                           </div>
                         </div>
                         <CardFooter>
-                          {turmasSolicitadas
-                            .map(t => t.id)
+                          {solicitaçoes
+                            .map(s => s.class_id)
                             .includes(turma.id) ? (
                             <button
                               onClick={() => this.cancelarSolicitacao(turma.id)}
@@ -291,15 +282,6 @@ export default class HomeAlunoScreen extends Component {
                 );
               })}
         </Row>
-        <Row>
-          <Col xs={12} textCenter>
-            <NavPagination
-              totalPages={totalPages}
-              pageAtual={numPageAtual}
-              handlePage={this.handlePage}
-            />
-          </Col>
-        </Row>
       </TemplateSistema>
     );
   }
@@ -308,7 +290,7 @@ export default class HomeAlunoScreen extends Component {
 {
   /* <CardFooter>
 
-{turmasSolicitadas
+{solicitaçoes
   .map(t => t.id)
   .includes(turma.id) ? (
   <button

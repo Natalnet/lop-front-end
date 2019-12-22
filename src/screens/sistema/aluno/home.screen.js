@@ -17,40 +17,24 @@ export default class HomeAlunoScreen extends Component {
     this.state = {
       minhasTurmas: [],
       loadingTurmas: false,
-      contentInputSeach: "",
-      fieldFilter: "name",
-      numPageAtual: 1,
-      totalItens: 0,
-      totalPages: 0,
       descriptions: []
     };
     //this.handlePage=this.handlePage.bind(this)
   }
 
   async componentDidMount() {
-    this.getProfessor();
     await this.getMinhasTurmas();
 
     document.title = "Inicio - Aluno";
   }
-  async getMinhasTurmas(loadingResponse = true) {
-    const { numPageAtual, contentInputSeach, fieldFilter } = this.state;
-    let query = `include=${contentInputSeach}`;
-    query += `&field=${fieldFilter}`;
-
+  async getMinhasTurmas() {
+    let query = `?myClasses=yes`
     try {
-      if (loadingResponse) this.setState({ loadingTurmas: true });
-      const response = await api.get(
-        `/user/class/page/${numPageAtual}?${query}`
-      );
-      console.log("minhas turmas");
-      console.log(response.data.docs[0].classsesHasUseres[0].user_id);
-      //console.log(query);
+      this.setState({ loadingTurmas: true });
+      const response = await api.get(`/class${query}`);
+      console.log("minhas turmas",response.data);
       this.setState({
-        minhasTurmas: [...response.data.docs],
-        totalItens: response.data.total,
-        totalPages: response.data.totalPages,
-        numPageAtual: response.data.currentPage,
+        minhasTurmas: [...response.data],
         loadingTurmas: false
       });
     } catch (err) {
@@ -105,57 +89,21 @@ export default class HomeAlunoScreen extends Component {
     );
   }
 
-  async getProfessor() {
-    const id = "";
-    const response = await api.get(
-      "/user/1e265f2b-c536-47e2-8481-a96d8b03a510"
-    );
-    console.log("akii");
-    console.log(response);
-  }
 
   render() {
     const {
-      fieldFilter,
       loadingTurmas,
-      contentInputSeach,
       minhasTurmas,
-      numPageAtual,
-      totalPages
     } = this.state;
     return (
       <TemplateSistema active="home">
-        <div style={{ marginBottom: "20px" }}>
-          <Col xs={12}>
-            <InputGroupo
-              style={{ padding: "0px" }}
-              placeholder={`Perquise pelo ${
-                fieldFilter === "nome"
-                  ? "Nome"
-                  : fieldFilter === "code"
-                  ? "Código"
-                  : "..."
-              }`}
-              value={contentInputSeach}
-              handleContentInputSeach={this.handleContentInputSeach.bind(this)}
-              filterSeash={this.filterSeash.bind(this)}
-              handleSelect={this.handleSelectFieldFilter.bind(this)}
-              options={[
-                { value: "name", content: "Nome" },
-                { value: "code", content: "Código" }
-              ]}
-              clearContentInputSeach={this.clearContentInputSeach.bind(this)}
-              loading={loadingTurmas}
-            />
-          </Col>
-        </div>
         <Row>
           {loadingTurmas ? (
             <div className="loader" style={{ margin: "0px auto" }}></div>
           ) : (
-            minhasTurmas.map((turma, index) => (
-              <Fragment key={index}>
-                <Col xs={12} md={6}>
+            minhasTurmas.map((turma) => (
+              <Fragment key={turma.id}>
+                <Col xs={12}>
                   <Card>
                     <CardHead
                       name={turma.name}
@@ -181,15 +129,7 @@ export default class HomeAlunoScreen extends Component {
             ))
           )}
         </Row>
-        <Row>
-          <Col xs={12} textCenter>
-            <NavPagination
-              totalPages={totalPages}
-              pageAtual={numPageAtual}
-              handlePage={this.handlePage}
-            />
-          </Col>
-        </Row>
+        
       </TemplateSistema>
     );
   }

@@ -43,11 +43,10 @@ export default class Provas extends Component {
     async componentDidMount() {
 
         this.getProvas()
-        this.getTodasProvas()
+        
         await this.getInfoTurma()
         const {turma} = this.state
         document.title = `${turma && turma.name} - provas`;
-        //this.getTodasProvas()
     }
      async getInfoTurma(){
         const id = this.props.match.params.id
@@ -79,8 +78,12 @@ export default class Provas extends Component {
         }
     }
 
-    async inserirProva(idProva){
-        const idTurma = this.props.match.params.id
+    async inserirProva(test){
+        const {id} = this.props.match.params
+        const request = {
+            idClass:id,
+            idTest:test.id
+        }
         try{
               Swal.fire({
                 title:'Adicionando prova',
@@ -90,8 +93,8 @@ export default class Provas extends Component {
               })
               Swal.showLoading()
               
-              await api.post(`/class/${idTurma}/addTest/test/${idProva}`)
-              await this.getTodasProvas()
+              await api.post(`/classHasTest/store`,request)
+              this.handleCloseshowModalProvas()
               Swal.hideLoading()
               Swal.fire({
                   type: 'success',
@@ -110,8 +113,8 @@ export default class Provas extends Component {
     }
     async removerProva(prova){
         const idTest = prova.id
-        console.log(prova);
-        const idTurma = this.props.match.params.id
+        const idClass = this.props.match.params.id
+        const query = `?idClass=${idClass}`
         try{
             const {value} = await Swal.fire({
                 title: `Tem certeza que quer remover "${prova.title}" da turma?`,
@@ -131,9 +134,8 @@ export default class Provas extends Component {
                 allowEnterKey:false
             })
             Swal.showLoading()
-            await api.delete(`/class/${idTurma}/remove/test/${idTest}`)
+            await api.delete(`/classHasTest/${idTest}/delete${query}`)
             const {provas} = this.state
-            this.getTodasProvas()
             this.setState({provas:provas.filter(prova=>prova.id!==idTest)})
             Swal.hideLoading()
             Swal.fire({
@@ -150,11 +152,13 @@ export default class Provas extends Component {
         }
     }
     async getProvas(){
-        const id = this.props.match.params.id
+        const id = this.props.match.params.id;
+        let query = `?idClass=${id}`
+        //query += `$idNotIn=${}`
         try{
             
             this.setState({loandingProvas:true})
-            const response = await api.get(`/class/${id}/tests`)
+            const response = await api.get(`/test${query}`)
             console.log('provas');
             console.log(response.data);
             this.setState({
@@ -170,13 +174,13 @@ export default class Provas extends Component {
     };
 
     async getTodasProvas(){
-        const {numPageAtual,contentInputSeach,fieldFilter} = this.state
-        let query = `include=${contentInputSeach.trim()}`
-        query += `&field=${fieldFilter}`
+        const {numPageAtual,contentInputSeach,fieldFilter,provas} = this.state
+        let query = `?idNotIn=${provas.map(p=>p.id).join(" ")}`
+        query += `&include=${contentInputSeach.trim()}`;
+        query += `&field=${fieldFilter}`;
         try{
             this.setState({loandingTodasProvas:true})
-            const id = this.props.match.params.id
-            const response = await api.get(`/test/class/${id}/page/${numPageAtual}?${query}`)
+            const response = await api.get(`/test/page/${numPageAtual}${query}`)
             console.log('todasprovas');
             console.log(response.data.docs);
             this.setState({
@@ -208,6 +212,7 @@ export default class Provas extends Component {
         this.setState({showModalInfo:false})
     }
     handleshowModalProvas(e){
+        this.getTodasProvas()
         this.setState({showModalProvas:true})
     }
     handleCloseshowModalProvas(e){
@@ -267,8 +272,7 @@ export default class Provas extends Component {
 
                     provas.map((prova,i)=>{
                         const questions = prova.questions
-                        const questionsCompleted = prova.questions.filter(q=>q.completed)
-                        //const completed = (questionsCompleted.length/questions.length*100).toFixed(2)
+                        const questionsCompleted = prova.questions.filter(q=>q.completedSumissionsCount>0)
                         return(
                         <Fragment key={prova.id}>
                         <Col xs={12}>
@@ -343,7 +347,7 @@ export default class Provas extends Component {
                         :
                             
                             todasprovas.map((prova,index)=>(
-                                <div key={index} className="col-6"> 
+                                <div key={index} className="col-12"> 
                                     <Card>
                                         <CardHead>
                                             <CardTitle>
@@ -352,7 +356,7 @@ export default class Provas extends Component {
                                             <CardOptions>
 
                                                 <div className="btn-group  float-right" role="group" aria-label="Exemplo básico">
-                                                    <button className="btn-primary btn" onClick={()=>this.inserirProva(prova.id)} >Adicionar</button>
+                                                    <button className="btn-primary btn" onClick={()=>this.inserirProva(prova)} >Adicionar</button>
                                                         <button
                                                             className ="btn btn-primary"
                                                             data-toggle="collapse" data-target={'#collapse'+prova.id}

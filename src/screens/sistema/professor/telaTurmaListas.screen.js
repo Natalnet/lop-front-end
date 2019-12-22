@@ -43,12 +43,10 @@ export default class Pagina extends Component {
 
   async componentDidMount() {
     this.getListas();
-    this.getTodasListas();
 
     await this.getInfoTurma();
     const {turma} = this.state
     document.title = `${turma && turma.name} - listas`;
-    this.getTodasListas();
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -81,7 +79,10 @@ export default class Pagina extends Component {
   async inserirLista(lista) {
     const {id} = this.props.match.params;
     const idLista = lista.id
-    const query = `?idClass=${id}&idList=${idLista}`
+    const request = {
+      idClass:id,
+      idList:idLista
+    }
     try {
       Swal.fire({
         title: "Adicionando lista",
@@ -91,7 +92,7 @@ export default class Pagina extends Component {
       });
       Swal.showLoading();
 
-      await api.post(`/classHasListQuestion/store${query}`);
+      await api.post(`/classHasListQuestion/store`,request);
       this.handleCloseshowModalListas()
       Swal.hideLoading();
       Swal.fire({
@@ -114,7 +115,7 @@ export default class Pagina extends Component {
     
     const idClass = this.props.match.params.id;
     const idList = list.id
-    const query = `?idList=${idList}&idClass=${idClass}`
+    const query = `?idClass=${idClass}`
     try {
       const { value } = await Swal.fire({
         title: `Tem certeza que quer remover "${list.title}" da turma?`,
@@ -134,9 +135,8 @@ export default class Pagina extends Component {
         allowEnterKey: false
       });
       Swal.showLoading();
-      await api.delete(`/classHasListQuestion/delete${query}`);
+      await api.delete(`/classHasListQuestion/${idList}/delete${query}`);
       const { listas } = this.state;
-      this.getTodasListas();
       this.setState({ listas: listas.filter(lista => lista.id !== idList) });
       Swal.hideLoading();
       Swal.fire({
@@ -152,15 +152,14 @@ export default class Pagina extends Component {
     }
   }
   async getTodasListas() {
-    const { numPageAtual, contentInputSeach, fieldFilter } = this.state;
-    let query = `include=${contentInputSeach.trim()}`;
+    const { numPageAtual, contentInputSeach, fieldFilter ,listas} = this.state;
+    let query = `?idNotInt=${listas.map(l=>l.id).join(" ")}`
+    query += `&include=${contentInputSeach.trim()}`;
     query += `&field=${fieldFilter}`;
+  
     try {
       this.setState({ loandingTodasListas: true });
-      const id = this.props.match.params.id;
-      const response = await api.get(
-        `/listQuestion/class/${id}/page/${numPageAtual}?${query}`
-      );
+      const response = await api.get(`/listQuestion/page/${numPageAtual}${query}`)
       console.log("todasListas");
       console.log(response.data.docs);
       this.setState({
@@ -176,9 +175,10 @@ export default class Pagina extends Component {
   }
   async getListas() {
     const id = this.props.match.params.id;
+    let query = `?idClass=${id}`
     try {
       this.setState({ loandingListas: true });
-      const response = await api.get(`/class/${id}/lists`);
+      const response = await api.get(`/listQuestion${query}`);
       console.log("listas");
       console.log(response.data);
       this.setState({
@@ -193,7 +193,7 @@ export default class Pagina extends Component {
   async addDateLimit(list){
     const idClass = this.props.match.params.id;
     const idList = list.id
-    const query = `?idList=${idList}&idClass=${idClass}`
+    const query = `?idClass=${idClass}`
     const {dateLimit} = this.state
     if(dateLimit){
       const request = {
@@ -201,7 +201,7 @@ export default class Pagina extends Component {
       }
       try{
         this.setState({loadingDateLimit:true})
-        await api.put(`/classHasListQuestion/update${query}`,request)
+        await api.put(`/classHasListQuestion/${idList}/update${query}`,request)
         this.getListas()
         this.handleCloseShowModalDate()
         this.setState({loadingDateLimit:false})
@@ -237,6 +237,7 @@ export default class Pagina extends Component {
       this.setState({showModalDate:false})
   }
   handleShowModalListas(e) {
+    this.getTodasListas()
     this.setState({ showModalListas: true });
   }
   handleCloseshowModalListas(e) {
@@ -336,9 +337,7 @@ export default class Pagina extends Component {
           ) : (
             listas.map((lista, i) => {
               const questions = lista.questions;
-              const questionsCompleted = lista.questions.filter(
-                q => q.completed
-              );
+              const questionsCompleted = lista.questions.filter(q => q.completedSumissionsCount>0);
 
               return (
                 <Fragment key={lista.id}>

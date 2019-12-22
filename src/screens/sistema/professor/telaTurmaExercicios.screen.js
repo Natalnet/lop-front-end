@@ -97,7 +97,7 @@ export default class Exercicios extends Component {
   async addDateLimit(list){
     const idClass = this.props.match.params.id;
     const idList = list.id
-    const query = `?idList=${idList}&idClass=${idClass}`
+    const query = `?idClass=${idClass}`
     const {dateLimit} = this.state
     if(dateLimit){
       const request = {
@@ -105,7 +105,7 @@ export default class Exercicios extends Component {
       }
       try{
         this.setState({loadingDateLimit:true})
-        await api.put(`/classHasListQuestion/update${query}`,request)
+        await api.put(`/classHasListQuestion/${idList}/update${query}`,request)
         this.handleCloseShowModalDate()
         this.setState({loadingDateLimit:false})
         this.getLista()
@@ -140,7 +140,7 @@ export default class Exercicios extends Component {
   render() {
     const { loadingInfoTurma, turma,loadingDateLimit,showModalDate,dateLimit, loandingLista, lista } = this.state;
     const questions = lista && lista.questions
-    const questionsCompleted = lista && lista.questions.filter(q => q.completedSumissionsConunt>0);
+    const questionsCompleted = lista && lista.questions.filter(q => q.completedSumissionsCount>0);
 
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
@@ -217,7 +217,7 @@ export default class Exercicios extends Component {
                                   <CardTitle>
                                     <b>
                                       {question.title}&nbsp;
-                                      {question.completed ? (
+                                      {question.correctSumissionsCount>0 ? (
                                         <i
                                           className="fa fa-check"
                                           style={{ color: "#0f0" }}
