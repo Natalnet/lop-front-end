@@ -30,6 +30,7 @@ export default class TurmasScreen extends Component {
       loadingTurmas: false,
       contentInputSeach: "",
       fieldFilter: "name",
+      docsPerPage:10,
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
@@ -45,14 +46,15 @@ export default class TurmasScreen extends Component {
   }
 
   async getMinhasTurmas(loadingResponse = true) {
-    const { numPageAtual, contentInputSeach, fieldFilter } = this.state;
-    let query = `include=${contentInputSeach}`;
+    const { numPageAtual, contentInputSeach, fieldFilter,docsPerPage } = this.state;
+    let query = `?include=${contentInputSeach}`;
     query += `&field=${fieldFilter}`;
-
+    query += `&docsPerPage=${docsPerPage}`
+    query += `&myClasses=yes`
     try {
       if (loadingResponse) this.setState({ loadingTurmas: true });
       const response = await api.get(
-        `/user/class/page/${numPageAtual}?${query}`
+        `/class/page/${numPageAtual}${query}`
       );
       console.log("minhas turmas");
       console.log(response.data);

@@ -63,7 +63,6 @@ export default class Listas extends Component {
       query += `&idUser=${idUser}`
       this.setState({ loandingListas: true });
       const response = await api.get(`/listQuestion${query}`);
-      //const response = await api.get(`/class/${id}/participants/${idUser}/lists`);
       console.log("listas");
       console.log(response.data);
       this.setState({

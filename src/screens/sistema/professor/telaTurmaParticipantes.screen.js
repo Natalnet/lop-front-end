@@ -15,6 +15,7 @@ export default class Pagina extends Component {
             loadingParticipantes:false,
             turma:JSON.parse(sessionStorage.getItem('turma')) || '',
             loadingInfoTurma:true,
+            docsPerPage:15,
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
@@ -59,12 +60,15 @@ export default class Pagina extends Component {
     }
 
     async getParticipantes(loading=true){
-        const id = this.props.match.params.id
-        const {numPageAtual} = this.state
-
+        const {numPageAtual,docsPerPage} = this.state
+        const idClass = this.props.match.params.id
+        let query = `?idClass=${idClass}`
+        query +=`&classes=yes`
+        query +=`&docsPerPage=${docsPerPage}`
+        
         try{
             if(loading) this.setState({loadingParticipantes:true})
-            const response = await api.get(`/class/${id}/participants/page/${numPageAtual}`)
+            const response = await api.get(`/user/page/${numPageAtual}${query}`)
             console.log('participantes');
             console.log(response.data);
             this.setState({
@@ -82,7 +86,9 @@ export default class Pagina extends Component {
     }
     async removerParticipante(user){
         const idUser = user.id
-        const idTurma = this.props.match.params.id
+        const idClass = this.props.match.params.id
+        let query = `?idClass=${idClass}`
+        query +=`&idUser=${idUser}`
         try{
             const {value} = await Swal.fire({
                 title: `Tem certeza que quer remover "${user.email}" da turma?`,
@@ -102,9 +108,9 @@ export default class Pagina extends Component {
                 allowEnterKey:false
             })
             Swal.showLoading()
-            const response = await api.delete(`/class/${idTurma}/remove/user/${idUser}`)
-            console.log(response.data);
-            this.getParticipantes(false)
+            await api.delete(`/classHasUser/delete${query}`)
+            const {participantes} = this.state
+            this.setState({participantes:participantes.filter(p=>p.id!==idUser)})
             Swal.hideLoading()
             Swal.fire({
                 type: 'success',

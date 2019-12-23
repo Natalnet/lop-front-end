@@ -14,6 +14,7 @@ export default class Pagina extends Component {
             loadingParticipantes:false,
             turma:JSON.parse(sessionStorage.getItem('turma')) || '',
             loadingInfoTurma:true,
+            docsPerPage:15,
             numPageAtual:1,
             totalItens:0,
             totalPages:0,
@@ -65,18 +66,21 @@ export default class Pagina extends Component {
     }
 
     async getParticipantes(){
-        const id = this.props.match.params.id
-        const {numPageAtual} = this.state
-
+        const {numPageAtual,docsPerPage} = this.state
+        const idClass = this.props.match.params.id
+        let query = `?idClass=${idClass}`
+        query +=`&classes=yes`
+        query +=`&docsPerPage=${docsPerPage}`
         try{
             this.setState({loadingParticipantes:true})
-            const response = await api.get(`/class/${id}/participants/page/${numPageAtual}`)
+            const response = await api.get(`/user/page/${numPageAtual}${query}`)            
             console.log('participantes');
             console.log(response);
             this.setState({
                 participantes:[...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
+                numPageAtual : response.data.currentPage,
                 loadingParticipantes:false,
             })
             

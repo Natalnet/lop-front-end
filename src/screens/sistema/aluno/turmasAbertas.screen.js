@@ -101,6 +101,7 @@ export default class HomeAlunoScreen extends Component {
   }
   async solicitarAcesso(idClass) {
     console.log(idClass);
+    const request = {idClass}
     try {
       //this.setState({solicitando:'disabled'})
       Swal.fire({
@@ -110,7 +111,7 @@ export default class HomeAlunoScreen extends Component {
         allowEnterKey: false
       });
       Swal.showLoading();
-      const response = await api.post(`/solicitation/class/${idClass}/store`);
+      const response = await api.post(`/solicitation/store`,request);
       console.log("solicitação:");
       console.log(response.data);
       await this.getSolicitaçoes(false);
@@ -132,8 +133,9 @@ export default class HomeAlunoScreen extends Component {
       //this.setState({solicitando:''})
     }
   }
-  async cancelarSolicitacao(idTurma) {
-    sessionStorage.getItem("user.id");
+  async cancelarSolicitacao(idClass) {
+    //sessionStorage.getItem("user.id");
+    let query = `?idClass=${idClass}`
     try {
       //this.setState({solicitando:'disabled'})
       Swal.fire({
@@ -143,7 +145,7 @@ export default class HomeAlunoScreen extends Component {
         allowEnterKey: false
       });
       Swal.showLoading();
-      await api.delete(`/solicitation/class/${idTurma}/delete`);
+      await api.delete(`/solicitation/delete${query}`);
       await this.getSolicitaçoes(false);
       this.getTurmasAbertas(false);
       Swal.hideLoading();

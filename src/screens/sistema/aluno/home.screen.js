@@ -19,7 +19,6 @@ export default class HomeAlunoScreen extends Component {
       loadingTurmas: false,
       descriptions: []
     };
-    //this.handlePage=this.handlePage.bind(this)
   }
 
   async componentDidMount() {
@@ -43,22 +42,7 @@ export default class HomeAlunoScreen extends Component {
     }
   }
 
-  handlePage(e, numPage) {
-    e.preventDefault();
-    //console.log(numPage);
-    this.setState(
-      {
-        numPageAtual: numPage
-      },
-      () => this.getMinhasTurmas()
-    );
-  }
 
-  setRedirect = () => {
-    this.setState({
-      redirect: true
-    });
-  };
 
   handleContentInputSeach(e) {
     console.log(e.target.value);

@@ -10,7 +10,7 @@ export default class Pagina extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      solicitacoes: [],
+      usuarios: [],
       loading: false,
       loadingUsers: true,
       loadingInfoTurma: true,
@@ -18,11 +18,11 @@ export default class Pagina extends Component {
     };
   }
   async componentDidMount() {
-    this.getSolicitacoes();
+    this.getUsuarios();
     await this.getInfoTurma();
     const {turma} = this.state
     document.title = `${turma && turma.name} - Solicitações`;
-    this.getSolicitacoesRealTime();
+    this.getUsuariosRealTime();
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
@@ -51,15 +51,18 @@ export default class Pagina extends Component {
       this.setState({ loadingInfoTurma: false });
     }
   }
-  async getSolicitacoes(loadingResponse = true) {
+  async getUsuarios(loadingResponse = true) {
     const id = this.props.match.params.id;
+    let query = `?idClass=${id}`
+    query += `&solicitations=yes`
+    query += `&fields=id name email enrollment`
     try {
       if (loadingResponse) this.setState({ loading: true });
-      const response = await api.get(`/solicitation/class/${id}`);
+      const response = await api.get(`/user${query}`);
       console.log("solicitações");
       console.log(response.data);
       this.setState({
-        solicitacoes: [...response.data],
+        usuarios: [...response.data],
         loading: false,
         loadingUsers: false
       });
@@ -71,20 +74,28 @@ export default class Pagina extends Component {
       console.log(err);
     }
   }
-  getSolicitacoesRealTime() {
+  getUsuariosRealTime() {
     const io = socket(baseUrlBackend);
     console.log(io);
     const id = this.props.match.params.id;
     io.emit("connectRoonClass", id); //conectando à sala
 
-    io.on("RequestsClass", response => {
+    io.on("soliciteClass", response => {
       console.log("no socket");
       console.log(response);
-      this.getSolicitacoes(false);
+      const {usuarios} = this.state
+      this.setState({usuarios:[...usuarios,response]})
     });
+    io.on("cancelSolicitClass", response => {
+      console.log("no socket");
+      console.log(response);
+      const {usuarios} = this.state
+      this.setState({usuarios:[...usuarios.filter(s=>s.id!==response)]})
+    });  
   }
   async aceitaSolicitacao(idUser) {
-    const idTurma = this.props.match.params.id;
+    const idClass = this.props.match.params.id;
+    const request={idUser,idClass}
     try {
       Swal.fire({
         title: "Processando",
@@ -93,10 +104,11 @@ export default class Pagina extends Component {
         allowEnterKey: false
       });
       Swal.showLoading();
-      await api.post(`/solicitation/class/${idTurma}/user/${idUser}/store`);
+      await this.removeSolicitacao(idUser,false);
+      await api.post(`/classHasUser/store`,request);
       //console.log(response);
-      await this.removeSolicitacao(idUser);
-      this.getSolicitacoes();
+      
+      this.getUsuarios();
       Swal.hideLoading();
       Swal.fire({
         type: "success",
@@ -111,36 +123,41 @@ export default class Pagina extends Component {
     }
   }
 
-  async removeSolicitacao(idUser) {
-    const idTurma = this.props.match.params.id;
+  async removeSolicitacao(idUser,msg=true) {
+    const idClass = this.props.match.params.id;
+    let query = `?idClass=${idClass}`
+    query += `&idUser=${idUser}`
     try {
-      Swal.fire({
-        title: "Processando",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        allowEnterKey: false
-      });
-      Swal.showLoading();
-      const response = await api.delete(
-        `/solicitation/${idTurma}/user/${idUser}/delete`
-      );
-      console.log(response.data);
-      this.getSolicitacoes();
-      Swal.hideLoading();
-      Swal.fire({
-        type: "success",
-        title: "Solicitação rejeitada com sucesso!"
-      });
+      if(msg){
+        Swal.fire({
+          title: "Processando",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          allowEnterKey: false
+        });
+        Swal.showLoading();
+      }
+      
+      await api.delete(`/solicitation/delete${query}`);
+      const {usuarios} = this.state
+      this.setState({usuarios:usuarios.filter(u=>u.id!==idUser)})
+      if(msg){
+        Swal.hideLoading();
+        Swal.fire({
+          type: "success",
+          title: "Solicitação rejeitada com sucesso!"
+        });
+      }
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
         type: "error",
-        title: "ops... Solicitação não pôde ser removida"
+        title: "ops... algo deu errado na operação"
       });
     }
   }
   render() {
-    const { solicitacoes, loadingUsers, turma, loadingInfoTurma } = this.state;
+    const { usuarios, loadingUsers, turma, loadingInfoTurma } = this.state;
     return (
       <TemplateSistema
         {...this.props}
@@ -188,7 +205,7 @@ export default class Pagina extends Component {
                     </td>
                   </tr>
                 ) : (
-                  solicitacoes.map((user, i) => (
+                  usuarios.map((user, i) => (
                     <tr key={i}>
                       <td className="text-center">
                         <div
