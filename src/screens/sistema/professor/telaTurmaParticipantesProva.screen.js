@@ -100,7 +100,7 @@ export default class Exercicios extends Component {
             <Col xs={12}>
               <h3 style={{ margin: "0px" }}>
                 <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester || 1} |{" "}
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} | {" "}
                 {usuario && usuario.name} - {usuario && usuario.enrollment}
               </h3>
             </Col>

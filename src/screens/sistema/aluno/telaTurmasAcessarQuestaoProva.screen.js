@@ -89,13 +89,15 @@ export default class Editor extends Component {
     this.appStyles();
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
-    setInterval(
-      function() {
-        this.salvaRascunho(false);
-      }.bind(this),
-      60000
-    );
+    this.time = setInterval(function() {
+      this.salvaRascunho(false);
+    }.bind(this),60000);
   }
+
+  componentWillUnmount(){
+    clearInterval(this.time)
+  }
+  
   appStyles() {
     const cardEnunciado = this.cardEnunciadoRef.current;
     const cardExemplos = this.cardExemplos.current;
@@ -119,9 +121,10 @@ export default class Editor extends Component {
     const request = {
       ip : ip[0],
       environment:'desktop',
+      idQuestion,
     }
     try{
-      await api.post(`/access/question/${idQuestion}/store`,request)
+      await api.post(`/access/store`,request)
     }
     catch(err){
       console.log(err);
@@ -155,11 +158,13 @@ export default class Editor extends Component {
     }
   }
   async getProva() {
+    const {id,idTest} = this.props.match.params;
+    const idClass = id
+    let query = `?idClass=${idClass}`
     try {
-      const idClass = this.props.match.params.id;
-      const idTest = this.props.match.params.idTest;
-      const response = await api.get(`/test/${idTest}/class/${idClass}`);
+      const response = await api.get(`/test/${idTest}${query}`);
       const prova = response.data
+      console.log('prova:',prova)
       const password = sessionStorage.getItem(`passwordTest-${prova.id}`)
       const hashCode = `${generateHash(prova.password)}-${prova.id}`
       if(prova.status==="FECHADA" || !password || password!==hashCode){
@@ -184,9 +189,13 @@ export default class Editor extends Component {
   
   async getExercicio() {
     const {id,idTest,idExercicio} = this.props.match.params;
-    const query = `?exclude=solution`;
+    let query = `?exclude=solution`;
+    query += `&draft=yes`
+    query += `&idClass=${id}`
+    query += `&idTest=${idTest}`
+    query += `&difficulty=yes`
     try {
-      const response = await api.get(`/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}${query}`);
+      const response = await api.get(`/question/${idExercicio}${query}`);
       console.log("questão");
       console.log(response.data);
       this.setState({
@@ -210,10 +219,13 @@ export default class Editor extends Component {
     const request = {
       answer: solution,
       char_change_number,
+      idQuestion : idExercicio,
+      idTest : idTest,
+      idClass : id
     };
     try {
       this.setState({ salvandoRascunho: true });
-      await api.post(`/draft/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}/store`, request);
+      await api.post(`/draft/store`, request);
 
       this.setState({ salvandoRascunho: false });
       if (showMsg) {
@@ -290,12 +302,12 @@ export default class Editor extends Component {
         timeConsuming: timeConsuming,
         ip: ip[0],
         environment: "desktop",
-        char_change_number
+        idQuestion:idExercicio,
+        idClass:id,
+        idTest:idTest,
       };
-      await api.post(
-        `/submission/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}/store`,
-        request
-      );
+      await api.post(`/submission/store`,request);
+
       this.setState({ tempo_inicial: new Date() });
     } catch (err) {
       this.setState({ tempo_inicial: new Date() });
@@ -319,14 +331,12 @@ export default class Editor extends Component {
     const userDifficulty = e.target ? e.target.value : "";
     const idQuestion = this.props.match.params.idExercicio;
     const request = {
-      userDifficulty: userDifficulty
+      userDifficulty: userDifficulty,
+      idQuestion
     };
     try {
       this.setState({ loadDifficulty: true });
-      const response = await api.post(
-        `/difficulty/question/${idQuestion}/store`,
-        request
-      );
+      await api.post(`/difficulty/store`,request);
       this.setState({
         userDifficulty: userDifficulty,
         loadDifficulty: false

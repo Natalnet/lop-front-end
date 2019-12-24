@@ -335,7 +335,7 @@ export default class Editor extends Component {
       return <Redirect to='/professor/exercicios' />
     }
     const {percentualAcerto,response,status,difficulty,katexDescription,savingQuestion,loadingReponse,title,description,inputs,outputs} = this.state
-    const { tests,language,theme,contentRes,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags,msgTitle,msgDescription,descriptionErro } = this.state;
+    const { tests,language,theme,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags,msgTitle,msgDescription,descriptionErro } = this.state;
 
     
     return (
@@ -346,7 +346,7 @@ export default class Editor extends Component {
             <i className="fa fa-code"></i> Nova questão
           </CardTitle>
       </CardHead>
-      <CardBody loading={loadingExercicio}>
+      <CardBody loading={loadingExercicio || loadingTags}>
       <form onSubmit={e => this.updateQuestion(e)} >
         <div className="form-row">
           <div className="form-group col-md-12">

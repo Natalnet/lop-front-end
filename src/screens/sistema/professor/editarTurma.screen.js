@@ -44,8 +44,10 @@ export default class NovasTurmasScreen extends Component {
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;
+    let query = `?user=YES`
+    query +=`&profile=PROFESSOR`
     try {
-      const response = await api.get(`/class/${id}`);
+      const response = await api.get(`/class/${id}${query}`);
       console.log("class:");
       console.log(response.data);
       await this.setState({
@@ -136,7 +138,8 @@ export default class NovasTurmasScreen extends Component {
   }
 
   async getProfessores() {
-    let query = `?fields=id email&profile=PROFESSOR`;
+    let query = `?fields=id email`
+    query+=`&profile=PROFESSOR`;
     try {
       const response = await api.get(`/user${query}`);
       this.setState({

@@ -105,10 +105,11 @@ export default class Editor extends Component {
     const idQuestion = this.props.match.params.idExercicio;
     const request = {
       ip: ip[0],
-      environment: "desktop"
+      environment: "desktop",
+      idQuestion
     };
     try {
-      await api.post(`/access/question/${idQuestion}/store`, request);
+      await api.post(`/access/store`, request);
     } catch (err) {
       console.log(err);
     }
@@ -142,9 +143,13 @@ export default class Editor extends Component {
   }
   async getExercicio() {
     const {id,idTest,idExercicio} = this.props.match.params;
-    const query = `?exclude=solution`;
+    let query = `?exclude=solution`
+    query += `&draft=yes`
+    query += `&idClass=${id}`
+    query += `&idTest=${idTest}`
+    query += `&difficulty=yes`
     try {
-      const response = await api.get(`/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}${query}`);
+      const response = await api.get(`/question/${idExercicio}${query}`);
       console.log("questão");
       console.log(response.data);
       this.setState({
@@ -168,11 +173,13 @@ export default class Editor extends Component {
     const request = {
       answer: solution,
       char_change_number,
+      idQuestion : idExercicio,
+      idTest : idTest,
+      idClass : id
     };
     try {
       this.setState({ salvandoRascunho: true });
-      await api.post(`/draft/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}/store`, request);
-
+      await api.post(`/draft/store`, request);
       this.setState({ salvandoRascunho: false });
       if (showMsg) {
         const Toast = Swal.mixin({
@@ -246,12 +253,13 @@ export default class Editor extends Component {
         timeConsuming: timeConsuming,
         ip: ip[0],
         environment: "desktop",
-        char_change_number
+        char_change_number,
+        idQuestion:idExercicio,
+        idClass:id,
+        idTest:idTest,
       };
-      await api.post(
-        `/submission/question/${idExercicio}/list/${null}/test/${idTest}/class/${id}/store`,
-        request
-      );
+      await api.post(`/submission/store`,request);
+
       this.setState({ tempo_inicial: new Date() });
     } catch (err) {
       this.setState({ tempo_inicial: new Date() });
@@ -275,14 +283,12 @@ export default class Editor extends Component {
     const userDifficulty = e.target ? e.target.value : "";
     const idQuestion = this.props.match.params.idExercicio;
     const request = {
-      userDifficulty: userDifficulty
+      userDifficulty: userDifficulty,
+      idQuestion
     };
     try {
       this.setState({ loadDifficulty: true });
-      const response = await api.post(
-        `/difficulty/question/${idQuestion}/store`,
-        request
-      );
+      await api.post(`/difficulty/store`,request);
       this.setState({
         userDifficulty: userDifficulty,
         loadDifficulty: false

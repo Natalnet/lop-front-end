@@ -63,13 +63,13 @@ export default class Exercicios extends Component {
     }
   }
   async getProva() {
+    const {id,idTest} = this.props.match.params;
+    const idClass = id
+    let query = `?idClass=${idClass}`
     try {
-      const {id,idTest} = this.props.match.params;
-      let query = `?idClass=${id}`
       const response = await api.get(`/test/${idTest}${query}`);
-      console.log("provas");
-      console.log(response.data);
-      const prova = response.data;
+      const prova = response.data
+      console.log('prova:',prova)
       const password = sessionStorage.getItem(`passwordTest-${prova && prova.id}`);
       const hashCode = `${generateHash(prova && prova.password)}-${prova && prova.id}`;
       if ((prova && prova.status === "FECHADA") || (!password) || (password !== hashCode)) {
