@@ -304,7 +304,8 @@ export default class Editor extends Component {
         msgTitle:'',
         msgDescription:'',
       })
-      if(err.response.status===400){
+      console.log(Object.getOwnPropertyDescriptors(err))
+      if(err.response && err.response.status===400){
           for(let fieldErro of err.response.data){
             if(fieldErro.field==="title"){
               this.setState({msgTitle:fieldErro.msg})

@@ -6,7 +6,7 @@ const baseUrlBackend = process.env.REACT_APP_BASE_URL_BACKEND || "http://localho
 const api = axios.create({
   baseURL: baseUrlBackend
 });
-api.interceptors.request.use(async config => {
+api.interceptors.request.use(config => {
   const token = sessionStorage.getItem("auth-token");
   if (token) {
     config.headers.authorization = `Bearer ${token}`;

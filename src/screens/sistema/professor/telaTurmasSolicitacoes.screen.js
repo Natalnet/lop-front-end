@@ -18,8 +18,9 @@ export default class Pagina extends Component {
     };
   }
   async componentDidMount() {
-    this.getUsuarios();
     await this.getInfoTurma();
+    this.getUsuarios();
+    
     const {turma} = this.state
     document.title = `${turma && turma.name} - Solicitações`;
     this.getUsuariosRealTime();

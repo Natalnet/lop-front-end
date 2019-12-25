@@ -22,17 +22,12 @@ export default class Listas extends Component {
       todasListas: []
     };
   }
-  componentWillMount() {
-    const idClass = this.props.match.params.id;
-    const turmas = JSON.parse(sessionStorage.getItem("user.classes"));
-    const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase();
-    if (turmas && !turmas.includes(idClass))
-      this.props.history.push(`/${profile}`);
-  }
+  
   async componentDidMount() {
+    await this.getInfoTurma();
     this.getListas();
     this.getListasRealTime();
-    await this.getInfoTurma();
+   
     const {turma} = this.state
     document.title = `${turma && turma.name} - listas`;
   }

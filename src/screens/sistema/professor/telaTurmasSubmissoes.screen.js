@@ -36,9 +36,10 @@ export default class HomesubmissoesScreen extends Component {
     this.handlePage = this.handlePage.bind(this);
   }
   async componentDidMount() {
+    await this.getInfoTurma();
     this.getSubmissoes();
     this.getSubmissoesRealTime();
-    await this.getInfoTurma();
+    
     const {turma} = this.state
     document.title = `${turma && turma.name} - Submissões`;
   }

@@ -24,8 +24,8 @@ export default class Pagina extends Component {
     }
 
     async componentDidMount() {
-        this.getParticipantes()
         await this.getInfoTurma()
+        this.getParticipantes()
         const {turma} = this.state
         document.title = `${turma && turma.name} - participantes`;        
     }

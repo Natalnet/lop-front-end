@@ -11,17 +11,10 @@ export default class Pagina extends Component {
             loadingInfoTurma:true,
         }
     }
-    componentWillMount(){
-        const idClass = this.props.match.params.id
-        const turmas = JSON.parse(sessionStorage.getItem('user.classes'))
-        const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
-        if(turmas && !turmas.includes(idClass))
-            this.props.history.push(`/${profile}`)
-    }
-
-    componentDidMount() {
+    
+    async componentDidMount() {
         document.title = "Dashboard";
-        this.getInfoTurma()
+        await this.getInfoTurma()
     }
     async getInfoTurma(){
         const id = this.props.match.params.id

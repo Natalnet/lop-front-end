@@ -256,13 +256,13 @@ export default class Editor extends Component {
     }
     catch(err){
       console.log('status');
-      console.log(err.response.status);
+      console.log(err.response && err.response.status);
       console.log(Object.getOwnPropertyDescriptors(err));
       await this.setState({
         msgTitle:'',
         msgDescription:'',
       })
-      if(err.response.status===400){
+      if(err.response && err.response.status===400){
           for(let fieldErro of err.response.data){
             if(fieldErro.field==="title"){
               this.setState({msgTitle:fieldErro.msg})

@@ -48,7 +48,7 @@ export default class recoverScreen extends Component {
         erro: false,
         msg: ""
       });
-      if (err.message === "Request failed with status code 400") {
+      if (err.response && err.response.status===400) {
         this.setState({ msgEmail: err.response.data.msg });
       } else {
         this.setState({

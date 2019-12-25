@@ -41,10 +41,8 @@ export default class Provas extends Component {
     }
 
     async componentDidMount() {
-
-        this.getProvas()
-        
         await this.getInfoTurma()
+        this.getProvas()
         const {turma} = this.state
         document.title = `${turma && turma.name} - provas`;
     }

@@ -10,29 +10,9 @@ import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 
 export default class Error404 extends Component {
-  state = {
-    perfil: sessionStorage.getItem("user.profile")
-  }
+  
   componentDidMount() {
     document.title = "Error404 - Plataforma LOP";
-  }
-
-  retornar(){
-    if(this.state.perfil==='PROFESSOR'){
-      return(<Link className="btn btn-primary" to="/professor/turmas">
-          <i className="fe fe-arrow-left mr-2" />Voltar para o início
-      </Link>)
-    }
-    else if(this.state.perfil==='ADMINISTRADOR'){
-      return(<Link className="btn btn-primary" to="/administrador/usuarios">
-          <i className="fe fe-arrow-left mr-2" />Voltar para o início
-      </Link>)
-    }
-    else if(this.state.perfil==='ALUNO'){
-      return(<Link className="btn btn-primary" to="/aluno">
-          <i className="fe fe-arrow-left mr-2" />Voltar para o início
-      </Link>)
-    }
   }
 
   render() {
@@ -45,9 +25,11 @@ export default class Error404 extends Component {
             </div>
             <h1 className="h2 mb-3">Página não encontrada</h1>
             <p className="h4 text-muted font-weight-normal mb-7">
-              Você tentou acessar uma página que não existe na plataforma LOP.
+                Erro ao processar requisição.
             </p>
-            {this.retornar()}
+            <Link className="btn btn-primary" to={`/${sessionStorage.getItem('user.profile').toLocaleLowerCase()}`}>
+              <i className="fe fe-arrow-left mr-2" />Voltar para o início 
+            </Link>
           </div>
         </div>
       </div>

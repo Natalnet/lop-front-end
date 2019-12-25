@@ -24,9 +24,10 @@ export default class Listas extends Component {
     };
   }
   async componentDidMount() {
+    await this.getInfoTurma();
     this.getListas();
     this.getProvas()
-    await this.getInfoTurma();
+    
     const {turma} = this.state
     document.title = `${turma && turma.name} - listas`;
   }
@@ -211,7 +212,7 @@ export default class Listas extends Component {
                             />
                             <CardOptions>
                               <Link
-                                to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario.id}/provas/${prova.id}/exercicios`}
+                                to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario && usuario.id}/provas/${prova.id}/exercicios`}
                               >
                                 <button className="btn btn-success">
                                   Acessar <i className="fa fa-wpexplorer" />

@@ -7,9 +7,7 @@
 
 import React, { Component, createRef } from "react";
 
-import Swal from "sweetalert2";
-
-import axios from "axios";
+import api from "../../services/api"
 
 import ErrorBoundary from "screens/erros/errorBoundary.screen";
 
@@ -27,63 +25,35 @@ export default class TemplateSistema extends Component {
   constructor(props) {
     super(props);
     this.height = createRef() 
-    this.state = {
-      erros: [],
-      keyErros: 0,
-      perfil: sessionStorage.getItem("user.profile"),
-    };
+
   }
 
   componentDidMount() {
-    document.title = "Template de login";
+    document.title = "Plaforma Lop";
     this.handleAxiosErros();
   }
 
   handleAxiosErros = () => {
-    axios.interceptors.response.use(null, error => {
-      if (error.response !== undefined) {
-        if (
-          error.response.status === 500 ||
-          error.response.status === 400 ||
-          error.response.status === 404
-        ) {
-          const { erros } = error.response.data;
-          if(erros !== undefined){
-            let text = erros.map(erro => {
-              return `${erro.msg}`.replace(".", "");
-            });
-  
-            Swal.fire({
-              type: "error",
-              title: `Erro ${error.response.status}`,
-              text: text,
-              confirmButtonText: "Voltar para o sistema"
-            });
-          } else{
-            Swal.fire({
-              type: "error",
-              title: `Erro ${error.response.status}`,
-              text: 'Erro ao processar requisição.',
-              confirmButtonText: "Voltar para o sistema"
-            });
+    api.interceptors.response.use(null, err => {
+        console.log("interceptores------>>>>>>")
+        console.log(Object.getOwnPropertyDescriptors(err))
+        console.log(err.message)
+        console.log("interceptores------>>>>>>")
+        
+          if ((err.response && err.response.status === 404) || err.message==="Network Error") {
+                this.props.history.push('/404')
+          } 
+          else if(err.response && err.response.status === 401){
+            this.props.history.push(`/${sessionStorage.getItem('user.profile').toLocaleLowerCase()}`)
           }
-          
-        } else {
-          return Promise.reject(error);
-        }
-      }
+          else {
+            return Promise.reject(err);
+          }
+        
     });
   };
 
-  getPerfilUsuario = () => {
-    console.log(this.state.perfil)
-
-    const perfilDaUrl = window.location.pathname.slice(1);
-    
-    const arraySistemaPermisssao = perfilDaUrl.split('/');
-    
-    return arraySistemaPermisssao[0] === "sistema" ? arraySistemaPermisssao[1] : perfis.ALUNO;
-  }
+  
 
   // footer(){
   //   const teste = this.height.current

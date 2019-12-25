@@ -63,7 +63,7 @@ export default class LoginScreen extends Component {
           msg:'',
           loading:false
         })        
-        if(err.message==='Request failed with status code 400'){
+        if(err.response && err.response.status===400){
           console.log(err.response.data);
           for(let fieldErro of err.response.data){
             if(fieldErro.field==="name"){

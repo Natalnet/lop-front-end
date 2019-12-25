@@ -4,7 +4,7 @@ import { PrivateRoutes } from "./privateRoutes.util";
 
 const exportRoutes = routes => {
   const routesMap = routes.map((route, index) => {
-    if (route.private === false) {
+    if (!route.private) {
       return (
         <Route
           key={index}
@@ -14,7 +14,7 @@ const exportRoutes = routes => {
         />
       );
     } 
-    else if(route.private === true ) {
+    else{
       return (
         <PrivateRoutes
           perfil={route.perfil}

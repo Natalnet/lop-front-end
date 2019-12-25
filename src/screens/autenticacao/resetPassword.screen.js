@@ -76,7 +76,7 @@ export default class resetScreen extends Component {
           error:true,
           msg:false
         })
-        if(err.message==='Request failed with status code 400'){
+        if(err.response && err.response.status===400){
           this.setState({msg:err.response.data.msg})
           Swal.fire({
             type: "error",

@@ -5,6 +5,10 @@ import exportRoutes from 'util/routes/exportRoutes.util';
 
 const routes = [
     {
+        path: '/404',
+        component: Error404
+    },
+    {
         path: '*',
         component: Error404
     }

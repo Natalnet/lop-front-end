@@ -12,8 +12,8 @@ export default class Pagina extends Component {
     };
   }
 
-  componentDidMount() {
-    this.getInfoTurma();
+  async componentDidMount() {
+    await this.getInfoTurma();
   }
   async getInfoTurma() {
     const id = this.props.match.params.id;

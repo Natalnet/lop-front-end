@@ -42,9 +42,8 @@ export default class Pagina extends Component {
   }
 
   async componentDidMount() {
-    this.getListas();
-
     await this.getInfoTurma();
+    this.getListas();
     const {turma} = this.state
     document.title = `${turma && turma.name} - listas`;
   }
