@@ -1,16 +1,12 @@
-import React, { Component } from "react";
-
-import { Redirect } from "react-router-dom";
+import { Component } from "react";
 
 import Swal from "sweetalert2";
 
 import api from "../../services/api";
 
 export default class ConfirmRegister extends Component {
-  state = {
-    redirect: false,
-    redirectLogin: false
-  };
+
+  
   componentDidMount() {
     document.title = "Confirmar cadastro - Plataforma LOP";
     this.confirmarRegistro();
@@ -36,7 +32,7 @@ export default class ConfirmRegister extends Component {
         title: `Seja bem vindo(a)`,
         text: `Seu email foi confirmado com sucesso, uso da plataforma já disponivel.`,
       })
-      this.setState({ redirect: true }); 
+      this.props.history.push(`/${sessionStorage.getItem("user.profile").toLocaleLowerCase()}`)
     }
     catch(err){
         Swal.fire({
@@ -49,18 +45,12 @@ export default class ConfirmRegister extends Component {
           allowEnterKey:false 
         }).then(result => {
           if (result.value) {
-            return this.setState({ redirectLogin: true });
+            this.props.history.push(`/`)
           }
         })
       }
   };
   render() {
-    if (this.state.redirect) {
-      return <Redirect to={`/${sessionStorage.getItem("user.profile").toLocaleLowerCase()}`} />;
-    }
-    if (this.state.redirectLogin) {
-      return <Redirect to="/" />;
-    }
     return null;
   }
 }

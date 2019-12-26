@@ -4,7 +4,7 @@ import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/TurmasProfessor/cardHead.component";
 import CardOptions from "components/ui/card/TurmasProfessor/cardOptions.component";
-import CardTitle from "components/ui/card/cardTitle.component";
+//import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/TurmasProfessor/cardBody.component";
 import CardFooter from "components/ui/card/TurmasProfessor/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
@@ -14,9 +14,9 @@ import Col from "components/ui/grid/col.component";
 import api, { baseUrlBackend } from "../../../services/api";
 import socket from "socket.io-client";
 
-const botaoV = {
+/*const botaoV = {
   float: "right"
-};
+};*/
 
 const botao = {
   width: "100%"
@@ -58,7 +58,6 @@ export default class TurmasScreen extends Component {
       );
       console.log("minhas turmas");
       console.log(response.data);
-      //console.log(query);
       this.setState({
         minhasTurmas: [...response.data.docs],
         totalItens: response.data.total,
@@ -66,6 +65,32 @@ export default class TurmasScreen extends Component {
         numPageAtual: response.data.currentPage,
         loadingTurmas: false
       });
+      let myClasses = sessionStorage.getItem("myClasses")
+      if(myClasses && typeof JSON.parse(myClasses)==="object"){
+        myClasses = JSON.parse(myClasses)
+        let newClasses = response.data.docs
+        newClasses.forEach(c => {
+          if(!myClasses.map(t=>t.id).includes(c.id)){
+            myClasses = [...myClasses,{
+              id:c.id,
+              year:c.year,
+              name:c.name,
+              semester:c.semester
+            }]
+          }
+        });
+        sessionStorage.setItem("myClasses",JSON.stringify(myClasses))
+      }
+      else{
+        sessionStorage.setItem("myClasses",JSON.stringify(response.data.docs.map(t=>{
+          return {
+            id:t.id,
+            year:t.year,
+            name:t.name,
+            semester:t.semester
+          }
+        })))
+      }
     } catch (err) {
       this.setState({ loadingTurmas: false });
       console.log(err);
@@ -104,12 +129,6 @@ export default class TurmasScreen extends Component {
     );
   }
 
-  setRedirect = () => {
-    this.setState({
-      redirect: true
-    });
-  };
-
   handleContentInputSeach(e) {
     console.log(e.target.value);
     this.setState(
@@ -147,7 +166,7 @@ export default class TurmasScreen extends Component {
       minhasTurmas,
       numPageAtual,
       totalPages,
-      descriptions
+      //descriptions
     } = this.state;
     const range = num => {
       let arr = [];

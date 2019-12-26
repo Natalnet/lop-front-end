@@ -17,11 +17,12 @@ export default class Exercicios extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      redirect: false,
       prova: null,
-      loandingProva: true,
+      loandingProva: false,
       loadingInfoTurma: true,
-      turma: JSON.parse(sessionStorage.getItem("turma")) || ""
+      testTitle:"" ,
+      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
+      turma:"",    
     };
   }
   
@@ -29,38 +30,48 @@ export default class Exercicios extends Component {
     await this.getInfoTurma();
     this.getProva();
   }
-  async getInfoTurma() {
-    const id = this.props.match.params.id;
-    const { turma } = this.state;
-    if (!turma || (turma && turma.id !== id)) {
-      console.log("dentro do if");
-      try {
-        const response = await api.get(`/class/${id}`);
-        const turmaData = {
-          id: response.data.id,
-          name: response.data.name,
-          year: response.data.year,
-          semester: response.data.semester,
-          languages: response.data.languages
-        };
+  async getInfoTurma(){
+    const id = this.props.match.params.id
+    const {myClasses} = this.state
+    if(myClasses && typeof myClasses==="object"){
+        const index = myClasses.map(c=>c.id).indexOf(id)
+        if(index!==-1){
+            this.setState({
+                turma:myClasses[index]
+            })
+        }
+        this.setState({loadingInfoTurma:false})
+        return null
+    }
+    try{
+        const response = await api.get(`/class/${id}`)
         this.setState({
-          turma: turmaData,
-          loadingInfoTurma: false
-        });
-        sessionStorage.setItem("turma", JSON.stringify(turmaData));
-      } catch (err) {
-        this.setState({ loadingInfoTurma: false });
+            turma:response.data,
+            loadingInfoTurma:false,
+        })
+    }
+    catch(err){
+        this.setState({loadingInfoTurma:false})
         console.log(err);
-      }
-    } else {
-      this.setState({ loadingInfoTurma: false });
     }
   }
   async getProva() {
     const {id,idTest} = this.props.match.params;
     const idClass = id
+    let lists = sessionStorage.getItem("lists")
+    if(lists && typeof JSON.parse(lists)==="object"){  
+      lists = JSON.parse(lists)      
+      const index = lists.map(l=>l.id).indexOf(idTest)
+      if(index!==-1){
+          this.setState({
+            testTitle:lists[index].title
+          })
+      }
+    }
     let query = `?idClass=${idClass}`
+    //const {turma} = this.state
     try {
+      this.setState({loandingProva: true})
       const response = await api.get(`/test/${idTest}${query}`);
       const prova = response.data
       console.log('prova:',prova)
@@ -71,10 +82,11 @@ export default class Exercicios extends Component {
       } else {
         this.setState({
           prova,
-          loandingProva: false
+          loandingProva: false,
+          testTitle:prova.title
         });
-        const {turma} = this.state
-        document.title = `${turma && turma.name} - ${response.data.title}`;
+        
+        
       }
     } catch (err) {
       console.log(err);
@@ -84,7 +96,7 @@ export default class Exercicios extends Component {
   RecolherProva = e => {};
 
   render() {
-    const { loadingInfoTurma, turma, loandingProva, prova } = this.state;
+    const { loadingInfoTurma, turma, loandingProva, prova ,testTitle} = this.state;
     const questions = prova && prova.questions
     const questionsCompleted = prova && prova.questions.filter(q => q.correctSumissionsCount>0);
     return (
@@ -94,10 +106,15 @@ export default class Exercicios extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
-              </h3>
+              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+              {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+              <i className="fa fa-angle-left ml-2 mr-2"/> 
+              <Link to={`/aluno/turma/${this.props.match.params.id}/provas`}>
+                Provas
+              </Link>
+              <i className="fa fa-angle-left ml-2 mr-2"/>
+              {testTitle || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+            </h5>
             )}
           </Col>
         </Row>
@@ -105,16 +122,6 @@ export default class Exercicios extends Component {
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>
-            <Row mb={15}>
-              <Col xs={12}>
-                <Link to={`/aluno/turma/${this.props.match.params.id}/provas`}>
-                  <button className="btn btn-success mr-2">
-                    <i className="fa fa-arrow-left" /> Voltar para as Provas{" "}
-                    <i className="fa fa-file-text" />
-                  </button>
-                </Link>
-              </Col>
-            </Row>
             <Row mb={15}>
               <Col xs={12}>
                 <Card>

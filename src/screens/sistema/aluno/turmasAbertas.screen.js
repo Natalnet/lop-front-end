@@ -6,15 +6,13 @@ import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/TurmasAbertasAlunos/cardHead.component";
 import CardOptions from "components/ui/card/TurmasAbertasAlunos/cardOptions.component";
-import CardTitle from "components/ui/card/cardTitle.component";
+//import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/TurmasAbertasAlunos/cardBody.component";
 import CardFooter from "components/ui/card/TurmasAbertasAlunos/cardFooter.component";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import Collapse from "components/ui/collapse/collapse.component";
-import ButtonToogle from "components/ui/collapse/buttonToogle.component";
-import NavPagination from "components/ui/navs/navPagination";
+
 import socket from "socket.io-client";
 
 export default class HomeAlunoScreen extends Component {
@@ -197,39 +195,39 @@ export default class HomeAlunoScreen extends Component {
       loadingMinhasTurmas,
       code
     } = this.state;
-    const range = num => {
-      let arr = [];
-      for (let i = 0; i < num; i++) arr = [...arr,i];
-      return arr;
-    };
     return (
       <TemplateSistema active="turmasAbertas">
-        <Row mb={24}>
-          <Col xs={12}>
-              <p>Perquise turmas abertas pelo código</p>
+        <Row mb={15}>
+          <Col xs={12} >
+              <h5 style={{margin:'0px'}}> 
+                Perquise turmas abertas pelo código
+              </h5>
           </Col>
+        </Row>
           {loadingMinhasTurmas?
             <div className="loader" style={{ margin: "0px auto" }}></div>
           :
-          <Col xs={12}>
-            <InputGroupo
-              placeholder={`Perquise pelo Código`}
-              value={code}
-              handleContentInputSeach ={this.handleCode.bind(this)}
-              filterSeash={this.filterSeash.bind(this)}
-              handleSelect={this.handleSelectFieldFilter.bind(this)}
-              options={[{ value: "code", content: "Código" }]}
-              clearcode={this.clearcode.bind(this)}
-              loading={loandingTurmasAbertas}
-            />
-          </Col>
+          <Row mb={24}>
+            <Col xs={12}>
+              <InputGroupo
+                placeholder={`Perquise pelo Código`}
+                value={code}
+                handleContentInputSeach ={this.handleCode.bind(this)}
+                filterSeash={this.filterSeash.bind(this)}
+                handleSelect={this.handleSelectFieldFilter.bind(this)}
+                options={[{ value: "code", content: "Código" }]}
+                clearcode={this.clearcode.bind(this)}
+                loading={loandingTurmasAbertas}
+              />
+            </Col>
+          </Row>
         }
-        </Row>
+        
         <Row>
           {turmasAbertas.map((turma) => {
                 return (
                   <Fragment key={turma.id}>
-                    <Col xs={12}>
+                    <Col xs={12} md={6}>
                       <Card>
                         <CardHead
                           name={turma.name}

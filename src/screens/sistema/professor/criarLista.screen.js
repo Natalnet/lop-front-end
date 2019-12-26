@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
 import Swal from "sweetalert2";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
@@ -27,7 +26,6 @@ export default class CriarListaScreen extends Component {
     super(props);
     this.state = {
       contentInputSeach: "",
-      redirect: false,
       exercicios: [],
       selecionados: [],
       fildFilter: "title",
@@ -101,7 +99,7 @@ export default class CriarListaScreen extends Component {
         type: "success",
         title: "Lista criada com sucesso!"
       });
-      this.setState({ redirect: true });
+      this.props.history.push("/professor/listas")
     }catch (err) {
       Swal.hideLoading();
       Swal.fire({
@@ -178,9 +176,7 @@ export default class CriarListaScreen extends Component {
   }
 
   render() {
-    if (this.state.redirect) {
-      return <Redirect to="/professor/listas" />;
-    }
+    
     const {
       loadingExercicios,
       contentInputSeach,

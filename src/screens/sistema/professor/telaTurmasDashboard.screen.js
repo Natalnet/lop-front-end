@@ -7,7 +7,8 @@ export default class Pagina extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      turma: JSON.parse(sessionStorage.getItem("turma")) || "",
+      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
+      turma:"",        
       loadingInfoTurma: true
     };
   }
@@ -15,31 +16,29 @@ export default class Pagina extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
   }
-  async getInfoTurma() {
-    const id = this.props.match.params.id;
-    const { turma } = this.state;
-    if (!turma || (turma && turma.id !== id)) {
-      console.log("dentro do if");
-      try {
-        const response = await api.get(`/class/${id}`);
-        const turmaData = {
-          id: response.data.id,
-          name: response.data.name,
-          year: response.data.year,
-          semester: response.data.semester,
-          languages: response.data.languages
-        };
+  async getInfoTurma(){
+    const id = this.props.match.params.id
+    const {myClasses} = this.state
+    if(myClasses && typeof myClasses==="object"){
+        const index = myClasses.map(c=>c.id).indexOf(id)
+        if(index!==-1){
+            this.setState({
+                turma:myClasses[index]
+            })
+        }
+        this.setState({loadingInfoTurma:false})
+        return null
+    }
+    try{
+        const response = await api.get(`/class/${id}`)
         this.setState({
-          turma: turmaData,
-          loadingInfoTurma: false
-        });
-        sessionStorage.setItem("turma", JSON.stringify(turmaData));
-      } catch (err) {
-        this.setState({ loadingInfoTurma: false });
+            turma:response.data,
+            loadingInfoTurma:false,
+        })
+    }
+    catch(err){
+        this.setState({loadingInfoTurma:false})
         console.log(err);
-      }
-    } else {
-      this.setState({ loadingInfoTurma: false });
     }
   }
   render() {

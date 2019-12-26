@@ -1,5 +1,4 @@
 import React, { Component,Fragment } from "react";
-import {Redirect} from 'react-router-dom'
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import apiCompiler from '../../../services/apiCompiler'
@@ -21,14 +20,12 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
 import TableResults2 from '../../../components/ui/tables/tableResults2.component'
 import TableIO from '../../../components/ui/tables/tableIO.component'
 import Select from 'react-select';
 import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
 import FormSelect2 from '../../../components/ui/forms/formSelect2.component'
-import imgLoading from '../../../assets/loading.gif'
 
 export default class Editor extends Component {
   constructor(props){
@@ -60,7 +57,6 @@ export default class Editor extends Component {
       tags:[],
       tagsSelecionadas:[],
       loadingTags:false,
-      redirect:false,
     }
   }
   componentDidMount(){
@@ -242,7 +238,7 @@ export default class Editor extends Component {
     }
     try{
       this.setState({savingQuestion:true})
-      const response = await api.post('/question/store',request)
+      await api.post('/question/store',request)
       Swal.hideLoading()
       Swal.fire({
           type: 'success',
@@ -250,9 +246,8 @@ export default class Editor extends Component {
       })
       this.setState({
         savingQuestion:false,
-        redirect:true
       })
-      console.log(response.data)
+      this.props.history.push('/professor/exercicios')
     }
     catch(err){
       console.log('status');
@@ -282,10 +277,7 @@ export default class Editor extends Component {
   }
 
   render() {
-    if(this.state.redirect){
-      return <Redirect to='/professor/exercicios' />
-    }
-    const {percentualAcerto,status,difficulty,katexDescription,response,savingQuestion ,loadingReponse,title,description,inputs,outputs} = this.state
+    const {percentualAcerto,status,difficulty,katexDescription,response,savingQuestion ,loadingReponse,title,description} = this.state
     const { tests,language,theme,descriptionErro,solution,tags,loadingTags,msgTitle,msgDescription} = this.state;
     return (
     <TemplateSistema active='exercicios'>
@@ -353,7 +345,7 @@ export default class Editor extends Component {
           <div className="form-group col-md-6">
             <label>
             Katex: &nbsp;
-            <a href='https://katex.org/docs/supported.html#operators' className="badge badge-info" target='_blank'>
+            <a href='https://katex.org/docs/supported.html#operators' className="badge badge-info" rel="noopener noreferrer" target='_blank'>
               <i className="fa fa-info-circle"/> &nbsp;
               Ver documentação
               </a>
@@ -454,12 +446,12 @@ export default class Editor extends Component {
                 name="ACE_EDITOR"
                 showPrintMargin={false}
                 showGutter={true}
-                enableLiveAutocompletion={true}
-                enableBasicAutocompletion={true}
+                 
+                 
                 highlightActiveLine={true}
                 setOptions={{
-                  enableBasicAutocompletion: true,
-                  enableLiveAutocompletion: true,
+                   
+                   
                   enableSnippets: true,
                   showLineNumbers: true,
                   tabSize: 2,

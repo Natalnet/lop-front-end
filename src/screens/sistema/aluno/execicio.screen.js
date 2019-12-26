@@ -55,7 +55,6 @@ export default class Editor extends Component {
       inputs: "",
       outputs: "",
       percentualAcerto: "",
-      redirect: "",
       loadingExercicio: true,
       userDifficulty: "",
       loadDifficulty: false,
@@ -305,7 +304,7 @@ export default class Editor extends Component {
                     </CardTitle>
                   </CardHead>
                   <CardBody>
-                    <div className="row">{description}</div>
+                    <Row>{description}</Row>
                     {katexDescription ? (
                       <BlockMath>{katexDescription}</BlockMath>
                     ) : (
@@ -399,8 +398,8 @@ export default class Editor extends Component {
                     showPrintMargin={false}
                     name="ACE_EDITOR"
                     showGutter={true}
-                    enableLiveAutocompletion={true}
-                    enableBasicAutocompletion={true}
+                     
+                     
                     highlightActiveLine={true}
                   />
                 </Card>

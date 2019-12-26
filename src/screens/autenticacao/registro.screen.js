@@ -6,7 +6,7 @@
 import React, { Component } from "react";
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 import api from "../../services/api";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import LogoLOP from "components/ui/logoLOP.component";
 
 export default class LoginScreen extends Component {
@@ -28,26 +28,26 @@ export default class LoginScreen extends Component {
       msgConfirm_password:''
     };
   }
-  componentDidMount(){
-    document.title = "Realizar cadastro - Plataforma LOP";
+  componentDidMount() {
+    document.title = "Realizar Cadastro - Plataforma LOP";
   }
   async register(e){
     e.preventDefault();
 
-    //const {name,email,enrollment,password,confirm_password} = this.state
-    if (this.state.password !== this.state.confirm_password) {
+    const {name,email,enrollment,password,confirm_password} = this.state
+    if (password !== confirm_password) {
       await this.setState({ msgConfirm_password : "A senha e confirmação de senha não correspondem" });
     }
     else{
       const request = {
-        name: this.state.name,
-        email: this.state.email,
-        password: this.state.password,
-        enrollment: this.state.enrollment
+        name: name,
+        email: email,
+        password: password,
+        enrollment: enrollment
       };
       try{
         this.setState({loading:true})
-        const response = await api.post("/auth/register", request)
+        await api.post("/auth/register", request)
         await this.setState({
           showMenssageSendMail:true,
           loading:false
@@ -93,9 +93,7 @@ export default class LoginScreen extends Component {
       }
     }
   };
-  componentDidMount() {
-    document.title = "Realizar Cadastro - Plataforma LOP";
-  }
+
   handleNomeChange = e => {
     this.setState({ name: e.target.value });
   };
@@ -112,9 +110,6 @@ export default class LoginScreen extends Component {
     this.setState({ confirm_password: e.target.value });
   };
   render() {
-    if(this.state.redirect){
-      return <Redirect to="/"/>
-    }
     const {name,email,enrollment,password,confirm_password,msg,loading} = this.state
     const {msgName,msgEmail,msgEnrollment,msgPassoword,msgConfirm_password}=this.state
     if(this.state.showMenssageSendMail){

@@ -1,6 +1,4 @@
 import React, { Component, Fragment } from "react";
-import NavPagination from "components/ui/navs/navPagination";
-import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import api from "../../../services/api";
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
@@ -36,6 +34,15 @@ export default class HomeAlunoScreen extends Component {
         minhasTurmas: [...response.data],
         loadingTurmas: false
       });
+      const myClasses = response.data.map(t=>{
+        return {
+          id:t.id,
+          year:t.year,
+          name:t.name,
+          semester:t.semester
+        }
+      })
+      sessionStorage.setItem("myClasses",JSON.stringify(myClasses))
     } catch (err) {
       this.setState({ loadingTurmas: false });
       console.log(err);
@@ -87,7 +94,7 @@ export default class HomeAlunoScreen extends Component {
           ) : (
             minhasTurmas.map((turma) => (
               <Fragment key={turma.id}>
-                <Col xs={12}>
+                <Col xs={12} md={6}>
                   <Card>
                     <CardHead
                       name={turma.name}

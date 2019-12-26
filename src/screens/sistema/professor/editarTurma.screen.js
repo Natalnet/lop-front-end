@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
-import { Redirect } from "react-router-dom";
 import Select from "react-select";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -16,7 +15,6 @@ const botao = {
 
 export default class NovasTurmasScreen extends Component {
   state = {
-    redirect: false,
     name: "",
     year: new Date().getFullYear().toString(),
     semester: new Date().getMonth() < 6 ? "1" : "2",
@@ -42,48 +40,31 @@ export default class NovasTurmasScreen extends Component {
     await this.getProfessores();
     this.getInfoTurma();
   }
-  async getInfoTurma() {
-    const id = this.props.match.params.id;
-    let query = `?user=YES`
-    query +=`&profile=PROFESSOR`
-    try {
-      const response = await api.get(`/class/${id}${query}`);
-      console.log("class:");
-      console.log(response.data);
-      await this.setState({
-        name: response.data.name,
-        year: response.data.year,
-        semester: response.data.semester,
-        description: response.data.description,
-        state: response.data.description.state,
-        professoresSelecionados: response.data.users
-          .filter(p => p.profile === "PROFESSOR")
-          .map(p => {
-            return {
-              id: p.id,
-              value: p.id,
-              label: p.email
-            };
-          }),
-        linguagensSelecionadas: response.data.languages.map(language => {
-          return {
-            value: language,
-            label:
-              language === "javascript"
-                ? "JavaScript"
-                : language === "cpp"
-                ? "C++"
-                : ""
-          };
-        })
-      });
-      console.log(this.state.linguagensSelecionadas);
-      this.setState({ loadingInfoTurma: false });
-    } catch (err) {
-      this.setState({ loadingInfoTurma: false });
-      console.log(err);
+  async getInfoTurma(){
+    const id = this.props.match.params.id
+    const {myClasses} = this.state
+    if(myClasses && typeof myClasses==="object"){
+        const index = myClasses.map(c=>c.id).indexOf(id)
+        if(index!==-1){
+            this.setState({
+                turma:myClasses[index]
+            })
+        }
+        this.setState({loadingInfoTurma:false})
+        return null
     }
-  }
+    try{
+        const response = await api.get(`/class/${id}`)
+        this.setState({
+            turma:response.data,
+            loadingInfoTurma:false,
+        })
+    }
+    catch(err){
+        this.setState({loadingInfoTurma:false})
+        console.log(err);
+    }
+} 
   async atualizarTurma(event) {
     event.preventDefault();
     let {name,year,semester,description,state,linguagensSelecionadas,professoresSelecionados}=this.state
@@ -125,7 +106,7 @@ export default class NovasTurmasScreen extends Component {
         type: "success",
         title: "Turma atualizada com sucesso!"
       });
-      this.setState({ redirect: true });
+      this.props.history.push("/professor")
     } 
     catch (err) {
       Swal.hideLoading();
@@ -173,7 +154,6 @@ export default class NovasTurmasScreen extends Component {
     this.setState({ state: e.target.value });
   };
   handleProfessorsChange = professores => {
-    const { professoresSelecionados } = this.state;
     this.setState({
       professoresSelecionados: professores || []
     });
@@ -185,9 +165,6 @@ export default class NovasTurmasScreen extends Component {
   };
 
   render() {
-    if (this.state.redirect) {
-      return <Redirect to="/professor" />;
-    }
     const { loadingInfoTurma } = this.state;
     return (
       <TemplateSistema active="home">

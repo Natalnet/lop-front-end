@@ -58,7 +58,7 @@ export default class HomeAdministradorScreen extends Component {
         allowEnterKey:false
       })
       Swal.showLoading()
-      const response = await api.put(`/user/${user.id}/update`,request)
+      await api.put(`/user/${user.id}/update`,request)
       this.setState({
         users:this.state.users.map(u=>{
           if(u.id===user.id){

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
-import { Redirect } from "react-router-dom";
 import Select from "react-select";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -16,7 +15,6 @@ const botao = {
 
 export default class NovasTurmasScreen extends Component {
   state = {
-    redirect: false,
     name:"",
     year: new Date().getFullYear().toString(),
     semester: new Date().getMonth() < 6 ? "1" : "2",
@@ -82,7 +80,7 @@ export default class NovasTurmasScreen extends Component {
         type: "success",
         title: "Turma criada com sucesso!"
       });
-      this.setState({ redirect: true });
+      this.props.history.push("/professor")
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
@@ -152,9 +150,6 @@ export default class NovasTurmasScreen extends Component {
     });
   };
   render() {
-    if (this.state.redirect) {
-      return <Redirect to="/professor" />;
-    }
     const {name} = this.state
     return (
       <TemplateSistema active="home">

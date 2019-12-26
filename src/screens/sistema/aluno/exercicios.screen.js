@@ -94,7 +94,9 @@ export default class ExerciciosScreen extends Component {
         <TemplateSistema active='exercicios'>
                 <Row mb={15}>
                     <Col xs={12} >
-                        <h3 style={{margin:'0px'}}> Exercícios</h3>
+                    <h5 style={{margin:'0px'}}> 
+                        Exercícios
+                    </h5> 
                     </Col>
                 </Row>
                 <Row>

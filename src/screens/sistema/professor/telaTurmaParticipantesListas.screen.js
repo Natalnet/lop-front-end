@@ -13,14 +13,14 @@ export default class Listas extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      redirect: false,
       listas: [],
       provas: [],
       user: {},
       loandingListas: false,
       loandingProvas: false,
       loadingInfoTurma: true,
-      turma: JSON.parse(sessionStorage.getItem("turma")) || ""
+      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
+      turma:"",      
     };
   }
   async componentDidMount() {

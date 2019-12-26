@@ -22,10 +22,10 @@ export default class Provas extends Component {
     constructor(props){
         super(props)
         this.state = {
-            redirect: false,
             provas: [],
             loadingInfoTurma:true,
-            turma:JSON.parse(sessionStorage.getItem('turma')) || '',
+            myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
+            turma:"",             
             loandingTodasProvas:true,
             loandingProvas:false,
             showModalProvas:false,
@@ -46,35 +46,31 @@ export default class Provas extends Component {
         const {turma} = this.state
         document.title = `${turma && turma.name} - provas`;
     }
-     async getInfoTurma(){
+    async getInfoTurma(){
         const id = this.props.match.params.id
-        const {turma} = this.state
-        if(!turma || (turma && turma.id!==id)){
-            console.log('dentro do if');
-            try{
-                const response = await api.get(`/class/${id}`)
-                const turmaData = {
-                    id:response.data.id,
-                    name:response.data.name,
-                    year:response.data.year,
-                    semester:response.data.semester,
-                    languages:response.data.languages
-                }
+        const {myClasses} = this.state
+        if(myClasses && typeof myClasses==="object"){
+            const index = myClasses.map(c=>c.id).indexOf(id)
+            if(index!==-1){
                 this.setState({
-                    turma:turmaData,
-                    loadingInfoTurma:false,
+                    turma:myClasses[index]
                 })
-                sessionStorage.setItem('turma',JSON.stringify(turmaData))
             }
-            catch(err){
-                this.setState({loadingInfoTurma:false})
-                console.log(err);
-            }
-        }
-        else{
             this.setState({loadingInfoTurma:false})
+            return null
         }
-    }
+        try{
+            const response = await api.get(`/class/${id}`)
+            this.setState({
+                turma:response.data,
+                loadingInfoTurma:false,
+            })
+        }
+        catch(err){
+            this.setState({loadingInfoTurma:false})
+            console.log(err);
+        }
+      }
 
     async inserirProva(test){
         const {id} = this.props.match.params

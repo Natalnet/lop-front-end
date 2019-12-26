@@ -3,14 +3,13 @@ import TemplateAutenticacao from "components/templates/autenticacao.template";
 
 import api from "../../services/api";
 
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import LogoLOP from "components/ui/logoLOP.component";
 
 export default class LoginScreen extends Component {
   constructor(props){
     super(props)
     this.state = {
-      redirect: false,
       msgEmail: "",
       msgPass:'',
       email: "",
@@ -38,11 +37,8 @@ export default class LoginScreen extends Component {
       sessionStorage.setItem("user.name", response.data.user.name);
       sessionStorage.setItem("user.email", response.data.user.email);
       sessionStorage.setItem("user.enrollment", response.data.user.enrollment);
-      this.setState({ 
-        redirect: true, 
-        profile: response.data.user.profile,
-        loading:false 
-      });;
+      this.props.history.push(`/${sessionStorage.getItem("user.profile").toLocaleLowerCase()}`)
+
     }
     catch(err){
       console.log(Object.getOwnPropertyDescriptors(err))
@@ -73,9 +69,7 @@ export default class LoginScreen extends Component {
     this.setState({ password: e.target.value });
   };
   render() {
-    if (this.state.redirect) {
-      return <Redirect to={`/${sessionStorage.getItem("user.profile").toLocaleLowerCase()}`} />;
-    }
+    
     const {msg,msgEmail,email,msgPass,password,loading} = this.state
     return (
       <TemplateAutenticacao>

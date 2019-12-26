@@ -13,7 +13,8 @@ export default class Pagina extends Component {
             participantes: [],
             showModal:false,
             loadingParticipantes:false,
-            turma:JSON.parse(sessionStorage.getItem('turma')) || '',
+            myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
+            turma:"",              
             loadingInfoTurma:true,
             docsPerPage:15,
             numPageAtual:1,
@@ -29,35 +30,31 @@ export default class Pagina extends Component {
         const {turma} = this.state
         document.title = `${turma && turma.name} - participantes`;        
     }
-     async getInfoTurma(){
+    async getInfoTurma(){
         const id = this.props.match.params.id
-        const {turma} = this.state
-        if(!turma || (turma && turma.id!==id)){
-            console.log('dentro do if');
-            try{
-                const response = await api.get(`/class/${id}`)
-                const turmaData = {
-                    id:response.data.id,
-                    name:response.data.name,
-                    year:response.data.year,
-                    semester:response.data.semester,
-                    languages:response.data.languages
-                }
+        const {myClasses} = this.state
+        if(myClasses && typeof myClasses==="object"){
+            const index = myClasses.map(c=>c.id).indexOf(id)
+            if(index!==-1){
                 this.setState({
-                    turma:turmaData,
-                    loadingInfoTurma:false,
+                    turma:myClasses[index]
                 })
-                sessionStorage.setItem('turma',JSON.stringify(turmaData))
             }
-            catch(err){
-                this.setState({loadingInfoTurma:false})
-                console.log(err);
-            }
-        }
-        else{
             this.setState({loadingInfoTurma:false})
+            return null
         }
-    }
+        try{
+            const response = await api.get(`/class/${id}`)
+            this.setState({
+                turma:response.data,
+                loadingInfoTurma:false,
+            })
+        }
+        catch(err){
+            this.setState({loadingInfoTurma:false})
+            console.log(err);
+        }
+      }
 
     async getParticipantes(loading=true){
         const {numPageAtual,docsPerPage} = this.state

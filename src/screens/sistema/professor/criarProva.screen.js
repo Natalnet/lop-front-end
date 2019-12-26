@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
 import Swal from "sweetalert2";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
@@ -28,7 +27,6 @@ export default class criarProvaScreen extends Component {
     super(props);
     this.state = {
       contentInputSeach: "",
-      redirect: false,
       exercicios: [],
       selecionados: [],
       fildFilter: "title",
@@ -109,7 +107,7 @@ export default class criarProvaScreen extends Component {
        type: "success",
        title: "Prova criada com sucesso!"
      });
-     this.setState({ redirect: true });
+     this.props.history.push("/professor/provas")
     }
     catch (err) {
       Swal.hideLoading();
@@ -199,9 +197,6 @@ export default class criarProvaScreen extends Component {
 
 
   render() {
-    if (this.state.redirect) {
-      return <Redirect to="/professor/provas" />;
-    }
     const {
       loadingExercicios,
       contentInputSeach,

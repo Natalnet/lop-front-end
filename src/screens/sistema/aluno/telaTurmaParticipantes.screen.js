@@ -12,7 +12,8 @@ export default class Pagina extends Component {
             participantes: [],
             showModal:false,
             loadingParticipantes:false,
-            turma:JSON.parse(sessionStorage.getItem('turma')) || '',
+            myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
+            turma:"",            
             loadingInfoTurma:true,
             docsPerPage:15,
             numPageAtual:1,
@@ -30,35 +31,31 @@ export default class Pagina extends Component {
         document.title = `${turma && turma.name} - participantes`;
         
     }
-     async getInfoTurma(){
+    async getInfoTurma(){
         const id = this.props.match.params.id
-        const {turma} = this.state
-        if(!turma || (turma && turma.id!==id)){
-            console.log('dentro do if');
-            try{
-                const response = await api.get(`/class/${id}`)
-                const turmaData = {
-                    id:response.data.id,
-                    name:response.data.name,
-                    year:response.data.year,
-                    semester:response.data.semester,
-                    languages:response.data.languages
-                }
+        const {myClasses} = this.state
+        if(myClasses && typeof myClasses==="object"){
+            const index = myClasses.map(c=>c.id).indexOf(id)
+            if(index!==-1){
                 this.setState({
-                    turma:turmaData,
-                    loadingInfoTurma:false,
+                    turma:myClasses[index]
                 })
-                sessionStorage.setItem('turma',JSON.stringify(turmaData))
             }
-            catch(err){
-                this.setState({loadingInfoTurma:false})
-                console.log(err);
-            }
-        }
-        else{
             this.setState({loadingInfoTurma:false})
+            return null
         }
-    }
+        try{
+            const response = await api.get(`/class/${id}`)
+            this.setState({
+                turma:response.data,
+                loadingInfoTurma:false,
+            })
+        }
+        catch(err){
+            this.setState({loadingInfoTurma:false})
+            console.log(err);
+        }
+      }
 
     async getParticipantes(){
         const {numPageAtual,docsPerPage} = this.state
@@ -125,8 +122,10 @@ export default class Pagina extends Component {
                         {loadingInfoTurma?
                             <div className="loader"  style={{margin:'0px auto'}}></div>
                             :
-                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}</h3>
-                        }
+                            <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                                <i className="fa fa-angle-left ml-2 mr-2"/> Participantes
+                            </h5>                        }
                     </Col>
                 </Row>
                 <Row mb={15}>
@@ -139,7 +138,6 @@ export default class Pagina extends Component {
                                 <th>Email</th>
                                 <th>Matrícula</th>
                                 <th>Função</th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -161,9 +159,7 @@ export default class Pagina extends Component {
                                     <td>
                                         <div className="loader"/>
                                     </td>
-                                    <td>
-                                        <div className="loader"/>
-                                    </td>
+           
                                 </tr>           
                             :
                                 participantes.map((user, index) => (
@@ -180,11 +176,6 @@ export default class Pagina extends Component {
                                         <td>{user.email}</td>
                                         <td>{user.enrollment}</td>
                                         <td>{user.profile}</td>
-                                        <td>
-                                            <button className="btn btn-primary mr-2">
-                                                <i className="fa fa-info"/>
-                                            </button>
-                                        </td>
                                     </tr>
                                 ))
                             }

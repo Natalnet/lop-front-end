@@ -1,12 +1,6 @@
 import React, { Component } from "react";
-
 import TemplateAutenticacao from "components/templates/autenticacao.template";
-import Error404 from "screens/erros/error404.screen";
-
-import { Redirect } from "react-router-dom";
-
 import Swal from "sweetalert2";
-
 import api from "../../services/api";
 import LogoLOP from "components/ui/logoLOP.component";
 
@@ -15,8 +9,6 @@ export default class resetScreen extends Component {
   constructor(props){
     super(props)
     this.state = {
-      redirect: false,
-      redirectLogin: false,
       msg: "",
       password: "",
       loading:false,
@@ -65,7 +57,7 @@ export default class resetScreen extends Component {
           allowEnterKey:false 
         }).then(result => {
           if (result.value) {
-            return this.setState({ redirect: true });
+            this.props.histoty.push("/autenticacao/recuperar-senha")
           }
         })
       }
@@ -88,7 +80,7 @@ export default class resetScreen extends Component {
             allowEnterKey:false 
           }).then(result => {
             if (result.value) {
-              return this.setState({ redirectLogin: true });
+              this.props.histoty.push("/autenticacao/recuperar-senha")
             }
           });
         }
@@ -103,13 +95,7 @@ export default class resetScreen extends Component {
   };
 
   render() {
-    if (this.state.redirectLogin) {
-      return <Redirect to="/autenticacao/recuperar-senha" />;
-    }
-    if (this.state.redirect) {
-      return <Redirect to="/" />;
-    }
-    console.log(this.props);
+  
     const {msg,error,password,confirmpassword,loading} = this.state
     return (
       <TemplateAutenticacao>
@@ -141,7 +127,7 @@ export default class resetScreen extends Component {
                 name="confirmpassword"
                 className={`form-control ${error && 'is-invalid'}`}
                 placeholder="****"
-                value={this.state.confirmpassword}
+                value={confirmpassword}
                 onChange={this.handleChange}
                 required
               />

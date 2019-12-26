@@ -3,17 +3,10 @@ import TemplateSistema from "components/templates/sistema.template";
 import api, { baseUrlBackend } from "../../../services/api";
 import Swal from "sweetalert2";
 import generateHash from "../../../util/funçoesAuxiliares/generateHash";
-import { Link } from "react-router-dom";
-import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
-import { BlockMath } from "react-katex";
-import NavPagination from "components/ui/navs/navPagination";
-import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import socket from "socket.io-client";
@@ -23,10 +16,10 @@ export default class Provas extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      redirect: false,
       provas: [],
       loadingInfoTurma: true,
-      turma: JSON.parse(sessionStorage.getItem("turma")) || "",
+      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
+      turma:"",      
       loandingListas: false,
       password: ""
     };
@@ -39,37 +32,36 @@ export default class Provas extends Component {
     
     document.title = `${this.state.turma.name} - provas`;
   }
-  async getInfoTurma() {
-    const id = this.props.match.params.id;
-    const { turma } = this.state;
-    if (!turma || (turma && turma.id !== id)) {
-      console.log("dentro do if");
-      try {
-        const response = await api.get(`/class/${id}`);
-        const turmaData = {
-          id: response.data.id,
-          name: response.data.name,
-          year: response.data.year,
-          semester: response.data.semester,
-          languages: response.data.languages
-        };
+  async getInfoTurma(){
+    const id = this.props.match.params.id
+    const {myClasses} = this.state
+    if(myClasses && typeof myClasses==="object"){
+        const index = myClasses.map(c=>c.id).indexOf(id)
+        if(index!==-1){
+            this.setState({
+                turma:myClasses[index]
+            })
+        }
+        this.setState({loadingInfoTurma:false})
+        return null
+    }
+    try{
+        const response = await api.get(`/class/${id}`)
         this.setState({
-          turma: turmaData,
-          loadingInfoTurma: false
-        });
-        sessionStorage.setItem("turma", JSON.stringify(turmaData));
-      } catch (err) {
-        this.setState({ loadingInfoTurma: false });
+            turma:response.data,
+            loadingInfoTurma:false,
+        })
+    }
+    catch(err){
+        this.setState({loadingInfoTurma:false})
         console.log(err);
-      }
-    } else {
-      this.setState({ loadingInfoTurma: false });
     }
   }
 
   async getProvas() {
     const id = this.props.match.params.id;
     let query = `?idClass=${id}`
+    const {turma} = this.state
     try {
       this.setState({ loandingListas: true });
       const response = await api.get(`/test${query}`);
@@ -79,6 +71,29 @@ export default class Provas extends Component {
         provas: [...response.data],
         loandingListas: false
       });
+      document.title = `${turma && turma.name} - ${response.data.title}`;
+      let lists = sessionStorage.getItem("lists")
+      if(lists && typeof JSON.parse(lists)==="object"){
+        lists = JSON.parse(lists)
+        let newLists = response.data
+        newLists.forEach(list => {
+          if(!lists.map(l=>l.id).includes(list.id)){
+            lists = [...lists,{
+                id:list.id,
+                title:list.title
+            }]
+          }
+        });
+        sessionStorage.setItem("lists",JSON.stringify(lists))
+      }
+      else{
+        sessionStorage.setItem("lists",JSON.stringify(response.data.map(l=>{
+          return {
+            id:l.id,
+            title:l.title,
+          }
+        })))
+      }
     } catch (err) {
       this.setState({ loandingListas: false });
       console.log(err);
@@ -121,7 +136,6 @@ export default class Provas extends Component {
       } else {
         const { value } = await Swal.fire({
           title: "Senha para acessar a prova",
-          input: "text",
           confirmButtonText: "Acessar",
           cancelButtonText: "Cancelar",
           input: "password",
@@ -156,10 +170,10 @@ export default class Provas extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma.name} - {turma.year}.{turma.semester || 1}
-              </h3>
+              <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> Provas
+              </h5> 
             )}
           </div>
         </div>
