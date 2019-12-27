@@ -68,28 +68,7 @@ export default class Listas extends Component {
         listas: [...response.data],
         loandingListas: false
       });
-      let lists = sessionStorage.getItem("lists")
-      if(lists && typeof JSON.parse(lists)==="object"){
-        lists = JSON.parse(lists)
-        let newLists = response.data
-        newLists.forEach(list => {
-          if(!lists.map(l=>l.id).includes(list.id)){
-            lists = [...lists,{
-                id:list.id,
-                title:list.title
-            }]
-          }
-        });
-        sessionStorage.setItem("lists",JSON.stringify(lists))
-      }
-      else{
-        sessionStorage.setItem("lists",JSON.stringify(response.data.map(l=>{
-          return {
-            id:l.id,
-            title:l.title,
-          }
-        })))
-      }
+    
     } catch (err) {
       this.setState({ loandingListas: false });
       console.log(err);

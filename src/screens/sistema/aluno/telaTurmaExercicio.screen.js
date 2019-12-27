@@ -57,7 +57,7 @@ export default class Editor extends Component {
       percentualAcerto:'',
       myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
       turma:"",
-      listTitle:"",
+      lista:"",
       loadingInfoTurma:true,
       loadingExercicio:true,
       userDifficulty:'',
@@ -144,27 +144,17 @@ export default class Editor extends Component {
         console.log(err);
     }
   }
+
   async getLista() {
     try {
       const idClass = this.props.match.params.id;
       const idLista = this.props.match.params.idLista;
-      let lists = sessionStorage.getItem("lists")
-      if(lists && typeof JSON.parse(lists)==="object"){  
-        lists = JSON.parse(lists)      
-        const index = lists.map(l=>l.id).indexOf(idLista)
-        if(index!==-1){
-            this.setState({
-              listTitle:lists[index].title
-            })
-        }
-        return null
-      }
       let query = `?idClass=${idClass}`
       const response = await api.get(`/listQuestion/${idLista}${query}`);
       console.log("lista");
       console.log(response.data);
       this.setState({
-        listTitle:response.data.title,
+        lista:response.data,
       });
     } catch (err) {
       console.log(err);
@@ -325,7 +315,7 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {turma,response,percentualAcerto,loadingReponse,title,description,results,katexDescription,listTitle} = this.state
+    const {turma,response,percentualAcerto,loadingReponse,title,description,results,katexDescription,lista} = this.state
     const { language,theme,descriptionErro,solution,loadingExercicio,loadingInfoTurma,userDifficulty,loadDifficulty,salvandoRascunho} = this.state;
 
     return (
@@ -344,7 +334,7 @@ export default class Editor extends Component {
                 </Link>
                 <i className="fa fa-angle-left ml-2 mr-2"/>
                 <Link to={`/aluno/turma/${this.props.match.params.id}/lista/${this.props.match.params.idLista}`} >
-                  {listTitle || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                  {lista?lista.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
                 </Link>
                 <i className="fa fa-angle-left ml-2 mr-2"/>
                 {title || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}

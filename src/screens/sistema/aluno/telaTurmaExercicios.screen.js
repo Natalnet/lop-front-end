@@ -21,7 +21,6 @@ export default class Exercicios extends Component {
       loadingInfoTurma: true,
       myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
       turma:"",
-      listTitle:"" ,
       todasListas: []
     };
   }
@@ -61,32 +60,23 @@ export default class Exercicios extends Component {
     try {
       const idClass = this.props.match.params.id;
       const idLista = this.props.match.params.idLista;
-      let lists = sessionStorage.getItem("lists")
-      if(lists && typeof JSON.parse(lists)==="object"){  
-        lists = JSON.parse(lists)      
-        const index = lists.map(l=>l.id).indexOf(idLista)
-        if(index!==-1){
-            this.setState({
-              listTitle:lists[index].title
-            })
-        }
-      }
+     
       let query = `?idClass=${idClass}`
       this.setState({loandingLista: true});
       const response = await api.get(`/listQuestion/${idLista}${query}`);
-      console.log("listas");
+      console.log("lista");
       console.log(response.data);
       this.setState({
         lista: response.data,
-        listTitle:response.data.title,
         loandingLista: false
       });
     } catch (err) {
       console.log(err);
     }
   }
+  
   render() {
-    const { loadingInfoTurma, turma, loandingLista, lista,listTitle } = this.state;
+    const { loadingInfoTurma, turma, loandingLista, lista } = this.state;
     const questions = lista && lista.questions
     const questionsCompleted = lista && lista.questions.filter(q => q.completedSumissionsCount>0);
      
@@ -104,7 +94,7 @@ export default class Exercicios extends Component {
                   Listas
                 </Link>
                 <i className="fa fa-angle-left ml-2 mr-2"/>
-                {listTitle || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                {lista?lista.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
               </h5>
             )}
           </Col>

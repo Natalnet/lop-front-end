@@ -263,7 +263,7 @@ export default class TurmasScreen extends Component {
           {loadingTurmas
             ? range(8).map(i => (
                 <Fragment key={i}>
-                  <Col xs={12} md={6}>
+                  <Col xs={12} lg={6}>
                     <Card>
                       <CardHead></CardHead>
                       <CardBody loading></CardBody>
@@ -273,7 +273,7 @@ export default class TurmasScreen extends Component {
               ))
             : minhasTurmas.map((turma, index) => (
                 <Fragment key={turma.id}>
-                  <Col xs={12} md={6}>
+                  <Col xs={12} lg={6}>
                     <Card>
                       <CardHead
                         name={turma.name}
