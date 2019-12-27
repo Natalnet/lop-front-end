@@ -49,7 +49,7 @@ export default class Editor extends Component {
       difficulty: "Médio",
       solution: "",
       results: [],
-      prova:null,
+      prova:"",
       tempo_inicial: null,
       loadingReponse: false,
       loadingEditor: false,
@@ -151,16 +151,7 @@ export default class Editor extends Component {
   async getProva() {
     const {id,idTest} = this.props.match.params;
     const idClass = id
-    let lists = sessionStorage.getItem("lists")
-    if(lists && typeof JSON.parse(lists)==="object"){  
-      lists = JSON.parse(lists)      
-      const index = lists.map(l=>l.id).indexOf(idTest)
-      if(index!==-1){
-          this.setState({
-            testTitle:lists[index].title
-          })
-      }
-    }
+
     let query = `?idClass=${idClass}`
     try {
       const response = await api.get(`/test/${idTest}${query}`);
@@ -174,7 +165,6 @@ export default class Editor extends Component {
       }else{
         this.setState({
           prova,
-          testTitle:prova.title
         })
       }
     } catch (err) {
@@ -361,7 +351,6 @@ export default class Editor extends Component {
       description,
       results,
       katexDescription,
-      testTitle
     } = this.state;
     const {
       language,
@@ -390,7 +379,7 @@ export default class Editor extends Component {
               </Link>
               <i className="fa fa-angle-left ml-2 mr-2"/>
               <Link to={`/aluno/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`} >
-                {testTitle || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                {prova?prova.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
               </Link>
               <i className="fa fa-angle-left ml-2 mr-2"/>
               {title || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}

@@ -281,20 +281,21 @@ export default class Editor extends Component {
 
     return (
       <TemplateSistema active="exercicios">
+        <Row mb={15}>
+          <Col xs={12}>
+            <h5 style={{margin:'0px'}}>
+              <Link to="/aluno/exercicios">
+                Exercícios
+              </Link>
+              <i className="fa fa-angle-left ml-2 mr-2"/> 
+              {title || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+            </h5>
+          </Col>
+        </Row>
         {loadingExercicio ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>
-            <Row mb={15}>
-              <Col xs={12}>
-                <Link to="/aluno/exercicios">
-                  <button className="btn btn-success mr-2">
-                    <i className="fa fa-arrow-left" /> Voltar aos exercícios{" "}
-                    <i className="fa fa-file-text" />
-                  </button>
-                </Link>
-              </Col>
-            </Row>
             <Row>
               <Col xs={12} md={7}>
                 <Card ref={this.cardEnunciadoRef}>

@@ -17,10 +17,9 @@ export default class Exercicios extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      prova: null,
+      prova: "",
       loandingProva: false,
       loadingInfoTurma: true,
-      testTitle:"" ,
       myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
       turma:"",    
     };
@@ -28,7 +27,9 @@ export default class Exercicios extends Component {
   
   async componentDidMount() {
     await this.getInfoTurma();
-    this.getProva();
+    await this.getProva();
+    const {turma,prova} = this.state
+    document.title = `${turma && turma.name} - ${prova && prova.title}`;
   }
   async getInfoTurma(){
     const id = this.props.match.params.id
@@ -58,18 +59,7 @@ export default class Exercicios extends Component {
   async getProva() {
     const {id,idTest} = this.props.match.params;
     const idClass = id
-    let lists = sessionStorage.getItem("lists")
-    if(lists && typeof JSON.parse(lists)==="object"){  
-      lists = JSON.parse(lists)      
-      const index = lists.map(l=>l.id).indexOf(idTest)
-      if(index!==-1){
-          this.setState({
-            testTitle:lists[index].title
-          })
-      }
-    }
     let query = `?idClass=${idClass}`
-    //const {turma} = this.state
     try {
       this.setState({loandingProva: true})
       const response = await api.get(`/test/${idTest}${query}`);
@@ -83,20 +73,15 @@ export default class Exercicios extends Component {
         this.setState({
           prova,
           loandingProva: false,
-          testTitle:prova.title
         });
-        
-        
       }
     } catch (err) {
       console.log(err);
     }
   }
 
-  RecolherProva = e => {};
-
   render() {
-    const { loadingInfoTurma, turma, loandingProva, prova ,testTitle} = this.state;
+    const { loadingInfoTurma, turma, loandingProva, prova } = this.state;
     const questions = prova && prova.questions
     const questionsCompleted = prova && prova.questions.filter(q => q.correctSumissionsCount>0);
     return (
@@ -113,7 +98,7 @@ export default class Exercicios extends Component {
                 Provas
               </Link>
               <i className="fa fa-angle-left ml-2 mr-2"/>
-              {testTitle || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+              {prova?prova.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
             </h5>
             )}
           </Col>
