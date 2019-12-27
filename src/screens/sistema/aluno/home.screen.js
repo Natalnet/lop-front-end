@@ -104,9 +104,12 @@ export default class HomeAlunoScreen extends Component {
                         <CardBody description={turma.description} />
                       </div>
                     </div>
+                    {console.log(turma)}
                     <CardFooter
                       idTurma={turma.id}
                       participantes={turma.usersCount}
+                      listas={turma.listsCount}
+                      provas={turma.testsCount}
                     />
                   </Card>
                 </Col>

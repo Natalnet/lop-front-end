@@ -2,10 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default props => {
-  const { idTurma, participantes,children } = props;
+  const { idTurma, participantes, children, provas, listas } = props;
   return (
     <div className="card-footer1">
-     
       <div
         className="avatar d-block"
         style={{
@@ -42,26 +41,22 @@ export default props => {
       </Link>
       {/*estático*/}
       <ul className="social-links list-inline mb-0 mt-2">
-          <li className="list-inline-item  ml-4" title ={`${4} participante(s)`}>
-            <i 
-              className="fa fa-users mr-1"
-            />
-            {4}
-          </li>
-          <li className="list-inline-item" title ={`${7} lista(s)`}>
-            <i 
-              className="fe fe-file-text mr-1"
-            />
-            {7}
-          </li>
-          <li className="list-inline-item" title ={`${3} prova(s)`}>
-            <i 
-              className="fa fa-file-text-o mr-1"
-            />
-            {3}
-          </li>
-          
-        </ul>
+        <li
+          className="list-inline-item  ml-4"
+          title={`${participantes} participante(s)`}
+        >
+          <i className="fa fa-users mr-1" />
+          {participantes}
+        </li>
+        <li className="list-inline-item" title={`${listas} lista(s)`}>
+          <i className="fe fe-file-text mr-1" />
+          {listas}
+        </li>
+        <li className="list-inline-item" title={`${provas} prova(s)`}>
+          <i className="fa fa-file-text-o mr-1" />
+          {provas}
+        </li>
+      </ul>
     </div>
   );
 };
