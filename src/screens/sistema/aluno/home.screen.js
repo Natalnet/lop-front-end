@@ -80,42 +80,56 @@ export default class HomeAlunoScreen extends Component {
 
   render() {
     const { loadingTurmas, minhasTurmas } = this.state;
+    const range = num => {
+      let arr = [];
+      for (let i = 0; i < num; i++) arr.push(i);
+      return arr;
+    };
     return (
       <TemplateSistema active="home">
         <Row>
-          {loadingTurmas ? (
-            <div className="loader" style={{ margin: "0px auto" }}></div>
-          ) : (
-            minhasTurmas.map(turma => (
-              <Fragment key={turma.id}>
-                <Col xs={12} lg={6}>
-                  <Card>
-                    <CardHead
-                      name={turma.name}
-                      code={turma.code}
-                      semestre={turma.semester}
-                      ano={turma.year}
-                    />
-                    <div className="row">
-                      <div className="col-3">
-                        <CardOptions linguagens={turma.languages} />
+          {loadingTurmas
+            ? range(8).map(i => (
+                <Fragment key={i}>
+                  <Col xs={12} md={6}>
+                    <Card style={{ height: "178px" }}>
+                      <div
+                        className="loader"
+                        style={{ margin: "0px auto", paddingTop: "170px" }}
+                      ></div>
+                    </Card>
+                  </Col>
+                </Fragment>
+              ))
+            : minhasTurmas.map(turma => (
+                <Fragment key={turma.id}>
+                  <Col xs={12} lg={6}>
+                    <Card>
+                      <CardHead
+                        name={turma.name}
+                        code={turma.code}
+                        semestre={turma.semester}
+                        ano={turma.year}
+                      />
+                      <div className="row">
+                        <div className="col-3">
+                          <CardOptions linguagens={turma.languages} />
+                        </div>
+                        <div className="col-9" style={{ paddingLeft: "0px" }}>
+                          <CardBody description={turma.description} />
+                        </div>
                       </div>
-                      <div className="col-9" style={{ paddingLeft: "0px" }}>
-                        <CardBody description={turma.description} />
-                      </div>
-                    </div>
-                    {console.log(turma)}
-                    <CardFooter
-                      idTurma={turma.id}
-                      participantes={turma.usersCount}
-                      listas={turma.listsCount}
-                      provas={turma.testsCount}
-                    />
-                  </Card>
-                </Col>
-              </Fragment>
-            ))
-          )}
+                      {console.log(turma)}
+                      <CardFooter
+                        idTurma={turma.id}
+                        participantes={turma.usersCount}
+                        listas={turma.listsCount}
+                        provas={turma.testsCount}
+                      />
+                    </Card>
+                  </Col>
+                </Fragment>
+              ))}
         </Row>
       </TemplateSistema>
     );
