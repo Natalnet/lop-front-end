@@ -25,31 +25,29 @@ export default class HomeAlunoScreen extends Component {
     document.title = "Inicio - Aluno";
   }
   async getMinhasTurmas() {
-    let query = `?myClasses=yes`
+    let query = `?myClasses=yes`;
     try {
       this.setState({ loadingTurmas: true });
       const response = await api.get(`/class${query}`);
-      console.log("minhas turmas",response.data);
+      console.log("minhas turmas", response.data);
       this.setState({
         minhasTurmas: [...response.data],
         loadingTurmas: false
       });
-      const myClasses = response.data.map(t=>{
+      const myClasses = response.data.map(t => {
         return {
-          id:t.id,
-          year:t.year,
-          name:t.name,
-          semester:t.semester
-        }
-      })
-      sessionStorage.setItem("myClasses",JSON.stringify(myClasses))
+          id: t.id,
+          year: t.year,
+          name: t.name,
+          semester: t.semester
+        };
+      });
+      sessionStorage.setItem("myClasses", JSON.stringify(myClasses));
     } catch (err) {
       this.setState({ loadingTurmas: false });
       console.log(err);
     }
   }
-
-
 
   handleContentInputSeach(e) {
     console.log(e.target.value);
@@ -80,19 +78,15 @@ export default class HomeAlunoScreen extends Component {
     );
   }
 
-
   render() {
-    const {
-      loadingTurmas,
-      minhasTurmas,
-    } = this.state;
+    const { loadingTurmas, minhasTurmas } = this.state;
     return (
       <TemplateSistema active="home">
         <Row>
           {loadingTurmas ? (
             <div className="loader" style={{ margin: "0px auto" }}></div>
           ) : (
-            minhasTurmas.map((turma) => (
+            minhasTurmas.map(turma => (
               <Fragment key={turma.id}>
                 <Col xs={12} md={6}>
                   <Card>
@@ -120,7 +114,6 @@ export default class HomeAlunoScreen extends Component {
             ))
           )}
         </Row>
-        
       </TemplateSistema>
     );
   }

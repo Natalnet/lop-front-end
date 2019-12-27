@@ -8,7 +8,8 @@ export default props => {
       style={{ marginTop: "5px", paddingRight: "5px" }}
     >
       <b>Descrição: </b>
-      {/* {description.slice(0, 120) + "..."} */}
+
+      {description && description.slice(0, 100) + "..."}
       {console.log(description)}
     </div>
   );

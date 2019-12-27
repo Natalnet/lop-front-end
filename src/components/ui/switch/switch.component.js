@@ -17,7 +17,7 @@ export default props => {
             backgroundColor: "#E33C36"
           },
           trackChecked: {
-            backgroundColor: "#374796"
+            backgroundColor: "#5B9540"
           }
         }}
         style={{

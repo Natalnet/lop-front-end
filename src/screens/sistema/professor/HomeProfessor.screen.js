@@ -14,6 +14,7 @@ import Col from "components/ui/grid/col.component";
 import api, { baseUrlBackend } from "../../../services/api";
 import socket from "socket.io-client";
 import Switch from "../../../components/ui/switch/switch.component";
+import Shimmer from "react-shimmer-effect";
 
 /*const botaoV = {
   float: "right"
@@ -264,9 +265,11 @@ export default class TurmasScreen extends Component {
             ? range(8).map(i => (
                 <Fragment key={i}>
                   <Col xs={12} md={6}>
-                    <Card>
-                      <CardHead></CardHead>
-                      <CardBody loading></CardBody>
+                    <Card style={{ height: "178px" }}>
+                      <div
+                        className="loader"
+                        style={{ margin: "0px auto", paddingTop: "170px" }}
+                      ></div>
                     </Card>
                   </Col>
                 </Fragment>
@@ -299,8 +302,15 @@ export default class TurmasScreen extends Component {
                         >
                           <Link to={`/professor/turma/${turma.id}/editar`}>
                             <button
-                              style={{ float: "right", margin: "2px" }}
-                              className="btn btn-success mr-2"
+                              style={{
+                                float: "right",
+                                margin: "2px",
+                                backgroundColor: "white",
+                                color: "807D85",
+                                border: "solid 1px",
+                                borderColor: "#DFDFDF"
+                              }}
+                              className="btn  mr-2"
                             >
                               <i className="fa fa-edit" /> Editar
                             </button>
@@ -334,51 +344,4 @@ export default class TurmasScreen extends Component {
       </TemplateSistema>
     );
   }
-}
-
-{
-  /* <CardFooter>
-<span
-  title={`${turma.usersCount} participante(s)`}
-  className="avatar avatar-cyan mr-1"
->
-  {turma.usersCount}
-</span>
-
-<span
-  title={`${turma.solicitationsCount} solicitação(ões)`}
-  className="avatar avatar-red mr-1"
->
-  {turma.solicitationsCount}
-</span>
-
-<Link to={`/professor/turma/${turma.id}/editar`}>
-  <button style={botaoV} className="btn btn-success mr-2">
-    <i className="fa fa-edit" /> Editar
-  </button>
-</Link>
-<Link to={`/professor/turma/${turma.id}/participantes`}>
-  <button style={botaoV} className="btn btn-primary mr-2">
-    <i className="fe fe-corner-down-right" /> Entrar
-  </button>
-</Link>
-</CardFooter> */
-}
-
-{
-  /* <span
-        title={`${participantes} participante(s)`}
-        className="avatar avatar-cyan mr-1"
-        style={{ margin: "5px" }}
-      >
-        {participantes}
-      </span>
-
-      <span
-        title={`${solicitacoes} solicitação(ões)`}
-        className="avatar avatar-red mr-1"
-        style={{ margin: "5px" }}
-      >
-        {solicitacoes}
-      </span> */
 }
