@@ -8,6 +8,7 @@ import CardBody from "components/ui/card/Turmas/cardBody.component";
 import CardFooter from "components/ui/card/Turmas/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import CardLoader from "components/ui/card/cardLoader.component";
 
 export default class HomeAlunoScreen extends Component {
   constructor(props) {
@@ -92,12 +93,11 @@ export default class HomeAlunoScreen extends Component {
             ? range(8).map(i => (
                 <Fragment key={i}>
                   <Col xs={12} md={6}>
-                    <Card style={{ height: "178px" }}>
+                    <CardLoader style={{ height: "178px" }}>
                       <div
-                        className="loader"
                         style={{ margin: "0px auto", paddingTop: "170px" }}
                       ></div>
-                    </Card>
+                    </CardLoader>
                   </Col>
                 </Fragment>
               ))
