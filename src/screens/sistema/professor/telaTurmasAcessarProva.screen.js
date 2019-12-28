@@ -141,8 +141,6 @@ export default class Exercicios extends Component {
 
   render() {
     const { loadingInfoTurma, turma, loandingProva, prova } = this.state;
-    const questions = prova && prova.questions
-    const questionsCompleted = prova && prova.questions.filter(q => q.correctSumissionsCount>0);
 
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
@@ -243,8 +241,8 @@ export default class Exercicios extends Component {
                       </h4>
                     </Col>
                     <ProgressBar 
-                      numQuestions={prova && questions.length}
-                      numQuestionsCompleted={prova && questionsCompleted.length}
+                        numQuestions={prova && prova.questionsCount}
+                        numQuestionsCompleted={prova && prova.questionsCompletedSumissionsCount}
                       dateBegin={prova && prova.classHasTest.createdAt}
                       width={100}
                     />
@@ -261,7 +259,7 @@ export default class Exercicios extends Component {
                                   <CardTitle>
                                     <b>
                                       {question.title}&nbsp;
-                                      {question.questionsCompleted>0 ? (
+                                      {question.isCorrect ? (
                                         <i
                                           className="fa fa-check"
                                           style={{ color: "#0f0" }}

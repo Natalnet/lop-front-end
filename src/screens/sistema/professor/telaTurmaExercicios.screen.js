@@ -137,8 +137,7 @@ export default class Exercicios extends Component {
   }
   render() {
     const { loadingInfoTurma, turma,loadingDateLimit,showModalDate,dateLimit, loandingLista, lista } = this.state;
-    const questions = lista && lista.questions
-    const questionsCompleted = lista && lista.questions.filter(q => q.completedSumissionsCount>0);
+    
 
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
@@ -197,8 +196,8 @@ export default class Exercicios extends Component {
                       </h4>
                     </Col>
                     <ProgressBar 
-                      numQuestions={lista && questions.length}
-                      numQuestionsCompleted={lista && questionsCompleted.length}
+                      numQuestions={lista && lista.questionsCount}
+                      numQuestionsCompleted={lista && lista.questionsCompletedSumissionsCount}
                       dateBegin={lista && lista.classHasListQuestion.createdAt}
                       dateEnd={lista && lista.classHasListQuestion.submissionDeadline}
                       width={100}
@@ -215,7 +214,7 @@ export default class Exercicios extends Component {
                                   <CardTitle>
                                     <b>
                                       {question.title}&nbsp;
-                                      {question.correctSumissionsCount>0 ? (
+                                      {question.isCorrect ? (
                                         <i
                                           className="fa fa-check"
                                           style={{ color: "#0f0" }}

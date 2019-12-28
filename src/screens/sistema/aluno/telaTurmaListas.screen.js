@@ -110,8 +110,6 @@ export default class Listas extends Component {
             <div className="loader" style={{ margin: "0px auto" }}></div>
           ) : (
             listas.map((lista, i) => {
-              const questions = lista.questions;
-              const questionsCompleted = lista.questions.filter(q => q.completedSumissionsCount>0)
               return (
                 <Fragment key={lista.id}>
                   <Col xs={12}>
@@ -123,8 +121,8 @@ export default class Listas extends Component {
                           </h4>
                         </Col>
                         <ProgressBar 
-                          numQuestions={questions.length}
-                          numQuestionsCompleted={questionsCompleted.length}
+                          numQuestions={lista.questionsCount}
+                          numQuestionsCompleted={lista.questionsCompletedSumissionsCount}
                           dateBegin={lista.classHasListQuestion.createdAt}
                           dateEnd={lista.classHasListQuestion.submissionDeadline}
                         />

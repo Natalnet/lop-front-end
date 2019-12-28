@@ -40,25 +40,42 @@ export default class NovasTurmasScreen extends Component {
     await this.getProfessores();
     this.getInfoTurma();
   }
-  async getInfoTurma(){
-    const id = this.props.match.params.id
-    const {myClasses} = this.state
-    if(myClasses && typeof myClasses==="object"){
-        const index = myClasses.map(c=>c.id).indexOf(id)
-        if(index!==-1){
-            this.setState({
-                turma:myClasses[index]
-            })
-        }
-        this.setState({loadingInfoTurma:false})
-        return null
-    }
-    try{
-        const response = await api.get(`/class/${id}`)
-        this.setState({
-            turma:response.data,
-            loadingInfoTurma:false,
-        })
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    let query = `?user=YES`
+    query +=`&profile=PROFESSOR`
+    try {
+      const response = await api.get(`/class/${id}${query}`);
+      console.log("class:");
+      console.log(response.data);
+      await this.setState({
+        name: response.data.name,
+        year: response.data.year,
+        semester: response.data.semester,
+        description: response.data.description,
+        state: response.data.description.state,
+        professoresSelecionados: response.data.users
+          .filter(p => p.profile === "PROFESSOR")
+          .map(p => {
+            return {
+              id: p.id,
+              value: p.id,
+              label: p.email
+            };
+        }),
+        linguagensSelecionadas: response.data.languages.map(language => {
+          return {
+            value: language,
+            label:
+              language === "javascript"
+                ? "JavaScript"
+                : language === "cpp"
+                ? "C++"
+                : ""
+          }
+        }),
+        loadingInfoTurma:false,
+      })
     }
     catch(err){
         this.setState({loadingInfoTurma:false})

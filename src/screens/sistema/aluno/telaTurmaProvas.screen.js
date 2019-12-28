@@ -61,7 +61,6 @@ export default class Provas extends Component {
   async getProvas() {
     const id = this.props.match.params.id;
     let query = `?idClass=${id}`
-    const {turma} = this.state
     try {
       this.setState({ loandingListas: true });
       const response = await api.get(`/test${query}`);
@@ -71,7 +70,6 @@ export default class Provas extends Component {
         provas: [...response.data],
         loandingListas: false
       });
-      document.title = `${turma && turma.name} - ${response.data.title}`;
     } catch (err) {
       this.setState({ loandingListas: false });
       console.log(err);
@@ -160,8 +158,6 @@ export default class Provas extends Component {
             <div className="loader" style={{ margin: "0px auto" }}></div>
           ) : (
             provas.map((prova, i) => {
-              const questions = prova.questions;
-              const questionsCompleted = prova.questions.filter(q => q.completedSumissionsCount>0);
               return (
                 <Fragment key={prova.id}>
                   <Col xs={12}>
@@ -173,8 +169,8 @@ export default class Provas extends Component {
                           </h4>
                         </Col>
                         <ProgressBar 
-                          numQuestions={questions.length}
-                          numQuestionsCompleted={questionsCompleted.length}
+                          numQuestions={prova.questionsCount}
+                          numQuestionsCompleted={prova.questionsCompletedSumissionsCount}
                           dateBegin={prova.classHasTest.createdAt}
                         />
                         <CardOptions>

@@ -82,8 +82,6 @@ export default class Exercicios extends Component {
       prova,
       usuario
     } = this.state;
-    const questions = prova && prova.questions
-    const questionsCompleted =prova && prova.questions.filter(q => q.correctSumissionsCount>0);
 
     return (
       <TemplateSistema
@@ -132,8 +130,8 @@ export default class Exercicios extends Component {
                     </Col>
 
                     <ProgressBar 
-                      numQuestions={prova && questions.length}
-                      numQuestionsCompleted={prova && questionsCompleted.length}
+                      numQuestions={prova && prova.questionsCount}
+                      numQuestionsCompleted={prova && prova.questionsCompletedSumissionsCount}
                       dateBegin={prova && prova.classHasTest.createdAt}
                       width={100}
                     />
@@ -149,7 +147,7 @@ export default class Exercicios extends Component {
                                   <CardTitle>
                                     <b>
                                       {question.title}&nbsp;
-                                      {question.correctSumissionsCount>0 ? (
+                                      {question.isCorrect? (
                                         <i
                                           className="fa fa-check"
                                           style={{ color: "#0f0" }}

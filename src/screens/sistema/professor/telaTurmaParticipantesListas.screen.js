@@ -151,8 +151,6 @@ export default class Listas extends Component {
               </Row>
               <Row mb={15}>
                 {listas.map((lista, i) => {
-                  const questions = lista.questions;
-                  const questionsCompleted = lista.questions.filter(q => q.completedSumissionsCount>0);
                   return (
                     <Fragment key={lista.id}>
                       <Col xs={12}>
@@ -164,10 +162,10 @@ export default class Listas extends Component {
                               </h4>
                             </Col>
                             <ProgressBar 
-                              numQuestions={questions.length}
-                              numQuestionsCompleted={questionsCompleted.length}
-                              dateBegin={lista.classHasListQuestion.createdAt}
-                              dateEnd={lista.classHasListQuestion.submissionDeadline}
+                                numQuestions={lista.questionsCount}
+                                numQuestionsCompleted={lista.questionsCompletedSumissionsCount}
+                                dateBegin={lista.classHasListQuestion.createdAt}
+                                dateEnd={lista.classHasListQuestion.submissionDeadline}
                             />
                             <CardOptions>
                               <Link
@@ -192,8 +190,6 @@ export default class Listas extends Component {
               </Row>
               <Row mb={15}>
                 {provas.map((prova, i) => {
-                  const questions = prova.questions;
-                  const questionsCompleted = prova.questions.filter(q => q.completedSumissionsCount>0);
 
                   return (
                     <Fragment key={prova.id}>
@@ -206,8 +202,8 @@ export default class Listas extends Component {
                               </h4>
                             </Col>
                             <ProgressBar 
-                              numQuestions={questions.length}
-                              numQuestionsCompleted={questionsCompleted.length}
+                              numQuestions={prova.questionsCount}
+                              numQuestionsCompleted={prova.questionsCompletedSumissionsCount}
                               dateBegin={prova.classHasTest.createdAt}
                             />
                             <CardOptions>
