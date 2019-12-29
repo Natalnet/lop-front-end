@@ -23,7 +23,7 @@ export default class HomeAlunoScreen extends Component {
       minhasTurmas: [],
       loadingMinhasTurmas:false,
       totalPages: 0,
-      solicitaçoes: [],
+      solicitacoes: [],
       loandingTurmasAbertas: false,
       descriptions: [],
       code: "",
@@ -31,26 +31,33 @@ export default class HomeAlunoScreen extends Component {
     };
   }
   async componentDidMount() {
-    await this.getMinhasTurmas()
+    
     this.getTurmasAbertasRealTime();
     document.title = "Início | LoP";
   }
-  async getMinhasTurmas(loading=true) {
+  async getMinhasTurmas() {
+    let myClasses = sessionStorage.getItem('myClasses')
+    if(myClasses && typeof JSON.parse(myClasses)==="object"){
+      myClasses = JSON.parse(myClasses)
+      console.log("minhas turmas",myClasses);
+      this.setState({minhasTurmas:myClasses})
+      return null
+    }
     let query = `?myClasses=yes`
     try {
-      if(loading) this.setState({ loadingMinhasTurmas: true });
+      this.setState({ loandingTurmasAbertas: true });
       const response = await api.get(`/class${query}`);
       console.log("minhas turmas",response.data);
       this.setState({
         minhasTurmas: [...response.data],
-        loadingMinhasTurmas: false
+        loandingTurmasAbertas: false
       });
     } catch (err) {
-      this.setState({ loadingMinhasTurmas: false });
+      this.setState({ loandingTurmasAbertas: false });
       console.log(err);
     }
   }
-  async getSolicitaçoes(loading = true) {
+  async getSolicitacoes(loading = true) {
     let query = `?mySolicitations=yes`
     try {
       if (loading) this.setState({ loandingTurmasAbertas: true });
@@ -58,7 +65,7 @@ export default class HomeAlunoScreen extends Component {
       console.log("minhas soicitações");
       console.log(response.data);
       this.setState({
-        solicitaçoes: [...response.data]
+        solicitacoes: [...response.data]
         //loandingTurmasAbertas:false
       });
     } catch (err) {
@@ -90,18 +97,41 @@ export default class HomeAlunoScreen extends Component {
     const io = socket(baseUrlBackend);
     io.emit("connectRoonUser", sessionStorage.getItem("user.id"));
 
-    io.on("MyRequestsClass", async response => {
-      await this.getMinhasTurmas(false);
-      await this.getSolicitaçoes(false);
-      await this.getTurmasAbertas(false);
-
+    io.on("RejectSolicitation", async response => {
+      const {solicitacoes} = this.state
+      this.setState({
+        solicitacoes:solicitacoes.filter(s=>s.class_id!==response)
+      })
     });
+
+    io.on("AcceptSolicitation", response => {
+      const {turmasAbertas} = this.state
+      const myNewClass = turmasAbertas.map(t=>{
+        return {
+          id:t.id,
+          title:t.title
+        }
+      })
+      let myClasses = sessionStorage.getItem('myClasses')
+      if(myClasses && typeof JSON.parse(myClasses)==="object"){
+        myClasses = [...JSON.parse(myClasses),...myNewClass]
+      }
+      else{
+        myClasses = myNewClass
+      }
+      sessionStorage.setItem('myClasses',JSON.stringify(myClasses))
+      console.log("minhas turmas",myClasses);
+      this.setState({
+        minhasTurmas:myClasses,
+        turmasAbertas:turmasAbertas.filter(t=>t.id!==response),
+      })
+      console.log("acabou de ser adicionado à turma")
+    });
+    
   }
   async solicitarAcesso(idClass) {
-    console.log(idClass);
     const request = {idClass}
     try {
-      //this.setState({solicitando:'disabled'})
       Swal.fire({
         title: "Processando solicitação",
         allowOutsideClick: false,
@@ -110,10 +140,11 @@ export default class HomeAlunoScreen extends Component {
       });
       Swal.showLoading();
       const response = await api.post(`/solicitation/store`,request);
-      console.log("solicitação:");
-      console.log(response.data);
-      await this.getSolicitaçoes(false);
-      this.getTurmasAbertas(false);
+      console.log("solicitação:",response.data);
+      const {solicitacoes} = this.state
+      this.setState({
+        solicitacoes:[...solicitacoes,response.data]
+      })
 
       Swal.hideLoading();
       Swal.fire({
@@ -144,8 +175,10 @@ export default class HomeAlunoScreen extends Component {
       });
       Swal.showLoading();
       await api.delete(`/solicitation/delete${query}`);
-      await this.getSolicitaçoes(false);
-      this.getTurmasAbertas(false);
+      const {solicitacoes} = this.state
+      this.setState({
+        solicitacoes:solicitacoes.filter(s=>s.class_id!==idClass)
+      })
       Swal.hideLoading();
       Swal.fire({
         type: "success",
@@ -170,7 +203,8 @@ export default class HomeAlunoScreen extends Component {
     });
   }
   async filterSeash(e) {
-    await this.getSolicitaçoes();
+    await this.getMinhasTurmas()
+    await this.getSolicitacoes();
     this.getTurmasAbertas();
   }
   async handleSelectFieldFilter(e) {
@@ -183,16 +217,16 @@ export default class HomeAlunoScreen extends Component {
     this.setState({
       code: ""
     });
-    await this.getSolicitaçoes();
+    await this.getMinhasTurmas();
+    await this.getSolicitacoes();
     this.getTurmasAbertas();
   }
 
   render() {
     const {
-      solicitaçoes,
+      solicitacoes,
       turmasAbertas,
       loandingTurmasAbertas,
-      loadingMinhasTurmas,
       code
     } = this.state;
     return (
@@ -204,30 +238,25 @@ export default class HomeAlunoScreen extends Component {
               </h5>
           </Col>
         </Row>
-          {loadingMinhasTurmas?
-            <div className="loader" style={{ margin: "0px auto" }}></div>
-          :
-          <Row mb={24}>
-            <Col xs={12}>
-              <InputGroupo
-                placeholder={`Perquise pelo Código`}
-                value={code}
-                handleContentInputSeach ={this.handleCode.bind(this)}
-                filterSeash={this.filterSeash.bind(this)}
-                handleSelect={this.handleSelectFieldFilter.bind(this)}
-                options={[{ value: "code", content: "Código" }]}
-                clearcode={this.clearcode.bind(this)}
-                loading={loandingTurmasAbertas}
-              />
-            </Col>
-          </Row>
-        }
-        
+        <Row mb={24}>
+          <Col xs={12}>
+            <InputGroupo
+              placeholder={`Perquise pelo Código`}
+              value={code}
+              handleContentInputSeach ={this.handleCode.bind(this)}
+              filterSeash={this.filterSeash.bind(this)}
+              handleSelect={this.handleSelectFieldFilter.bind(this)}
+              options={[{ value: "code", content: "Código" }]}
+              clearcode={this.clearcode.bind(this)}
+              loading={loandingTurmasAbertas}
+            />
+          </Col>
+        </Row>
         <Row>
           {turmasAbertas.map((turma) => {
                 return (
                   <Fragment key={turma.id}>
-                    <Col xs={12} md={6}>
+                    <Col xs={12} lg={6}>
                       <Card>
                         <CardHead
                           name={turma.name}
@@ -240,12 +269,11 @@ export default class HomeAlunoScreen extends Component {
                             <CardOptions linguagens={turma.languages} />
                           </div>
                           <div className="col-9" style={{ paddingLeft: "0px" }}>
-                            {console.log(turma.description)}
                             <CardBody description={turma.description} />
                           </div>
                         </div>
                         <CardFooter>
-                          {solicitaçoes
+                          {solicitacoes
                             .map(s => s.class_id)
                             .includes(turma.id) ? (
                             <button
@@ -290,7 +318,7 @@ export default class HomeAlunoScreen extends Component {
 {
   /* <CardFooter>
 
-{solicitaçoes
+{solicitacoes
   .map(t => t.id)
   .includes(turma.id) ? (
   <button

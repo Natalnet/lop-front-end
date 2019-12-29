@@ -100,13 +100,16 @@ export default class NovasTurmasScreen extends Component {
       return null
     }
     const requestInfo = {
-      name,
-      year,
-      semester,
-      description,
-      state,
+      updatedClass: {
+        name,
+        year,
+        semester,
+        description,
+        state,
+        languages: linguagensSelecionadas.map(l => l.value)
+      },
       professores:professoresSelecionados.map(p => p.id),
-      languages: linguagensSelecionadas.map(l => l.value)
+     
     };
     Swal.fire({
       title: "Atualizando turma",
