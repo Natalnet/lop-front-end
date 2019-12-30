@@ -1,4 +1,5 @@
 import React, { Component,Fragment } from "react";
+import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import apiCompiler from '../../../services/apiCompiler'
@@ -26,6 +27,8 @@ import Select from 'react-select';
 import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
 import FormSelect2 from '../../../components/ui/forms/formSelect2.component'
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 export default class Editor extends Component {
   constructor(props){
@@ -281,12 +284,18 @@ export default class Editor extends Component {
     const { tests,language,theme,descriptionErro,solution,tags,loadingTags,msgTitle,msgDescription} = this.state;
     return (
     <TemplateSistema active='exercicios'>
+      <Row mb={15}>
+          <Col xs={12}>
+            <h5 style={{margin:'0px'}}>
+                <Link to="/professor/exercicios">
+                  Exercícios
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                Criar Exercício
+              </h5>
+          </Col>
+      </Row>
     <Card>
-      <CardHead>
-          <CardTitle center>
-            <i className="fa fa-code"></i> Nova questão
-          </CardTitle>
-      </CardHead>
       <CardBody>
       <form onSubmit={e => this.saveQuestion(e)} >
         <div className="form-row">

@@ -14,6 +14,8 @@ import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 const lista = {
     backgroundColor:"white"
@@ -114,26 +116,27 @@ export default class HomeListasScreen extends Component {
         const {listas,fieldFilter,loadingListas,contentInputSeach,numPageAtual,totalPages,showModalInfo,questions} = this.state
         return (
         <TemplateSistema active='listas'>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
-                        <h3 style={{margin:'0px'}}> Listas de Exercícios</h3>
-                    </div>
-                </div>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-3">
-                       
-                            <Link to="/professor/criarlista">
+                <Row mb={15}>
+                    <Col xs={12} >
+                    <h5 style={{margin:'0px'}}> 
+                        Listas
+                    </h5> 
+                    </Col>
+                </Row>
+                <Row mb={15}>
+                    <Col xs={3} >
+                        <Link to="/professor/criarlista">
                             <button 
                                 className="btn btn-primary"
                                 type="button"
                                 style={botao}
                             >
-                                Criar Lista <i className="fe fe-file-plus" />
+                                Criar Lista 
+                                <i className="fe fe-file-plus" />
                             </button>
-                            </Link>
-                        
-                    </div>
-                    <div className=" col-9">     
+                        </Link>
+                    </Col>
+                    <Col xs={9}>     
                         <InputGroup
                             placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
@@ -144,10 +147,10 @@ export default class HomeListasScreen extends Component {
                             clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                             loading={loadingListas}                            
                         />
-                    </div>
-                </div>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
+                    </Col>
+                </Row>
+                <Row mb={15}>
+                    <Col xs={12}>
                         <table style={lista} className="table table-hover">
                             <thead>
                                 <tr>
@@ -194,17 +197,17 @@ export default class HomeListasScreen extends Component {
                                 })}
                             </tbody>
                         </table>
-                    </div>
-                </div>
-                <div className='row'>
-                    <div className='col-12 text-center'>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={12} textCenter>
                         <NavPagination
                           totalPages={totalPages}
                           pageAtual={numPageAtual}
                           handlePage={this.handlePage}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             <Modal
                 show={showModalInfo} onHide={this.handleCloseshowModalInfo.bind(this)}
                 size="lg"
@@ -217,9 +220,10 @@ export default class HomeListasScreen extends Component {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className="row">            
+                <Row>            
                 {questions.map((questao, index)=>(
-                    <div key={index} className="col-6"> 
+                    <Fragment key={index}>
+                    <Col xs={12}> 
                         <Card style={{marginBottom: "0"}}>
                             <CardHead style={{marginBottom: "0"}}>
                                 <CardTitle>
@@ -238,17 +242,24 @@ export default class HomeListasScreen extends Component {
                             </CardHead>
                             <div className="collapse" id={'collapse'+questao.id}>
                                 <CardBody>
-                                <b>Descrição: </b>
-                                <p>{questao.description}</p>
-                                <br/>
-                                <BlockMath>{questao.katexDescription|| ''}</BlockMath>
-                                <br/>
+                                    <Row>
+                                        <b>Descrição: </b>
+                                    </Row>
+                                    <Row>
+                                        <p>{questao.description}</p>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} textCenter>
+                                            <BlockMath>{questao.katexDescription|| ''}</BlockMath>
+                                        </Col>
+                                    </Row>
                                 </CardBody>
                             </div>
                         </Card>
-                    </div>
+                    </Col>
+                    </Fragment>
                 ))}
-                </div>      
+                </Row>      
                 
             </Modal.Body>
             <Modal.Footer>

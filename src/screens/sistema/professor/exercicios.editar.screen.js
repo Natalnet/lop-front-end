@@ -1,4 +1,5 @@
 import React, { Component,Fragment} from "react";
+import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import apiCompiler from '../../../services/apiCompiler'
@@ -26,6 +27,8 @@ import Select from 'react-select';
 import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
 import FormSelect2 from '../../../components/ui/forms/formSelect2.component'
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 export default class Editor extends Component {
   constructor(props){
@@ -330,16 +333,20 @@ export default class Editor extends Component {
   render() {
     const {percentualAcerto,response,status,difficulty,katexDescription,savingQuestion,loadingReponse,title,description} = this.state
     const { tests,language,theme,solution,loadingExercicio,tags,tagsSelecionadas ,loadingTags,msgTitle,msgDescription,descriptionErro } = this.state;
-
-    
     return (
     <TemplateSistema active='exercicios'>
+      <Row mb={15}>
+          <Col xs={12}>
+            <h5 style={{margin:'0px'}}>
+                <Link to="/professor/exercicios">
+                  Exercícios
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                Editar Exercício
+              </h5>
+          </Col>
+      </Row>
     <Card>
-      <CardHead>
-          <CardTitle center>
-            <i className="fa fa-code"></i> Nova questão
-          </CardTitle>
-      </CardHead>
       <CardBody loading={loadingExercicio || loadingTags}>
       <form onSubmit={e => this.updateQuestion(e)} >
         <div className="form-row">

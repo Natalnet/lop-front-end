@@ -182,7 +182,7 @@ export default class Editor extends Component {
   
   async getExercicio() {
     const {id,idTest,idExercicio} = this.props.match.params;
-    let query = `?exclude=solution`;
+    let query = `?exclude=id code status createdAt updatedAt author_id solution`;
     query += `&draft=yes`
     query += `&idClass=${id}`
     query += `&idTest=${idTest}`

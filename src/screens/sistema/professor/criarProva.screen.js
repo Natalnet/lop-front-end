@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
@@ -9,11 +10,12 @@ import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import TableIO from 'components/ui/tables/tableIO.component'
-
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 const botao2 = {
   float: "right",
@@ -209,10 +211,18 @@ export default class criarProvaScreen extends Component {
 
     return (
       <TemplateSistema active="provas">
+          <Row mb={15}>
+            <Col xs={12}>
+              <h5 style={{margin:'0px'}}>
+                <Link to="/professor/provas">
+                  Provas
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                Criar prova
+              </h5>
+            </Col>
+          </Row>
         <Card>
-          <CardHead>
-            <CardTitle>Criar prova</CardTitle>
-          </CardHead>
           <CardBody>
             <form onSubmit={e => this.criarProva(e)}>
               <div className="form-row">
@@ -254,7 +264,7 @@ export default class criarProvaScreen extends Component {
                   </select>
                 </div>
               </div>
-              <div className="row">
+              <div className="form-row">
                 <div className="form-group col-12">
                   <InputGroupo
                     placeholder={`Perquise...`}
@@ -274,7 +284,7 @@ export default class criarProvaScreen extends Component {
                   />
                 </div>
               </div>
-              <div className="row">
+              <div className="form-row">
                 <div className="form-group col-12">
                   <table
                     className="table table-hover"
@@ -310,7 +320,7 @@ export default class criarProvaScreen extends Component {
                           </td>
                         </tr>
                       ) : (
-                        this.state.exercicios.map((questao, index) => {
+                        this.state.exercicios.map((questao) => {
                           return (
                             <tr key={questao.id}>
                               <td>{questao.title}</td>
@@ -318,10 +328,10 @@ export default class criarProvaScreen extends Component {
                               <td>{`(${questao.submissions.countCorrects}/${questao.submissions.count})`}</td>
                               <td>{questao.author.email}</td>
                               <td>{formataData(questao.createdAt)}</td>
-                              <td>
+                              <td style={{display: 'inline-flex'}}>
                                 <button
                                   type="button"
-                                  className="btn btn-primary "
+                                  className="btn btn-primary mr-2"
                                   onClick={() =>
                                     this.handleShowModalInfo(questao)
                                   }
@@ -355,18 +365,18 @@ export default class criarProvaScreen extends Component {
                   </table>
                 </div>
               </div>
-              <div className="row">
-                <div className="col-12 text-center">
+              <Row>
+                <Col xs={12} textCenter>
                   <NavPagination
                     totalPages={totalPages}
                     pageAtual={numPageAtual}
                     handlePage={this.handlePage.bind(this)}
                   />
-                </div>
-              </div>
+                </Col>
+              </Row>
               <hr />
-              <div className="row">
-                <div className="col-12 text-center">
+              <Row>
+                <Col xs={12} textCenter>
                   <label>Selecionadas</label>
                   <table className="table table-hover">
                     <thead>
@@ -401,10 +411,10 @@ export default class criarProvaScreen extends Component {
                       ))}
                     </tbody>
                   </table>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12 text-center">
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12} textCenter>
                   <button
                     type="submit"
                     className="btn btn-primary float-right col-3"
@@ -412,8 +422,8 @@ export default class criarProvaScreen extends Component {
                   >
                     Criar Prova
                   </button>
-                </div>
-              </div>
+                </Col>
+              </Row>
             </form>
           </CardBody>
 
@@ -432,13 +442,13 @@ export default class criarProvaScreen extends Component {
                     {question.description}
                     <BlockMath>{question.katexDescription|| ''}</BlockMath>
                     <br/>
-                    <div className="row">
-                        <div className ="col-12">
+                    <Row>
+                      <Col xs={12} >
                           <TableIO
                             results={question.results || []}
                           />
-                        </div>
-                    </div>
+                      </Col>
+                    </Row>
                 </CardBody>
             </Card>
           </SwalModal>

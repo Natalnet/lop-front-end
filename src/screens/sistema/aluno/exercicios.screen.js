@@ -38,6 +38,7 @@ export default class ExerciciosScreen extends Component {
         try{
             this.setState({loadingExercicios:true})
             const response = await api.get(`/question/page/${numPageAtual}?${query}`)
+            console.log('exercicios',response.data)
             this.setState({
                 exercicios : [...response.data.docs],
                 totalItens : response.data.total,
@@ -155,9 +156,11 @@ export default class ExerciciosScreen extends Component {
                                             <td>{`(${exercicio.submissions.countCorrects}/${exercicio.submissions.count})`}</td>
                                             <td>{exercicio.author.email}</td>
                                             <td>{formataData(exercicio.createdAt)}</td>
-                                            <td>
-                                                <Link to={`/aluno/exercicio/${exercicio.id}`} className="btn btn-success mr-2">
-                                                    Acessar <i className="fa fa-wpexplorer" />
+                                            <td style={{display:'inline-flex'}}>
+                                                <Link to={`/aluno/exercicio/${exercicio.id}`} >
+                                                    <button className="btn btn-success mr-2">
+                                                        Acessar <i className="fa fa-wpexplorer" />
+                                                    </button>
                                                 </Link>
                                             </td>
                                         </tr>

@@ -13,6 +13,8 @@ import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 const lista = {
   backgroundColor: "white"
@@ -128,20 +130,22 @@ export default class HomeProvasScreen extends Component {
     } = this.state;
     return (
       <TemplateSistema active="provas">
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
-            <h3 style={{ margin: "0px" }}> provas de Exercícios</h3>
-          </div>
-        </div>
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-3">
+        <Row mb={15}>
+          <Col xs={12} >
+              <h5 style={{margin:'0px'}}> 
+                Provas
+              </h5> 
+          </Col>
+        </Row>
+        <Row mb={15}>
+          <Col xs={3} >
             <Link to="/professor/criarProva">
               <button className="btn btn-primary" type="button" style={botao}>
                 Criar Prova <i className="fe fe-file-plus" />
               </button>
             </Link>
-          </div>
-          <div className=" col-9">
+          </Col>
+          <Col xs={9} >
             <InputGroup
               placeholder={`Perquise pelo ${
                 fieldFilter === "title"
@@ -161,9 +165,9 @@ export default class HomeProvasScreen extends Component {
               clearContentInputSeach={this.clearContentInputSeach.bind(this)}
               loading={loadingProvas}
             />
-          </div>
-        </div>
-        <div className="row" style={{ marginBottom: "15px" }}>
+          </Col>
+        </Row>
+        <Row mb={15}>
           <div className="col-12">
             <table style={lista} className="table table-hover">
               <thead>
@@ -218,16 +222,16 @@ export default class HomeProvasScreen extends Component {
               </tbody>
             </table>
           </div>
-        </div>
-        <div className="row">
-          <div className="col-12 text-center">
+        </Row>
+        <Row>
+          <Col xs={12} textCenter>
             <NavPagination
               totalPages={totalPages}
               pageAtual={numPageAtual}
               handlePage={this.handlePage}
             />
-          </div>
-        </div>
+          </Col>
+        </Row>
         <Modal
           show={showModalInfo}
           onHide={this.handleCloseshowModalInfo.bind(this)}
@@ -243,7 +247,8 @@ export default class HomeProvasScreen extends Component {
           <Modal.Body>
             <div className="row">
               {questions.map((questao, index) => (
-                <div key={index} className="col-6">
+                <Fragment  key={index}>
+                <Col xs={12}>
                   <Card style={{ marginBottom: "0" }}>
                     <CardHead style={{ marginBottom: "0" }}>
                       <CardTitle>{questao.title}</CardTitle>
@@ -260,15 +265,22 @@ export default class HomeProvasScreen extends Component {
                     </CardHead>
                     <div className="collapse" id={"collapse" + questao.id}>
                       <CardBody>
-                        <b>Descrição: </b>
-                        <p>{questao.description}</p>
-                        <br />
-                        <BlockMath>{questao.katexDescription || ""}</BlockMath>
-                        <br />
+                        <Row>
+                          <b>Descrição: </b>
+                        </Row>
+                        <Row>
+                          <p>{questao.description}</p>
+                        </Row>
+                        <Row>
+                          <Col xs={12} textCenter>
+                            <BlockMath>{questao.katexDescription|| ''}</BlockMath>
+                          </Col>
+                        </Row>
                       </CardBody>
                     </div>
                   </Card>
-                </div>
+                </Col>
+                </Fragment>
               ))}
             </div>
           </Modal.Body>

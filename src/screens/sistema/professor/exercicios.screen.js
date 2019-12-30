@@ -14,7 +14,8 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
-
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 const lista = {
     backgroundColor:"white"
@@ -110,14 +111,15 @@ export default class HomeExerciciosScreen extends Component {
         const {exercicios,showModalInfo,fieldFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,question} = this.state
         return (
         <TemplateSistema active='exercicios'>
-            
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
-                        <h3 style={{margin:'0px'}}> Exercícios</h3>
-                    </div>
-                </div>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-3">
+                <Row mb={15}>
+                    <Col xs={12} >
+                        <h5 style={{margin:'0px'}}> 
+                            Exercícios
+                        </h5> 
+                    </Col>
+                </Row>
+                <Row mb={15}>
+                    <Col xs={3} >
                         <Link to="/professor/criarExercicio">
                             <button 
                                 className="btn btn-primary"
@@ -127,8 +129,8 @@ export default class HomeExerciciosScreen extends Component {
                                 Criar Exercicio +
                             </button>
                         </Link>
-                    </div>            
-                    <div className=" col-9">     
+                    </Col>           
+                    <Col xs={9} >     
                         <InputGroup
                             placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
                             value={contentInputSeach}
@@ -139,10 +141,10 @@ export default class HomeExerciciosScreen extends Component {
                             clearContentInputSeach={this.clearContentInputSeach.bind(this)}
                             loading={loadingExercicios}                            
                         />
-                    </div>
-                </div>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className=" col-12">
+                    </Col> 
+                </Row>
+                <Row mb={15}>
+                    <Col xs={12} >
                      <table style={lista} className="table table-hover">
                         <thead>
                             <tr>
@@ -184,7 +186,7 @@ export default class HomeExerciciosScreen extends Component {
 
                                         <td>{exercicio.author.email}</td>
                                         <td>{formataData(exercicio.createdAt)}</td>
-                                        <td>
+                                        <td style={{display:'inline-flex'}}>
                                             <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(exercicio)}>
                                                 <i className="fa fa-info"/>
                                             </button>
@@ -199,17 +201,17 @@ export default class HomeExerciciosScreen extends Component {
                             }
                         </tbody>
                     </table>
-                    </div>
-                </div>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className='col-12 text-center'>
+                    </Col>
+                </Row>
+                <Row mb={15}>
+                    <Col xs={12} textCenter>
                         <NavPagination
                           totalPages={totalPages}
                           pageAtual={numPageAtual}
                           handlePage={this.handlePage}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             <SwalModal
                 show={showModalInfo}
                 title="Exercício"
@@ -223,17 +225,24 @@ export default class HomeExerciciosScreen extends Component {
                     </CardTitle>
                 </CardHead>
                 <CardBody>
-                    <b>Descrição: </b> <br/>
-                    {question.description}
-                    <BlockMath>{question.katexDescription|| ''}</BlockMath>
-                    <br/>
-                    <div className="row">
-                        <div className ="col-12">
+                    <Row>
+                        <b>Descrição: </b>
+                    </Row>
+                    <Row>
+                        {question.description}
+                    </Row>
+                    <Row>
+                        <Col xs={12} textCenter>
+                            <BlockMath>{question.katexDescription|| ''}</BlockMath>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12}>
                           <TableIO
                             results={question.results || []}
                           />
-                        </div>
-                    </div>
+                        </Col>
+                    </Row>
                 </CardBody>
             </Card>
             </SwalModal>
