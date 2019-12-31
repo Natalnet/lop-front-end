@@ -140,19 +140,18 @@ export default class Provas extends Component {
     const {  loandingListas } = this.state;
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
-            {loadingInfoTurma ? (
-              <div className="loader" style={{ margin: "0px auto" }}></div>
-            ) : (
+        <Row mb={15}>
+          <Col xs={12}>
+            {loadingInfoTurma?
+              <div className="loader"  style={{margin:'0px auto'}}></div>
+              :
               <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
                 {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
                 <i className="fa fa-angle-left ml-2 mr-2"/> Provas
-              </h5> 
-            )}
-          </div>
-        </div>
-
+              </h5>                        
+            }
+          </Col>
+        </Row>
         <Row mb={15}>
           {loandingListas ? (
             <div className="loader" style={{ margin: "0px auto" }}></div>

@@ -54,6 +54,7 @@ export default class Editor extends Component {
       description:'',
       inputs:'',
       outputs:'',
+      lista:"",
       percentualAcerto:'',
       myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
       turma:"",        
@@ -71,6 +72,7 @@ export default class Editor extends Component {
   async componentDidMount() {
     this.setState({ tempo_inicial: new Date() });
     await this.getInfoTurma();
+    this.getLista()
     await this.getExercicio();
     this.salvaAcesso();
     this.appStyles();
@@ -141,7 +143,22 @@ export default class Editor extends Component {
         this.setState({loadingInfoTurma:false})
         console.log(err);
     }
-  } 
+  }
+  async getLista() {
+    try {
+      const idClass = this.props.match.params.id;
+      const idLista = this.props.match.params.idLista;
+      let query = `?idClass=${idClass}`
+      const response = await api.get(`/listQuestion/${idLista}${query}`);
+      console.log("lista");
+      console.log(response.data);
+      this.setState({
+        lista:response.data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
   async getExercicio() {
     const {id,idLista,idExercicio} = this.props.match.params;
     let query = `?exclude=id code status createdAt updatedAt author_id solution`;
@@ -216,7 +233,7 @@ export default class Editor extends Component {
     this.setState({ loadingReponse: true });
     try {
       this.salvaRascunho();
-      const response = await apiCompiler.post("/submission/exec", request);
+      const response = await apiCompiler.post("/apiCompiler", request);
       this.saveSubmission(
         request,
         response.data.percentualAcerto,
@@ -297,7 +314,7 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {turma,response,percentualAcerto,loadingReponse,title,description,results,katexDescription} = this.state
+    const {turma,response,percentualAcerto,loadingReponse,title,description,results,katexDescription,lista} = this.state
     const { language,theme,descriptionErro,solution,loadingExercicio,loadingInfoTurma,userDifficulty,loadDifficulty,salvandoRascunho} = this.state;
 
     return (
@@ -308,7 +325,20 @@ export default class Editor extends Component {
             {loadingInfoTurma?
                 <div className="loader"  style={{margin:'0px auto'}}></div>
                 :
-                <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}</h3>
+                <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                <Link to={`/professor/turma/${this.props.match.params.id}/listas`}>
+                  Listas
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                <Link to={`/professor/turma/${this.props.match.params.id}/lista/${this.props.match.params.idLista}`} >
+                  {lista?lista.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                {title || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+
+              </h5>            
             }
           </Col>
         </Row>
@@ -316,15 +346,6 @@ export default class Editor extends Component {
           <div className="loader" style={{margin:'0px auto'}}></div>
         :
         <Fragment>
-        <Row mb={15}>
-            <Col xs={12}>
-                <Link to={`/professor/turma/${this.props.match.params.id}/lista/${this.props.match.params.idLista}`} >
-                    <button className="btn btn-success mr-2">
-                     <i className="fa fa-arrow-left" /> Voltar à lista <i className="fa fa-file-text" />
-                    </button>
-                </Link>
-            </Col>
-        </Row>
         <Row>
           <Col xs={12} md={7}>
             <Card ref={this.cardEnunciadoRef}>

@@ -184,7 +184,7 @@ export default class Editor extends Component {
     }
     try{
       this.setState({ loadingReponse:true})
-      const response = await apiCompiler.post('/submission/exec',request)
+      const response = await apiCompiler.post('/apiCompiler',request)
       this.setState({ loadingReponse:false})
       console.log('resultados da requisição');
       console.log(response.data);
@@ -204,17 +204,12 @@ export default class Editor extends Component {
     
   }
   rTrimAll(tests){
-    console.log('antes do Rtrim');
-    console.log(tests);
-
     const results =  tests.map(test=>{
       return {
         inputs:test.inputs.split('\\n').map(test=>test.replace(/\s+$/,'')).join('\n'),
         output:test.output.split('\\n').join('\n').replace(/\s+$/,'').replace(/\n+$/,'')
       }
     })
-    console.log('depois do em RTrim');
-    console.log(results);
     return results
   }
   async saveQuestion(e){

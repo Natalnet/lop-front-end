@@ -72,8 +72,9 @@ export default class Editor extends Component {
   async componentDidMount() {
     this.setState({ tempo_inicial: new Date() });
     await this.getInfoTurma();
-    await this.getExercicio();
     this.getLista()
+    await this.getExercicio();
+    
     this.salvaAcesso();
     this.appStyles();
     document.title = `${this.state.title}`;
@@ -234,7 +235,7 @@ export default class Editor extends Component {
     this.setState({ loadingReponse: true });
     try {
       this.salvaRascunho();
-      const response = await apiCompiler.post("/submission/exec", request);
+      const response = await apiCompiler.post("/apiCompiler", request);
       this.saveSubmission(
         request,
         response.data.percentualAcerto,

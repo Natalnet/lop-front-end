@@ -196,9 +196,9 @@ export default class HomeProvasScreen extends Component {
                     </td>
                   </tr>
                 ) : (
-                  provas.map((prova, index) => {
+                  provas.map((prova) => {
                     return (
-                      <Fragment key={index}>
+                      <Fragment key={prova.id}>
                         <tr>
                           <td>{prova.title}</td>
                           <td>{prova.code}</td>

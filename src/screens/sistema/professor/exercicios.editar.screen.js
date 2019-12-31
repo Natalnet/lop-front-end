@@ -218,7 +218,7 @@ export default class Editor extends Component {
     
     try{
       this.setState({loadingReponse:true})
-      const response = await apiCompiler.post('/submission/exec',request)
+      const response = await apiCompiler.post('/apiCompiler',request)
       this.setState({ loadingReponse:false})
       console.log('resposta do servidor');
       console.log(response.data);

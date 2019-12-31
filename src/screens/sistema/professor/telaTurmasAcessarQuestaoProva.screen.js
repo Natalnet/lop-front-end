@@ -52,6 +52,7 @@ export default class Editor extends Component {
       loadingEditor: false,
       title: "",
       description: "",
+      prova:"",
       inputs: "",
       outputs: "",
       percentualAcerto: "",
@@ -71,6 +72,7 @@ export default class Editor extends Component {
   async componentDidMount() {
     this.setState({ tempo_inicial: new Date() });
     await this.getInfoTurma();
+    this.getProva()
     await this.getExercicio();
     this.salvaAcesso();
     this.appStyles();
@@ -137,6 +139,19 @@ export default class Editor extends Component {
     catch(err){
         this.setState({loadingInfoTurma:false})
         console.log(err);
+    }
+  }
+  async getProva() {
+    const {id,idTest} = this.props.match.params;
+    const idClass = id
+    let query = `?idClass=${idClass}`
+    try {
+      const response = await api.get(`/test/${idTest}${query}`);
+      this.setState({
+        prova:response.data
+      })
+    } catch (err) {
+      console.log(err);
     }
   }
   async getExercicio() {
@@ -212,7 +227,7 @@ export default class Editor extends Component {
     this.setState({ loadingReponse: true });
     try {
       this.salvaRascunho();
-      const response = await apiCompiler.post("/submission/exec", request);
+      const response = await apiCompiler.post("/apiCompiler", request);
       this.saveSubmission(
         request,
         response.data.percentualAcerto,
@@ -317,6 +332,7 @@ export default class Editor extends Component {
       loadingInfoTurma,
       userDifficulty,
       loadDifficulty,
+      prova,
       salvandoRascunho
     } = this.state;
 
@@ -327,10 +343,19 @@ export default class Editor extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
-              </h3>
+              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+              {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+              <i className="fa fa-angle-left ml-2 mr-2"/> 
+              <Link to={`/professor/turma/${this.props.match.params.id}/provas`}>
+                Provas
+              </Link>
+              <i className="fa fa-angle-left ml-2 mr-2"/>
+              <Link to={`/professor/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`} >
+                {prova?prova.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+              </Link>
+              <i className="fa fa-angle-left ml-2 mr-2"/>
+              {title || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+            </h5>
             )}
           </Col>
         </Row>
@@ -338,20 +363,6 @@ export default class Editor extends Component {
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>
-            <Row mb={15}>
-              <Col xs={12}>
-                {console.log("akii")}
-                {console.log(this.props.match.params)}
-                <Link
-                  to={`/professor/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`}
-                >
-                  <button className="btn btn-success mr-2">
-                    <i className="fa fa-arrow-left" /> Voltar para as questões{" "}
-                    <i className="fa fa-file-text" />
-                  </button>
-                </Link>
-              </Col>
-            </Row>
             <Row>
               <Col xs={12} md={7}>
                 <Card ref={this.cardEnunciadoRef}>

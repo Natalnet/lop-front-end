@@ -25,6 +25,7 @@ export default class HomesubmissoesScreen extends Component {
       submissoes: [],
       usuario : '',
       lista: '',
+      questao:'',
       myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
       turma:"",        
       showModal: false,
@@ -92,7 +93,8 @@ export default class HomesubmissoesScreen extends Component {
         numPageAtual: response.data.currentPage,
         loadingSubmissoes: false,
         usuario : response.data.user,
-        lista :response.data.list 
+        lista :response.data.list ,
+        questao:response.data.question
       });
     } catch (err) {
       this.setState({ loadingSubmissoes: false });
@@ -133,6 +135,7 @@ export default class HomesubmissoesScreen extends Component {
       turma,
       usuario,
       lista,
+      questao
     } = this.state;
     return (
       <TemplateSistema
@@ -141,31 +144,36 @@ export default class HomesubmissoesScreen extends Component {
         submenu={"telaTurmas"}
       >
         <Row mb={15}>
-            {loadingInfoTurma || loadingSubmissoes?(
+          <Col xs={12}>
+            {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-                <Col xs={12}>
-                    <h3 style={{ margin: "0px" }}>
-                      <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                      {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} | {usuario && usuario.name} - {usuario && usuario.enrollment} | {lista && lista.title}
-                    </h3>
-                </Col>
+              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                <Link to={`/professor/turma/${this.props.match.params.id}/participantes`}>
+                  Participantes
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas`}
+                >
+                  {usuario?`${usuario.name} - ${usuario.enrollment}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas/${this.props.match.params.idLista}/exercicios`}
+                >
+                  {lista?`${lista.title}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                {questao?`${questao.title}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}  
+              </h5>
             )}
+          </Col>
         </Row>
         <Row mb={15}>
           <Col xs={12}>
-            <Link
-              to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas/${this.props.match.params.idLista}/exercicios`}
-            >
-              <button className="btn btn-success mr-2">
-                <i className="fa fa-arrow-left" /> Voltar para lista{" "}
-                <i className="fa fa-file-text" />
-              </button>
-            </Link>
-          </Col>
-        </Row>
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
             <table style={table} className="table table-hover">
               <thead>
                 <tr>
@@ -258,26 +266,25 @@ export default class HomesubmissoesScreen extends Component {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12 text-center">
+          </Col>
+        </Row>
+        <Row mb={15}>
+          <Col xs={12} textCenter>
             <NavPagination
               totalPages={totalPages}
               pageAtual={numPageAtual}
               handlePage={this.handlePage}
             />
-          </div>
-        </div>
+          </Col>
+        </Row>
 
         <SwalModal
           show={showModalInfo}
           title={submissao && submissao.question.description}
           handleModal={this.handleCloseshowModalInfo.bind(this)}
           width={"100%"}
-          
         >
-          <div className="row">
+          <Row>
             <div className="col-12 offset-md-2 col-md-8 text-center">
               <AceEditor
                 mode={
@@ -294,7 +301,7 @@ export default class HomesubmissoesScreen extends Component {
                 editorProps={{ $blockScrolling: true }}
               />
             </div>
-          </div>
+          </Row>
         </SwalModal>
       </TemplateSistema>
     );

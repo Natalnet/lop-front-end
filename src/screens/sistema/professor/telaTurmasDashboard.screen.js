@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 export default class Pagina extends Component {
   constructor(props) {
@@ -49,18 +50,18 @@ export default class Pagina extends Component {
         active={"dashboard"}
         submenu={"telaTurmas"}
       >
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
-            {loadingInfoTurma ? (
-              <div className="loader" style={{ margin: "0px auto" }}></div>
-            ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
-              </h3>
-            )}
-          </div>
-        </div>
+        <Row mb={15}>
+          <Col xs={12}>
+            {loadingInfoTurma?
+            <div className="loader"  style={{margin:'0px auto'}}></div>
+            :
+            <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> Dashboard
+            </h5>                        
+            }
+          </Col>
+        </Row>
       </TemplateSistema>
     );
   }

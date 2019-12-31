@@ -180,7 +180,7 @@ export default class Editor extends Component {
     this.setState({ loadingReponse: true });
     try {
       this.salvaRascunho();
-      const response = await apiCompiler.post("/submission/exec", request);
+      const response = await apiCompiler.post("/apiCompiler", request);
       this.saveSubmission(
         request,
         response.data.percentualAcerto,

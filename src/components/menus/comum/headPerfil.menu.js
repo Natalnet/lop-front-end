@@ -16,13 +16,13 @@ export default class HeadPefilMenu extends Component {
     let nome = sessionStorage.getItem("user.name");
     return (
       <div className="d-flex">
-        <a className="header-brand" href="/dashboard">
+        <Link className="header-brand" to={`/${profile && profile.toLocaleLowerCase()}`}>
           <img
             src="/assets/images/lop.svg"
             className="header-brand-img"
             alt="lop logo"
           />
-        </a>
+        </Link>
         <div className="d-flex order-lg-2 ml-auto">
           <div className="dropdown">
             <Link

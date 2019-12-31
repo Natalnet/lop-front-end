@@ -5,7 +5,7 @@
  * @Last Modified time: 2019-02-03 22:00:20
  */
 
-import React, { Component, createRef } from "react";
+import React, { Component } from "react";
 
 import api from "../../services/api"
 
@@ -24,16 +24,19 @@ import MenuProfessor from "components/menus/dashboard/professor/menuProfessor.me
 export default class TemplateSistema extends Component {
   constructor(props) {
     super(props);
-    this.height = createRef() 
-
+     
+    
+   
+    //this.height = createRef()
   }
-
+  
   componentDidMount() {
     document.title = "Plaforma Lop";
     this.handleAxiosErros();
   }
 
   handleAxiosErros = () => {
+    const profile = sessionStorage.getItem("user.profile");
     api.interceptors.response.use(null, err => {
         console.log("interceptores------>>>>>>")
         console.log(Object.getOwnPropertyDescriptors(err))
@@ -41,10 +44,16 @@ export default class TemplateSistema extends Component {
         console.log("interceptores------>>>>>>")
         
           if ((err.response && err.response.status === 404) || err.message==="Network Error") {
-                this.props.history.push('/404')
+            this.props.history.push('/404')
           } 
           else if(err.response && err.response.status === 401){
-            this.props.history.push(`/${sessionStorage.getItem('user.profile').toLocaleLowerCase()}`)
+            if(err.response.data.msg==="token mal formatado"){
+              this.props.history.push('/')
+              sessionStorage.clear()
+            }
+            else{
+              this.props.history.push(`/${profile && profile.toLocaleLowerCase()}`)
+            }
           }
           else {
             return Promise.reject(err);
@@ -86,6 +95,7 @@ export default class TemplateSistema extends Component {
   // }
 
   render() {
+
     return (
       <ErrorBoundary>
         <div className="page">

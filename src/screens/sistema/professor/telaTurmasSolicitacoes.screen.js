@@ -3,6 +3,9 @@ import TemplateSistema from "components/templates/sistema.template";
 import Swal from "sweetalert2";
 import socket from "socket.io-client";
 import api, { baseUrlBackend } from "../../../services/api";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
+
 const lista = {
   backgroundColor: "white"
 };
@@ -164,20 +167,20 @@ export default class Pagina extends Component {
         active={"solicitações"}
         submenu={"telaTurmas"}
       >
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
-            {loadingInfoTurma ? (
-              <div className="loader" style={{ margin: "0px auto" }}></div>
-            ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
-              </h3>
-            )}
-          </div>
-        </div>
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
+        <Row mb={15}>
+          <Col xs={12}>
+              {loadingInfoTurma?
+              <div className="loader"  style={{margin:'0px auto'}}></div>
+              :
+              <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> Solicitações
+              </h5>                        
+              }
+          </Col>
+        </Row>
+        <Row mb={15}>
+          <Col xs={12}>
             <table style={lista} className="table table-hover">
               <thead>
                 <tr>
@@ -238,8 +241,8 @@ export default class Pagina extends Component {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
+          </Col>
+        </Row>
       </TemplateSistema>
     );
   }

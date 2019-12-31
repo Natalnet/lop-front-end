@@ -11,6 +11,8 @@ import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
 import "brace/mode/javascript";
 import "brace/theme/monokai";
+import Row from "components/ui/grid/row.component";
+import Col from "components/ui/grid/col.component";
 
 const lista = {
   backgroundColor: "white"
@@ -34,7 +36,6 @@ export default class HomesubmissoesScreen extends Component {
       docsPerPage: 15,
       submissao: ""
     };
-    this.handlePage = this.handlePage.bind(this);
   }
   async componentDidMount() {
     await this.getInfoTurma();
@@ -156,7 +157,8 @@ export default class HomesubmissoesScreen extends Component {
       } /*,()=>this.getSubmissoes()*/
     );
   }
-  filterSeash() {
+  filterSeash(e) {
+    //e.preventDefault()
     this.getSubmissoes();
   }
   clearContentInputSeach() {
@@ -186,20 +188,20 @@ export default class HomesubmissoesScreen extends Component {
         {...this.props}
         submenu={"telaTurmas"}
       >
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
-            {loadingInfoTurma ? (
-              <div className="loader" style={{ margin: "0px auto" }}></div>
-            ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
-              </h3>
-            )}
-          </div>
-        </div>
-        <div className="row">
-          <div className="mb-3 col-12">
+        <Row mb={15}>
+            <Col xs={12}>
+                {loadingInfoTurma?
+                <div className="loader"  style={{margin:'0px auto'}}></div>
+                :
+                <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                    {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                    <i className="fa fa-angle-left ml-2 mr-2"/> Submissões
+                </h5>                        
+                }
+            </Col>
+        </Row>
+        <Row mb={15}>
+          <Col xs={12} mb={3}>
             <InputGroup
               placeholder={`Perquise pelo ${
                 fieldFilter === "name"
@@ -219,10 +221,10 @@ export default class HomesubmissoesScreen extends Component {
               clearContentInputSeach={this.clearContentInputSeach.bind(this)}
               loading={loadingSubmissoes}
             />
-          </div>
-        </div>
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
+          </Col>
+        </Row>
+        <Row mb={15}>
+          <Col xs={12}>
             <table style={lista} className="table table-hover table-responsive">
               <thead>
                 <tr>
@@ -310,17 +312,17 @@ export default class HomesubmissoesScreen extends Component {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12 text-center">
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} textCenter>
             <NavPagination
               totalPages={totalPages}
               pageAtual={numPageAtual}
-              handlePage={this.handlePage}
+              handlePage={this.handlePage.bind(this)}
             />
-          </div>
-        </div>
+          </Col>
+        </Row>
 
         <SwalModal
           show={showModalInfo}
@@ -328,7 +330,7 @@ export default class HomesubmissoesScreen extends Component {
           handleModal={this.handleCloseshowModalInfo.bind(this)}
           width={"100%"}
         >
-          <div className="row">
+          <Row>
             <div className="col-12 offset-md-2 col-md-8 text-center">
               <AceEditor
                 mode={
@@ -345,7 +347,7 @@ export default class HomesubmissoesScreen extends Component {
                 editorProps={{ $blockScrolling: true }}
               />
             </div>
-          </div>
+          </Row>
         </SwalModal>
       </TemplateSistema>
     );

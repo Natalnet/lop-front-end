@@ -303,29 +303,29 @@ export default class Pagina extends Component {
     } = this.state;
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-12">
-            {loadingInfoTurma ? (
-              <div className="loader" style={{ margin: "0px auto" }}></div>
-            ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
-              </h3>
-            )}
-          </div>
-        </div>
+        <Row mb={15}>
+            <Col xs={12}>
+                {loadingInfoTurma?
+                <div className="loader"  style={{margin:'0px auto'}}></div>
+                :
+                <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                    {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                    <i className="fa fa-angle-left ml-2 mr-2"/> Listas
+                </h5>                        
+                }
+            </Col>
+        </Row>
 
-        <div className="row" style={{ marginBottom: "15px" }}>
-          <div className="col-3">
+        <Row mb={15}>
+          <Col xs={12}>
             <button
               className={`btn btn-primary ${loandingListas && "btn-loading"}`}
               onClick={() => this.handleShowModalListas()}
             >
               Adicionar novas listas <i className="fa fa-plus-circle" />
             </button>
-          </div>
-        </div>
+          </Col>
+        </Row>
 
         <Row mb={15}>
           {loandingListas ? (
@@ -385,7 +385,7 @@ export default class Pagina extends Component {
           <Modal.Body>
             <Fragment>
               <Row mb={15}>
-                <div className=" col-12">
+                <Col xs={12}>
                   <InputGroup
                     placeholder={`Perquise pelo ${
                       fieldFilter === "title"
@@ -409,14 +409,15 @@ export default class Pagina extends Component {
                     )}
                     loading={loandingTodasListas}
                   />
-                </div>
+                </Col>
               </Row>
-              <div className="row">
+              <Row>
                 {loandingTodasListas ? (
                   <div className="loader" style={{ margin: "0px auto" }} />
                 ) : (
                   todasListas.map((lista, index) => (
-                    <div key={index} className="col-12">
+                    <Fragment key={lista.id}>
+                    <Col xs={12}>
                       <Card>
                         <CardHead>
                           <CardTitle>
@@ -447,29 +448,35 @@ export default class Pagina extends Component {
                         </CardHead>
                         <div className="collapse" id={"collapse" + lista.id}>
                           <CardBody>
-                            <b>Questões: </b> <br />
-                            <br />
-                            {lista.questions.map((questoes, index) => (
-                              <div key={index}>
-                                <p>{index + 1 + " - " + questoes.title}</p>
-                              </div>
+                            <Row>
+                              <b>Questões: </b> 
+                            </Row>
+                            <Row>
+                            {lista.questions.map((questao, index) => (
+                              <Fragment key={questao.id}>
+                                <Col xs={12}>
+                                  <p>{index + 1 + " - " + questao.title}</p>
+                                </Col>
+                              </Fragment>
                             ))}
+                            </Row>
                           </CardBody>
                         </div>
                       </Card>
-                    </div>
+                    </Col>
+                    </Fragment>
                   ))
                 )}
-              </div>
-              <div className="row">
-                <div className="col-12 text-center">
+              </Row>
+              <Row>
+                <Col xs={12} textCenter>
                   <NavPagination
                     totalPages={totalPages}
                     pageAtual={numPageAtual}
                     handlePage={this.handlePage.bind(this)}
                   />
-                </div>
-              </div>
+                </Col>
+              </Row>
             </Fragment>
           </Modal.Body>
           <Modal.Footer>

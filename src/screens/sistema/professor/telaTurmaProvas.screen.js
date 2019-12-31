@@ -239,48 +239,46 @@ export default class Provas extends Component {
         const {contentInputSeach,fieldFilter,showModalProvas,questions,showModalInfo,loandingProvas} = this.state
         return (
         <TemplateSistema {...this.props} active={'provas'} submenu={'telaTurmas'}>
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-12">
-                        {loadingInfoTurma?
-                            <div className="loader"  style={{margin:'0px auto'}}></div>
-                            :
-                            <h3 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}</h3>
-                        }
-                    </div>
-                </div>
-
-                <div className="row" style={{marginBottom:'15px'}}>
-                    <div className="col-3">
-                    <button className={`btn btn-primary ${loandingProvas && 'btn-loading'}`} onClick={()=>this.handleshowModalProvas()}>
-                         Adicionar novas provas <i className="fa fa-plus-circle" />
-                    </button>
-                    </div>
-                </div>
-
-                <Row mb={15}>
-                    
-                    {loandingProvas
-                    ?
-                        <div className="loader"  style={{margin:'0px auto'}}></div>
+            <Row mb={15}>
+                <Col xs={12}>
+                    {loadingInfoTurma?
+                    <div className="loader"  style={{margin:'0px auto'}}></div>
                     :
+                    <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                        {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                        <i className="fa fa-angle-left ml-2 mr-2"/> Provas
+                    </h5>                        
+                    }
+                </Col>
+            </Row>
 
-                    provas.map((prova,i)=>{
-                        const questions = prova.questions
-                        const questionsCompleted = prova.questions.filter(q=>q.completedSumissionsCount>0)
-                        return(
-                        <Fragment key={prova.id}>
-                        <Col xs={12}>
+            <Row mb={15}>
+                <Col xs={3}>
+                <button className={`btn btn-primary ${loandingProvas && 'btn-loading'}`} onClick={()=>this.handleshowModalProvas()}>
+                        Adicionar novas provas <i className="fa fa-plus-circle" />
+                </button>
+                </Col>
+            </Row>
+            <Row mb={15}>
+                {loandingProvas
+                ?
+                    <div className="loader"  style={{margin:'0px auto'}}></div>
+                :
+
+                provas.map((prova,i)=>{
+                    return(
+                    <Fragment key={prova.id}>
+                    <Col xs={12}>
                         <Card key={prova.id} style={{margin:'2px'}}>
                             <CardHead>
                                 <Col xs={5}>
                                     <h4 style={{margin:'0px'}}><b>{prova.title}</b></h4>
                                 </Col>
                                 <ProgressBar 
-                                  numQuestions={questions.length}
-                                  numQuestionsCompleted={questionsCompleted.length}
-                                  dateBegin={prova.classHasTest.createdAt}
+                                    numQuestions={prova.questionsCount}
+                                    numQuestionsCompleted={prova.questionsCompletedSumissionsCount}
+                                    dateBegin={prova.classHasTest.createdAt}
                                 />
-                                
                                 <CardOptions>
                                     <Link to={`/professor/turma/${this.props.match.params.id}/prova/${prova.id}`}>
                                         <button className="btn btn-success mr-2">
@@ -294,104 +292,106 @@ export default class Provas extends Component {
                             </CardHead>
 
                         </Card>
-                        </Col>
-                        </Fragment>
-                        )
-                    })
-                    }
-                    
+                    </Col>
+                    </Fragment>
+                    )
+                })
+                }
+                
+            </Row>
+
+            <Modal
+                show={showModalProvas} onHide={this.handleCloseshowModalProvas.bind(this)}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                    Provas
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <>
+                <Row mb={15}>
+                    <Col xs={12}> 
+                        <InputGroup
+                            placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
+                            value={contentInputSeach}
+                            handleContentInputSeach={this.handleContentInputSeach.bind(this)}
+                            filterSeash={this.filterSeash.bind(this)}
+                            handleSelect={this.handleSelectFieldFilter.bind(this)}
+                            options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
+                            clearContentInputSeach={this.clearContentInputSeach.bind(this)}
+                            loading={loandingTodasProvas}                            
+                        />
+                    </Col>
                 </Row>
-
-
-
-
-            
-
-                <Modal
-                  show={showModalProvas} onHide={this.handleCloseshowModalProvas.bind(this)}
-                  size="lg"
-                  aria-labelledby="contained-modal-title-vcenter"
-                  centered
-                >
-                    <Modal.Header>
-                      <Modal.Title id="contained-modal-title-vcenter">
-                        Provas
-                      </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                    <Fragment>
-                    <Row mb={15}>
-                        <div className=" col-12">     
-                            <InputGroup
-                                placeholder={`Perquise pelo ${fieldFilter==='title'?'Nome':fieldFilter==='code'?'Código':'...'}`}
-                                value={contentInputSeach}
-                                handleContentInputSeach={this.handleContentInputSeach.bind(this)}
-                                filterSeash={this.filterSeash.bind(this)}
-                                handleSelect={this.handleSelectFieldFilter.bind(this)}
-                                options={ [{value:'title',content:'Nome'},{value:'code',content:'Código'}] }
-                                clearContentInputSeach={this.clearContentInputSeach.bind(this)}
-                                loading={loandingTodasProvas}                            
-                            />
-                        </div>
-                    </Row>
-                    <div className="row">
-                        {loandingTodasProvas 
-                        ?        
-                            <div className="loader" style={{margin:'0px auto'}}/>
-                        :
-                            
-                            todasprovas.map((prova,index)=>(
-                                <div key={index} className="col-12"> 
-                                    <Card>
-                                        <CardHead>
-                                            <CardTitle>
-                                                {`${prova.title} - ${prova.code}`} 
-                                            </CardTitle>
-                                            <CardOptions>
-
-                                                <div className="btn-group  float-right" role="group" aria-label="Exemplo básico">
-                                                    <button className="btn-primary btn" onClick={()=>this.inserirProva(prova)} >Adicionar</button>
-                                                        <button
-                                                            className ="btn btn-primary"
-                                                            data-toggle="collapse" data-target={'#collapse'+prova.id}
-                                                            style={{position: "relative"}}
-                                                        >
-                                                        <i className="fe fe-chevron-down"/>
-                                                    </button>
-                                                </div>
-                                            </CardOptions>
-                                        </CardHead>
-                                        <div className="collapse" id={'collapse'+prova.id}>
-                                            <CardBody>
-                                                <b>Questões: </b> <br/><br/>
-                                                {prova.questions.map((questoes, index)=>(
-                                                    <div key={index}>
-                                                        <p>{index+1+" - "+questoes.title}</p>
-                                                    </div>
-                                                ))}
-                                            </CardBody>
-                                        </div>
-                                    </Card>
-                                </div>
-                            ))
-                            
-                        }
-                    </div>
-                    <div className='row'>
-                        <div className='col-12 text-center'>
-                            <NavPagination
-                              totalPages={totalPages}
-                              pageAtual={numPageAtual}
-                              handlePage={this.handlePage.bind(this)}
-                            />
-                        </div>
-                    </div>
-                </Fragment>
-                </Modal.Body>
-              <Modal.Footer>
-                <button className="btn btn-primary" onClick={this.handleCloseshowModalProvas.bind(this)}>Fechar</button>
-              </Modal.Footer>
-            </Modal>
+                <Row>
+                    {loandingTodasProvas 
+                    ?        
+                        <div className="loader" style={{margin:'0px auto'}}/>
+                    :
+                        
+                        todasprovas.map((prova,index)=>(
+                            <Fragment key={prova.id}> 
+                            <Col xs={12}> 
+                                <Card>
+                                    <CardHead>
+                                        <CardTitle>
+                                            {`${prova.title} - ${prova.code}`} 
+                                        </CardTitle>
+                                        <CardOptions>
+                                            <div className="btn-group  float-right" role="group" aria-label="Exemplo básico">
+                                                <button className="btn-primary btn" onClick={()=>this.inserirProva(prova)} >Adicionar</button>
+                                                    <button
+                                                        className ="btn btn-primary"
+                                                        data-toggle="collapse" data-target={'#collapse'+prova.id}
+                                                        style={{position: "relative"}}
+                                                    >
+                                                    <i className="fe fe-chevron-down"/>
+                                                </button>
+                                            </div>
+                                        </CardOptions>
+                                    </CardHead>
+                                    <div className="collapse" id={'collapse'+prova.id}>
+                                        <CardBody>
+                                            <Row>
+                                                <b>Exercícios: </b>
+                                            </Row>
+                                            <Row>
+                                            {prova.questions.map((questao)=>(
+                                                <Fragment key={questao.id}>
+                                                    <Col xs={12}>
+                                                        <p>{index+1+" - "+questao.title}</p>
+                                                    </Col>
+                                                </Fragment>
+                                            ))}
+                                            </Row>
+                                        </CardBody>
+                                    </div>
+                                </Card>
+                            </Col>
+                            </Fragment>
+                        ))
+                        
+                    }
+                </Row>
+                <Row mb={15}>
+                    <Col xs={12} textCenter>
+                        <NavPagination
+                            totalPages={totalPages}
+                            pageAtual={numPageAtual}
+                            handlePage={this.handlePage.bind(this)}
+                        />
+                    </Col>
+                </Row>
+            </>
+            </Modal.Body>
+            <Modal.Footer>
+            <button className="btn btn-primary" onClick={this.handleCloseshowModalProvas.bind(this)}>Fechar</button>
+            </Modal.Footer>
+        </Modal>
 
             <Modal
                 show={showModalInfo} onHide={this.handleCloseshowModalInfo.bind(this)}
@@ -405,7 +405,7 @@ export default class Provas extends Component {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <div className="row">            
+                <Row>            
                 {questions.map((questao, index)=>(
                     <div key={index} className="col-6"> 
                         <Card >
@@ -435,7 +435,7 @@ export default class Provas extends Component {
                         </Card>
                     </div>
                 ))}
-                </div>      
+                </Row>      
                 
             </Modal.Body>
             <Modal.Footer>

@@ -25,7 +25,9 @@ export default class HomesubmissoesScreen extends Component {
       submissoes: [],
       usuario : null,
       myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
-      turma:"",        
+      turma:"",
+      prova:"",
+      questao:"",
       showModal: false,
       loadingSubmissoes: false,
       numPageAtual: 1,
@@ -84,9 +86,6 @@ export default class HomesubmissoesScreen extends Component {
     try {
       if (loading) this.setState({ loadingSubmissoes: true });
       const response = await api.get(`/submissions/page/${numPageAtual}${query}`);
-      /*const response = await api.get(
-        `/submissions/class/${id}/user/${idUser}/test/${idProva}/question/${idExercicio}/page/${numPageAtual}${query}`
-      );*/
       console.log("todas submissoes:");
       console.log(response.data);
       this.setState({
@@ -95,7 +94,9 @@ export default class HomesubmissoesScreen extends Component {
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
         loadingSubmissoes: false,
-        usuario : response.data.user
+        usuario : response.data.user,
+        prova: response.data.test,
+        questao: response.data.question
       });
     } catch (err) {
       this.setState({ loadingSubmissoes: false });
@@ -128,6 +129,8 @@ export default class HomesubmissoesScreen extends Component {
     const {
       submissoes,
       showModalInfo,
+      prova,
+      questao,
       loadingSubmissoes,
       numPageAtual,
       totalPages,
@@ -143,16 +146,33 @@ export default class HomesubmissoesScreen extends Component {
         submenu={"telaTurmas"}
       >
         <Row mb={15}>
-            {loadingInfoTurma || loadingSubmissoes?(
+          <Col xs={12}>
+            {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-                <Col xs={12}>
-                    <h3 style={{ margin: "0px" }}>
-                      <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                      {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} | {usuario && usuario.name} - {usuario && usuario.enrollment}
-                    </h3>
-                </Col>
+              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                <Link to={`/professor/turma/${this.props.match.params.id}/participantes`}>
+                  Participantes
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas`}
+                >
+                  {usuario?`${usuario.name} - ${usuario.enrollment}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/provas/${this.props.match.params.idProva}/exercicios`}
+                >
+                  {prova?`${prova.title}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                {questao?`${questao.title}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}  
+              </h5>
             )}
+          </Col>
         </Row>
         <Row mb={15}>
           <Col xs={12}>

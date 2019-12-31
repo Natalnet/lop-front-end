@@ -141,34 +141,27 @@ export default class Exercicios extends Component {
 
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
-        <>
         <Row mb={15}>
           <Col xs={12}>
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
-              </h3>
+              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                <Link to={`/professor/turma/${this.props.match.params.id}/listas`}>
+                  Listas
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                {lista?lista.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+              </h5>
             )}
           </Col>
         </Row>
         <Row mb={15}>
           <Col xs={6}>
-            <Link
-              to={`/professor/turma/${this.props.match.params.id}/listas`}
-            >
-              <button className="btn btn-success mr-2">
-                <i className="fa fa-arrow-left" /> Voltar para listas{" "}
-                <i className="fa fa-file-text" />
-              </button>
-            </Link>
-          </Col>
-          <Col xs={6}>
             <button
               className={`btn btn-primary ${loandingLista && 'btn-loading'}`}
-              style={{float:'right'}}
               onClick={()=>this.handleShowModalDate()}
             >
               {lista && dateLimit?
@@ -179,8 +172,6 @@ export default class Exercicios extends Component {
             </button>
           </Col>
         </Row>
-
-        </>
         {loandingLista ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (

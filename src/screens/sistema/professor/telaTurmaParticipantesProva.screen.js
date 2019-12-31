@@ -90,31 +90,28 @@ export default class Exercicios extends Component {
         submenu={"telaTurmas"}
       >
         <Row mb={15}>
-          {loadingInfoTurma || loandingProva ? (
-            <div className="loader" style={{ margin: "0px auto" }}></div>
-          ) : (
-            <Col xs={12}>
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} | {" "}
-                {usuario && usuario.name} - {usuario && usuario.enrollment}
-              </h3>
-            </Col>
-          )}
-        </Row>
-        <Row mb={15}>
           <Col xs={12}>
-            <Link
-              to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas`}
-            >
-              <button className="btn btn-success mr-2">
-                <i className="fa fa-arrow-left" /> Voltar para listas e provas{" "}
-                <i className="fa fa-file-text" />
-              </button>
-            </Link>
+            {loadingInfoTurma ? (
+              <div className="loader" style={{ margin: "0px auto" }}></div>
+            ) : (
+              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                <Link to={`/professor/turma/${this.props.match.params.id}/participantes`}>
+                  Participantes
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas`}
+                >
+                  {usuario?`${usuario.name} - ${usuario.enrollment}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                {prova?`${prova.title}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+              </h5>
+            )}
           </Col>
         </Row>
-
         {loandingProva ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (

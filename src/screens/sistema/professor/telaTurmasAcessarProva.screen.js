@@ -149,31 +149,29 @@ export default class Exercicios extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h3 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
-              </h3>
+              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+              {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+              <i className="fa fa-angle-left ml-2 mr-2"/> 
+              <Link to={`/professor/turma/${this.props.match.params.id}/provas`}>
+                Provas
+              </Link>
+              <i className="fa fa-angle-left ml-2 mr-2"/>
+              {prova?prova.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+            </h5>
             )}
           </Col>
         </Row>
+
         {loandingProva ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>
             <Row mb={15}>
               <Col xs={12}>
-                <Link
-                  to={`/professor/turma/${this.props.match.params.id}/provas`}
-                >
-                  <button className="btn btn-success mr-2">
-                    <i className="fa fa-arrow-left" /> Voltar para as Provas{" "}
-                    <i className="fa fa-file-text" />
-                  </button>
-                </Link>
+
                 {prova && prova.status === "FECHADA" ? (
                   <button
                     className="btn btn-primary"
-                    style={{ float: "right" }}
                     onClick={e => this.aplicarProva()}
                   >
                     Aplicar prova <i className="fa fa-file-text" />
@@ -181,7 +179,6 @@ export default class Exercicios extends Component {
                 ) : (
                   <button
                     className="btn btn-danger"
-                    style={{ float: "right" }}
                     onClick={e => this.recolherProva()}
                   >
                     Recolher Prova <i className="fa fa-file-text" />

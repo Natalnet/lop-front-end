@@ -331,7 +331,7 @@ export default class criarProvaScreen extends Component {
                               <td style={{display: 'inline-flex'}}>
                                 <button
                                   type="button"
-                                  className="btn btn-primary mr-2"
+                                  className="btn btn-primary mr-2t"
                                   onClick={() =>
                                     this.handleShowModalInfo(questao)
                                   }
@@ -438,17 +438,24 @@ export default class criarProvaScreen extends Component {
                 <CardTitle>{question.title}</CardTitle>
               </CardHead>
                 <CardBody>
-                    <b>Descrição: </b> <br/>
+                  <Row>
+                    <b>Descrição: </b>
+                  </Row>
+                  <Row>
                     {question.description}
-                    <BlockMath>{question.katexDescription|| ''}</BlockMath>
-                    <br/>
-                    <Row>
-                      <Col xs={12} >
-                          <TableIO
-                            results={question.results || []}
-                          />
-                      </Col>
-                    </Row>
+                  </Row>
+                  <Row>
+                    <Col xs={12} textCenter>
+                      <BlockMath>{question.katexDescription|| ''}</BlockMath>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={12} >
+                        <TableIO
+                          results={question.results || []}
+                        />
+                    </Col>
+                  </Row>
                 </CardBody>
             </Card>
           </SwalModal>

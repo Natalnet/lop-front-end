@@ -31,30 +31,29 @@ export default class Listas extends Component {
     const {turma} = this.state
     document.title = `${turma && turma.name} - listas`;
   }
-  async getInfoTurma() {
-    const id = this.props.match.params.id;
-    const { turma } = this.state;
-    if (!turma || (turma && turma.id !== id)) {
-      try {
-        const response = await api.get(`/class/${id}`);
-        const turmaData = {
-          id: response.data.id,
-          name: response.data.name,
-          year: response.data.year,
-          semester: response.data.semester,
-          languages: response.data.languages
-        };
+  async getInfoTurma(){
+    const id = this.props.match.params.id
+    const {myClasses} = this.state
+    if(myClasses && typeof myClasses==="object"){
+        const index = myClasses.map(c=>c.id).indexOf(id)
+        if(index!==-1){
+            this.setState({
+                turma:myClasses[index]
+            })
+        }
+        this.setState({loadingInfoTurma:false})
+        return null
+    }
+    try{
+        const response = await api.get(`/class/${id}`)
         this.setState({
-          turma: turmaData,
-          loadingInfoTurma: false
-        });
-        sessionStorage.setItem("turma", JSON.stringify(turmaData));
-      } catch (err) {
-        this.setState({ loadingInfoTurma: false });
+            turma:response.data,
+            loadingInfoTurma:false,
+        })
+    }
+    catch(err){
+        this.setState({loadingInfoTurma:false})
         console.log(err);
-      }
-    } else {
-      this.setState({ loadingInfoTurma: false });
     }
   }
   async getListas() {
@@ -113,118 +112,107 @@ export default class Listas extends Component {
         active={"participantes"}
         submenu={"telaTurmas"}
       >
-        <Fragment>
-          <Row mb={15}>
-            {loadingInfoTurma || loandingListas || loandingProvas? (
+        <Row mb={15}>
+          <Col xs={12}>
+            {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <Col xs={12}>
-                <h3 style={{ margin: "0px" }}>
-                  <i className="fa fa-users mr-2" aria-hidden="true" />{" "}
-                  {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} |{" "}
-                  {usuario && usuario.name} - {usuario && usuario.enrollment}
-                </h3>
-              </Col>
+              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                <i className="fa fa-angle-left ml-2 mr-2"/> 
+                <Link to={`/professor/turma/${this.props.match.params.id}/participantes`}>
+                  Participantes
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2"/>
+                {usuario?`${usuario.name} - ${usuario.enrollment}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+              </h5>
             )}
-          </Row>
+          </Col>
+        </Row>
+        {loandingListas ? (
+          <div className="loader" style={{ margin: "0px auto" }}></div>
+        ) : (
+          <Fragment>
+            <Row mb={10}>
+              <Col md={12} textCenter>
+                <h4 style={{ margin: "0px" }}>Listas</h4>
+              </Col>
+            </Row>
+            <Row mb={15}>
+              {listas.map((lista, i) => {
+                return (
+                  <Fragment key={lista.id}>
+                    <Col xs={12}>
+                      <Card key={lista.id} style={{ margin: "2px" }}>
+                        <CardHead>
+                          <Col xs={5}>
+                            <h4 style={{ margin: "0px" }}>
+                              <b>{lista.title}</b>
+                            </h4>
+                          </Col>
+                          <ProgressBar 
+                              numQuestions={lista.questionsCount}
+                              numQuestionsCompleted={lista.questionsCompletedSumissionsCount}
+                              dateBegin={lista.classHasListQuestion.createdAt}
+                              dateEnd={lista.classHasListQuestion.submissionDeadline}
+                          />
+                          <CardOptions>
+                            <Link
+                              to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario && usuario.id}/listas/${lista.id}/exercicios`}
+                            >
+                              <button className="btn btn-success">
+                                Acessar <i className="fa fa-wpexplorer" />
+                              </button>
+                            </Link>
+                          </CardOptions>
+                        </CardHead>
+                      </Card>
+                    </Col>
+                  </Fragment>
+                );
+              })}
+            </Row>
+            <Row mb={10}>
+              <Col md={12} textCenter>
+                <h4 style={{ margin: "0px" }}>Provas</h4>
+              </Col>
+            </Row>
+            <Row mb={15}>
+              {provas.map((prova, i) => {
 
-          <Row mb={15}>
-            <Col xs={12}>
-              <Link
-                to={`/professor/turma/${this.props.match.params.id}/participantes`}
-              >
-                <button className="btn btn-success mr-2">
-                  <i className="fa fa-arrow-left" /> Voltar aos participantes
-                </button>
-              </Link>
-            </Col>
-          </Row>
-
-          {loandingListas ? (
-            <div className="loader" style={{ margin: "0px auto" }}></div>
-          ) : (
-            <Fragment>
-              <Row mb={10}>
-                <Col md={12} textCenter>
-                  <h4 style={{ margin: "0px" }}>Listas</h4>
-                </Col>
-              </Row>
-              <Row mb={15}>
-                {listas.map((lista, i) => {
-                  return (
-                    <Fragment key={lista.id}>
-                      <Col xs={12}>
-                        <Card key={lista.id} style={{ margin: "2px" }}>
-                          <CardHead>
-                            <Col xs={5}>
-                              <h4 style={{ margin: "0px" }}>
-                                <b>{lista.title}</b>
-                              </h4>
-                            </Col>
-                            <ProgressBar 
-                                numQuestions={lista.questionsCount}
-                                numQuestionsCompleted={lista.questionsCompletedSumissionsCount}
-                                dateBegin={lista.classHasListQuestion.createdAt}
-                                dateEnd={lista.classHasListQuestion.submissionDeadline}
-                            />
-                            <CardOptions>
-                              <Link
-                                to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario && usuario.id}/listas/${lista.id}/exercicios`}
-                              >
-                                <button className="btn btn-success">
-                                  Acessar <i className="fa fa-wpexplorer" />
-                                </button>
-                              </Link>
-                            </CardOptions>
-                          </CardHead>
-                        </Card>
-                      </Col>
-                    </Fragment>
-                  );
-                })}
-              </Row>
-              <Row mb={10}>
-                <Col md={12} textCenter>
-                  <h4 style={{ margin: "0px" }}>Provas</h4>
-                </Col>
-              </Row>
-              <Row mb={15}>
-                {provas.map((prova, i) => {
-
-                  return (
-                    <Fragment key={prova.id}>
-                      <Col xs={12}>
-                        <Card key={prova.id} style={{ margin: "2px" }}>
-                          <CardHead>
-                            <Col xs={5}>
-                              <h4 style={{ margin: "0px" }}>
-                                <b>{prova.title}</b>
-                              </h4>
-                            </Col>
-                            <ProgressBar 
-                              numQuestions={prova.questionsCount}
-                              numQuestionsCompleted={prova.questionsCompletedSumissionsCount}
-                              dateBegin={prova.classHasTest.createdAt}
-                            />
-                            <CardOptions>
-                              <Link
-                                to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario && usuario.id}/provas/${prova.id}/exercicios`}
-                              >
-                                <button className="btn btn-success">
-                                  Acessar <i className="fa fa-wpexplorer" />
-                                </button>
-                              </Link>
-                            </CardOptions>
-                          </CardHead>
-                        </Card>
-                      </Col>
-                    </Fragment>
-                  );
-                })}
-              </Row>
-            </Fragment>
-          )}
-        </Fragment>
+                return (
+                  <Fragment key={prova.id}>
+                    <Col xs={12}>
+                      <Card key={prova.id} style={{ margin: "2px" }}>
+                        <CardHead>
+                          <Col xs={5}>
+                            <h4 style={{ margin: "0px" }}>
+                              <b>{prova.title}</b>
+                            </h4>
+                          </Col>
+                          <ProgressBar 
+                            numQuestions={prova.questionsCount}
+                            numQuestionsCompleted={prova.questionsCompletedSumissionsCount}
+                            dateBegin={prova.classHasTest.createdAt}
+                          />
+                          <CardOptions>
+                            <Link
+                              to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario && usuario.id}/provas/${prova.id}/exercicios`}
+                            >
+                              <button className="btn btn-success">
+                                Acessar <i className="fa fa-wpexplorer" />
+                              </button>
+                            </Link>
+                          </CardOptions>
+                        </CardHead>
+                      </Card>
+                    </Col>
+                  </Fragment>
+                );
+              })}
+            </Row>
+          </Fragment>
+        )}
       </TemplateSistema>
     );
   }
