@@ -14,6 +14,8 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
+
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
@@ -30,7 +32,7 @@ export default class HomeExerciciosScreen extends Component {
         this.state = {
             contentInputSeach:'',
             exercicios: [],
-            showModal:false,
+            showModalInfo:false,
             loadingExercicios:false,
             fieldFilter:'title',
             numPageAtual:1,
@@ -182,7 +184,7 @@ export default class HomeExerciciosScreen extends Component {
                                     <tr key={index}>
                                         <td>{exercicio.title}</td>
                                         <td>{exercicio.code}</td>
-                                        <td>{`(${exercicio.submissions.countCorrects}/${exercicio.submissions.count})`}</td>
+                                        <td>{`(${exercicio.submissionsCorrectsCount}/${exercicio.submissionsCount})`}</td>
 
                                         <td>{exercicio.author.email}</td>
                                         <td>{formataData(exercicio.createdAt)}</td>
@@ -212,40 +214,53 @@ export default class HomeExerciciosScreen extends Component {
                         />
                     </Col>
                 </Row>
-            <SwalModal
-                show={showModalInfo}
-                title="Exercício"
-                handleModal={this.handleCloseshowModalInfo.bind(this)}
-                width={'90%'}
-            >
-            <Card>
-                <CardHead>
-                    <CardTitle>
-                        {question.title}
-                    </CardTitle>
-                </CardHead>
-                <CardBody>
-                    <Row>
-                        <b>Descrição: </b>
-                    </Row>
-                    <Row>
-                        {question.description}
-                    </Row>
-                    <Row>
-                        <Col xs={12} textCenter>
-                            <BlockMath>{question.katexDescription|| ''}</BlockMath>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12}>
-                          <TableIO
-                            results={question.results || []}
-                          />
-                        </Col>
-                    </Row>
-                </CardBody>
-            </Card>
-            </SwalModal>
+                <SwalModal
+                    show={showModalInfo}
+                    title="Exercício"
+                    handleModal={this.handleCloseshowModalInfo.bind(this)}
+                    width={'90%'}
+                >
+                <Card>
+                    <CardHead>
+                        <CardTitle>
+                            {question.title}
+                        </CardTitle>
+                    </CardHead>
+                    <CardBody>
+                        <Row>
+                            <b>Descrição: </b>
+                        </Row>
+                        <Row>
+                            {question.description}
+                        </Row>
+                        <Row>
+                            <Col xs={12} textCenter>
+                                <BlockMath>{question.katexDescription|| ''}</BlockMath>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col xs={12}>
+                            <TableIO
+                                results={question.results || []}
+                            />
+                            </Col>
+                        </Row>
+                    </CardBody>
+                    <CardFooter>
+                        <Row>
+                            <Col xs={12} mb={15}>
+                                <b>Autor:</b> {question && question.author.email} 
+                            </Col>
+                            <Col xs={12} mb={15}>
+                                <b>Tags: </b> {question && question.tags.join(", ")}
+                            </Col>
+                            <Col xs={12}>
+                                <b>Data de criação:</b> {question && formataData(question.createdAt)} 
+                            </Col>
+                        </Row>
+                    </CardFooter>
+                </Card>
+                </SwalModal>
         </TemplateSistema>
         )
     }

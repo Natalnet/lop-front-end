@@ -3,10 +3,6 @@ import React from 'react'
 export default props =>{
 	const {placeholder,value,filterSeash,handleContentInputSeach,handleSelect,options,loading,clearContentInputSeach} = props
 	return(
-        <form onSubmit={(e)=> {
-            e.preventDefault()
-            return filterSeash(e)
-        }}>
         <div className="input-group">
             <input 
                 type="text" 
@@ -26,8 +22,9 @@ export default props =>{
             </div>
             <button 
                 className={`btn btn-secondary btn-outline-secondary `}                            
-                type="submit" 
+                type="button" 
                 id="button-addon2"
+                onClick={()=> filterSeash()}
             >
                 <i className="fe fe-search" />
             </button>
@@ -40,6 +37,5 @@ export default props =>{
                 <i className="fe fe-refresh-cw" />
             </button>
         </div>
-        </form>
 	)
 }

@@ -325,7 +325,7 @@ export default class criarProvaScreen extends Component {
                             <tr key={questao.id}>
                               <td>{questao.title}</td>
                               <td>{questao.code}</td>
-                              <td>{`(${questao.submissions.countCorrects}/${questao.submissions.count})`}</td>
+                              <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
                               <td>{questao.author.email}</td>
                               <td>{formataData(questao.createdAt)}</td>
                               <td style={{display: 'inline-flex'}}>
@@ -394,7 +394,7 @@ export default class criarProvaScreen extends Component {
                         <tr key={index}>
                           <td>{questao.title}</td>
                           <td>{questao.code}</td>
-                          <td>{`(${questao.submissions.countCorrects}/${questao.submissions.count})`}</td>
+                          <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
                           <td>{questao.author.email}</td>
                           <td>{formataData(questao.createdAt)}</td>
                           <td>
