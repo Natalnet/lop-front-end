@@ -9,9 +9,9 @@ import React, { Component } from "react";
 
 export default class CardBody extends Component {
   render() {
-  	const {loading,children} = this.props
+  	const {loading,children,overflow} = this.props
     return (
-      <div className='card-body' style={{overflow:'auto'}}>
+      <div className='card-body' style={{overflow:overflow?overflow:'auto'}}>
       	{loading
       	?
       		<div className="loader"  style={{margin:'0px auto'}}></div>
