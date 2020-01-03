@@ -269,12 +269,12 @@ export default class TurmasScreen extends Component {
                       <div
                         className="loader"
                         style={{ margin: "0px auto", paddingTop: "170px" }}
-                      ></div>
+                      />
                     </Card>
                   </Col>
                 </Fragment>
               ))
-            : minhasTurmas.map((turma, index) => (
+            : minhasTurmas.map((turma) => (
                 <Fragment key={turma.id}>
                   <Col xs={12} lg={6}>
                     <Card>
@@ -294,7 +294,7 @@ export default class TurmasScreen extends Component {
                       </div>
                       <CardFooter>
                         <div className="col-6" style={{ float: "left" }}>
-                          <Switch status={turma.state} />
+                          <Switch status={turma.state} id={turma.id}/>
                         </div>
                         <div
                           className="col-6"
