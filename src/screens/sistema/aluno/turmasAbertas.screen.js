@@ -247,7 +247,7 @@ export default class HomeAlunoScreen extends Component {
               filterSeash={this.filterSeash.bind(this)}
               handleSelect={this.handleSelectFieldFilter.bind(this)}
               options={[{ value: "code", content: "Código" }]}
-              clearcode={this.clearcode.bind(this)}
+              clearContentInputSeach ={this.clearcode.bind(this)}
               loading={loandingTurmasAbertas}
             />
           </Col>

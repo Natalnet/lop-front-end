@@ -27,7 +27,7 @@ export default props => {
           await api.put(`/class/${id}/update`,request)
           Swal.fire({
             type: "success",
-            title: "Testado a turma atalizado com sucesso!"
+            title: "Estado da turma atualizado com sucesso!"
           });
           console.log("ok")
         }
