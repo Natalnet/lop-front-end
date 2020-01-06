@@ -7,7 +7,6 @@ export const PrivateRoutes = ({ component: Component,perfil, ...rest }) => (
     render={props =>
       !sessionStorage.getItem("auth-token") ||
       !sessionStorage.getItem("user.name") ||
-      !sessionStorage.getItem("user.enrollment") ||
       !sessionStorage.getItem("user.email") ||
       !sessionStorage.getItem("user.id") ||
       !sessionStorage.getItem("user.profile")

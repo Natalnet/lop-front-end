@@ -104,7 +104,7 @@ export default class Exercicios extends Component {
                 <Link
                   to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas`}
                 >
-                  {usuario?`${usuario.name} - ${usuario.enrollment}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                  {usuario?`${usuario.name} `:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
                 </Link>
                 <i className="fa fa-angle-left ml-2 mr-2"/>
                 {lista?`${lista.title}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}

@@ -1,23 +1,23 @@
 import React from "react";
 
-function colorLinguagem(linguagens) {
-  if (linguagens === "javascript") {
+function colorLinguagem(linguagem) {
+  if (linguagem === "javascript") {
     return (
       <span
         className="badge badge-pill badge-success"
         style={{ backgroundColor: "#F6E03A" }}
       >
-        {linguagens}
+        {linguagem}
       </span>
     );
   }
-  if (linguagens === "cpp") {
+  if (linguagem === "cpp") {
     return (
       <span
         className="badge badge-pill badge-success"
         style={{ backgroundColor: "#6599D2" }}
       >
-        {linguagens}
+        {linguagem}
       </span>
     );
   }

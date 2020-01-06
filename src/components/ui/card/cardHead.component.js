@@ -11,10 +11,10 @@ import React, { Component } from "react";
 export default class CardHead extends Component {
    
   render() {
-    let {children,onClick,style} = this.props
+    let {children,onClick,style,variant} = this.props
     style = style || {}
     return (
-      <div className="card-header" onClick={()=>onClick()} style={style}>
+      <div className={`card-${variant|| "header"}`} onClick={()=>onClick && onClick()} style={style}>
         {children}
       </div>
     );

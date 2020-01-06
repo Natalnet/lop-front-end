@@ -4,11 +4,13 @@ import Swal from "sweetalert2";
 
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/TurmasAbertasAlunos/cardHead.component";
-import CardOptions from "components/ui/card/TurmasAbertasAlunos/cardOptions.component";
-//import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/TurmasAbertasAlunos/cardBody.component";
-import CardFooter from "components/ui/card/TurmasAbertasAlunos/cardFooter.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardTitle from "components/ui/card/cardTitle.component"
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
+import IconCPP from "../../../assets/icons/icons-cpp.svg"
+import IconJS from "../../../assets/icons/icons-javascript.svg"
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -130,7 +132,25 @@ export default class HomeAlunoScreen extends Component {
     
   }
   async solicitarAcesso(idClass) {
-    const request = {idClass}
+    
+    const { value } = await Swal.fire({
+      title: "Informe sua matrícula da instituição na qual esssa turma pertence?",
+      confirmButtonText: "Ok",
+      cancelButtonText: "Cancelar",
+      input: "text",
+      showCancelButton: true,
+      inputValue: "", //valor inicial
+      inputValidator: value => {
+        if (!value) {
+          return "Você precisa fornecer sua matrícula";
+        }
+      }
+    });
+    if (!value) return null
+    const request = {
+      idClass,
+      enrollment:value
+    }
     try {
       Swal.fire({
         title: "Processando solicitação",
@@ -258,21 +278,72 @@ export default class HomeAlunoScreen extends Component {
                   <Fragment key={turma.id}>
                     <Col xs={12} lg={6}>
                       <Card>
-                        <CardHead
-                          name={turma.name}
-                          code={turma.code}
-                          semestre={turma.semester}
-                          ano={turma.year}
-                        />
-                        <div className="row">
-                          <div className="col-3">
-                            <CardOptions linguagens={turma.languages} />
-                          </div>
-                          <div className="col-9" style={{ paddingLeft: "0px" }}>
-                            <CardBody description={turma.description} />
-                          </div>
-                        </div>
+                        <CardHead      
+                          style={{
+                            backgroundColor: "rgba(190,190,190,0.2)",
+                            maxHeight: "56px",
+                            
+                          }}
+                        >
+                          <CardTitle>
+                              <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester}  
+                          </CardTitle>
+                          <CardOptions>
+                            <p
+                              style={{
+                                fontSize: "11px",
+                                fontWeight: "bold",
+                                margin:"0px"
+                              }}
+                            >
+                              Código: {turma.code}
+                            </p>
+                          </CardOptions>
+                        </CardHead>
+                        <CardBody style={{height:"110px"}}>
+                          <p>
+                            <b>Linguagens: </b>
+                            {turma.languages.map((language) => {
+                              const src= {
+                                cpp:IconCPP,
+                                javascript:IconJS
+                              }
+                              return (
+                                <img
+                                  className="ml-2"
+                                  width ="25px"
+                                  key={language}
+                                  src={src[language]}
+                                  alt={language}
+                                />
+                              )
+                            })
+                            }
+                          </p>
+                          <p><b>Descrição da turma:</b> &nbsp; {turma.description}</p>
+                        </CardBody>
                         <CardFooter>
+                          <div
+                            className="avatar d-block"
+                            style={{
+                              float: "left",
+                              margin: "5px 5px 5px 0px",
+                              backgroundImage: `url("https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"})`
+                            }}
+                          />
+                          <div
+                            style={{
+                              margin: "4px",
+                              alignItems: "center",
+                              textAlign: "left",
+                              float: "left",
+                              fontSize: "10px"
+                            }}
+                          >
+                            {turma.author.name}
+                            <div className="row" />
+                            {turma.author.email}
+                          </div>
                           {solicitacoes
                             .map(s => s.class_id)
                             .includes(turma.id) ? (
@@ -303,6 +374,23 @@ export default class HomeAlunoScreen extends Component {
                               Solicitar Acesso <i className="fa fa-users" /> +
                             </button>
                           )}
+                          <ul className="social-links list-inline mb-0 mt-2">
+                            <li
+                              className="list-inline-item  ml-4"
+                              title={`${turma.usersCount} participante(s)`}
+                            >
+                              <i className="fa fa-users mr-1" />
+                              {turma.usersCount}
+                            </li>
+                            <li className="list-inline-item" title={`${turma.listsCount} lista(s)`}>
+                              <i className="fe fe-file-text mr-1" />
+                              {turma.listsCount}
+                            </li>
+                            <li className="list-inline-item" title={`${turma.testsCount} prova(s)`}>
+                              <i className="fa fa-file-text-o mr-1" />
+                              {turma.testsCount}
+                            </li>
+                          </ul>
                         </CardFooter>
                       </Card>
                     </Col>
@@ -315,28 +403,3 @@ export default class HomeAlunoScreen extends Component {
   }
 }
 
-{
-  /* <CardFooter>
-
-{solicitacoes
-  .map(t => t.id)
-  .includes(turma.id) ? (
-  <button
-    onClick={() => this.cancelarSolicitacao(turma.id)}
-    className="btn btn-danger"
-    style={{ float: "right" }}
-  >
-    Cancelar solicitação <i className="fa fa-users" />{" "}
-    -
-  </button>
-) : (
-  <button
-    onClick={() => this.solicitarAcesso(turma.id)}
-    className="btn btn-primary"
-    style={{ float: "right" }}
-  >
-    Solicitar Acesso <i className="fa fa-users" /> +
-  </button>
-)}
-</CardFooter> */
-}

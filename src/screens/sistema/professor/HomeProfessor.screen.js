@@ -1,12 +1,16 @@
-import React, { Component, Fragment, useState } from "react";
+import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/TurmasProfessor/cardHead.component";
-import CardOptions from "components/ui/card/TurmasProfessor/cardOptions.component";
-//import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/TurmasProfessor/cardBody.component";
-import CardFooter from "components/ui/card/TurmasProfessor/cardFooter.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardTitle from "components/ui/card/cardTitle.component"
+import CardOptions from "components/ui/card/cardOptions.component";
+import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
+import IconCPP from "../../../assets/icons/icons-cpp.svg"
+import IconJS from "../../../assets/icons/icons-javascript.svg"
+import { range} from "../../../util/auxiliaryFunctions.util"
+import Swal from "sweetalert2";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
 import Row from "components/ui/grid/row.component";
@@ -14,7 +18,7 @@ import Col from "components/ui/grid/col.component";
 import api, { baseUrlBackend } from "../../../services/api";
 import socket from "socket.io-client";
 import Switch from "../../../components/ui/switch/switch.component";
-import Shimmer from "react-shimmer-effect";
+//import Shimmer from "react-shimmer-effect";
 
 /*const botaoV = {
   float: "right"
@@ -119,15 +123,33 @@ export default class TurmasScreen extends Component {
       this.getMinhasTurmas(false);
     });
   }
-  async handleShowDescription(id) {
-    console.log("descriptions");
-    const { descriptions } = this.state;
-    const index = descriptions.indexOf(id);
-    if (index === -1) {
-      await this.setState({ descriptions: [id, ...descriptions] });
-    } else {
-      await this.setState({
-        descriptions: [...descriptions.filter((desc, i) => i !== index)]
+  async handleState(state,idClass){
+    const request = {
+      updatedClass :{
+        state,
+      } 
+    }
+    try{
+      Swal.fire({
+        title: "Atualizando estado a turma",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      Swal.showLoading();
+      await api.put(`/class/${idClass}/update`,request)
+      Swal.fire({
+        type: "success",
+        title: "Estado da turma atualizado com sucesso!"
+      });
+      console.log("ok")
+    }
+    catch(err){
+      console.log(err)
+      Swal.hideLoading();
+      Swal.fire({
+        type: "error",
+        title: "Erro: Não foi possivel atualizar estado da turma"
       });
     }
   }
@@ -221,11 +243,7 @@ export default class TurmasScreen extends Component {
       totalPages
       //descriptions
     } = this.state;
-    const range = num => {
-      let arr = [];
-      for (let i = 0; i < num; i++) arr.push(i);
-      return arr;
-    };
+    
     return (
       <TemplateSistema active="home">
         <Row mb={24}>
@@ -278,54 +296,102 @@ export default class TurmasScreen extends Component {
                 <Fragment key={turma.id}>
                   <Col xs={12} lg={6}>
                     <Card>
-                      <CardHead
-                        name={turma.name}
-                        code={turma.code}
-                        semestre={turma.semester}
-                        ano={turma.year}
-                      />
-                      <div className="row">
-                        <div className="col-3">
-                          <CardOptions linguagens={turma.languages} />
-                        </div>
-                        <div className="col-9" style={{ paddingLeft: "0px" }}>
-                          <CardBody description={turma.description} />
-                        </div>
-                      </div>
-                      <CardFooter>
-                        <div className="col-6" style={{ float: "left" }}>
-                          <Switch status={turma.state} id={turma.id}/>
-                        </div>
-                        <div
-                          className="col-6"
-                          style={{ float: "right", padding: "0px" }}
-                        >
-                          <Link to={`/professor/turma/${turma.id}/editar`}>
-                            <button
-                              style={{
-                                float: "right",
-                                margin: "2px",
-                                backgroundColor: "white",
-                                color: "807D85",
-                                border: "solid 1px",
-                                borderColor: "#DFDFDF"
-                              }}
-                              className="btn  mr-2"
-                            >
-                              <i className="fa fa-edit" /> Editar
-                            </button>
-                          </Link>
-                          <Link
-                            to={`/professor/turma/${turma.id}/participantes`}
+                      <CardHead      
+                        style={{
+                          backgroundColor: "rgba(190,190,190,0.2)",
+                          maxHeight: "56px",
+                          
+                        }}
+                      >
+                        <CardTitle>
+                            <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester}  
+                        </CardTitle>
+                        <CardOptions>
+                          <p
+                            style={{
+                              fontSize: "11px",
+                              fontWeight: "bold",
+                              margin:"0px"
+                            }}
                           >
-                            <button
-                              style={{ float: "right", margin: "2px" }}
-                              className="btn btn-primary mr-2"
+                            Código: {turma.code}
+                          </p>
+                        </CardOptions>
+                      </CardHead>
+                      <CardBody style={{height:"110px"}}>
+                        <p>
+                          <b>Linguagens: </b>
+                          {turma.languages.map((language) => {
+                            const src= {
+                              cpp:IconCPP,
+                              javascript:IconJS
+                            }
+                            return (
+                              <img
+                                className="ml-2"
+                                width ="25px"
+                                key={language}
+                                src={src[language]}
+                                alt={language}
+                              />
+                            )
+                          })
+                          }
+                        </p>
+                        <p><b>Descrição da turma:</b> &nbsp; {turma.description}</p>
+                      </CardBody>
+                      <CardFooter>
+                        <div style={{display:"inline-flex"}}>
+                          <Switch 
+                            status={turma.state} 
+                            id={turma.id}
+                            style={{ margin: "auto 8px auto 0px"}}
+                            onChange={this.handleState.bind(this)}
+                          /> 
+                          <p style={{ margin: "8px 8px"}}>{turma.state}</p>
+                          <ul className="social-links list-inline mb-0 mt-2">
+                            <li
+                              className="list-inline-item  ml-4"
+                              title={`${turma.usersCount} participante(s)`}
                             >
-                              <i className="fe fe-corner-down-right" /> Entrar
-                            </button>
-                          </Link>
+                              <i className="fa fa-users mr-1" />
+                              {turma.usersCount}
+                            </li>
+                            <li className="list-inline-item" title={`${turma.listsCount} lista(s)`}>
+                              <i className="fe fe-file-text mr-1" />
+                              {turma.listsCount}
+                            </li>
+                            <li className="list-inline-item" title={`${turma.testsCount} prova(s)`}>
+                              <i className="fa fa-file-text-o mr-1" />
+                              {turma.testsCount}
+                            </li>
+                          </ul>
                         </div>
+                        <Link to={`/professor/turma/${turma.id}/editar`}>
+                          <button
+                            style={{
+                              float: "right",
+                              margin: "2px",
+                              backgroundColor: "white",
+                              color: "807D85",
+                              border: "solid 1px",
+                              borderColor: "#DFDFDF"
+                            }}
+                            className="btn  mr-2"
+                          >
+                            <i className="fa fa-edit" /> Editar
+                          </button>
+                        </Link>
+                        <Link
+                            to={`/professor/turma/${turma.id}/participantes`}
+                        >
+                          <button
+                            style={{ float: "right", margin: "2px" }}
+                            className="btn btn-primary mr-2"
+                          >
+                            <i className="fe fe-corner-down-right" /> Entrar
+                          </button>
+                        </Link>        
                       </CardFooter>
                     </Card>
                   </Col>

@@ -7,7 +7,7 @@ import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import formataData from "../../../util/funçoesAuxiliares/formataData";
+import {formatDate} from "../../../util/auxiliaryFunctions.util";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -203,7 +203,7 @@ export default class HomeProvasScreen extends Component {
                           <td>{prova.title}</td>
                           <td>{prova.code}</td>
                           <td>{prova.password}</td>
-                          <td>{formataData(prova.createdAt)}</td>
+                          <td>{formatDate(prova.createdAt)}</td>
                           <td className="text-center">
                             <button
                               className="btn btn-primary float-right"

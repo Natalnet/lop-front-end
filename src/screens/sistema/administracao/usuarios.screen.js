@@ -136,7 +136,6 @@ export default class HomeAdministradorScreen extends Component {
                    <th></th>
                    <th>Nome</th>
                    <th>Email</th>
-                   <th>Matrícula</th>
                    <th>Função</th>
                </tr>
            </thead>
@@ -169,7 +168,6 @@ export default class HomeAdministradorScreen extends Component {
                 </td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td>{user.enrollment}</td>
                 <td>
                   {user.id===sessionStorage.getItem('user.id')?
                     <select

@@ -1,5 +1,5 @@
 import React from "react";
-import formataData from '../../../util/funçoesAuxiliares/formataData'
+import {formatDate} from '../../../util/auxiliaryFunctions.util'
 
 export default props => {
   let {numQuestions,numQuestionsCompleted,width,dateBegin,dateEnd} = props
@@ -32,8 +32,8 @@ export default props => {
         </div>
         <div className="float-right">
           <small className="text-muted">
-            {dateBegin?formataData(dateBegin).split(' - ')[0]:''}
-            {dateEnd?` - ${formataData(dateEnd).split(' - ')[0]}`:''}
+            {dateBegin?formatDate(dateBegin).split(' - ')[0]:''}
+            {dateEnd?` - ${formatDate(dateEnd).split(' - ')[0]}`:''}
           </small>
         </div>
       </div>

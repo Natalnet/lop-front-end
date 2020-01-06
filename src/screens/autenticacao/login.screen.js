@@ -36,7 +36,6 @@ export default class LoginScreen extends Component {
       sessionStorage.setItem("user.profile", response.data.user.profile);
       sessionStorage.setItem("user.name", response.data.user.name);
       sessionStorage.setItem("user.email", response.data.user.email);
-      sessionStorage.setItem("user.enrollment", response.data.user.enrollment);
       this.props.history.push(`/${sessionStorage.getItem("user.profile").toLocaleLowerCase()}`)
 
     }

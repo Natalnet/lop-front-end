@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import generateHash from "../../../util/funçoesAuxiliares/generateHash";
+import {generateHash} from "../../../util/auxiliaryFunctions.util";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";

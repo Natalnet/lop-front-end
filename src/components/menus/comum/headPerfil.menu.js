@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 export default class HeadPefilMenu extends Component {
   render() {
     let profile = sessionStorage.getItem("user.profile");
-    let matricula = sessionStorage.getItem("user.enrollment");
     let nome = sessionStorage.getItem("user.name");
     return (
       <div className="d-flex">
@@ -40,7 +39,7 @@ export default class HeadPefilMenu extends Component {
               <span className="ml-2 d-none d-lg-block">
                 <span className="text-default">{nome}</span>
                 <small className="text-muted d-block mt-1">
-                  {profile} - {matricula}
+                  {profile}
                 </small>
               </span>
             </Link>

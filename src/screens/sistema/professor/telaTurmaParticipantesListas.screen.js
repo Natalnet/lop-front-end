@@ -124,12 +124,12 @@ export default class Listas extends Component {
                   Participantes
                 </Link>
                 <i className="fa fa-angle-left ml-2 mr-2"/>
-                {usuario?`${usuario.name} - ${usuario.enrollment}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                {usuario?`${usuario.name} `:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
               </h5>
             )}
           </Col>
         </Row>
-        {loandingListas ? (
+        {loandingListas || loandingProvas? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>

@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
-import formataData from "../../../util/funçoesAuxiliares/formataData";
+import {formatDate} from "../../../util/auxiliaryFunctions.util";
 import NavPagination from "components/ui/navs/navPagination";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
@@ -282,7 +282,7 @@ export default class CriarListaScreen extends Component {
                               <td>{questao.code}</td>
                               <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
                               <td>{questao.author.email}</td>
-                              <td>{formataData(questao.createdAt)}</td>
+                              <td>{formatDate(questao.createdAt)}</td>
                               <td style={{display: 'inline-flex'}}>
                                 <button
                                   type="button"
@@ -351,7 +351,7 @@ export default class CriarListaScreen extends Component {
                           <td>{questao.code}</td>
                           <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
                           <td>{questao.author.email}</td>
-                          <td>{formataData(questao.createdAt)}</td>
+                          <td>{formatDate(questao.createdAt)}</td>
                           <td>
                             <button
                               type="button"

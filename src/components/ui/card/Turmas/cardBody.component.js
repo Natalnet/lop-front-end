@@ -9,7 +9,6 @@ export default props => {
     >
       <b>Descrição: </b>
       {description.slice(0, 120) + "..."}
-      {console.log(description)}
     </div>
   );
 };

@@ -43,7 +43,7 @@ export default class Editor extends Component {
       response:[],
       katexDescription:'',
       status:'PÚBLICA',
-      difficulty:'Médio',
+      difficulty:'3',
       solution:'',
       loadingReponse:false,
       savingQuestion:false,
@@ -164,6 +164,7 @@ export default class Editor extends Component {
     this.setState({status:e.target.value})
   }
   async handleDifficulty(e){
+    console.log("difficulty: ",e.target.value)
     this.setState({
       difficulty:e.target.value
     })
@@ -233,7 +234,10 @@ export default class Editor extends Component {
     catch(err){
       Object.getOwnPropertyDescriptors(err)
       this.setState({loadingReponse:false})
-      alert('erro na conexão com o servidor')
+      Swal.fire({
+        type: 'error',
+        title: 'ops... Algum erro aconteceu na operação :(',
+      })
     }
     
   }
@@ -384,11 +388,11 @@ export default class Editor extends Component {
           <div className="form-group col-md-6">
             <label htmlFor="selectDifficulty">Dificuldade </label>
             <select className="form-control" defaultValue={difficulty} id='selectDifficulty' onChange={(e)=>this.handleDifficulty(e)}>
-              <option value = 'Muito fácil' >Muito fácil</option>
-              <option value = 'Fácil' >Fácil</option>
-              <option value = 'Médio' >Médio</option>
-              <option value = 'Difícil' >Difícil</option>
-              <option value = 'Muito difícil' >Muito difícil</option>
+              <option value = '1' >Muito fácil</option>
+              <option value = '2' >Fácil</option>
+              <option value = '3' >Médio</option>
+              <option value = '4' >Difícil</option>
+              <option value = '5' >Muito difícil</option>
             </select>
           </div>
           <div className="form-group col-12">

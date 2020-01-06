@@ -1,7 +1,7 @@
 import React, { Component, Fragment, createRef } from "react";
 //import PropTypes from "prop-types";
 import api from "../../../services/api";
-import findLocalIp from "../../../util/funçoesAuxiliares/findLocalIp";
+import {findLocalIp} from "../../../util/auxiliaryFunctions.util";
 import { Link } from "react-router-dom";
 import HTMLFormat from "../../../components/ui/htmlFormat";
 import Swal from "sweetalert2";
@@ -245,7 +245,10 @@ export default class Editor extends Component {
     } catch (err) {
       Object.getOwnPropertyDescriptors(err);
       this.setState({ loadingReponse: false });
-      alert("erro na conexão com o servidor");
+      Swal.fire({
+        type: 'error',
+        title: 'ops... Algum erro aconteceu na operação :(',
+      })
     }
   }
   async saveSubmission(
@@ -335,7 +338,6 @@ export default class Editor extends Component {
       prova,
       salvandoRascunho
     } = this.state;
-
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <Row mb={15}>
@@ -439,18 +441,18 @@ export default class Editor extends Component {
               <Col xs={5} md={2}>
                 <label htmlFor="selectDifficulty">Dificuldade: </label>
                 <select
-                  defaultValue={userDifficulty}
+                  defaultValue = {userDifficulty}
                   className="form-control"
                   id="selectDifficulty"
                   disabled={loadDifficulty ? "disabled" : ""}
                   onChange={e => this.handleDifficulty(e)}
                 >
                   <option value={""}></option>
-                  <option value="Muito fácil">Muito fácil</option>
-                  <option value="Fácil">Fácil</option>
-                  <option value="Médio">Médio</option>
-                  <option value="Difícil">Difícil</option>
-                  <option value="Muito difícil">Muito difícil</option>
+                  <option value = '1' >Muito fácil</option>
+                  <option value = '2' >Fácil</option>
+                  <option value = '3' >Médio</option>
+                  <option value = '4' >Difícil</option>
+                  <option value = '5' >Muito difícil</option>
                 </select>
               </Col>
             </Row>

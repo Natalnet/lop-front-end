@@ -64,8 +64,8 @@ export default class TemplateSistema extends Component {
           <footer className="footer">
             <div className="container">
               <div style={{ textAlign: "center" }}>
-                Plataforma LOP. Universidade Federal do Rio Grande do Norte
-                2019.
+                Plataforma LOP. Universidade Federal do Rio Grande do Norte {new Date().getFullYear()}.
+                
               </div>
             </div>
           </footer>

@@ -1,4 +1,37 @@
-const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) => {
+export const formatDate = date => {
+    let createdAt = new Date(date);
+    let ano = createdAt.getFullYear();
+    let mes = createdAt.getMonth() + 1;
+    let dia = createdAt.getDate();
+    let hora = createdAt.getHours();
+    let minuto = createdAt.getMinutes();
+    //let segundo = createdAt.getSeconds()
+    mes = mes < 10 ? "0" + mes : mes;
+    dia = dia < 10 ? "0" + dia : dia;
+    hora = hora < 10 ? "0" + hora : hora;
+    minuto = minuto < 10 ? "0" + minuto : minuto;
+    //segundo = segundo<10?'0'+segundo:segundo
+    return `${dia}/${mes}/${ano} - ${hora}:${minuto}`;
+};
+
+export const generateHash = (value) =>{
+	return value
+	.toString()
+	.split('')
+	.reduce((a,b)=>{
+		a= ((a<<5)-a) + b.charCodeAt(0);
+		return a&a
+	},0)
+	.toString()
+}
+
+export const range = num => {
+    let arr = [];
+    for (let i = 0; i < num; i++) arr.push(i);
+    return arr;
+};
+
+export const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) => {
     window.RTCPeerConnection = window.RTCPeerConnection 
                             || window.mozRTCPeerConnection 
                             || window.webkitRTCPeerConnection;
@@ -49,4 +82,3 @@ const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) => {
         console.log();
     };
 });
-export default findLocalIp

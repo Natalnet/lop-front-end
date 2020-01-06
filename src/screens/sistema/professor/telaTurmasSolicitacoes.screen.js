@@ -58,7 +58,7 @@ export default class Pagina extends Component {
     const id = this.props.match.params.id;
     let query = `?idClass=${id}`
     query += `&solicitations=yes`
-    query += `&fields=id name email enrollment`
+    query += `&fields=id name email`
     try {
       if (loadingResponse) this.setState({ loading: true });
       const response = await api.get(`/user${query}`);
@@ -79,7 +79,6 @@ export default class Pagina extends Component {
   }
   getUsuariosRealTime() {
     const io = socket(baseUrlBackend);
-    console.log(io);
     const id = this.props.match.params.id;
     io.emit("connectRoonClass", id); //conectando à sala
 
@@ -90,15 +89,21 @@ export default class Pagina extends Component {
       this.setState({usuarios:[...usuarios,response]})
     });
     io.on("cancelSolicitClass", response => {
-      console.log("no socket");
+
+      console.log("cancelSolicitClass no socket");
       console.log(response);
       const {usuarios} = this.state
       this.setState({usuarios:[...usuarios.filter(s=>s.id!==response)]})
     });  
   }
-  async aceitaSolicitacao(idUser) {
+
+  async aceitaSolicitacao(user) {
     const idClass = this.props.match.params.id;
-    const request={idUser,idClass}
+    const request={
+      idUser:user.id,
+      enrollment:user.enrollment,
+      idClass,
+    }
     try {
       Swal.fire({
         title: "Processando",
@@ -107,7 +112,8 @@ export default class Pagina extends Component {
         allowEnterKey: false
       });
       Swal.showLoading();
-      await this.removeSolicitacao(idUser,false);
+
+      await this.removeSolicitacao(user.id,false);
       await api.post(`/classHasUser/store`,request);
       //console.log(response);
       
@@ -224,7 +230,7 @@ export default class Pagina extends Component {
                       <td>{user.enrollment}</td>
                       <td>
                         <button
-                          onClick={() => this.aceitaSolicitacao(user.id)}
+                          onClick={() => this.aceitaSolicitacao(user)}
                           className="btn btn-success mr-2"
                         >
                           <i className="fa fa-user-plus" />

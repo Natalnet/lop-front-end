@@ -37,7 +37,7 @@ export default class recoverScreen extends Component {
       this.setState({
         loading: false,
         erro: false,
-        msg: response.data,
+        msg: response.data.msg,
         msgEmail: ""
       });
     } catch (err) {

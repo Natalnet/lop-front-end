@@ -5,7 +5,7 @@ import TemplateSistema from "components/templates/sistema.template";
 import Select from 'react-select';
 import NavPagination from "components/ui/navs/navPagination";
 import api from '../../../services/api'
-import formataData from "../../../util/funçoesAuxiliares/formataData";
+import {formatDate} from "../../../util/auxiliaryFunctions.util";
 import SwalModal from "components/ui/modal/swalModal.component";
 import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
@@ -22,9 +22,7 @@ import Col from "components/ui/grid/col.component";
 const lista = {
     backgroundColor:"white"
 };
-const botao = {
-    width: "100%"
-};
+
 
 export default class HomeExerciciosScreen extends Component {
     constructor(props){
@@ -185,6 +183,7 @@ export default class HomeExerciciosScreen extends Component {
 
     render() {
         const {exercicios,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,showFilter,showModalInfo,question,docsPerPage,tags,loadingTags,radioAsc,radioDesc,sortBy} = this.state
+        const arrDifficulty = [null,"Muito fácio","Fácio","Médio","Difício","Muito difício"]
         return (
         <TemplateSistema active='exercicios'>
                 <Row mb={15}>
@@ -235,7 +234,8 @@ export default class HomeExerciciosScreen extends Component {
                                     <div className="selectgroup" >
                                         <select id={"ordem"} defaultValue={sortBy} className="form-control" onChange={(e)=> this.handleSort(e)} style={{cursor:"pointer"}}>
                                             <option value={'createdAt'}>Data de criação</option>
-                                            <option value={'title'}>Ordem alfabetica</option>
+                                            <option value={'title'}>Ordem alfabética</option>
+                                            <option value={'difficulty'}>Dificuldade</option>
                                             {/*<option value={'isCorrect'}>Resolvidas por mim</option>
                                             <option value={'accessCount'}>N° de acessos</option>
                                             <option value={'submissionsCount'}>N° de Submissões</option>
@@ -303,11 +303,13 @@ export default class HomeExerciciosScreen extends Component {
                         <table style={lista} className="table table-hover">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Nome</th>
                                     <th>Código</th>
                                     
                                     <th>N° de acessos</th>
-                                    <th>Submissões gerais (corretas/total)</th>
+                                    <th>N° de Submissões corretas</th>
+                                    <th>N° de Submissões</th>
                                     <th>Dificuldade</th>
                                     <th></th>
                                 </tr>
@@ -331,36 +333,47 @@ export default class HomeExerciciosScreen extends Component {
                                         <td>
                                             <div className="loader"/>
                                         </td>
+                                        <td>
+                                            <div className="loader"/>
+                                        </td>
+                                        <td>
+                                            <div className="loader"/>
+                                        </td>
 
                                     </tr>           
                                 :
                                     exercicios.map((exercicio, index) => (
-                                        <tr key={index}>
-                                            <td style={{display:'inline-flex'}}>
+                                        <tr key={exercicio.id}>
+                                            <td>
                                                 {exercicio.isCorrect ? (
-                                                    <>
-                                                        <i
-                                                            className="fa fa-check"
-                                                            style={{ color: "#0f0" }}
-                                                        />
-                                                        &nbsp;
-                                                    </>
-                                                ) : null}
-                                                {exercicio.title}
-                                                
+                                                    <i
+                                                        className="fa fa-check"
+                                                        style={{ color: "#0f0" }}
+                                                    />  
+                                                ) :exercicio.wasTried?(
+                                                    <i
+                                                        className="fa fa-remove"
+                                                        style={{ color: "#f00" }}
+                                                    />  
+                                                ):<>&nbsp;</>}
+                                            </td>
+                                            <td>
+                                                {exercicio.title}  
                                             </td>
                                             <td>{exercicio.code}</td>
                                             <td>{exercicio.accessCount}</td>
-                                            <td>{`(${exercicio.submissionsCorrectsCount}/${exercicio.submissionsCount})`}</td>
-                                            <td>{exercicio.difficulty}</td>
+                                            <td>{exercicio.submissionsCorrectsCount}</td>
+                                            <td>{exercicio.submissionsCount}</td>
+
+                                            <td>{arrDifficulty[parseInt(exercicio.difficulty)]}</td>
                                             <td style={{display:'inline-flex'}}>
-                                            <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(exercicio)}>
-                                                <i className="fa fa-info"/>
-                                            </button>
-                                            <Link to={`/professor/exercicios/${exercicio.id}/editar`}>
-                                                <button className="btn btn-success">
-                                                    <i className="fe fe-edit" />
+                                                <button className="btn btn-primary mr-2" onClick={()=>this.handleShowModalInfo(exercicio)}>
+                                                    <i className="fa fa-info"/>
                                                 </button>
+                                                <Link to={`/professor/exercicios/${exercicio.id}/editar`}>
+                                                    <button className="btn btn-success">
+                                                        <i className="fe fe-edit" />
+                                                    </button>
                                             </Link>
                                             </td>
                                         </tr>
@@ -420,7 +433,7 @@ export default class HomeExerciciosScreen extends Component {
                                 <b>Tags: </b> {question && question.tags.join(", ")}
                             </Col>
                             <Col xs={12}>
-                                <b>Data de criação:</b> {question && formataData(question.createdAt)} 
+                                <b>Data de criação:</b> {question && formatDate(question.createdAt)} 
                             </Col>
                         </Row>
                     </CardFooter>

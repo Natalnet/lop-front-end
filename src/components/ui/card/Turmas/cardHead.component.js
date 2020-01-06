@@ -12,24 +12,22 @@ export default props => {
         paddingLeft: "0px"
       }}
     >
-      <div className="">
-        <div className="col-12" style={{}}>
-          <h4 className="" style={{ margin: "5px", marginTop: "10px" }}>
-            <i className="fa fa-users" /> {name} - {ano}.{semestre}
-          </h4>
-        </div>
-        <div className="col-12">
-          <p
-            style={{
-              marginTop: "0px",
-              float: "right",
-              fontSize: "11px",
-              fontWeight: "bold"
-            }}
-          >
-            Código: {code}
-          </p>
-        </div>
+      <div className="col-12" style={{}}>
+        <h4 className="" style={{ margin: "5px", marginTop: "10px" }}>
+          <i className="fa fa-users" /> {name} - {ano}.{semestre}
+        </h4>
+      </div>
+      <div className="col-12">
+        <p
+          style={{
+            marginTop: "0px",
+            float: "right",
+            fontSize: "11px",
+            fontWeight: "bold"
+          }}
+        >
+          Código: {code}
+        </p>
       </div>
     </div>
   );

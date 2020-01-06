@@ -178,7 +178,7 @@ export default class Pagina extends Component {
                             <th></th>
                             <th>Nome</th>
                             <th>Email</th>
-                            <th>Mátricula</th>
+                            <th>Matrícula</th>
                             <th>Função</th>
                             <th></th>
                         </tr>

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import NavPagination from "components/ui/navs/navPagination";
 import api from "../../../services/api";
-import formataData from "../../../util/funçoesAuxiliares/formataData";
+import {formatDate} from "../../../util/auxiliaryFunctions.util";
 import SwalModal from "components/ui/modal/swalModal.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -160,7 +160,7 @@ export default class HomesubmissoesScreen extends Component {
                 <Link
                   to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas`}
                 >
-                  {usuario?`${usuario.name} - ${usuario.enrollment}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                  {usuario?`${usuario.name} `:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
                 </Link>
                 <i className="fa fa-angle-left ml-2 mr-2"/>
                 <Link
@@ -257,7 +257,7 @@ export default class HomesubmissoesScreen extends Component {
                       <td>{submission.ip}</td>
                       <td>{submission.char_change_number}</td>
                       <td>{submission.environment}</td>
-                      <td>{formataData(submission.createdAt)}</td>
+                      <td>{formatDate(submission.createdAt)}</td>
                       <td>
                         <button
                           className="btn btn-primary mr-2"

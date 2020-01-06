@@ -16,13 +16,11 @@ export default class LoginScreen extends Component {
       showMenssageSendMail: false,
       loading:false,
       name: "",
-      enrollment: "",
       email: "",
       password: "",
       confirm_password: "",
       msg: "",
       msgName:'',
-      msgEnrollment:'',
       msgEmail:'',
       msgPassoword:'',
       msgConfirm_password:''
@@ -34,7 +32,7 @@ export default class LoginScreen extends Component {
   async register(e){
     e.preventDefault();
 
-    const {name,email,enrollment,password,confirm_password} = this.state
+    const {name,email,password,confirm_password} = this.state
     if (password !== confirm_password) {
       await this.setState({ msgConfirm_password : "A senha e confirmação de senha não correspondem" });
     }
@@ -43,7 +41,6 @@ export default class LoginScreen extends Component {
         name: name,
         email: email,
         password: password,
-        enrollment: enrollment
       };
       try{
         this.setState({loading:true})
@@ -57,7 +54,6 @@ export default class LoginScreen extends Component {
         await this.setState({
           msgName:'',
           msgEmail :'',
-          msgEnrollment:'',
           msgPassoword:'',
           msgConfirm_password:'',
           msg:'',
@@ -72,9 +68,7 @@ export default class LoginScreen extends Component {
             if(fieldErro.field==="email"){
               this.setState({msgEmail:fieldErro.msg})
             }
-            if(fieldErro.field==="enrollment"){
-              this.setState({msgEnrollment:fieldErro.msg})
-            }
+          
             if(fieldErro.field==="password"){
               this.setState({msgPassoword:fieldErro.msg})
             }
@@ -82,7 +76,6 @@ export default class LoginScreen extends Component {
           /*this.setState({
             msgName: err.response.data.name || '',
             msgEmail :err.response.data.email || '',
-            msgEnrollment:err.response.data.enrollment || '',
             msgPassoword:err.response.data.password || '',
           })*/
         }
@@ -97,9 +90,7 @@ export default class LoginScreen extends Component {
   handleNomeChange = e => {
     this.setState({ name: e.target.value });
   };
-  handleEnrollmentChange = e => {
-    this.setState({ enrollment: e.target.value });
-  };
+  
   handleEmailChange = e => {
     this.setState({ email: e.target.value });
   };
@@ -110,8 +101,8 @@ export default class LoginScreen extends Component {
     this.setState({ confirm_password: e.target.value });
   };
   render() {
-    const {name,email,enrollment,password,confirm_password,msg,loading} = this.state
-    const {msgName,msgEmail,msgEnrollment,msgPassoword,msgConfirm_password}=this.state
+    const {name,email,password,confirm_password,msg,loading} = this.state
+    const {msgName,msgEmail,msgPassoword,msgConfirm_password}=this.state
     if(this.state.showMenssageSendMail){
       return(
         <TemplateAutenticacao>
@@ -143,18 +134,7 @@ export default class LoginScreen extends Component {
               />
               <div className="invalid-feedback">{msgName}</div>
             </div>
-            <div className="form-group">
-              <label className="form-label">Matrícula</label>
-              <input
-                type="text"
-                className={`form-control ${msgEnrollment && 'is-invalid'}`}
-                placeholder="Digite sua matrícula"
-                value={enrollment}
-                onChange={this.handleEnrollmentChange}
-                required
-              />
-              <div className="invalid-feedback">{msgEnrollment}</div>
-            </div>
+            
             <div className="form-group">
               <label className="form-label">Endereço de e-mail</label>
               <input

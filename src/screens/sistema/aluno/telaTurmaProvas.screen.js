@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api, { baseUrlBackend } from "../../../services/api";
 import Swal from "sweetalert2";
-import generateHash from "../../../util/funçoesAuxiliares/generateHash";
+import {generateHash} from "../../../util/auxiliaryFunctions.util";
 import "katex/dist/katex.min.css";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";

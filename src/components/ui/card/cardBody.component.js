@@ -8,18 +8,25 @@
 import React, { Component } from "react";
 
 export default class CardBody extends Component {
-  render() {
-  	const {loading,children,overflow} = this.props
+    render() {
+		let {loading,children,style} = this.props
+		if(style){
+			style.overflow = style.overflow?style.overflow:'auto'
+		}else{
+			style = {overflow:'auto'}
+		}
+	    
+
     return (
-      <div className='card-body' style={{overflow:overflow?overflow:'auto'}}>
-      	{loading
-      	?
-      		<div className="loader"  style={{margin:'0px auto'}}></div>
-      	:
-      		children
-      	}
+        <div className='card-body' style={style}>
+			{loading
+			?
+				<div className="loader"  style={{margin:'0px auto'}}></div>
+			:
+				children
+			}
        
-      </div>
+        </div>
     );
   }
 }

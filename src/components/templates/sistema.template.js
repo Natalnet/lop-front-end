@@ -5,7 +5,7 @@
  * @Last Modified time: 2019-02-03 22:00:20
  */
 
-import React, { Component } from "react";
+import React, { Component,createRef } from "react";
 
 import api from "../../services/api"
 
@@ -24,10 +24,7 @@ import MenuProfessor from "components/menus/dashboard/professor/menuProfessor.me
 export default class TemplateSistema extends Component {
   constructor(props) {
     super(props);
-     
-    
-   
-    //this.height = createRef()
+    this.height = createRef()
   }
   
   componentDidMount() {
@@ -38,26 +35,26 @@ export default class TemplateSistema extends Component {
   handleAxiosErros = () => {
     const profile = sessionStorage.getItem("user.profile");
     api.interceptors.response.use(null, err => {
-        console.log("interceptores------>>>>>>")
-        console.log(Object.getOwnPropertyDescriptors(err))
-        console.log(err.message)
-        console.log("interceptores------>>>>>>")
-        
-          if ((err.response && err.response.status === 404) || err.message==="Network Error") {
-            this.props.history.push('/404')
-          } 
-          else if(err.response && err.response.status === 401){
-            if(err.response.data.msg==="token mal formatado"){
-              this.props.history.push('/')
-              sessionStorage.clear()
-            }
-            else{
-              this.props.history.push(`/${profile && profile.toLocaleLowerCase()}`)
-            }
-          }
-          else {
-            return Promise.reject(err);
-          }
+      console.log("interceptores------>>>>>>")
+      console.log(Object.getOwnPropertyDescriptors(err))
+      console.log(err.message)
+      console.log("interceptores------>>>>>>")
+      
+      if ((err.response && err.response.status === 404) || err.message==="Network Error") {
+        this.props.history.push('/404')
+      } 
+      else if(err.response && err.response.status === 401){
+        if(err.response.data.msg==="token mal formatado"){
+          this.props.history.push('/')
+          sessionStorage.clear()
+        }
+        else{
+          this.props.history.push(`/${profile && profile.toLocaleLowerCase()}`)
+        }
+      }
+      else {
+        return Promise.reject(err);
+      }
         
     });
   };
@@ -118,8 +115,8 @@ export default class TemplateSistema extends Component {
           <footer className="footer">
             <div className="container">
               <div style={{textAlign:"center"}}> 
-              Plataforma LOP. Universidade Federal do Rio Grande do Norte
-                  2019.
+              Plataforma LOP. Universidade Federal do Rio Grande do Norte {new Date().getFullYear()}.
+               
               </div>
             </div>
        </footer>
