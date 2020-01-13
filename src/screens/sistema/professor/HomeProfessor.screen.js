@@ -87,7 +87,8 @@ export default class TurmasScreen extends Component {
                 id: c.id,
                 year: c.year,
                 name: c.name,
-                semester: c.semester
+                semester: c.semester,
+                languages:c.languages
               }
             ];
           }
@@ -102,7 +103,8 @@ export default class TurmasScreen extends Component {
                 id: t.id,
                 year: t.year,
                 name: t.name,
-                semester: t.semester
+                semester: t.semester,
+                languages: t.languages
               };
             })
           )
@@ -318,7 +320,7 @@ export default class TurmasScreen extends Component {
                           </p>
                         </CardOptions>
                       </CardHead>
-                      <CardBody style={{height:"110px"}}>
+                      <CardBody className="card-class overflow-auto">
                         <p>
                           <b>Linguagens: </b>
                           {turma.languages.map((language) => {

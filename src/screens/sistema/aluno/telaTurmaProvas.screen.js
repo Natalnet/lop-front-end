@@ -1,16 +1,13 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api, { baseUrlBackend } from "../../../services/api";
 import Swal from "sweetalert2";
 import {generateHash} from "../../../util/auxiliaryFunctions.util";
 import "katex/dist/katex.min.css";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import socket from "socket.io-client";
-import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
+import TurmaProvasScreen from "components/screens/turmaProvas.componente.screen"
 
 export default class Provas extends Component {
   constructor(props) {
@@ -152,45 +149,19 @@ export default class Provas extends Component {
             }
           </Col>
         </Row>
-        <Row mb={15}>
-          {loandingListas ? (
+        {loandingListas ? (
+          <Row mb={15}>
             <div className="loader" style={{ margin: "0px auto" }}></div>
-          ) : (
-            provas.map((prova, i) => {
-              return (
-                <Fragment key={prova.id}>
-                  <Col xs={12}>
-                    <Card key={prova.id} style={{ margin: "2px" }}>
-                      <CardHead>
-                        <Col xs={5}>
-                          <h4 style={{ margin: "0px" }}>
-                            <b>{prova.title}</b>
-                          </h4>
-                        </Col>
-                        <ProgressBar 
-                          numQuestions={prova.questionsCount}
-                          numQuestionsCompleted={prova.questionsCompletedSumissionsCount}
-                          dateBegin={prova.classHasTest.createdAt}
-                        />
-                        <CardOptions>
-                          {prova.status === "ABERTA" ? (
-                            <button
-                              className="btn btn-success mr-2"
-                              style={{ float: "right" }}
-                              onClick={() => this.acessar(prova)}
-                            >
-                              Acessar <i className="fa fa-wpexplorer" />
-                            </button>
-                          ) : null}
-                        </CardOptions>
-                      </CardHead>
-                    </Card>
-                  </Col>
-                </Fragment>
-              );
-            })
-          )}
-        </Row>
+          </Row>
+        ) : (
+          <TurmaProvasScreen
+            {...this.state}
+            {...this.props}
+            provas={provas}
+            acessar={this.acessar.bind(this)}
+          />
+        )
+        }
       </TemplateSistema>
     );
   }

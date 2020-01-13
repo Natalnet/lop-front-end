@@ -32,10 +32,10 @@ export default class LoginScreen extends Component {
       this.setState({loading:true})
       const response = await api.post("/auth/authenticate", request)
       sessionStorage.setItem("auth-token", response.data.token);
-      sessionStorage.setItem("user.id", response.data.user.id);
       sessionStorage.setItem("user.profile", response.data.user.profile);
       sessionStorage.setItem("user.name", response.data.user.name);
       sessionStorage.setItem("user.email", response.data.user.email);
+      sessionStorage.setItem("user.urlImage", response.data.user.urlImage || "");
       this.props.history.push(`/${sessionStorage.getItem("user.profile").toLocaleLowerCase()}`)
 
     }

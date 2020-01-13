@@ -1,34 +1,14 @@
-import React, { Component,Fragment,createRef} from "react";
+import React, { Component} from "react";
 //import PropTypes from "prop-types";
 import api from '../../../services/api'
 import {findLocalIp} from "../../../util/auxiliaryFunctions.util";
 import { Link } from "react-router-dom";
-import HTMLFormat from '../../../components/ui/htmlFormat'
 import Swal from 'sweetalert2'
 import apiCompiler from '../../../services/apiCompiler'
-import AceEditor from 'react-ace';
-import 'brace/mode/c_cpp';
-import 'brace/mode/javascript';
-import 'brace/theme/monokai';
-import 'brace/theme/github';
-import 'brace/theme/tomorrow';
-import 'brace/theme/kuroir';
-import 'brace/theme/twilight';
-import 'brace/theme/xcode';
-import 'brace/theme/textmate';
-import 'brace/theme/solarized_dark';
-import 'brace/theme/solarized_light';
-import 'brace/theme/terminal';
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import TableResults2 from '../../../components/ui/tables/tableResults2.component'
-import { BlockMath } from 'react-katex';
-import FormSelect from '../../../components/ui/forms/formSelect.component'
 import TemplateSistema from '../../../components/templates/sistema.template'
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import ExercicioScreen from "components/screens/exercicio.componete.escreen";
 
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts
@@ -65,8 +45,7 @@ export default class Editor extends Component {
       salvandoRascunho:false,
       char_change_number:0,
     }
-    this.cardEnunciadoRef = createRef()
-    this.cardExemplos = createRef()
+
   }
 
   async componentDidMount() {
@@ -75,7 +54,7 @@ export default class Editor extends Component {
     this.getLista()
     await this.getExercicio();
     this.salvaAcesso();
-    this.appStyles();
+    
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
     this.time = setInterval(function() {
@@ -87,23 +66,7 @@ export default class Editor extends Component {
     clearInterval(this.time)
   }
   
-  appStyles() {
-    const cardEnunciado = this.cardEnunciadoRef.current;
-    const cardExemplos = this.cardExemplos.current;
-    const heightCardEnunciado = cardEnunciado && cardEnunciado.offsetHeight;
-    const heightCardExemplos = cardExemplos && cardExemplos.offsetHeight;
-    if (heightCardEnunciado > heightCardExemplos) {
-      cardEnunciado &&
-        cardEnunciado.setAttribute("style", `height:${heightCardEnunciado}px`);
-      cardExemplos &&
-        cardExemplos.setAttribute("style", `height:${heightCardEnunciado}px`);
-    } else {
-      cardEnunciado &&
-        cardEnunciado.setAttribute("style", `height:${heightCardExemplos}px`);
-      cardExemplos &&
-        cardExemplos.setAttribute("style", `height:${heightCardExemplos}px`);
-    }
-  }
+  
   async salvaAcesso(){
     const ip = await findLocalIp(false);
     const idQuestion = this.props.match.params.idExercicio;
@@ -234,7 +197,7 @@ export default class Editor extends Component {
     try {
       this.salvaRascunho();
       const response = await apiCompiler.post("/apiCompiler", request);
-      this.saveSubmission(
+      await this.saveSubmission(
         request,
         response.data.percentualAcerto,
         timeConsuming,
@@ -317,10 +280,8 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {turma,response,percentualAcerto,loadingReponse,title,description,results,katexDescription,lista} = this.state
-    const { language,theme,descriptionErro,solution,loadingExercicio,loadingInfoTurma,userDifficulty,loadDifficulty,salvandoRascunho} = this.state;
+    const {turma,title,lista,loadingExercicio,loadingInfoTurma} = this.state
     return (
-
     <TemplateSistema {...this.props} active={'listas'} submenu={'telaTurmas'}>
         <Row mb={15}>
           <Col xs={12}>
@@ -347,6 +308,19 @@ export default class Editor extends Component {
         {loadingExercicio?
           <div className="loader" style={{margin:'0px auto'}}></div>
         :
+          <ExercicioScreen
+            {...this.state}
+            {...this.props}
+            showAllTestCases={true}
+            languages={turma && turma.languages}
+            changeLanguage ={this.changeLanguage.bind(this)}
+            changeTheme ={this.changeTheme.bind(this)}
+            handleSolution ={this.handleSolution.bind(this)}
+            handleDifficulty ={this.handleDifficulty.bind(this)}
+            submeter ={this.submeter.bind(this)}
+            salvaRascunho={this.salvaRascunho.bind(this)}
+          />
+        /*
         <Fragment>
         <Row>
           <Col xs={12} md={7}>
@@ -471,6 +445,7 @@ export default class Editor extends Component {
           </Col>
         </Row>
         </Fragment>
+        */
         }
         
     </TemplateSistema>

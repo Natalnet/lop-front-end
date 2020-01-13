@@ -174,18 +174,6 @@ export default class HomesubmissoesScreen extends Component {
             )}
           </Col>
         </Row>
-        <Row mb={15}>
-          <Col xs={12}>
-            <Link
-              to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/provas/${this.props.match.params.idProva}/exercicios`}
-            >
-              <button className="btn btn-success mr-2">
-                <i className="fa fa-arrow-left" /> Voltar para prova{" "}
-                <i className="fa fa-file-text" />
-              </button>
-            </Link>
-          </Col>
-        </Row>
         <div className="row" style={{ marginBottom: "15px" }}>
           <div className="col-12">
             <table style={lista} className="table table-hover">

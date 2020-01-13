@@ -4,6 +4,7 @@ import AdministracaoTemplate from "components/templates/administracao.template";
 import NavPagination from "components/ui/navs/navPagination";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import Swal from 'sweetalert2'
+import profileImg from "../../../assets/perfil.png"
 
 export default class HomeAdministradorScreen extends Component {
 
@@ -161,15 +162,15 @@ export default class HomeAdministradorScreen extends Component {
                 <td>
                   <div 
                       className="avatar d-block" 
-                      style={
-                          {backgroundImage: `url(${user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                      }
+                      style={{
+                        backgroundImage: `url(${user.urlImage || profileImg})`                    
+                      }}
                   />
                 </td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>
-                  {user.id===sessionStorage.getItem('user.id')?
+                  {user.email===sessionStorage.getItem("user.email")?
                     <select
                         disabled
                         className="form-control" 

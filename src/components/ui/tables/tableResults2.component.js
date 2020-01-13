@@ -11,7 +11,7 @@ export default props => {
 
 	const {response,descriptionErro,showAllTestCases} = props
   
-      let rows = showAllTestCases?response:response.filter((r,i)=>i===0)
+      let tests = showAllTestCases?response:response.filter((t,i)=>i===0)
   
       if(descriptionErro){
         return(
@@ -26,8 +26,8 @@ export default props => {
       }
 	    return(
         <Fragment>
-        {rows.map((teste,i)=>
-          <Card key={i}>
+        {tests.map((teste,i)=>
+          <Card key={i} className={`card-status-${teste.isMatch?'success':'danger'}`}>
             <CardHead>
               <CardTitle>
                 {`${i+1}° Teste `}
@@ -38,7 +38,6 @@ export default props => {
                 }
               </CardTitle>
               <CardOptions>
-
                 <i
                   title='Ver descrição'
                   style={{color:'blue',cursor:'pointer',fontSize:'25px'}}

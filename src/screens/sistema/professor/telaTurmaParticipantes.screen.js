@@ -1,11 +1,10 @@
-import React, { Component,Fragment } from "react";
+import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
-import NavPagination from "components/ui/navs/navPagination";
-import { Link } from "react-router-dom";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import ParticioantesScreenfrom from "components/screens/participantes.componentes.screen"
 
 export default class Pagina extends Component {
     constructor(props){
@@ -155,7 +154,7 @@ export default class Pagina extends Component {
         },()=>this.getParticipantes())
     }
     render() {
-        const {turma,participantes,loadingInfoTurma,loadingParticipantes,numPageAtual,totalPages} = this.state
+        const {turma,loadingInfoTurma} = this.state
         return (
         <TemplateSistema {...this.props} active={'participantes'} submenu={'telaTurmas'}>
             <Row mb={15}>
@@ -170,87 +169,12 @@ export default class Pagina extends Component {
                     }
                 </Col>
             </Row>
-            <Row mb={15}>
-                <Col xs={12}>
-                    <table style={{backgroundColor:"white"}} className="table table-hover">
-                    <thead> 
-                        <tr>
-                            <th></th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Matrícula</th>
-                            <th>Função</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loadingParticipantes
-                        ?
-                            <tr>
-                                <td>
-                                    <div className="loader" />
-                                </td>
-                                <td>                                        
-                                    <div className="loader" />
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>                                        
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                                <td>
-                                    <div className="loader"/>
-                                </td>
-                            </tr>           
-                        :
-                            participantes.map((user, index) => (
-                                <tr key={index}>
-                                    <td className='text-center'>
-                                        <div 
-                                            className="avatar d-block" 
-                                            style={
-                                                {backgroundImage: `url(${user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                            }
-                                        />
-                                    </td>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.enrollment}</td>
-                                    <td>{user.profile}</td>
-                                    <td>
-                                        {user.profile!=="PROFESSOR" &&
-                                        <Fragment> 
-                                            <Link to={`/professor/turma/${this.props.match.params.id}/participantes/${user.id}/listas`}>
-                                                <button className="btn btn-primary mr-2">
-                                                    <i className="fa fa-info"/>
-                                                </button>
-                                            </Link>
-                                            <button className="btn btn-danger" onClick={()=>this.removerParticipante(user)}>
-                                                <i className="fa fa-trash "/>
-                                            </button>
-                                        </Fragment>
-                                        }
-                                    </td>
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </table>
-                </Col>
-            </Row>
-            <Row>
-                <Col xs={12} textCenter>
-                  <NavPagination
-                    totalPages={totalPages}
-                    pageAtual={numPageAtual}
-                    handlePage={this.handlePage.bind(this)}
-                  />
-                </Col>
-            </Row>
+            <ParticioantesScreenfrom
+                {...this.props}
+                {...this.state}
+                handlePage={this.handlePage.bind(this)}
+                removerParticipante={this.removerParticipante.bind(this)}
+            />
         </TemplateSistema>
         )
     }

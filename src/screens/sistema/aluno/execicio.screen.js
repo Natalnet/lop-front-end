@@ -1,38 +1,16 @@
-import React, { Component, Fragment, createRef } from "react";
+import React, { Component} from "react";
 //import PropTypes from "prop-types";
 import {findLocalIp} from "../../../util/auxiliaryFunctions.util";
 import api from "../../../services/api";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import HTMLFormat from "../../../components/ui/htmlFormat";
 import apiCompiler from "../../../services/apiCompiler";
-import { BlockMath } from "react-katex";
-import AceEditor from "react-ace";
-import "brace/mode/c_cpp";
-import "brace/mode/javascript";
-import "brace/theme/monokai";
-import "brace/theme/github";
-import "brace/theme/tomorrow";
-import "brace/theme/kuroir";
-import "brace/theme/twilight";
-import "brace/theme/xcode";
-import "brace/theme/textmate";
-import "brace/theme/solarized_dark";
-import "brace/theme/solarized_light";
-import "brace/theme/terminal";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import TableResults2 from "../../../components/ui/tables/tableResults2.component";
-import FormSelect from "../../../components/ui/forms/formSelect.component";
 import TemplateSistema from "../../../components/templates/sistema.template";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import ExercicioScreen from "components/screens/exercicio.componete.escreen";
 
 export default class Editor extends Component {
-  // @todo: Use typescript to handle propTypes via monaco.d.ts
-  // (https://github.com/Microsoft/monaco-editor/blob/master/monaco.d.ts):
   constructor(props) {
     super(props);
     this.state = {
@@ -61,16 +39,14 @@ export default class Editor extends Component {
       salvandoRascunho: false,
       char_change_number:0,
     };
-    this.cardEnunciadoRef = createRef();
-    this.cardExemplos = createRef();
+    
   }
 
   async componentDidMount() {
     this.setState({ tempo_inicial: new Date() });
-    
     await this.getExercicio();
     this.salvaAcesso()
-    this.appStyles();
+    
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
     this.time = setInterval(function() {
@@ -81,23 +57,7 @@ export default class Editor extends Component {
     clearInterval(this.time)
   }
 
-  appStyles() {
-    const cardEnunciado = this.cardEnunciadoRef.current;
-    const cardExemplos = this.cardExemplos.current;
-    const heightCardEnunciado = cardEnunciado && cardEnunciado.offsetHeight;
-    const heightCardExemplos = cardExemplos && cardExemplos.offsetHeight;
-    if (heightCardEnunciado > heightCardExemplos) {
-      cardEnunciado &&
-        cardEnunciado.setAttribute("style", `height:${heightCardEnunciado}px`);
-      cardExemplos &&
-        cardExemplos.setAttribute("style", `height:${heightCardEnunciado}px`);
-    } else {
-      cardEnunciado &&
-        cardEnunciado.setAttribute("style", `height:${heightCardExemplos}px`);
-      cardExemplos &&
-        cardExemplos.setAttribute("style", `height:${heightCardExemplos}px`);
-    }
-  }
+  
   async salvaAcesso(){
     const ip = await findLocalIp(false);
     const idQuestion = this.props.match.params.id;
@@ -138,6 +98,7 @@ export default class Editor extends Component {
       //this.setState({ loadingExercicio: false });
     }
   }
+  
   async salvaRascunho(showMsg = true) {
     const idQuestion = this.props.match.params.id;
     const {solution,char_change_number} = this.state
@@ -168,6 +129,7 @@ export default class Editor extends Component {
       this.setState({ salvandoRascunho: false });
     }
   }
+  
   async submeter(e) {
     e.preventDefault();
     const timeConsuming = new Date() - this.state.tempo_inicial;
@@ -181,7 +143,7 @@ export default class Editor extends Component {
     try {
       this.salvaRascunho();
       const response = await apiCompiler.post("/apiCompiler", request);
-      this.saveSubmission(
+      await this.saveSubmission(
         request,
         response.data.percentualAcerto,
         timeConsuming,
@@ -205,7 +167,7 @@ export default class Editor extends Component {
       console.log(err);    
     }
   }
-
+  
   async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming,char_change_number) {
     const idQuestion = this.props.match.params.id;
     try {
@@ -242,6 +204,7 @@ export default class Editor extends Component {
       char_change_number:this.state.char_change_number+1,
     });
   }
+  
   async handleDifficulty(e) {
     const userDifficulty = e.target ? e.target.value : "";
     const idQuestion = this.props.match.params.id;
@@ -263,25 +226,7 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {
-      response,
-      percentualAcerto,
-      loadingReponse,
-      title,
-      description,
-      results,
-      katexDescription
-    } = this.state;
-    const {
-      language,
-      theme,
-      descriptionErro,
-      solution,
-      loadingExercicio,
-      userDifficulty,
-      loadDifficulty,
-      salvandoRascunho
-    } = this.state;
+    const {title,loadingExercicio} = this.state;
     return (
       <TemplateSistema active="exercicios">
         <Row mb={15}>
@@ -298,136 +243,18 @@ export default class Editor extends Component {
         {loadingExercicio ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
-          <Fragment>
-            <Row>
-              <Col xs={12} md={7}>
-                <Card ref={this.cardEnunciadoRef}>
-                  <CardHead>
-                    <CardTitle>
-                      <b>{title}</b>
-                    </CardTitle>
-                  </CardHead>
-                  <CardBody>
-                    <Row>{description}</Row>
-                    {katexDescription ? (
-                      <BlockMath>{katexDescription}</BlockMath>
-                    ) : (
-                      ""
-                    )}
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col xs={12} md={5}>
-                <Card ref={this.cardExemplos}>
-                  <CardHead>
-                    <CardTitle>Exemplos</CardTitle>
-                  </CardHead>
-                  <CardBody>
-                    <table className="table">
-                      <tbody>
-                        <tr>
-                          <td>
-                            <b>Exemplo de entrada</b>
-                          </td>
-                          <td>
-                            <b>Exemplo de saída</b>
-                          </td>
-                        </tr>
-                        {results
-                          .map((res, i) => (
-                            <tr key={i}>
-                              <td>
-                                <HTMLFormat>{res.inputs}</HTMLFormat>
-                              </td>
-                              <td>
-                                <HTMLFormat>{res.output}</HTMLFormat>
-                              </td>
-                            </tr>
-                          ))
-                          .filter((res, i) => i < 2)}
-                      </tbody>
-                    </table>
-                  </CardBody>
-                </Card>
-              </Col>
-            </Row>
-            <Row mb={10}>
-              <FormSelect
-                loadingReponse={loadingReponse}
-                changeLanguage={this.changeLanguage.bind(this)}
-                changeTheme={this.changeTheme.bind(this)}
-                executar={this.submeter.bind(this)}
-              />
-              <Col xs={5} md={3}>
-                <label htmlFor="rascunho">&nbsp;</label>
-                <button
-                  style={{ width: "100%" }}
-                  className={`btn btn-azure ${salvandoRascunho &&
-                    "btn-loading"}`}
-                  onClick={() => this.salvaRascunho()}
-                >
-                  <i className="fa fa-floppy-o" />
-                  &nbsp;&nbsp; Salvar rascunho
-                </button>
-              </Col>
-              <Col xs={5} md={2}>
-                <label htmlFor="selectDifficulty">Dificuldade: </label>
-                <select
-                  defaultValue = {userDifficulty}
-                  className="form-control"
-                  id="selectDifficulty"
-                  disabled={loadDifficulty ? "disabled" : ""}
-                  onChange={e => this.handleDifficulty(e)}
-                >
-                  <option value={""}></option>
-                  <option value = '1' >Muito fácil</option>
-                  <option value = '2' >Fácil</option>
-                  <option value = '3' >Médio</option>
-                  <option value = '4' >Difícil</option>
-                  <option value = '5' >Muito difícil</option>
-                </select>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={12} md={7}>
-                <Card>
-                  <AceEditor
-                    mode={language === "cpp" ? "c_cpp" : language}
-                    theme={theme}
-                    focus={false}
-                    onChange={this.handleSolution.bind(this)}
-                    value={solution}
-                    fontSize={14}
-                    width="100%"
-                    showPrintMargin={false}
-                    name="ACE_EDITOR"
-                    showGutter={true}
-                     
-                     
-                    highlightActiveLine={true}
-                  />
-                </Card>
-              </Col>
-
-              <Col xs={12} md={5}>
-                {loadingReponse ? (
-                  <div className="loader" style={{ margin: "0px auto" }}></div>
-                ) : (
-                  <Card style={{ minHeight: "500px" }}>
-                    <CardHead>
-                      <CardTitle>Resultados</CardTitle>
-                    </CardHead>
-                    <TableResults2
-                      response={response}
-                      showAllTestCases={true}
-                      descriptionErro={descriptionErro}
-                      percentualAcerto={percentualAcerto}
-                    />
-                  </Card>
-                )}
-              </Col>
-            </Row>
-          </Fragment>
+          <ExercicioScreen
+            {...this.state}
+            {...this.props}
+            showAllTestCases={true}
+            cardExemplos={this.cardEnunciadoRef}
+            changeLanguage ={this.changeLanguage.bind(this)}
+            changeTheme ={this.changeTheme.bind(this)}
+            handleSolution ={this.handleSolution.bind(this)}
+            handleDifficulty ={this.handleDifficulty.bind(this)}
+            submeter ={this.submeter.bind(this)}
+            salvaRascunho={this.salvaRascunho.bind(this)}
+          />
         )}
       </TemplateSistema>
     );

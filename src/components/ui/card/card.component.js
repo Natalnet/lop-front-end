@@ -5,19 +5,15 @@
  * @Last Modified time: 2019-02-03 22:00:20
  */
 
-import React,{forwardRef} from "react";
+import React from "react";
 
-const Card = (props,ref)=>{
-  	const {children,style} = props
+export default (props)=>{
+	const {children,className} = props
     return (
-    	<div className='row row-cards row-deck turma' ref={ref}>
-    		<div className="col-12">
-    			<div className="card" style={style || {} } >
-			      {children}
-		      </div>
-      	</div>
-      </div>
+		<div className={`card ${className || ''}`} >
+			{children}
+		</div>
+      	
     );
 }
-export default forwardRef(Card)
 

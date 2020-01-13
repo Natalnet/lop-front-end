@@ -6,13 +6,13 @@
  */
 
 import React, { Component } from "react";
-
 import { Link } from "react-router-dom";
-
+import profileImg from "../../../assets/perfil.png"
 export default class HeadPefilMenu extends Component {
   render() {
-    let profile = sessionStorage.getItem("user.profile");
-    let nome = sessionStorage.getItem("user.name");
+    const profile = sessionStorage.getItem("user.profile");
+    const nome = sessionStorage.getItem("user.name");
+    const urlImage = sessionStorage.getItem("user.urlImage")
     return (
       <div className="d-flex">
         <Link className="header-brand" to={`/${profile && profile.toLocaleLowerCase()}`}>
@@ -32,8 +32,7 @@ export default class HeadPefilMenu extends Component {
               <span
                 className="avatar"
                 style={{
-                  backgroundImage:
-                    "url(https://avatars2.githubusercontent.com/u/19957124?s=460&v=4)"
+                  backgroundImage: `url(${urlImage || profileImg})`
                 }}
               />
               <span className="ml-2 d-none d-lg-block">

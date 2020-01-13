@@ -9,16 +9,12 @@ import React, { Component } from "react";
 
 export default class CardBody extends Component {
     render() {
-		let {loading,children,style} = this.props
-		if(style){
-			style.overflow = style.overflow?style.overflow:'auto'
-		}else{
-			style = {overflow:'auto'}
-		}
+		let {loading,children,className} = this.props
+		
 	    
 
     return (
-        <div className='card-body' style={style}>
+        <div className={`card-body ${className || ''}`}>
 			{loading
 			?
 				<div className="loader"  style={{margin:'0px auto'}}></div>

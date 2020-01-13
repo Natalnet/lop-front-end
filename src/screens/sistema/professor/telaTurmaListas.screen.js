@@ -2,7 +2,6 @@ import React, { Component, Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import NavPagination from "components/ui/navs/navPagination";
@@ -14,7 +13,7 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
+import TurmaListasScrren from "../.././../components/screens/turmaListas.componente.screen" 
 
 export default class Pagina extends Component {
   constructor(props) {
@@ -326,52 +325,18 @@ export default class Pagina extends Component {
             </button>
           </Col>
         </Row>
-
-        <Row mb={15}>
-          {loandingListas ? (
+        {loandingListas ? (
+          <Row mb={15}>
             <div className="loader" style={{ margin: "0px auto" }}></div>
-          ) : (
-            listas.map((lista, i) => {
-              return (
-                <Fragment key={lista.id}>
-                <Col xs={12}>
-                  <Card key={lista.id} style={{ margin: "2px" }}>
-                    <CardHead>
-                      <Col xs={5}>
-                        <h4 style={{ margin: "0px" }}>
-                          <b>{lista.title}</b>
-                        </h4>
-                      </Col>
-                      <ProgressBar 
-                          numQuestions={lista.questionsCount}
-                          numQuestionsCompleted={lista.questionsCompletedSumissionsCount}
-                          dateBegin={lista.classHasListQuestion.createdAt}
-                          dateEnd={lista.classHasListQuestion.submissionDeadline}
-                      />
-                      <CardOptions>
-                        <Link
-                          to={`/professor/turma/${this.props.match.params.id}/lista/${lista.id}`}
-                        >
-                          <button className="btn btn-success mr-2">
-                            Acessar <i className="fa fa-wpexplorer" />
-                          </button>
-                        </Link>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => this.removerLista(lista)}
-                        >
-                          <i className="fa fa-trash " />
-                        </button>
-                      </CardOptions>
-                    </CardHead>
-                  </Card>
-                </Col>
-                </Fragment>
-              );
-            })
-          )}
-        </Row>
-
+          </Row>
+        ) : (
+          <TurmaListasScrren
+            {...this.state}
+            {...this.props}
+            listas={listas}
+            removerLista={this.removerLista.bind(this)}
+          />
+        )}
         <Modal
           show={showModalListas}
           onHide={this.handleCloseshowModalListas.bind(this)}

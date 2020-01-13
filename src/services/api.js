@@ -8,8 +8,12 @@ const api = axios.create({
 });
 api.interceptors.request.use(config => {
   const token = sessionStorage.getItem("auth-token");
+  const profile = sessionStorage.getItem("user.profile")
   if (token) {
     config.headers.authorization = `Bearer ${token}`;
+  }
+  if(profile){
+    config.headers.profile = profile;
   }
   return config;
 });

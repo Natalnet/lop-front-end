@@ -22,10 +22,11 @@ export default class ConfirmRegister extends Component {
       Swal.showLoading()
       const response = await api.post("/auth/confirm_register" + key)
       sessionStorage.setItem("auth-token", response.data.token);
-      sessionStorage.setItem("user.id", response.data.user.id);
       sessionStorage.setItem("user.profile", response.data.user.profile);
       sessionStorage.setItem("user.name", response.data.user.name);
       sessionStorage.setItem("user.email", response.data.user.email);
+      sessionStorage.setItem("user.urlImage", response.data.user.urlImage || "");
+
       Swal.fire({
         type: "success",
         title: `Seja bem vindo(a)`,

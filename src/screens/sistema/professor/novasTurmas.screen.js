@@ -63,7 +63,7 @@ export default class NovasTurmasScreen extends Component {
       semester,
       description,
       state,
-      professores:professoresSelecionados.map(p => p.id),
+      professores:professoresSelecionados.map(p => p.value),
       languages: linguagensSelecionadas.map(l => l.value)
     };
     Swal.fire({
@@ -100,15 +100,13 @@ export default class NovasTurmasScreen extends Component {
       await this.setState({
         professoresSelecionados: [
           {
-            value: sessionStorage.getItem("user.id"),
-            id: sessionStorage.getItem("user.id"),
+            value: sessionStorage.getItem("user.email"),
             label: sessionStorage.getItem("user.email")
           }
         ],
         todosProfessores: response.data.map(p => {
           return {
-            value: p.id,
-            id: p.id,
+            value: p.email,
             label: p.email
           };
         })
@@ -139,7 +137,13 @@ export default class NovasTurmasScreen extends Component {
   handleStateChange = e => {
     this.setState({ state: e.target.value });
   };
-  handleProfessorsChange = professores => {
+  handleProfessorsChange = (professores, { action, removedValue  }) => {
+    console.log("professores:",professores)
+    console.log("action:",action)
+    console.log("removedProfessor:",removedValue )
+    const myEmail = sessionStorage.getItem("user.email")
+    if(removedValue && removedValue.value===myEmail) return null
+    
     this.setState({
       professoresSelecionados: professores || []
     });
@@ -242,6 +246,7 @@ export default class NovasTurmasScreen extends Component {
                     placeholder={"Selecione as linguagens"}
                     isMulti
                     options={this.state.linguagens}
+                    isClearable={false}
                     onChange={this.handleLanguageChange.bind(this)}
                   />
                 </div>
@@ -255,12 +260,14 @@ export default class NovasTurmasScreen extends Component {
                     isLoading={this.state.loadingProfessores}
                     defaultValue={[
                       {
-                        value: sessionStorage.getItem("user.id"),
-                        id: sessionStorage.getItem("user.id"),
+                        value: sessionStorage.getItem("user.email"),
+                        id: sessionStorage.getItem("user.email"),
                         label: sessionStorage.getItem("user.email")
                       }
                     ]}
+                    value={this.state.professoresSelecionados}
                     options={this.state.todosProfessores}
+                    isClearable={false}
                     onChange={this.handleProfessorsChange.bind(this)}
                   />
                 </div>

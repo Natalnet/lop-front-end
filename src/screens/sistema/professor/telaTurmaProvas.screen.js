@@ -2,7 +2,6 @@ import React, { Component,Fragment } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import Swal from 'sweetalert2'
-import { Link } from "react-router-dom";
 import {Modal} from 'react-bootstrap'
 import 'katex/dist/katex.min.css';
 import {BlockMath } from 'react-katex';
@@ -15,7 +14,7 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
+import TurmaProvasScreen from "components/screens/turmaProvas.componente.screen"
 
 export default class Provas extends Component {
 
@@ -259,47 +258,19 @@ export default class Provas extends Component {
                 </button>
                 </Col>
             </Row>
-            <Row mb={15}>
-                {loandingProvas
-                ?
+            {loandingProvas
+            ?
+                <Row mb={15}>
                     <div className="loader"  style={{margin:'0px auto'}}></div>
-                :
-
-                provas.map((prova,i)=>{
-                    return(
-                    <Fragment key={prova.id}>
-                    <Col xs={12}>
-                        <Card key={prova.id} style={{margin:'2px'}}>
-                            <CardHead>
-                                <Col xs={5}>
-                                    <h4 style={{margin:'0px'}}><b>{prova.title}</b></h4>
-                                </Col>
-                                <ProgressBar 
-                                    numQuestions={prova.questionsCount}
-                                    numQuestionsCompleted={prova.questionsCompletedSumissionsCount}
-                                    dateBegin={prova.classHasTest.createdAt}
-                                />
-                                <CardOptions>
-                                    <Link to={`/professor/turma/${this.props.match.params.id}/prova/${prova.id}`}>
-                                        <button className="btn btn-success mr-2">
-                                            Acessar <i className="fa fa-wpexplorer" />
-                                        </button>
-                                    </Link>
-                                    <button className="btn btn-danger" onClick={()=>this.removerProva(prova)}>
-                                        <i className="fa fa-trash "/>
-                                    </button>
-                                </CardOptions>
-                            </CardHead>
-
-                        </Card>
-                    </Col>
-                    </Fragment>
-                    )
-                })
-                }
-                
-            </Row>
-
+                </Row>
+            :
+                <TurmaProvasScreen
+                    {...this.state}
+                    {...this.props}
+                    provas={provas}
+                    removerProva={this.removerProva.bind(this)}
+                />
+            }
             <Modal
                 show={showModalProvas} onHide={this.handleCloseshowModalProvas.bind(this)}
                 size="lg"

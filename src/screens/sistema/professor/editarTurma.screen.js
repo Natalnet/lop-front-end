@@ -58,8 +58,7 @@ export default class NovasTurmasScreen extends Component {
           .filter(p => p.profile === "PROFESSOR")
           .map(p => {
             return {
-              id: p.id,
-              value: p.id,
+              value: p.email,
               label: p.email
             };
         }),
@@ -108,7 +107,7 @@ export default class NovasTurmasScreen extends Component {
         state,
         languages: linguagensSelecionadas.map(l => l.value)
       },
-      professores:professoresSelecionados.map(p => p.id),
+      professores:professoresSelecionados.map(p => p.value),
      
     };
     Swal.fire({
@@ -146,8 +145,7 @@ export default class NovasTurmasScreen extends Component {
       this.setState({
         todosProfessores: response.data.map(p => {
           return {
-            value: p.id,
-            id: p.id,
+            value: p.email,
             label: p.email
           };
         })
@@ -173,7 +171,13 @@ export default class NovasTurmasScreen extends Component {
   handleStateChange = e => {
     this.setState({ state: e.target.value });
   };
-  handleProfessorsChange = professores => {
+  handleProfessorsChange = (professores, { action, removedValue  }) => {
+    console.log("professores:",professores)
+    console.log("action:",action)
+    console.log("removedProfessor:",removedValue )
+    const myEmail = sessionStorage.getItem("user.email")
+    if(removedValue && removedValue.value===myEmail) return null
+    
     this.setState({
       professoresSelecionados: professores || []
     });
@@ -285,6 +289,7 @@ export default class NovasTurmasScreen extends Component {
                       isMulti
                       options={this.state.linguagens}
                       closeMenuOnSelect={false}
+                      isClearable={false}
                       onChange={this.handleLanguageChange.bind(this)}
                     />
                   </div>
@@ -294,9 +299,10 @@ export default class NovasTurmasScreen extends Component {
                     <label>Professores: </label>
                     <Select
                       style={{ boxShadow: "white" }}
-                      defaultValue={this.state.professoresSelecionados}
+                      value={this.state.professoresSelecionados}
                       options={this.state.todosProfessores}
                       isMulti
+                      isClearable={false}
                       onChange={this.handleProfessorsChange.bind(this)}
                     />
                   </div>

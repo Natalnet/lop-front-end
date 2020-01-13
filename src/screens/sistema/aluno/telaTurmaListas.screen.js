@@ -1,14 +1,10 @@
-import React, { Component, Fragment } from "react";
-import { Link } from "react-router-dom";
+import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api, { baseUrlBackend } from "../../../services/api";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import socket from "socket.io-client";
-import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
+import TurmaListasScrren from "../.././../components/screens/turmaListas.componente.screen" 
 
 export default class Listas extends Component {
   constructor(props) {
@@ -19,7 +15,6 @@ export default class Listas extends Component {
       loadingInfoTurma: true,
       myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
       turma:"",      
-      todasListas: []
     };
   }
   
@@ -105,45 +100,18 @@ export default class Listas extends Component {
             )}
           </Col>
         </Row>
-        <Row mb={15}>
-          {loandingListas ? (
+        {loandingListas ? (
+          <Row mb={15}>
             <div className="loader" style={{ margin: "0px auto" }}></div>
-          ) : (
-            listas.map((lista, i) => {
-              return (
-                <Fragment key={lista.id}>
-                  <Col xs={12}>
-                    <Card key={lista.id} style={{ margin: "2px" }}>
-                      <CardHead>
-                        <Col xs={5}>
-                          <h4 style={{ margin: "0px" }}>
-                            <b>{lista.title}</b>
-                          </h4>
-                        </Col>
-                        <ProgressBar 
-                          numQuestions={lista.questionsCount}
-                          numQuestionsCompleted={lista.questionsCompletedSumissionsCount}
-                          dateBegin={lista.classHasListQuestion.createdAt}
-                          dateEnd={lista.classHasListQuestion.submissionDeadline}
-                        />
-
-                        <CardOptions>
-                          <Link
-                            to={`/aluno/turma/${this.props.match.params.id}/lista/${lista.id}`}
-                          >
-                            <button className="btn btn-success">
-                              Acessar <i className="fa fa-wpexplorer" />
-                            </button>
-                          </Link>
-                        </CardOptions>
-                      </CardHead>
-                    </Card>
-                  </Col>
-                </Fragment>
-              );
-            })
-          )}
-        </Row>
+          </Row>
+        ) : (
+          <TurmaListasScrren
+            {...this.state}
+            {...this.props}
+            listas={listas}
+          />
+        )
+        }
       </TemplateSistema>
     );
   }

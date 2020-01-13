@@ -5,6 +5,7 @@ import socket from "socket.io-client";
 import api, { baseUrlBackend } from "../../../services/api";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import profileImg from "../../../assets/perfil.png"
 
 const lista = {
   backgroundColor: "white"
@@ -104,6 +105,7 @@ export default class Pagina extends Component {
       enrollment:user.enrollment,
       idClass,
     }
+    let query = `?userEmail=${user.email}`
     try {
       Swal.fire({
         title: "Processando",
@@ -113,11 +115,12 @@ export default class Pagina extends Component {
       });
       Swal.showLoading();
 
-      await this.removeSolicitacao(user.id,false);
-      await api.post(`/classHasUser/store`,request);
-      //console.log(response);
-      
-      this.getUsuarios();
+      await this.removeSolicitacao(user,false);
+      await api.post(`/classHasUser/store${query}`,request);
+      const {usuarios}= this.state
+      this.setState({
+        usuarios : usuarios.filter(u=>u.id!==user.id)
+      })
       Swal.hideLoading();
       Swal.fire({
         type: "success",
@@ -132,10 +135,13 @@ export default class Pagina extends Component {
     }
   }
 
-  async removeSolicitacao(idUser,msg=true) {
+  async removeSolicitacao(user,msg=true) {
+    const idUser = user.id
+    const emailUser = user.email
     const idClass = this.props.match.params.id;
     let query = `?idClass=${idClass}`
     query += `&idUser=${idUser}`
+    query += `&emailUser=${emailUser}`
     try {
       if(msg){
         Swal.fire({
@@ -220,8 +226,7 @@ export default class Pagina extends Component {
                         <div
                           className="avatar d-block"
                           style={{
-                            backgroundImage: `url(${user.urlImage ||
-                              "https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"})`
+                            backgroundImage: `url(${user.urlImage || profileImg})`
                           }}
                         />
                       </td>
@@ -236,7 +241,7 @@ export default class Pagina extends Component {
                           <i className="fa fa-user-plus" />
                         </button>
                         <button
-                          onClick={() => this.removeSolicitacao(user.id)}
+                          onClick={() => this.removeSolicitacao(user)}
                           className="btn btn-danger mr-2"
                         >
                           <i className="fa fa-user-times" />

@@ -44,12 +44,17 @@ export default class TemplateSistema extends Component {
         this.props.history.push('/404')
       } 
       else if(err.response && err.response.status === 401){
-        if(err.response.data.msg==="token mal formatado"){
-          this.props.history.push('/')
+        console.log("props:",this.props)
+        if(err.response.data.msg==="token mal formatado" ){
           sessionStorage.clear()
+          document.location.href = '/'
+        }
+        else if(err.response.data.msg==="perfil inválido"){
+          sessionStorage.clear()
+          document.location.href = '/'
         }
         else{
-          this.props.history.push(`/${profile && profile.toLocaleLowerCase()}`)
+          document.location.href = `/${profile && profile.toLocaleLowerCase()}`
         }
       }
       else {

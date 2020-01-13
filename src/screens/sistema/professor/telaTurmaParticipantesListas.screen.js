@@ -2,12 +2,10 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import ProgressBar from "../../../components/ui/ProgressBar/progressBar.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import TurmaProvasScreen from "components/screens/turmaProvas.componente.screen"
+import TurmaListasScrren from "../.././../components/screens/turmaListas.componente.screen" 
 
 export default class Listas extends Component {
   constructor(props) {
@@ -138,79 +136,25 @@ export default class Listas extends Component {
                 <h4 style={{ margin: "0px" }}>Listas</h4>
               </Col>
             </Row>
-            <Row mb={15}>
-              {listas.map((lista, i) => {
-                return (
-                  <Fragment key={lista.id}>
-                    <Col xs={12}>
-                      <Card key={lista.id} style={{ margin: "2px" }}>
-                        <CardHead>
-                          <Col xs={5}>
-                            <h4 style={{ margin: "0px" }}>
-                              <b>{lista.title}</b>
-                            </h4>
-                          </Col>
-                          <ProgressBar 
-                              numQuestions={lista.questionsCount}
-                              numQuestionsCompleted={lista.questionsCompletedSumissionsCount}
-                              dateBegin={lista.classHasListQuestion.createdAt}
-                              dateEnd={lista.classHasListQuestion.submissionDeadline}
-                          />
-                          <CardOptions>
-                            <Link
-                              to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario && usuario.id}/listas/${lista.id}/exercicios`}
-                            >
-                              <button className="btn btn-success">
-                                Acessar <i className="fa fa-wpexplorer" />
-                              </button>
-                            </Link>
-                          </CardOptions>
-                        </CardHead>
-                      </Card>
-                    </Col>
-                  </Fragment>
-                );
-              })}
-            </Row>
+            <TurmaListasScrren
+              {...this.state}
+              {...this.props}
+              listas={listas}
+              user={usuario}
+              participant
+            />
             <Row mb={10}>
               <Col md={12} textCenter>
                 <h4 style={{ margin: "0px" }}>Provas</h4>
               </Col>
             </Row>
-            <Row mb={15}>
-              {provas.map((prova, i) => {
-
-                return (
-                  <Fragment key={prova.id}>
-                    <Col xs={12}>
-                      <Card key={prova.id} style={{ margin: "2px" }}>
-                        <CardHead>
-                          <Col xs={5}>
-                            <h4 style={{ margin: "0px" }}>
-                              <b>{prova.title}</b>
-                            </h4>
-                          </Col>
-                          <ProgressBar 
-                            numQuestions={prova.questionsCount}
-                            numQuestionsCompleted={prova.questionsCompletedSumissionsCount}
-                            dateBegin={prova.classHasTest.createdAt}
-                          />
-                          <CardOptions>
-                            <Link
-                              to={`/professor/turma/${this.props.match.params.id}/participantes/${usuario && usuario.id}/provas/${prova.id}/exercicios`}
-                            >
-                              <button className="btn btn-success">
-                                Acessar <i className="fa fa-wpexplorer" />
-                              </button>
-                            </Link>
-                          </CardOptions>
-                        </CardHead>
-                      </Card>
-                    </Col>
-                  </Fragment>
-                );
-              })}
-            </Row>
+            <TurmaProvasScreen
+              {...this.state}
+              {...this.props}
+              provas={provas}
+              user={usuario}
+              participant
+            />
           </Fragment>
         )}
       </TemplateSistema>

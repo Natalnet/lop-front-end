@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 
-import Swal from "sweetalert2";
-
-import axios from "axios";
+import api from "../../services/api"
 
 import ErrorBoundary from "screens/erros/errorBoundary.screen";
 
@@ -18,33 +16,39 @@ export default class TemplateSistema extends Component {
     };
   }
   componentDidMount() {
-    document.title = "Template de login";
-
-    axios.interceptors.response.use(null, error => {
-      if (error.response !== undefined) {
-        if (
-          error.response.status === 500 ||
-          error.response.status === 400 ||
-          error.response.status === 404
-        ) {
-          const { erros } = error.response.data;
-
-          let text = erros.map(erro => {
-            return `${erro.msg}`.replace(".", "");
-          });
-
-          Swal.fire({
-            type: "error",
-            title: `Erro ${error.response.status}`,
-            text: text,
-            confirmButtonText: "Voltar para o sistema"
-          });
-        } else {
-          return Promise.reject(error);
+    document.title = "Adiministração";
+  }
+  handleAxiosErros = () => {
+    const profile = sessionStorage.getItem("user.profile");
+    api.interceptors.response.use(null, err => {
+      console.log("interceptores------>>>>>>")
+      console.log(Object.getOwnPropertyDescriptors(err))
+      console.log(err.message)
+      console.log("interceptores------>>>>>>")
+      
+      if ((err.response && err.response.status === 404) || err.message==="Network Error") {
+        this.props.history.push('/404')
+      } 
+      else if(err.response && err.response.status === 401){
+        console.log("props:",this.props)
+        if(err.response.data.msg==="token mal formatado" ){
+          sessionStorage.clear()
+          document.location.href = '/'
+        }
+        else if(err.response.data.msg==="perfil inválido"){
+          sessionStorage.clear()
+          document.location.href = '/'
+        }
+        else{
+          document.location.href = `/${profile && profile.toLocaleLowerCase()}`
         }
       }
+      else {
+        return Promise.reject(err);
+      }
+        
     });
-  }
+  };
 
   render() {
     return (

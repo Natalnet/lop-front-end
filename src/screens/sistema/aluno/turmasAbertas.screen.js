@@ -14,8 +14,8 @@ import IconJS from "../../../assets/icons/icons-javascript.svg"
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-
 import socket from "socket.io-client";
+import profileImg from "../../../assets/perfil.png";
 
 export default class HomeAlunoScreen extends Component {
   constructor(props) {
@@ -97,9 +97,11 @@ export default class HomeAlunoScreen extends Component {
   }
   async getTurmasAbertasRealTime() {
     const io = socket(baseUrlBackend);
-    io.emit("connectRoonUser", sessionStorage.getItem("user.id"));
+    io.emit("connectRoonUser", sessionStorage.getItem("user.email"));
 
     io.on("RejectSolicitation", async response => {
+
+      console.log("sockets",response)
       const {solicitacoes} = this.state
       this.setState({
         solicitacoes:solicitacoes.filter(s=>s.class_id!==response)
@@ -134,7 +136,7 @@ export default class HomeAlunoScreen extends Component {
   async solicitarAcesso(idClass) {
     
     const { value } = await Swal.fire({
-      title: "Informe sua matrícula da instituição na qual esssa turma pertence?",
+      title: "Informe sua matrícula na instituição da qual essa turma pertence",
       confirmButtonText: "Ok",
       cancelButtonText: "Cancelar",
       input: "text",
@@ -179,14 +181,11 @@ export default class HomeAlunoScreen extends Component {
         type: "error",
         title: "ops... Falha ao tentar fazer solicitação"
       });
-      //this.setState({solicitando:''})
     }
   }
   async cancelarSolicitacao(idClass) {
-    //sessionStorage.getItem("user.id");
     let query = `?idClass=${idClass}`
     try {
-      //this.setState({solicitando:'disabled'})
       Swal.fire({
         title: "Cancelando Solicitação",
         allowOutsideClick: false,
@@ -328,7 +327,7 @@ export default class HomeAlunoScreen extends Component {
                             style={{
                               float: "left",
                               margin: "5px 5px 5px 0px",
-                              backgroundImage: `url("https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"})`
+                              backgroundImage: `url(${turma.author.urlImage || profileImg})`
                             }}
                           />
                           <div

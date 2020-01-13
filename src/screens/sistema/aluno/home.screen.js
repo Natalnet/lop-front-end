@@ -15,6 +15,7 @@ import IconJS from "../../../assets/icons/icons-javascript.svg"
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import CardLoader from "components/ui/card/cardLoader.component";
+import profileImg from "../../../assets/perfil.png"
 
 export default class HomeAlunoScreen extends Component {
   constructor(props) {
@@ -45,7 +46,8 @@ export default class HomeAlunoScreen extends Component {
           id: t.id,
           year: t.year,
           name: t.name,
-          semester: t.semester
+          semester: t.semester,
+          languages:t.languages
         };
       });
       sessionStorage.setItem("myClasses", JSON.stringify(myClasses));
@@ -86,6 +88,7 @@ export default class HomeAlunoScreen extends Component {
 
   render() {
     const { loadingTurmas, minhasTurmas } = this.state;
+
     return (
       <TemplateSistema active="home">
         <Row>
@@ -101,9 +104,22 @@ export default class HomeAlunoScreen extends Component {
                   </Col>
                 </Fragment>
               ))
-            : minhasTurmas.map(turma => (
+            : (minhasTurmas.length===0)?
+              
+              <Col xs={12} textCenter>
+                <div className="alert alert-info" role="alert">
+                  Você ainda não está em nenhuma turma <i className="fa fa-frown-o"/>. 
+                  Caso tenha o código de uma, poderá solicitar acesso a ela em 
+                  <Link to="/aluno/turmasAbertas">
+                    <i className="fe fe-users ml-2"/> Turmas abertas
+                  </Link>
+                </div>
+              </Col>
+             
+            :
+            minhasTurmas.map(turma => (
                 <Fragment key={turma.id}>
-                  <Col xs={12} lg={6}>
+                  <Col xs={12} lg={6} >
                     <Card>
                       <CardHead      
                         style={{
@@ -127,7 +143,7 @@ export default class HomeAlunoScreen extends Component {
                           </p>
                         </CardOptions>
                       </CardHead>
-                      <CardBody style={{height:"110px"}}>
+                      <CardBody className="card-class overflow-auto">
                         <p>
                           <b>Linguagens: </b>
                           {turma.languages.map((language) => {
@@ -155,7 +171,7 @@ export default class HomeAlunoScreen extends Component {
                           style={{
                             float: "left",
                             margin: "5px 5px 5px 0px",
-                            backgroundImage: `url("https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"})`
+                            backgroundImage: `url(${turma.author.urlImage || profileImg})`
                           }}
                         />
                         <div

@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
-import NavPagination from "components/ui/navs/navPagination";
-import Table from 'components/ui/tables/tableType1.component'
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import ParticioantesScreenfrom from "components/screens/participantes.componentes.screen"
 export default class Pagina extends Component {
     constructor(props){
         super(props)
@@ -114,84 +113,26 @@ export default class Pagina extends Component {
         },()=>this.getParticipantes())
     }
     render() {
-        const {turma,participantes,loadingInfoTurma,loadingParticipantes,numPageAtual,totalPages} = this.state
+        const {turma,loadingInfoTurma} = this.state
+
         return (
         <TemplateSistema {...this.props} active={'participantes'} submenu={'telaTurmas'}>
-                <Row mb={15}>
-                    <Col xs={12}>
-                        {loadingInfoTurma?
-                            <div className="loader"  style={{margin:'0px auto'}}></div>
-                            :
-                            <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
-                                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
-                                <i className="fa fa-angle-left ml-2 mr-2"/> Participantes
-                            </h5>                        }
-                    </Col>
-                </Row>
-                <Row mb={15}>
-                    <Col xs={12}>
-                     <Table>
-                        <thead> 
-                            <tr>
-                                <th></th>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>Matrícula</th>
-                                <th>Função</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loadingParticipantes
-                            ?
-                                <tr>
-                                    <td>
-                                        <div className="loader" />
-                                    </td>
-                                    <td>                                        
-                                        <div className="loader" />
-                                    </td>
-                                    <td>
-                                        <div className="loader"/>
-                                    </td>                                        
-                                    <td>
-                                        <div className="loader"/>
-                                    </td>
-                                    <td>
-                                        <div className="loader"/>
-                                    </td>
-           
-                                </tr>           
-                            :
-                                participantes.map((user, index) => (
-                                    <tr key={index}>
-                                        <td className='text-center'>
-                                            <div 
-                                                className="avatar d-block" 
-                                                style={
-                                                    {backgroundImage: `url(${user.urlImage || 'https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg'})`}
-                                                }
-                                            />
-                                        </td>
-                                        <td>{user.name}</td>
-                                        <td>{user.email}</td>
-                                        <td>{user.enrollment}</td>
-                                        <td>{user.profile}</td>
-                                    </tr>
-                                ))
-                            }
-                        </tbody>
-                    </Table>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col xs={12} textCenter>
-                        <NavPagination
-                          totalPages={totalPages}
-                          pageAtual={numPageAtual}
-                          handlePage={this.handlePage}
-                        />
-                    </Col>
-                </Row>
+            <Row mb={15}>
+                <Col xs={12}>
+                    {loadingInfoTurma?
+                        <div className="loader"  style={{margin:'0px auto'}}></div>
+                        :
+                        <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
+                            {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
+                            <i className="fa fa-angle-left ml-2 mr-2"/> Participantes
+                        </h5>                        }
+                </Col>
+            </Row>
+            <ParticioantesScreenfrom
+                {...this.props}
+                {...this.state}
+                handlePage={this.handlePage.bind(this)}
+            />
         </TemplateSistema>
         )
     }
