@@ -544,7 +544,7 @@ export default class Editor extends Component {
           }
           </div>
         </div>
-          <button type='submit' className={`btn btn-primary btn-lg btn-block ${savingQuestion && 'btn-loading'}`}>
+          <button type='submit' className={`btn btn-primary btn-lg btn-block mt-5 ${savingQuestion && 'btn-loading'}`}>
             <i className="fa fa-save"></i> Salvar
           </button> 
         </form>

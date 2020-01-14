@@ -343,7 +343,7 @@ export default class TurmasScreen extends Component {
                         <p><b>Descrição da turma:</b> &nbsp; {turma.description}</p>
                       </CardBody>
                       <CardFooter>
-                        <div style={{display:"inline-flex"}}>
+                        <div className="d-inline-flex">
                           <Switch 
                             status={turma.state} 
                             id={turma.id}

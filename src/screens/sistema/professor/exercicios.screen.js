@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import {formatDate} from "../../../util/auxiliaryFunctions.util";
@@ -45,17 +46,17 @@ export default class HomeExerciciosScreen extends Component {
     }
     async componentDidMount() {
         document.title = "Exercícios - professor";
-        await this.getTags();
+        this.getTags();
         this.getExercicios();
     }
     async getExercicios(){
-        const {numPageAtual,contentInputSeach,fildFilter,docsPerPage,valueRadioSort,sortBy,tags,tagsSelecionadas} = this.state
+        const {numPageAtual,contentInputSeach,fildFilter,docsPerPage,valueRadioSort,sortBy,tagsSelecionadas} = this.state
         let query = `include=${contentInputSeach.trim()}`
         query +=`&docsPerPage=${docsPerPage}`
         query += `&field=${fildFilter}`
         query += `&sortBy=${sortBy}`
         query += `&sort=${valueRadioSort}`
-        query += `&tags=${tagsSelecionadas.length===0?JSON.stringify(tags.map(tag=>tag.label)):JSON.stringify(tagsSelecionadas.map(tag=>tag.label))}`
+        query += `&tags=${JSON.stringify(tagsSelecionadas.map(tag=>tag.label))}`
         try{
             this.setState({loadingExercicios:true})
             const response = await api.get(`/question/page/${numPageAtual}?${query}`)
@@ -176,74 +177,84 @@ export default class HomeExerciciosScreen extends Component {
         const {showModalInfo,question} = this.state
         return (
         <TemplateSistema active='exercicios'>
-                <Row mb={15}>
-                    <Col xs={12}>
-                    <h5 style={{margin:'0px'}}> 
-                        Exercícios
-                    </h5> 
-                    </Col>
-                </Row>
-                <ExerciciosPaginados
-                    {...this.state}
-                    {...this.props}
-                    handleShowfilter = {this.handleShowfilter.bind(this)}
-                    filterSeash = {this.filterSeash.bind(this)}
-                    handleContentInputSeach = {this.handleContentInputSeach.bind(this)}
-                    handleSelectfildFilter = {this.handleSelectfildFilter.bind(this)}
-                    handleSort = {this.handleSort.bind(this)}
-                    handleRadio = {this.handleRadio.bind(this)}
-                    handleDocsPerPage = {this.handleDocsPerPage.bind(this)}
-                    handleTagsChangeTags = {this.handleTagsChangeTags.bind(this)}
-                    handleShowModalInfo = {this.handleShowModalInfo.bind(this)}
-                    handlePage = {this.handlePage.bind(this)}
-                />
-                <SwalModal
-                    show={showModalInfo}
-                    title="Exercício"
-                    handleModal={this.handleCloseshowModalInfo.bind(this)}
-                    width={'90%'}
-                >
-                <Card>
-                    <CardHead>
-                        <CardTitle>
-                            {question && question.title}
-                        </CardTitle>
-                    </CardHead>
-                    <CardBody>
-                        <Row>
-                            <b>Descrição: </b>
-                        </Row>
-                        <Row>
-                            {question && question.description}
-                        </Row>
-                        <Row>
-                            <Col xs={12} textCenter>
-                                <BlockMath>{(question && question.katexDescription) || ''}</BlockMath>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col xs={12}>
-                            <TableIO
-                                results={(question && question.results) || []}
-                            />
-                            </Col>
-                        </Row>
-                    </CardBody>
-                    <CardFooter>
-                        <Row>
-                            <Col xs={12} mb={15}>
-                                <b>Autor:</b> {question && question.author.email} 
-                            </Col>
-                            <Col xs={12} mb={15}>
-                                <b>Tags: </b> {question && question.tags.join(", ")}
-                            </Col>
-                            <Col xs={12}>
-                                <b>Data de criação:</b> {question && formatDate(question.createdAt)} 
-                            </Col>
-                        </Row>
-                    </CardFooter>
-                </Card>
-                </SwalModal>
+            <Row mb={15}>
+                <Col xs={12}>
+                <h5 style={{margin:'0px'}}> 
+                    Exercícios
+                </h5> 
+                </Col>
+            </Row>
+            <Row mb={15}>
+                <Col xs={12}>
+                    <Link to="/professor/criarExercicio">
+                        <button className="btn btn-primary">
+                            Criar Exercício
+                        </button>
+                        
+                    </Link>            
+                </Col>
+            </Row>
+            <ExerciciosPaginados
+                {...this.state}
+                {...this.props}
+                handleShowfilter = {this.handleShowfilter.bind(this)}
+                filterSeash = {this.filterSeash.bind(this)}
+                handleContentInputSeach = {this.handleContentInputSeach.bind(this)}
+                handleSelectfildFilter = {this.handleSelectfildFilter.bind(this)}
+                handleSort = {this.handleSort.bind(this)}
+                handleRadio = {this.handleRadio.bind(this)}
+                handleDocsPerPage = {this.handleDocsPerPage.bind(this)}
+                handleTagsChangeTags = {this.handleTagsChangeTags.bind(this)}
+                handleShowModalInfo = {this.handleShowModalInfo.bind(this)}
+                handlePage = {this.handlePage.bind(this)}
+            />
+            <SwalModal
+                show={showModalInfo}
+                title="Exercício"
+                handleModal={this.handleCloseshowModalInfo.bind(this)}
+                width={'90%'}
+            >
+            <Card>
+                <CardHead>
+                    <CardTitle>
+                        {question && question.title}
+                    </CardTitle>
+                </CardHead>
+                <CardBody>
+                    <Row>
+                        <b>Descrição: </b>
+                    </Row>
+                    <Row>
+                        {question && question.description}
+                    </Row>
+                    <Row>
+                        <Col xs={12} textCenter>
+                            <BlockMath>{(question && question.katexDescription) || ''}</BlockMath>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12}>
+                        <TableIO
+                            results={(question && question.results) || []}
+                        />
+                        </Col>
+                    </Row>
+                </CardBody>
+                <CardFooter>
+                    <Row>
+                        <Col xs={12} mb={15}>
+                            <b>Autor:</b> {question && question.author.email} 
+                        </Col>
+                        <Col xs={12} mb={15}>
+                            <b>Tags: </b> {question && question.tags.join(", ")}
+                        </Col>
+                        <Col xs={12}>
+                            <b>Data de criação:</b> {question && formatDate(question.createdAt)} 
+                        </Col>
+                    </Row>
+                </CardFooter>
+            </Card>
+            </SwalModal>
         </TemplateSistema>
         )
     }

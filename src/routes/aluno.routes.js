@@ -1,11 +1,11 @@
 import exportRoutes from "util/routes/exportRoutes.util";
 import HomeAlunoScreen from "screens/sistema/aluno/home.screen";
 
-import HomeListaExercicios from "../screens/sistema/aluno/execicio.screen";
+import HomeListaExercicios from "../screens/sistema/aluno/exercicio.screen";
 
 import TurmaAluno from "../screens/sistema/aluno/telaTurmaParticipantes.screen";
 import Exercicios from "../screens/sistema/aluno/exercicios.screen";
-import Exercicio from "../screens/sistema/aluno/execicio.screen";
+import Exercicio from "../screens/sistema/aluno/exercicio.screen";
 import TurmaLista from "../screens/sistema/aluno/telaTurmaListas.screen";
 import TurmaExercicio from "../screens/sistema/aluno/telaTurmaExercicio.screen";
 import TurmaExercicios from "../screens/sistema/aluno/telaTurmaExercicios.screen";

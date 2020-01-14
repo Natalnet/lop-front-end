@@ -283,7 +283,7 @@ export default class CriarListaScreen extends Component {
                               <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
                               <td>{questao.author.email}</td>
                               <td>{formatDate(questao.createdAt)}</td>
-                              <td style={{display: 'inline-flex'}}>
+                              <td className="d-inline-flex">
                                 <button
                                   type="button"
                                   className="btn btn-primary mr-2"

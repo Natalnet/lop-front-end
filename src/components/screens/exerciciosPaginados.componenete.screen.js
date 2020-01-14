@@ -16,6 +16,7 @@ export default props =>{
     
     const arrDifficulty = [null,"Muito fácio","Fácio","Médio","Difício","Muito difício"]
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
+    const email = sessionStorage.getItem("user.email")
     return (
         <>
         <Card>
@@ -189,7 +190,7 @@ export default props =>{
                                     <td>{exercicio.submissionsCount}</td>
                                     <td>{arrDifficulty[parseInt(exercicio.difficulty)]}</td>
                                     
-                                    <td style={{display:'inline-flex'}}>
+                                    <td className="d-inline-flex">
                                         {(profile==="aluno")?(
                                             <>
                                             <Link to={`/aluno/exercicio/${exercicio.id}`} >
@@ -205,11 +206,16 @@ export default props =>{
                                         :
                                         (profile==="professor")?(
                                             <>
+                                            <Link to={`/professor/exercicio/${exercicio.id}`} >
+                                                <button className="btn btn-success mr-2">
+                                                    Acessar <i className="fa fa-wpexplorer" />
+                                                </button>
+                                            </Link>
                                             <button className="btn btn-primary mr-2" onClick={()=>handleShowModalInfo(exercicio)}>
                                                     <i className="fa fa-info"/>
                                             </button>
                                             <Link to={`/professor/exercicios/${exercicio.id}/editar`}>
-                                                <button className="btn btn-success">
+                                                <button className={`btn btn-info ${(email!==exercicio.author.email) || (exercicio).submissionsCount>0 ?"d-none":""}`}>
                                                     <i className="fe fe-edit" />
                                                 </button>
                                             </Link>

@@ -5,6 +5,8 @@ import ListasScreen from "screens/sistema/professor/listas.screen";
 import ProvaScreen from "screens/sistema/professor/provas.screen";
 
 import ExerciciosScreen from "screens/sistema/professor/exercicios.screen";
+import Exercicio from "../screens/sistema/professor/exercicio.screen";
+
 import AtualizarexercicioScreen from "screens/sistema/professor/exercicios.editar.screen";
 
 import CriarListaScreen from "screens/sistema/professor/criarLista.screen";
@@ -62,6 +64,12 @@ const routes = [
   {
     path: "/professor/exercicios",
     component: ExerciciosScreen,
+    private: true,
+    perfil: "PROFESSOR"
+  },
+  {
+    path: "/professor/exercicio/:id",
+    component: Exercicio,
     private: true,
     perfil: "PROFESSOR"
   },

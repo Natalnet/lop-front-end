@@ -43,17 +43,17 @@ export default class ExerciciosScreen extends Component {
     }
     async componentDidMount() {
         document.title = "Exercícios";
-        await this.getTags();
+        this.getTags();
         this.getExercicios();
     }
     async getExercicios(){
-        const {numPageAtual,contentInputSeach,fildFilter,docsPerPage,valueRadioSort,sortBy,tags,tagsSelecionadas} = this.state
+        const {numPageAtual,contentInputSeach,fildFilter,docsPerPage,valueRadioSort,sortBy,tagsSelecionadas} = this.state
         let query = `include=${contentInputSeach.trim()}`
         query +=`&docsPerPage=${docsPerPage}`
         query += `&field=${fildFilter}`
         query += `&sortBy=${sortBy}`
         query += `&sort=${valueRadioSort}`
-        query += `&tags=${tagsSelecionadas.length===0?JSON.stringify(tags.map(tag=>tag.label)):JSON.stringify(tagsSelecionadas.map(tag=>tag.label))}`
+        query += `&tags=${JSON.stringify(tagsSelecionadas.map(tag=>tag.label))}`
         console.log(query)
         try{
             this.setState({loadingExercicios:true})
