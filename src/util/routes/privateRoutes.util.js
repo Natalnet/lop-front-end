@@ -10,7 +10,8 @@ export const PrivateRoutes = ({ component: Component,perfil, ...rest }) => (
       !sessionStorage.getItem("user.email") ||
       (
         (sessionStorage.getItem("user.profile") !== "ALUNO") &&
-        (sessionStorage.getItem("user.profile") !== "PROFESSOR")
+        (sessionStorage.getItem("user.profile") !== "PROFESSOR") &&
+        (sessionStorage.getItem("user.profile") !== "ADMINISTRADOR")
       )
       ? (
         <Redirect to={{ pathname: "/", state: { from: props.location } }} />

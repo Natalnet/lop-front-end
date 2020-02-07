@@ -137,6 +137,7 @@ export default class Exercicios extends Component {
 
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
+
         <Row mb={15}>
           <Col xs={12}>
             {loadingInfoTurma ? (
@@ -155,13 +156,29 @@ export default class Exercicios extends Component {
           </Col>
         </Row>
 
+
         {loandingProva ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
+          <>
+          <Row mb={15}>
+            <Col xs={12} textRight>
+              {prova && prova.status==="FECHADA"?
+                <button className="btn btn-success" onClick={()=>this.aplicarProva()}>
+                  Aplicar prova
+                </button>
+              :
+                <button className="btn btn-danger" onClick={()=>this.recolherProva()}>
+                  Recolher prova
+                </button>
+              }
+            </Col>
+          </Row>
           <TurmaProvaScrren
             {...this.props}
             prova={prova}
           />
+          </>
         )}
       </TemplateSistema>
     );
