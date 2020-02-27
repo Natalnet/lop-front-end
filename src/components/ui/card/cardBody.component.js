@@ -8,11 +8,21 @@
 import React, { Component } from "react";
 
 export default class CardBody extends Component {
-  render() {
+    render() {
+		let {loading,children,className} = this.props
+		
+	    
+
     return (
-      <div className="card-body">
-        {this.props.children}
-      </div>
+        <div className={`card-body ${className || ''}`}>
+			{loading
+			?
+				<div className="loader"  style={{margin:'0px auto'}}></div>
+			:
+				children
+			}
+       
+        </div>
     );
   }
 }

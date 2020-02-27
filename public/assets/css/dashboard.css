@@ -60,7 +60,7 @@ html {
   width: device-width;
 }
 
-article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, section {
+article, aside, dialog, figcaption, footer, figure, header, hgroup, main, nav, section {
   display: block;
 }
 
@@ -3616,6 +3616,29 @@ input[type="button"].btn-block {
   appearance: none;
 }
 
+.box {
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-size:0;
+  height: 200px;
+  position:relative;
+  overflow:hidden;
+}
+.box:before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:calc(500% + 200px);
+  bottom:0;
+  background-image:inherit;
+  animation:move 2s linear infinite reverse; 
+}
+@keyframes move{
+  to {
+    transform:translateX(calc(-50% - 100px));
+  }
+}
+
 .custom-select:focus {
   border-color: #1991eb;
   outline: 0;
@@ -4369,6 +4392,12 @@ input[type="button"].btn-block {
   padding: 1.5rem;
 }
 
+.card-body1 {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  height: 77px;
+}
+
 .card-title {
   margin-bottom: 1.5rem;
 }
@@ -4397,6 +4426,13 @@ input[type="button"].btn-block {
   border-bottom: 1px solid rgba(0, 40, 100, 0.12);
 }
 
+.card-header1 {
+  padding: 0rem 0rem;
+  margin-bottom: 0;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 40, 100, 0.12);
+}
+
 .card-header:first-child {
   border-radius: calc(3px - 1px) calc(3px - 1px) 0 0;
 }
@@ -4409,6 +4445,12 @@ input[type="button"].btn-block {
   padding: 1.5rem 1.5rem;
   background-color: rgba(0, 0, 0, 0.03);
   border-top: 1px solid rgba(0, 40, 100, 0.12);
+}
+
+.card-footer1 {
+  padding: 0rem 0rem;
+  border-top: 1px solid rgba(0, 40, 100, 0.12);
+  height: 45px;
 }
 
 .card-footer:last-child {
@@ -13036,6 +13078,13 @@ a.icon:hover {
   position: relative;
 }
 
+.card-body1 {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  margin: 0;
+  position: relative;
+}
+
 .card-body + .card-body {
   border-top: 1px solid rgba(0, 40, 100, 0.12);
 }
@@ -14276,7 +14325,12 @@ Icon input
   width: 10rem;
   font-size: .8rem;
 }
+.css-26l3qy-menu{
+  box-shadow: #fff;
+  background-color: #fff;
+  border-color:#fff;
 
+}
 .chart-circle-value {
   position: absolute;
   top: 0;

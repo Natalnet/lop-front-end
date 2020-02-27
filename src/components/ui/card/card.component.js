@@ -5,16 +5,15 @@
  * @Last Modified time: 2019-02-03 22:00:20
  */
 
-import React, { Component } from "react";
+import React from "react";
 
-export default class Card extends Component {
-  render() {
+export default (props)=>{
+	const {children,className} = props
     return (
-      <div className="row row-cards row-deck">
-        <div className="col-12">
-          <div className="card">{this.props.children}</div>
-        </div>
-      </div>
+		<div className={`card ${className || ''}`} >
+			{children}
+		</div>
+      	
     );
-  }
 }
+

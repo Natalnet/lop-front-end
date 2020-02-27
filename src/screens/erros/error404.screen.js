@@ -10,6 +10,7 @@ import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 
 export default class Error404 extends Component {
+  
   componentDidMount() {
     document.title = "Error404 - Plataforma LOP";
   }
@@ -24,10 +25,10 @@ export default class Error404 extends Component {
             </div>
             <h1 className="h2 mb-3">Página não encontrada</h1>
             <p className="h4 text-muted font-weight-normal mb-7">
-              Você tentou acessar uma página que não existe na plataforma LOP.
+                Erro ao processar requisição.
             </p>
-            <Link className="btn btn-primary" to="/">
-              <i className="fe fe-arrow-left mr-2" />Voltar para o início
+            <Link className="btn btn-primary" to={`/${sessionStorage.getItem('user.profile').toLocaleLowerCase()}`}>
+              <i className="fe fe-arrow-left mr-2" />Voltar para o início 
             </Link>
           </div>
         </div>

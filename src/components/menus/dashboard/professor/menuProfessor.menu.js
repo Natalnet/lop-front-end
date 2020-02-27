@@ -10,9 +10,12 @@
 import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
-
+import SubMenuTurmas from './subMenuTurma.menu'
 export default class MenuProfessor extends Component {
   render() {
+    if(this.props.submenu==='telaTurmas')
+    return <SubMenuTurmas {...this.props}/>
+    else
     return (
       <div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
         <div className="container">
@@ -20,21 +23,27 @@ export default class MenuProfessor extends Component {
             <div className="col-lg order-lg-first">
               <ul className="nav nav-tabs border-0 flex-column flex-lg-row">
                 <li className="nav-item">
-                  <Link to="/sistema/professor" className="nav-link">
+                  <Link to="/professor" className={`nav-link ${this.props.active==='home'?'active':''}`}>
                     <i className="fe fe-home" />
                     Início
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/professor/relatorio" className="nav-link">
-                    <i className="fe fe-bar-chart" />
-                    Relatório
+                  <Link to="/professor/listas" className={`nav-link ${this.props.active==='listas'?'active':''}`}>
+                    <i className="fe fe-file-text" />
+                    Listas
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/sistema/professor/gestao-de-atividades" className="nav-link">
-                    <i className="fe fe-briefcase" />
-                    Gestão de atividades
+                  <Link to="/professor/exercicios" className={`nav-link ${this.props.active==='exercicios'?'active':''}`}>
+                    <i className="fa fa-file-code-o" />
+                    Exercícios
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/professor/provas" className={`nav-link ${this.props.active==='provas'?'active':''}`}>
+                    <i className="fe fe-file" />
+                    Provas
                   </Link>
                 </li>
               </ul>

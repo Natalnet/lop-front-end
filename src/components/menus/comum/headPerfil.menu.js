@@ -6,21 +6,22 @@
  */
 
 import React, { Component } from "react";
-
-import {Link} from 'react-router-dom';
-
+import { Link } from "react-router-dom";
+import profileImg from "../../../assets/perfil.png"
 export default class HeadPefilMenu extends Component {
   render() {
+    const profile = sessionStorage.getItem("user.profile");
+    const nome = sessionStorage.getItem("user.name");
+    const urlImage = sessionStorage.getItem("user.urlImage")
     return (
       <div className="d-flex">
-        <a className="header-brand" href="/dashboard">
+        <Link className="header-brand" to={`/${profile && profile.toLocaleLowerCase()}`}>
           <img
-            style={{marginLeft:'-0.7em'}}
             src="/assets/images/lop.svg"
             className="header-brand-img"
             alt="lop logo"
           />
-        </a>
+        </Link>
         <div className="d-flex order-lg-2 ml-auto">
           <div className="dropdown">
             <Link
@@ -31,14 +32,13 @@ export default class HeadPefilMenu extends Component {
               <span
                 className="avatar"
                 style={{
-                  backgroundImage:
-                    "url(https://avatars1.githubusercontent.com/u/18246968?s=400&u=7a4633dba51fd94c701fc25219afb33123159471&v=4"
+                  backgroundImage: `url(${urlImage || profileImg})`
                 }}
               />
               <span className="ml-2 d-none d-lg-block">
-                <span className="text-default">Marcus Paulo Soares Dantas</span>
+                <span className="text-default">{nome}</span>
                 <small className="text-muted d-block mt-1">
-                  Aluno - 20190001014
+                  {profile}
                 </small>
               </span>
             </Link>
@@ -47,7 +47,11 @@ export default class HeadPefilMenu extends Component {
                 <i className="dropdown-icon fe fe-user" /> Perfil
               </Link>
               <div className="dropdown-divider" />
-              <Link className="dropdown-item" to="/dashboard/sair">
+              <Link
+                className="dropdown-item"
+                to="/"
+                onClick={() => sessionStorage.clear()}
+              >
                 <i className="dropdown-icon fe fe-log-out" /> Sair
               </Link>
             </div>

@@ -1,0 +1,43 @@
+table.table{
+    background-color: rgb(255,255,255);
+    border : 0.5px solid rgb(230, 222, 226);
+}
+table.table-exemplo{
+    border: 0;
+    background-color: rgb(255,255,255,0);
+    
+}
+.overflow-auto{
+    overflow: auto;
+}
+div.card-class{
+    height: 110px;
+}
+div.card-filter-exercicio{
+    overflow: visible;
+}
+div.card-results{
+    border:0;
+    min-height: 500px;
+    background-color: rgb(255,255,255);
+    
+}
+div.card-result{
+    overflow: auto;
+}
+div.card-primary{
+    margin: 0;
+    background-color: #dae5f5;
+}
+div.card-status-success{
+ 
+    border-left: 3px solid rgb(7, 151, 2);
+}
+div.card-status-danger{
+   
+    border-left: 3px solid #f00;
+}
+
+div.card-status-primary{
+    border-left: 3px solid #467fcf;
+}
