@@ -2,6 +2,6 @@
 //     host: 'http://meuapp.producao.com'
 // };
 const variables = {
-    host: 'http://localhost:8080'
+    host: 'https://lop.ect.ufrn.br'
 };
 export default variables;
