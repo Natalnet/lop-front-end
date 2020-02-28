@@ -201,7 +201,7 @@ export default class HomeAdministradorScreen extends Component {
               <NavPagination
                 totalPages={totalPages}
                 pageAtual={numPageAtual}
-                handlePage={this.handlePage}
+                handlePage={this.handlePage.bind(this)}
               />
             </div>
           </div>
