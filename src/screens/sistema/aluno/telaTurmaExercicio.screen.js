@@ -90,7 +90,8 @@ export default class Editor extends Component {
         const index = myClasses.map(c=>c.id).indexOf(id)
         if(index!==-1){
             this.setState({
-                turma:myClasses[index]
+                turma:myClasses[index],
+                language: myClasses[index].languages[0]
             })
         }
         this.setState({loadingInfoTurma:false})
@@ -100,6 +101,7 @@ export default class Editor extends Component {
         const response = await api.get(`/class/${id}`)
         this.setState({
             turma:response.data,
+            language:response.data.languages[0],
             loadingInfoTurma:false,
         })
     }
