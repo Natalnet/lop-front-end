@@ -18,6 +18,7 @@ export default class Exercicios extends Component {
       loadingInfoTurma: true,
       loadingDateLimit:false,
       dateLimit:'',
+      timeLimit:'',
       myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
       turma:"",        
       todasListas: []
@@ -67,18 +68,26 @@ export default class Exercicios extends Component {
       console.log(response.data);
       const lista = response.data
       let dateLimit = ''
+      let timeLimit = ''
       if(lista.classHasListQuestion.submissionDeadline){
         dateLimit = new Date(lista.classHasListQuestion.submissionDeadline)
         const yarn = dateLimit.getFullYear()
         const month = dateLimit.getMonth()+1
         const day = dateLimit.getDate()
+        const hours = dateLimit.getHours();
+        const minutes = dateLimit.getMinutes();
         dateLimit = `${yarn}-${month<10?'0'+month:month}-${day<10?'0'+day:day}`
+        timeLimit = `${hours<10?'0'+hours:hours}:${minutes<10?'0'+minutes:minutes}`
       }
       console.log('dateLimit');
       console.log(dateLimit);
+      console.log('timeLimit');
+      console.log(timeLimit);
+
       this.setState({
         lista,
         dateLimit,
+        timeLimit,
         loandingLista: false
       });
     } catch (err) {
@@ -90,10 +99,10 @@ export default class Exercicios extends Component {
     const idClass = this.props.match.params.id;
     const idList = list.id
     const query = `?idClass=${idClass}`
-    const {dateLimit} = this.state
+    const {dateLimit, timeLimit} = this.state
     if(dateLimit){
       const request = {
-        submissionDeadline:dateLimit
+        submissionDeadline:`${dateLimit}-${timeLimit.replace(':','-')}`
       }
       try{
         this.setState({loadingDateLimit:true})
@@ -121,6 +130,11 @@ export default class Exercicios extends Component {
     console.log(e.target.value);
     this.setState({dateLimit: e.target.value})
   }
+  changeTime(e){
+    console.log('time');
+    console.log(e.target.value);
+    this.setState({timeLimit: e.target.value})
+  }
   handleShowModalDate(){
       this.setState({
           showModalDate:true,
@@ -130,8 +144,7 @@ export default class Exercicios extends Component {
       this.setState({showModalDate:false})
   }
   render() {
-    const { loadingInfoTurma, turma,loadingDateLimit,showModalDate,dateLimit, loandingLista, lista } = this.state;
-    
+    const { loadingInfoTurma, turma,loadingDateLimit,showModalDate,dateLimit, timeLimit, loandingLista, lista } = this.state;
 
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
@@ -189,7 +202,7 @@ export default class Exercicios extends Component {
               <Modal.Body>
                 <Row>
                   <Col xs={12} textCenter>
-                    <input type='date' value={dateLimit} onChange={(e)=>this.changeDate(e)}/> - 23:59:59
+                    <input type='date' value={dateLimit} onChange={(e)=>this.changeDate(e)}/> - <input type='time' value={timeLimit} onChange={(e)=>this.changeTime(e)}/>
                   </Col>
                 </Row>
               </Modal.Body>

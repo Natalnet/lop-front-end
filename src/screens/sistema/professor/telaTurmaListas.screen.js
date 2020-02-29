@@ -31,6 +31,7 @@ export default class Pagina extends Component {
       showModalDate: false,
       todasListas: [],
       dateLimit:'',
+      timeLimit:'23:59',
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
@@ -190,10 +191,10 @@ export default class Pagina extends Component {
     const idClass = this.props.match.params.id;
     const idList = list.id
     const query = `?idClass=${idClass}`
-    const {dateLimit} = this.state
+    const {dateLimit, timeLimit} = this.state
     if(dateLimit){
       const request = {
-        submissionDeadline:dateLimit
+        submissionDeadline:`${dateLimit}-${timeLimit.replace(':','-')}`
       }
       try{
         this.setState({loadingDateLimit:true})
@@ -220,6 +221,12 @@ export default class Pagina extends Component {
     console.log('data');
     console.log(e.target.value);
     this.setState({dateLimit: e.target.value})
+  }
+
+  changeTime(e){
+    console.log('time');
+    console.log(e.target.value);
+    this.setState({timeLimit: e.target.value})
   }
 
   handleShowModalDate(list){
@@ -292,7 +299,8 @@ export default class Pagina extends Component {
       loandingTodasListas,
       totalPages,
       numPageAtual,
-      listas
+      listas,
+      timeLimit,
     } = this.state;
     const {
       contentInputSeach,
@@ -468,7 +476,7 @@ export default class Pagina extends Component {
           <Modal.Body>
             <Row>
               <Col xs={12} textCenter>
-                <input type='date' onChange={(e)=>this.changeDate(e)}/> - 23:59:59
+                <input type='date' onChange={(e)=>this.changeDate(e)}/> - <input type='time' value={timeLimit} onChange={(e)=>this.changeTime(e)}/>
               </Col>
             </Row>
           </Modal.Body>
