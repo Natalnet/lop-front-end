@@ -248,6 +248,7 @@ export default class Editor extends Component {
     } catch (err) {
       this.setState({ tempo_inicial: new Date() });
       console.log(err);
+      throw err;
     }
   }
 
