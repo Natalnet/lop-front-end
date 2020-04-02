@@ -10,7 +10,6 @@ import { Link } from "react-router-dom";
 export default props =>{
     const {provas,acessar,user,removerProva,participant}= props
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
-    console.log("user: ",user)
     return (
         <Row mb={15}>
             {provas.map((prova, i) => {

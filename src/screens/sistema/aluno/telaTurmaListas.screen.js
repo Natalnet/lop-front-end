@@ -26,6 +26,9 @@ export default class Listas extends Component {
     const {turma} = this.state
     document.title = `${turma && turma.name} - listas`;
   }
+  componentWillUnmount(){
+    this.io && this.io.close();
+  }
   async getInfoTurma(){
     const id = this.props.match.params.id
     const {myClasses} = this.state
@@ -70,14 +73,14 @@ export default class Listas extends Component {
     }
   }
   getListasRealTime() {
-    const io = socket(baseUrlBackend);
-    io.emit("connectRoonClass", this.props.match.params.id);
+    this.io = socket(baseUrlBackend);
+    this.io.emit("connectRoonClass", this.props.match.params.id);
 
-    io.on("addListToClass", response => {
+    this.io.on("addListToClass", response => {
       let { listas } = this.state;
       this.setState({ listas: [...listas, response] });
     });
-    io.on("removeListFromClass", response => {
+    this.io.on("removeListFromClass", response => {
       let { listas } = this.state;
       this.setState({
         listas: listas.filter(lista => lista.id !== response.id)

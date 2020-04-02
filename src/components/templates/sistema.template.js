@@ -21,6 +21,9 @@ import MenuProfessor from "components/menus/dashboard/professor/menuProfessor.me
 
 //import { perfis } from "config/enums/perfis.enum";
 
+const containerStyle = {
+  minHeight: "calc(100vh - 230px)"
+}
 export default class TemplateSistema extends Component {
   constructor(props) {
     super(props);
@@ -110,7 +113,8 @@ export default class TemplateSistema extends Component {
             {sessionStorage.getItem('user.profile')==='ALUNO'?<MenuAluno {...this.props}/>:null}
             {sessionStorage.getItem('user.profile')==='PROFESSOR'?<MenuProfessor {...this.props}/>:null}
             {sessionStorage.getItem('user.profile')==='ADMINISTRADOR'?<MenuAdministrador {...this.props}/>:null}
-            <div className="my-3 my-md-5">
+            
+            <div className="my-3 my-md-5" style={containerStyle}>
               <div className="container">
                 {this.props.children}
               </div>

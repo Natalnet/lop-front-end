@@ -67,9 +67,9 @@ export default class Editor extends Component {
 
   componentWillUnmount(){
     clearInterval(this.time)
+    this.io && this.io.close();
   }
-  
-  
+    
   async salvaAcesso(){
     const ip = await findLocalIp(false);
     const idQuestion = this.props.match.params.idExercicio;
@@ -118,7 +118,6 @@ export default class Editor extends Component {
     try {
       const response = await api.get(`/test/${idTest}${query}`);
       const prova = response.data
-      console.log('prova:',prova)
       const password = sessionStorage.getItem(`passwordTest-${prova.id}`)
       const hashCode = `${generateHash(prova.password)}-${prova.id}`
       if(prova.status==="FECHADA" || !password || password!==hashCode){
@@ -134,10 +133,10 @@ export default class Editor extends Component {
     }
   }
   getProvasRealTime(){
-    const io = socket(baseUrlBackend);
-    io.emit("connectRoonClass",this.props.match.params.id);
+    this.io = socket(baseUrlBackend);
+    this.io.emit("connectRoonClass",this.props.match.params.id);
 
-    io.on("changeStatusTest", reponse => {
+    this.io.on("changeStatusTest", reponse => {
       this.setState({status:reponse.status})
     })
   }

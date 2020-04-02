@@ -26,9 +26,13 @@ export default class Provas extends Component {
     await this.getInfoTurma();
     this.getProvas();
     this.getProvasRealTime();
-    
     document.title = `${this.state.turma.name} - provas`;
   }
+
+  componentWillUnmount(){
+    this.io && this.io.close();
+  }
+  
   async getInfoTurma(){
     const id = this.props.match.params.id
     const {myClasses} = this.state
@@ -61,8 +65,6 @@ export default class Provas extends Component {
     try {
       this.setState({ loandingListas: true });
       const response = await api.get(`/test${query}`);
-      console.log("provas");
-      console.log(response.data);
       this.setState({
         provas: [...response.data],
         loandingListas: false
@@ -73,10 +75,10 @@ export default class Provas extends Component {
     }
   }
   getProvasRealTime() {
-    const io = socket(baseUrlBackend);
-    io.emit("connectRoonClass", this.props.match.params.id);
+    this.io = socket(baseUrlBackend);
+    this.io.emit("connectRoonClass", this.props.match.params.id);
 
-    io.on("changeStatusTest", reponse => {
+    this.io.on("changeStatusTest", reponse => {
       let { provas } = this.state;
       provas = provas.map(prova => {
         const provaCopia = JSON.parse(JSON.stringify(prova));
@@ -87,11 +89,11 @@ export default class Provas extends Component {
       });
       this.setState({ provas });
     });
-    io.on("addTestToClass", response => {
+    this.io.on("addTestToClass", response => {
       let { provas } = this.state;
       this.setState({ provas: [...provas, response] });
     });
-    io.on("removeTestFromClass", response => {
+    this.io.on("removeTestFromClass", response => {
       let { provas } = this.state;
       this.setState({
         provas: provas.filter(prova => prova.id !== response.id)

@@ -3,16 +3,12 @@ import NovasTurmasScreen from "screens/sistema/professor/novasTurmas.screen";
 import HomeProfessorScreen from "screens/sistema/professor/HomeProfessor.screen";
 import ListasScreen from "screens/sistema/professor/listas.screen";
 import ProvaScreen from "screens/sistema/professor/provas.screen";
-
 import ExerciciosScreen from "screens/sistema/professor/exercicios.screen";
 import Exercicio from "../screens/sistema/professor/exercicio.screen";
-
 import AtualizarexercicioScreen from "screens/sistema/professor/exercicios.editar.screen";
-
 import CriarListaScreen from "screens/sistema/professor/criarLista.screen";
-
+import EditarListaScreen from "screens/sistema/professor/editarList.screen";
 import CriarProvaScreen from "screens/sistema/professor/criarProva.screen";
-
 import CriarExercicioScreen from "screens/sistema/professor/criarExercicios.screen";
 import Erro401 from "../screens/erros/error401.screen";
 import TelaTurmaParticipantes from "../screens/sistema/professor/telaTurmaParticipantes.screen";
@@ -25,17 +21,13 @@ import TelaTurmaProvas from "../screens/sistema/professor/telaTurmaProvas.screen
 import TelaTurmaSolicitacoes from "../screens/sistema/professor/telaTurmasSolicitacoes.screen";
 import TelaTurmaLista from "../screens/sistema/professor/telaTurmaListas.screen";
 import TurmaExercicio from "../screens/sistema/professor/telaTurmaExercicio.screen";
-
 import TurmaExercicios from "../screens/sistema/professor/telaTurmaExercicios.screen";
 import TelaTurmasDashboard from "../screens/sistema/professor/telaTurmasDashboard.screen";
-
 import TelaTurmasSubmissoes from "../screens/sistema/professor/telaTurmasSubmissoes.screen";
-
 import EditarTurma from "../screens/sistema/professor/editarTurma.screen";
-
 import RealizarQuestao from "../screens/sistema/professor/telaTurmasAcessarQuestaoProva.screen";
-
 import QuestoesProva from "../screens/sistema/professor/telaTurmasAcessarProva.screen";
+
 const routes = [
   {
     path: "/professor/novasturmas",
@@ -83,6 +75,12 @@ const routes = [
   {
     path: "/professor/criarLista",
     component: CriarListaScreen,
+    private: true,
+    perfil: "PROFESSOR"
+  },
+  {
+    path: "/professor/listas/:id/editar",
+    component: EditarListaScreen,
     private: true,
     perfil: "PROFESSOR"
   },

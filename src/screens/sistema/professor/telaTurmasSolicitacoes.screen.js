@@ -30,6 +30,11 @@ export default class Pagina extends Component {
     document.title = `${turma && turma.name} - Solicitações`;
     this.getUsuariosRealTime();
   }
+
+  componentWillUnmount(){
+    this.io && this.io.close();
+  }
+
   async getInfoTurma(){
     const id = this.props.match.params.id
     const {myClasses} = this.state
@@ -79,17 +84,17 @@ export default class Pagina extends Component {
     }
   }
   getUsuariosRealTime() {
-    const io = socket(baseUrlBackend);
+    this.io = socket(baseUrlBackend);
     const id = this.props.match.params.id;
-    io.emit("connectRoonClass", id); //conectando à sala
+    this.io.emit("connectRoonClass", id); //conectando à sala
 
-    io.on("soliciteClass", response => {
+    this.io.on("soliciteClass", response => {
       console.log("no socket");
       console.log(response);
       const {usuarios} = this.state
       this.setState({usuarios:[...usuarios,response]})
     });
-    io.on("cancelSolicitClass", response => {
+    this.io.on("cancelSolicitClass", response => {
 
       console.log("cancelSolicitClass no socket");
       console.log(response);

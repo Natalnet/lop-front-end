@@ -52,6 +52,10 @@ export default class TurmasScreen extends Component {
     this.getMinhasTurmasRealTime();
   }
 
+  componentWillUnmount(){
+    this.io && this.io.close();
+  }
+  
   async getMinhasTurmas(loadingResponse = true) {
     const {
       numPageAtual,
@@ -116,11 +120,11 @@ export default class TurmasScreen extends Component {
     }
   }
   getMinhasTurmasRealTime() {
-    const io = socket(baseUrlBackend);
+    this.io = socket(baseUrlBackend);
     for (let turma of this.state.minhasTurmas) {
-      io.emit("connectRoonClass", turma.id); //conectando à todas salas (minhas Turmas)
+      this.io.emit("connectRoonClass", turma.id); //conectando à todas salas (minhas Turmas)
     }
-    io.on("RequestsClass", async response => {
+    this.io.on("RequestsClass", async response => {
       console.log(response);
       this.getMinhasTurmas(false);
     });

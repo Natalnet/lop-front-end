@@ -170,7 +170,6 @@ export default class Editor extends Component {
   
   async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming,char_change_number) {
     const idQuestion = this.props.match.params.id;
-    
     try {
       const ip = await findLocalIp(false);
       console.log("local ips:");
