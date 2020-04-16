@@ -112,6 +112,7 @@ export default class Exercicios extends Component {
         ) : (
             <TurmaListaScrren
               {...this.props}
+              
               lista={lista}
               participant
             />

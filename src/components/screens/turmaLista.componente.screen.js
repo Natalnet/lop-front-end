@@ -74,7 +74,12 @@ export default props =>{
                                 <CardBody>{question.description}</CardBody>
                             </div>
                             <CardFooter>
-                                Suas submissões: {question.submissionsCount}
+                                
+                                {(profile==="professor" && participant)?
+                                        <span>Submissões do aluno: {question.submissionsCount}</span>
+                                    :
+                                        <span>Suas submissões: {question.submissionsCount}</span>
+                                }
                                 {(profile==="aluno")?(
                                     <Link to={`/aluno/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}>
                                     <button

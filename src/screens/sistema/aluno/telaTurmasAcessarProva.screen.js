@@ -58,7 +58,6 @@ export default class Exercicios extends Component {
       this.setState({loandingProva: true})
       const response = await api.get(`/test/${idTest}${query}`);
       const prova = response.data
-      console.log('prova:',prova)
       const password = sessionStorage.getItem(`passwordTest-${prova && prova.id}`);
       const hashCode = `${generateHash(prova && prova.password)}-${prova && prova.id}`;
       if ((prova && prova.status === "FECHADA") || (!password) || (password !== hashCode)) {

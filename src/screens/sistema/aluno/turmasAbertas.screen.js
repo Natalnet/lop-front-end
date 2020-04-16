@@ -32,10 +32,12 @@ export default class HomeAlunoScreen extends Component {
       fieldFilter: "code"
     };
   }
-  async componentDidMount() {
-    
+  componentDidMount() {
     this.getTurmasAbertasRealTime();
     document.title = "Início | LoP";
+  }
+  componentWillUnmount(){
+    this.io && this.io.close();
   }
   async getMinhasTurmas() {
     let myClasses = sessionStorage.getItem('myClasses')
@@ -96,19 +98,20 @@ export default class HomeAlunoScreen extends Component {
     }
   }
   async getTurmasAbertasRealTime() {
-    const io = socket(baseUrlBackend);
-    io.emit("connectRoonUser", sessionStorage.getItem("user.email"));
-
-    io.on("RejectSolicitation", async response => {
+    this.io = socket(baseUrlBackend);
+    this.io.emit("connectRoonUser", sessionStorage.getItem("user.email"));
+    
+    this.io.on("RejectSolicitation", async response => {
 
       console.log("sockets",response)
       const {solicitacoes} = this.state
       this.setState({
         solicitacoes:solicitacoes.filter(s=>s.class_id!==response)
       })
+      //io.close();
     });
 
-    io.on("AcceptSolicitation", response => {
+    this.io.on("AcceptSolicitation", response => {
       const {turmasAbertas} = this.state
       const myNewClass = turmasAbertas.map(t=>{
         return {

@@ -45,6 +45,9 @@ export default class HomesubmissoesScreen extends Component {
     const {turma} = this.state
     document.title = `${turma && turma.name} - Submissões`;
   }
+  componentWillUnmount(){
+    this.io && this.io.close();
+  }
   async getInfoTurma(){
     const id = this.props.match.params.id
     const {myClasses} = this.state
@@ -101,10 +104,10 @@ export default class HomesubmissoesScreen extends Component {
     }
   }
   getSubmissoesRealTime() {
-    const io = socket(baseUrlBackend);
+    this.io = socket(baseUrlBackend);
     const id = this.props.match.params.id;
-    io.emit("connectRoonClass", id); //conectando à sala
-    io.on("SubmissionClass", response => {
+    this.io.emit("connectRoonClass", id); //conectando à sala
+    this.io.on("SubmissionClass", response => {
       console.log("socket response");
       console.log(response);
       const { numPageAtual, submissoes, docsPerPage } = this.state;

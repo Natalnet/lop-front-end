@@ -33,6 +33,7 @@ export default class Editor extends Component {
       inputs: "",
       outputs: "",
       percentualAcerto: "",
+      author: null,
       loadingExercicio: true,
       userDifficulty: "",
       loadDifficulty: false,
@@ -91,6 +92,7 @@ export default class Editor extends Component {
         userDifficulty: response.data.userDifficulty || "",
         solution: response.data.questionDraft?response.data.questionDraft.answer:'',
         char_change_number:response.data.questionDraft?response.data.questionDraft.char_change_number:0,
+        author: response.data.author,
         loadingExercicio: false, 
       });
     } catch (err) {
@@ -141,7 +143,7 @@ export default class Editor extends Component {
     };
     this.setState({ loadingReponse: true });
     try {
-      this.salvaRascunho();
+      this.salvaRascunho(false);
       const response = await apiCompiler.post("/apiCompiler", request);
       await this.saveSubmission(
         request,
@@ -227,7 +229,7 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {title,loadingExercicio} = this.state;
+    const {title,loadingExercicio,author} = this.state;
     return (
       <TemplateSistema active="exercicios">
         <Row mb={15}>
@@ -242,12 +244,18 @@ export default class Editor extends Component {
           </Col>
         </Row>
         <Row mb={15}>
-          <Col xs={12}>
-              <Link to="/professor/criarExercicio">
-                Criar Exercício
-              </Link>            
+            <Col xs={12}>
+              {
+                author && sessionStorage.getItem("user.email")===author.email?
+                  <Link to={`/professor/exercicios/${this.props.match.params.id}/editar`}>
+                    Editar Exercício
+                  </Link>            
+                :
+                null
+              }
           </Col>
         </Row>
+
         {loadingExercicio ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (

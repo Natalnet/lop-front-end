@@ -156,6 +156,7 @@ export default class HomeListasScreen extends Component {
                                 <tr>
                                     <th>Nome</th>
                                     <th>Código</th>
+                                    <th>Autor</th>
                                     <th>Criado em</th>
                                     <th className="text-center"></th>
                                 </tr>
@@ -172,7 +173,10 @@ export default class HomeListasScreen extends Component {
                                         </td>
                                         <td>
                                             <div className="loader"/>
-                                        </td>                                        
+                                        </td>
+                                        <td>
+                                            <div className="loader"/>
+                                        </td>                                           
                                         <td>
                                             <div className="loader"/>
                                         </td>
@@ -184,11 +188,20 @@ export default class HomeListasScreen extends Component {
                                         <tr >
                                             <td>{lista.title}</td>
                                             <td>{lista.code}</td>
+                                            <td>{lista.author && lista.author.email}</td>
                                             <td>{formatDate(lista.createdAt)}</td>
-                                            <td className="text-center">
-                                            <button className="btn btn-primary float-right" onClick={()=>this.handleShowModalInfo(lista.questions)}>
-                                                <i className="fa fa-info"/>
-                                            </button>                                            
+                                            <td className="d-inline-flex ">
+                                                <button className="btn btn-primary float-right mr-2" onClick={()=>this.handleShowModalInfo(lista.questions)}>
+                                                    <i className="fa fa-info"/>
+                                                </button>                                            
+                                            
+                                            {
+                                                <Link to={`/professor/listas/${lista.id}/editar`}>
+                                                    <button className={`btn btn-info ${(lista.author && sessionStorage.getItem("user.email") === lista.author.email)?"inline-block":"d-none"}`}>
+                                                        <i className="fe fe-edit" />
+                                                    </button>
+                                                </Link>
+                                            }
                                             </td>
                                         </tr>
                                         
