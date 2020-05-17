@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
-import { Link } from "react-router-dom";
-import Table from "components/ui/tables/tableType1.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import profileImg from "assets/perfil.png";
 import api from "../../../services/api";
+import ProvasAlunosScreen from "components/screens/provasAlunos.componente.screen";
 
 export default class AlunosProvas extends Component {
   constructor(props) {
@@ -14,65 +12,20 @@ export default class AlunosProvas extends Component {
       myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
       idTurma: this.props.match.url.split("/").slice(3, 4),
       loadingPresentes: false,
-      presentes: [
-        {
-          id: "7777",
-          name: "fulano",
-          email: "fulano@gmail.com",
-          enrollment: "1234567",
-          questoes: "10/10",
-          notaSist: 9,
-          notaProf: 9.5,
-        },
-        {
-          id: "7777",
-          name: "fulano",
-          email: "fulano@gmail.com",
-          enrollment: "1234567",
-          questoes: "10/10",
-          notaSist: 9,
-          notaProf: 9.5,
-        },
-        {
-          id: "7777",
-          name: "fulano",
-          email: "fulano@gmail.com",
-          enrollment: "1234567",
-          questoes: "10/10",
-          notaSist: 9,
-          notaProf: 9.5,
-        },
-        {
-          id: "7777",
-          name: "fulano",
-          email: "fulano@gmail.com",
-          enrollment: "1234567",
-          questoes: "10/10",
-          notaSist: 9,
-          notaProf: 9.5,
-        },
-        {
-          id: "7777",
-          name: "fulano",
-          email: "fulano@gmail.com",
-          enrollment: "1234567",
-          questoes: "10/10",
-          notaSist: 9,
-          notaProf: 9.5,
-        },
-      ],
+      presentes: [],
       contentInputSeach: "",
       radioAsc: false,
       radioDesc: true,
       valueRadioSort: "DESC",
       showFilter: false,
       fildFilter: "title",
-      docsPerPage: 25,
+      docsPerPage: 15,
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
       loadingInfoTurma: true,
       turma: "",
+      idProva: this.props.match.params.id,
     };
   }
   async componentDidMount() {
@@ -97,14 +50,41 @@ export default class AlunosProvas extends Component {
     console.log(this.state.turma);
   }
 
-  async getAlunosPresentes() {
-    //const { docsPerPage } = this.state;
-    //const idTest = this.props.match.params.id;
-    //let query = `?idTest=${idTest}`;
-    //query += `&classes=yes`;
-    //query += `&docsPerPage=${docsPerPage}`;
+  async getAlunosPresentes(loading = true) {
+    const { numPageAtual, docsPerPage } = this.state;
+    const { idTurma } = this.state;
+    let query = `?idClass=${idTurma}`;
+    query += `&idTest=${this.props.match.params.id}`;
+    query += `&docsPerPage=${docsPerPage}`;
+
     try {
-      /*
+      if (loading) this.setState({ loadingPresentes: true });
+      const response = await api.get(
+        `/feedBacksTest/page/${numPageAtual}${query}`
+      );
+      console.log("Presentes");
+      console.log(response.data);
+      this.setState({
+        presentes: [...response.data.docs],
+        totalItens: response.data.total,
+        totalPages: response.data.totalPages,
+        numPageAtual: response.data.currentPage,
+        loadingPresentes: false,
+      });
+    } catch (err) {
+      this.setState({ loadingPresentes: false });
+      console.log(err);
+    }
+  }
+
+  //async getAlunosPresentes() {
+  //const { docsPerPage } = this.state;
+  //const idTest = this.props.match.params.id;
+  //let query = `?idTest=${idTest}`;
+  //query += `&classes=yes`;
+  //query += `&docsPerPage=${docsPerPage}`;
+  //try {
+  /*
       this.setState({loadingPresentes: true})
       const response = await api.get(``);
       console.log("presentes");
@@ -116,19 +96,24 @@ export default class AlunosProvas extends Component {
         numPageAtual: response.data.currentPage,
         loadingPresentes: false,
       });*/
-    } catch (err) {
-      this.setState({ loadingPresentes: false });
-      console.log(err);
-    }
+  //} catch (err) {
+  //this.setState({ loadingPresentes: false });
+  //console.log(err);
+  //}
+  //}
+  handlePage(e, numPage) {
+    e.preventDefault();
+    //console.log(numPage);
+    this.setState(
+      {
+        numPageAtual: numPage,
+      },
+      () => this.getAlunosPresentes()
+    );
   }
+
   render() {
-    const {
-      loadingPresentes,
-      presentes,
-      idTurma,
-      loadingInfoTurma,
-      turma,
-    } = this.state;
+    const { loadingInfoTurma, turma } = this.state;
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <Row mb={15}>
@@ -145,76 +130,11 @@ export default class AlunosProvas extends Component {
             )}
           </Col>
         </Row>
-        <Row mb={15}>
-          <Col xs={12}>
-            <Table>
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Nome</th>
-                  <th>Email</th>
-                  <th>Matrícula</th>
-                  <th>Questões</th>
-                  <th>Nota Do sistema</th>
-                  <th>Nota do Professor</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {loadingPresentes ? (
-                  <tr>
-                    <td>
-                      <div className="loader" />
-                    </td>
-                    <td>
-                      <div className="loader" />
-                    </td>
-                    <td>
-                      <div className="loader" />
-                    </td>
-                    <td>
-                      <div className="loader" />
-                    </td>
-                    <td>
-                      <div className="loader" />
-                    </td>
-                  </tr>
-                ) : (
-                  presentes.map((user, index) => (
-                    <tr key={index}>
-                      <td className="text-center">
-                        <div
-                          className="avatar d-block"
-                          style={{
-                            backgroundImage: `url(${
-                              user.urlImage || profileImg
-                            })`,
-                          }}
-                        />
-                      </td>
-                      <td>{user.name}</td>
-                      <td>{user.email}</td>
-                      <td>{user.enrollment}</td>
-                      <td>{user.questoes}</td>
-                      <td>{user.notaSist}</td>
-                      <td>{user.notaProf}</td>
-                      <td>
-                        <Link
-                          to={`/professor/turma/${idTurma}/prova/${this.props.match.params.id}/aluno/${user.id}`}
-                        >
-                          <button className="btn btn-primary mr-2">
-                            Corrigir
-                            <i className={"fe fe-file-text"} />
-                          </button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
+        <ProvasAlunosScreen
+          {...this.props}
+          {...this.state}
+          handlePage={this.handlePage.bind(this)}
+        />
       </TemplateSistema>
     );
   }
