@@ -30,6 +30,7 @@ export default (props) => {
     katexDescription,
     solution,
     answer,
+    corrected,
   } = props;
   const { loadingReponse } = props;
   const { language, theme, descriptionErro } = props;
@@ -219,7 +220,11 @@ export default (props) => {
         <Col xs={12} md={6}>
           <Card className="card-results">
             <CardHead>
-              <CardTitle>Resultados</CardTitle>
+              {props.loadingQuestoes ? (
+                <div className="loader" style={{ margin: "0px auto" }}></div>
+              ) : (
+                <CardTitle>Resultados</CardTitle>
+              )}
             </CardHead>
             {loadingReponse ? (
               <div className="loader" style={{ margin: "100px auto" }}></div>
@@ -317,7 +322,58 @@ export default (props) => {
         <Col xs={12} md={6}>
           <Card className="card-results">
             <CardHead>
-              <CardTitle>Feed Back</CardTitle>
+              {props.loadingQuestoes ? (
+                <div className="loader" style={{ margin: "0px auto" }}></div>
+              ) : (
+                <CardTitle>
+                  Feed Back
+                  {corrected ? (
+                    <>
+                      <label
+                        style={{
+                          color: "green",
+                          fontSize: "16px",
+                          marginLeft: "15px",
+                        }}
+                        htmlFor="selectDifficulty"
+                      >
+                        (Questão já corrigida)
+                      </label>
+                      <i
+                        style={{
+                          color: "green",
+                          fontSize: "16px",
+                        }}
+                        className="fa fa-check"
+                        data-toggle="tooltip"
+                        title="fa fa-check"
+                      ></i>
+                    </>
+                  ) : (
+                    <>
+                      <label
+                        style={{
+                          color: "red",
+                          fontSize: "16px",
+                          marginLeft: "15px",
+                        }}
+                        htmlFor="selectDifficulty"
+                      >
+                        (Questão não corrigida)
+                      </label>
+                      <i
+                        style={{
+                          color: "red",
+                          fontSize: "16px",
+                        }}
+                        className="fa fa-remove"
+                        data-toggle="tooltip"
+                        title="fa fa-remove"
+                      ></i>
+                    </>
+                  )}
+                </CardTitle>
+              )}
             </CardHead>
             <CardBody className=" p-0 ">
               {props.loadingQuestoes ? (
@@ -329,9 +385,7 @@ export default (props) => {
                 >
                   <Row>
                     <Col xs={10} md={4}>
-                      <label htmlFor="selectDifficulty">
-                        Nota do Sistema:{" "}
-                      </label>
+                      <label htmlFor="selectDifficulty">Nota do Sistema:</label>
                       <input
                         style={{ textAlign: "center" }}
                         className={"form-control"}
@@ -359,7 +413,6 @@ export default (props) => {
                         maxLength={"5"}
                         value={props.teacherNote}
                       ></input>
-                      {console.log(Number.isInteger(props.teacherNote))}
                     </Col>
 
                     <Col xs={10} md={4}>

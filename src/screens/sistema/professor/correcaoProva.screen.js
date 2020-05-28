@@ -59,17 +59,17 @@ export default class AlunosProvas extends Component {
       loadDifficulty: false,
       char_change_number: 0,
       feedBackTest: "",
-
+      corrected: false,
       answer: "",
       teacherNote: null,
 
       //SaveData
       comments: "",
-      compilation_error: true,
-      runtime_error: true,
-      presentation_error: true,
-      wrong_answer: true,
-      invalid_algorithm: true,
+      compilation_error: false,
+      runtime_error: false,
+      presentation_error: false,
+      wrong_answer: false,
+      invalid_algorithm: false,
       hitPercentage: 0,
       question_id: "",
     };
@@ -78,6 +78,35 @@ export default class AlunosProvas extends Component {
     document.title = "Questoes Feitas do aluno";
     await this.getStudentQuestions();
     await this.currentQuestion();
+    await this.initialSubmission();
+  }
+
+  //função que submete o codigo ao carregar a pagina
+  async initialSubmission() {
+    const { answer, language, results } = this.state;
+    const request = {
+      codigo: answer,
+      linguagem: language,
+      results: results,
+    };
+    this.setState({ loadingReponse: true });
+    try {
+      const response = await apiCompiler.post("/apiCompiler", request);
+      this.setState({
+        loadingReponse: false,
+        results: response.data.results,
+        percentualAcerto: response.data.percentualAcerto,
+        descriptionErro: response.data.descriptionErro,
+      });
+    } catch (err) {
+      console.log(Object.getOwnPropertyDescriptors(err));
+      this.setState({ loadingReponse: false });
+      Swal.fire({
+        type: "error",
+        title: "ops... Algum erro aconteceu na operação :(",
+      });
+      console.log(err);
+    }
   }
 
   //Coloca os dados da questao atual nos states
@@ -119,7 +148,10 @@ export default class AlunosProvas extends Component {
       });
     }
     if (questoes[numPageAtual - 1].feedBackTest) {
-      this.setState({ notaProfessor: questoes[numPageAtual - 1].feedBackTest });
+      this.setState({
+        notaProfessor: questoes[numPageAtual - 1].feedBackTest,
+        corrected: true,
+      });
     }
     this.setState({ loadingQuestion: false });
   }
@@ -327,8 +359,7 @@ export default class AlunosProvas extends Component {
   //função usada para executar o codigo(apenas executa)
   async submeter(e) {
     e.preventDefault();
-    const timeConsuming = new Date() - this.state.tempo_inicial;
-    const { answer, language, results, char_change_number } = this.state;
+    const { answer, language, results } = this.state;
     const request = {
       codigo: answer,
       linguagem: language,
