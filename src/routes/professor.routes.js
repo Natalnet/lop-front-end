@@ -28,6 +28,7 @@ import EditarTurma from "../screens/sistema/professor/editarTurma.screen";
 import RealizarQuestao from "../screens/sistema/professor/telaTurmasAcessarQuestaoProva.screen";
 import QuestoesProva from "../screens/sistema/professor/telaTurmasAcessarProva.screen";
 import ProvasAlunos from "../screens/sistema/professor/provasAlunos";
+import CorrecaoProvas from "../screens/sistema/professor/correcaoProva.screen";
 
 const routes = [
   {
@@ -167,8 +168,14 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/correcaoprovas/:id",
+    path: "/professor/turma/:id/correcaoprovas/:idProva",
     component: ProvasAlunos,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/turma/:id/prova/:idProva/aluno/:idAluno/page:idQuestion",
+    component: CorrecaoProvas,
     private: true,
     perfil: "PROFESSOR",
   },

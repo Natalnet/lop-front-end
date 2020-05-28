@@ -14,6 +14,7 @@ export default (props) => {
     numPageAtual,
     totalPages,
     idProva,
+    numQuestions,
   } = props;
   const { handlePage } = props;
   const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase();
@@ -69,12 +70,14 @@ export default (props) => {
                     <td>{user.name}</td>
                     <td>{user.email}</td>
                     <td>{user.enrollment}</td>
-                    <td>{user.questoes}</td>
-                    <td>{user.notaSist}</td>
-                    <td>{user.notaProf}</td>
+                    <td>{user.triedQuestions + "/" + numQuestions}</td>
+                    <td>{(user.scoreSystem / 10).toFixed(2)}</td>
+                    <td>{(user.scoreTeacher / 10).toFixed(2) || "0"}</td>
                     <td>
                       <Link
-                        to={`/professor/turma/${idTurma}/prova/${idProva}/aluno/${user.id}`}
+                        to={`/professor/turma/${idTurma}/prova/${idProva}/aluno/${
+                          user.id
+                        }/page:${1}`}
                       >
                         <button className="btn btn-primary mr-2">
                           Corrigir

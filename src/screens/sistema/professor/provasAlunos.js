@@ -10,7 +10,7 @@ export default class AlunosProvas extends Component {
     super(props);
     this.state = {
       myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
-      idTurma: this.props.match.url.split("/").slice(3, 4),
+      idTurma: this.props.match.params.id,
       loadingPresentes: false,
       presentes: [],
       contentInputSeach: "",
@@ -25,7 +25,8 @@ export default class AlunosProvas extends Component {
       totalPages: 0,
       loadingInfoTurma: true,
       turma: "",
-      idProva: this.props.match.params.id,
+      idProva: this.props.match.params.idProva,
+      numQuestions: 1,
     };
   }
   async componentDidMount() {
@@ -33,6 +34,7 @@ export default class AlunosProvas extends Component {
     await this.getAlunosPresentes();
     console.log(this.state.myClasses);
     await this.getInfoTurma();
+    console.log(this.props);
   }
 
   async getInfoTurma() {
@@ -54,7 +56,7 @@ export default class AlunosProvas extends Component {
     const { numPageAtual, docsPerPage } = this.state;
     const { idTurma } = this.state;
     let query = `?idClass=${idTurma}`;
-    query += `&idTest=${this.props.match.params.id}`;
+    query += `&idTest=${this.props.match.params.idProva}`;
     query += `&docsPerPage=${docsPerPage}`;
 
     try {
@@ -70,6 +72,7 @@ export default class AlunosProvas extends Component {
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
         loadingPresentes: false,
+        numQuestions: response.data.totalQuestions,
       });
     } catch (err) {
       this.setState({ loadingPresentes: false });
