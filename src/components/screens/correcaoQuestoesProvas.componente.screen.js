@@ -410,7 +410,7 @@ export default (props) => {
                             type="checkbox"
                             className="custom-control-input"
                             name="compilation_error"
-                            value={props.compilation_error}
+                            checked={props.compilation_error}
                             onChange={() => checkBox1()}
                           />
                           <span className="custom-control-label">
@@ -421,7 +421,8 @@ export default (props) => {
                           <input
                             type="checkbox"
                             className="custom-control-input"
-                            name={props.runtime_error}
+                            name="runtime_error"
+                            checked={props.runtime_error}
                             onChange={() => checkBox2()}
                           />
                           <span className="custom-control-label">
@@ -432,7 +433,8 @@ export default (props) => {
                           <input
                             type="checkbox"
                             className="custom-control-input"
-                            name={props.presentation_error}
+                            name="presentation_error"
+                            checked={props.presentation_error}
                             onChange={() => checkBox3()}
                           />
                           <span className="custom-control-label">
@@ -445,7 +447,8 @@ export default (props) => {
                           <input
                             type="checkbox"
                             className="custom-control-input"
-                            name={props.wrong_answer}
+                            name="wrong_answer"
+                            checked={props.wrong_answer}
                             onChange={() => checkBox4()}
                           />
                           <span className="custom-control-label">
@@ -456,7 +459,8 @@ export default (props) => {
                           <input
                             type="checkbox"
                             className="custom-control-input"
-                            name={props.invalid_algorithm}
+                            name="invalid_algorithm"
+                            checked={props.invalid_algorithm}
                             onChange={() => checkBox5()}
                           />
                           <span className="custom-control-label">
