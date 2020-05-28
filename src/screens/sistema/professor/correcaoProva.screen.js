@@ -78,17 +78,12 @@ export default class AlunosProvas extends Component {
     document.title = "Questoes Feitas do aluno";
     await this.getStudentQuestions();
     await this.currentQuestion();
-    console.log("AKIIIIII");
-    console.log(this.props);
   }
 
   //Coloca os dados da questao atual nos states
   currentQuestion(loading = true) {
     const { questoes, numPageAtual, loadingQuestion } = this.state;
     if (loading) this.setState({ loadingquestion: true });
-
-    console.log("TESTE");
-    console.log(this.state.compilation_error);
     if (questoes[numPageAtual - 1].feedBackTest) {
       this.setState({
         comments: questoes[numPageAtual - 1].feedBackTest.comments,
@@ -103,8 +98,6 @@ export default class AlunosProvas extends Component {
         teacherNote: questoes[numPageAtual - 1].feedBackTest.hitPercentage / 10,
       });
     }
-    console.log("TESTE2");
-    console.log(this.state.compilation_error);
     this.setState({
       title: questoes[numPageAtual - 1].title,
       description: questoes[numPageAtual - 1].description,
@@ -163,8 +156,6 @@ export default class AlunosProvas extends Component {
         compilation_error: true,
       });
     }
-    console.log("HAHAHAHAHAHAHA");
-    console.log(this.state.compilation_error);
   }
   checkBox2() {
     if (this.state.runtime_error) {
@@ -307,8 +298,6 @@ export default class AlunosProvas extends Component {
     try {
       if (loading) this.setState({ loadingQuestoes: true });
       const response = await api.get(`/feedBacksTest/show/${query}`);
-      console.log("Questoes do aluno");
-      console.log(response.data);
       this.setState({
         questoes: [...response.data],
         loadingQuestoes: false,
@@ -319,18 +308,6 @@ export default class AlunosProvas extends Component {
     }
     this.state.totalPages = this.state.questoes.length;
   }
-
-  //funcao usada no componente de navegação de paginas
-  /*handlePage(e, numPage) {
-    console.log(numPage);
-    this.setState({
-      numPageAtual: numPage,
-    });
-    this.currentQuestion();
-    this.ShowQuestion();
-    console.log("Questao da pagina");
-    console.log(this.state.questoes[this.state.numPageAtual - 1]);
-  }*/
 
   //retorna a quantidade de paginas a patir da quantidade de questoes
   totalPages() {
@@ -360,8 +337,6 @@ export default class AlunosProvas extends Component {
     this.setState({ loadingReponse: true });
     try {
       const response = await apiCompiler.post("/apiCompiler", request);
-      console.log("sumbissão: ");
-      console.log(response.data);
       this.setState({
         loadingReponse: false,
         results: response.data.results,
@@ -421,7 +396,6 @@ export default class AlunosProvas extends Component {
             <NavPagination
               totalPages={this.totalPages()}
               pageAtual={numPageAtual}
-              //handlePage={this.handlePage.bind(this)}
               idAluno={idAluno}
               numQuestion={numPageAtual}
               idTurma={idTurma}

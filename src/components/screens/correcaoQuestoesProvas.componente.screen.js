@@ -33,16 +33,6 @@ export default (props) => {
   } = props;
   const { loadingReponse } = props;
   const { language, theme, descriptionErro } = props;
-  /*let {
-    comments,
-    compilation_error,
-    runtime_error,
-    presentation_error,
-    wrong_answer,
-    invalid_algorithm,
-    hitPercentage,
-    teacherNote,
-  } = props;*/
   const {
     changeLanguage,
     changeTheme,
@@ -71,9 +61,7 @@ export default (props) => {
     "solarized_light",
     "terminal",
   ];
-  console.log("languages: ", props.languages);
   const languages = props.languages || ["javascript", "cpp"];
-  console.log("showAllTestCases:", props.showAllTestCases);
   let tests = props.showAllTestCases
     ? results
     : results.filter((t, i) => i === 0);
@@ -349,7 +337,7 @@ export default (props) => {
                         className={"form-control"}
                         type={"text"}
                         maxLength={"5"}
-                        value={props.hitPercentage}
+                        value={parseFloat(props.hitPercentage).toFixed(2)}
                       ></input>
                     </Col>
 
@@ -360,16 +348,18 @@ export default (props) => {
                       <input
                         style={{ textAlign: "center" }}
                         className={`form-control ${
-                          parseFloat(props.teacherNote) >= 10 ||
-                          parseFloat(props.teacherNote) <= 0
-                            ? "is_invalid"
-                            : "is_valid"
+                          parseFloat(props.teacherNote) > 10 ||
+                          parseFloat(props.teacherNote) < 0 ||
+                          parseFloat(props.teacherNote) != props.teacherNote
+                            ? "is-invalid"
+                            : "is-valid"
                         }`}
                         onChange={(e) => funcTeacherNote(e)}
                         type={"text"}
                         maxLength={"5"}
                         value={props.teacherNote}
                       ></input>
+                      {console.log(Number.isInteger(props.teacherNote))}
                     </Col>
 
                     <Col xs={10} md={4}>
