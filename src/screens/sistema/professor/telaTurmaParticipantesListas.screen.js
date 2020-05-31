@@ -133,7 +133,7 @@ export default class Listas extends Component {
           <Fragment>
             <Row mb={10}>
               <Col md={12} textCenter>
-                <h4 style={{ margin: "0px" }}>Listas</h4>
+                <h4 style={{ margin: "0px" }}>{listas.length > 0 && 'Listas'}</h4>
               </Col>
             </Row>
             <TurmaListasScrren
@@ -145,7 +145,7 @@ export default class Listas extends Component {
             />
             <Row mb={10}>
               <Col md={12} textCenter>
-                <h4 style={{ margin: "0px" }}>Provas</h4>
+                <h4 style={{ margin: "0px" }}>{provas.length > 0 && 'Provas'}</h4>
               </Col>
             </Row>
             <TurmaProvasScreen

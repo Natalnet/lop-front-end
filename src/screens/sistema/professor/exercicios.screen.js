@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { getStateFormQuestionsFromStorage } from '../../../util/auxiliaryFunctions.util'
 import TemplateSistema from "components/templates/sistema.template";
 import api from '../../../services/api'
 import {formatDate} from "../../../util/auxiliaryFunctions.util";
@@ -15,18 +16,24 @@ import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import ExerciciosPaginados from "components/screens/exerciciosPaginados.componenete.screen"
+import HTMLFormat from "components/ui/htmlFormat"
 
 export default class HomeExerciciosScreen extends Component {
     constructor(props){
         super(props)
         this.state = {
-            contentInputSeach:'',
-            exercicios: [],
-            radioAsc:false,
-            radioDesc:true,
-            valueRadioSort:"DESC",
-            sortBy:"createdAt",
+            contentInputSeach: getStateFormQuestionsFromStorage('contentInputSeach'),
+            radioAsc: getStateFormQuestionsFromStorage('radioAsc'),
+            radioDesc: getStateFormQuestionsFromStorage('radioDesc'),
+            valueRadioSort: getStateFormQuestionsFromStorage('valueRadioSort'),
+            sortBy: getStateFormQuestionsFromStorage('sortBy'),
+            tagsSelecionadas: getStateFormQuestionsFromStorage('tagsSelecionadas'),
+            fildFilter: getStateFormQuestionsFromStorage('fildFilter'),
+            docsPerPage: getStateFormQuestionsFromStorage('docsPerPage'),
+            numPageAtual: sessionStorage.getItem('pageQuestions') || 1,
+
             showModalInfo:false,
+            exercicios: [],
             question:"",
             showModal:false,
             loadingExercicios:false,
@@ -34,10 +41,6 @@ export default class HomeExerciciosScreen extends Component {
             tags:[],
             allTags:[],
             showFilter:false,
-            tagsSelecionadas:[],
-            fildFilter:'title',
-            docsPerPage:15,
-            numPageAtual:1,
             totalItens:0,
             totalPages:0,
         }
@@ -69,6 +72,15 @@ export default class HomeExerciciosScreen extends Component {
                 numPageAtual : response.data.currentPage,
                 loadingExercicios:false
             })
+            sessionStorage.setItem('pageQuestions',response.data.currentPage);
+            sessionStorage.setItem('contentInputSeach',contentInputSeach);
+            sessionStorage.setItem('docsPerPage',docsPerPage);
+            sessionStorage.setItem('fildFilter',fildFilter);
+            sessionStorage.setItem('sortBy',sortBy);
+            sessionStorage.setItem('valueRadioSort',valueRadioSort);
+            sessionStorage.setItem('radioAsc',valueRadioSort==="ASC"?true:false);
+            sessionStorage.setItem('radioDesc',valueRadioSort==="DESC"?true:false);
+            sessionStorage.setItem('tagsSelecionadas',JSON.stringify(tagsSelecionadas));
         }catch(err){
             this.setState({loadingExercicios:false})
             console.log(err);
@@ -225,7 +237,11 @@ export default class HomeExerciciosScreen extends Component {
                         <b>Descrição: </b>
                     </Row>
                     <Row>
-                        {question && question.description}
+                        <span style={{overflow:'auto'}}>
+                            <HTMLFormat>
+                                {question && question.description}
+                            </HTMLFormat>
+                        </span>
                     </Row>
                     <Row>
                         <Col xs={12} textCenter>

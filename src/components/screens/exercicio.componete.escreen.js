@@ -46,7 +46,9 @@ export default (props)=>{
                     <CardBody className="overflow-auto">
                     <Row>
                         <Col xs={12} md={7}>
-                            {description}
+                            <HTMLFormat>
+                                {description}
+                            </HTMLFormat>
                             {katexDescription ? (
                                 <BlockMath>{katexDescription}</BlockMath>
                             ) : (

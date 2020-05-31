@@ -118,6 +118,7 @@ export default class Editor extends Component {
     try {
       const response = await api.get(`/test/${idTest}${query}`);
       const prova = response.data
+      console.log('prova:',prova)
       const password = sessionStorage.getItem(`passwordTest-${prova.id}`)
       const hashCode = `${generateHash(prova.password)}-${prova.id}`
       if(prova.status==="FECHADA" || !password || password!==hashCode){

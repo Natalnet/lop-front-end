@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
-import {formatDate} from "../../../util/auxiliaryFunctions.util";
+import { formatDate } from "../../../util/auxiliaryFunctions.util";
 import NavPagination from "components/ui/navs/navPagination";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
@@ -16,6 +16,7 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import HTMLFormat from "components/ui/htmlFormat"
 
 const botao2 = {
   float: "right",
@@ -34,7 +35,7 @@ export default class criarProvaScreen extends Component {
       fildFilter: "title",
       title: "",
       password: "",
-      showAllTestCases:false,
+      showAllTestCases: false,
       loadingExercicios: false,
       numPageAtual: 1,
       totalItens: 0,
@@ -75,41 +76,41 @@ export default class criarProvaScreen extends Component {
   async criarProva(e) {
     console.log("criar prva");
     e.preventDefault();
-    const {title,password,showAllTestCases,selecionados} = this.state
-    let msg=""
-    msg += !title?"Informe o título da turma<br/>":"" ;
-    msg += !password?"Informe uma senha para prova<br/>":"" ;
-    msg += selecionados.length === 0? "Escolha pelo menos um exercício<br/>":"";
-    
-    if(msg){
+    const { title, password, showAllTestCases, selecionados } = this.state
+    let msg = ""
+    msg += !title ? "Informe o título da turma<br/>" : "";
+    msg += !password ? "Informe uma senha para prova<br/>" : "";
+    msg += selecionados.length === 0 ? "Escolha pelo menos um exercício<br/>" : "";
+
+    if (msg) {
       Swal.fire({
         type: "error",
         title: "Erro: Não foi possivel criar lista",
-        html:  msg
+        html: msg
       });
       return null
     }
-     const requestInfo = {
-       title,
-       password,
-       questions: selecionados.map(q => q.id),
-       showAllTestCases,
-     };
-     try {
-       Swal.fire({
-         title: "Criando prova",
-         allowOutsideClick: false,
-         allowEscapeKey: false,
-         allowEnterKey: false
-       });
-     Swal.showLoading();
-     await api.post("/test/store", requestInfo);
-     Swal.hideLoading();
-     Swal.fire({
-       type: "success",
-       title: "Prova criada com sucesso!"
-     });
-     this.props.history.push("/professor/provas")
+    const requestInfo = {
+      title,
+      password,
+      questions: selecionados.map(q => q.id),
+      showAllTestCases,
+    };
+    try {
+      Swal.fire({
+        title: "Criando prova",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      Swal.showLoading();
+      await api.post("/test/store", requestInfo);
+      Swal.hideLoading();
+      Swal.fire({
+        type: "success",
+        title: "Prova criada com sucesso!"
+      });
+      this.props.history.push("/professor/provas")
     }
     catch (err) {
       Swal.hideLoading();
@@ -157,7 +158,7 @@ export default class criarProvaScreen extends Component {
 
   handleshowAllTestCasesChange(e) {
     this.setState({ showAllTestCases: e.target.value });
-  } 
+  }
 
   handlePage(e, numPage) {
     e.preventDefault();
@@ -211,17 +212,17 @@ export default class criarProvaScreen extends Component {
 
     return (
       <TemplateSistema active="provas">
-          <Row mb={15}>
-            <Col xs={12}>
-              <h5 style={{margin:'0px'}}>
-                <Link to="/professor/provas">
-                  Provas
+        <Row mb={15}>
+          <Col xs={12}>
+            <h5 style={{ margin: '0px' }}>
+              <Link to="/professor/provas">
+                Provas
                 </Link>
-                <i className="fa fa-angle-left ml-2 mr-2"/> 
+              <i className="fa fa-angle-left ml-2 mr-2" />
                 Criar prova
               </h5>
-            </Col>
-          </Row>
+          </Col>
+        </Row>
         <Card>
           <CardBody>
             <form onSubmit={e => this.criarProva(e)}>
@@ -257,7 +258,7 @@ export default class criarProvaScreen extends Component {
                     defaultValue={this.state.showAllTestCases}
                     onChange={e => this.handleshowAllTestCasesChange(e)}
                     className="form-control"
-  
+
                   >
                     <option value={false}>Mostrar apenas primeiro</option>
                     <option value={true}>Mostrar todos</option>
@@ -320,47 +321,47 @@ export default class criarProvaScreen extends Component {
                           </td>
                         </tr>
                       ) : (
-                        this.state.exercicios.map((questao) => {
-                          return (
-                            <tr key={questao.id}>
-                              <td>{questao.title}</td>
-                              <td>{questao.code}</td>
-                              <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
-                              <td>{questao.author.email}</td>
-                              <td>{formatDate(questao.createdAt)}</td>
-                              <td className="d-inline-flex">
-                                <button
-                                  type="button"
-                                  className="btn btn-primary mr-2t"
-                                  onClick={() =>
-                                    this.handleShowModalInfo(questao)
-                                  }
-                                >
-                                  <i className="fa fa-info" /> 
-                                </button>
-                                {selecionados
-                                  .map(s => s.id)
-                                  .includes(questao.id) ? (
+                          this.state.exercicios.map((questao) => {
+                            return (
+                              <tr key={questao.id}>
+                                <td>{questao.title}</td>
+                                <td>{questao.code}</td>
+                                <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
+                                <td>{questao.author.email}</td>
+                                <td>{formatDate(questao.createdAt)}</td>
+                                <td className="d-inline-flex">
                                   <button
                                     type="button"
-                                    className="float-right btn  btn-indigo disabled"
+                                    className="btn btn-primary mr-2t"
+                                    onClick={() =>
+                                      this.handleShowModalInfo(questao)
+                                    }
                                   >
-                                    Selecionada
+                                    <i className="fa fa-info" />
                                   </button>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    className="float-right btn  btn-primary"
-                                    onClick={e => this.selecionar(questao)}
-                                  >
-                                    Adicionar <i className="fe fe-file-plus" />
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
-                      )}
+                                  {selecionados
+                                    .map(s => s.id)
+                                    .includes(questao.id) ? (
+                                      <button
+                                        type="button"
+                                        className="float-right btn  btn-indigo disabled"
+                                      >
+                                        Selecionada
+                                      </button>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        className="float-right btn  btn-primary"
+                                        onClick={e => this.selecionar(questao)}
+                                      >
+                                        Adicionar <i className="fe fe-file-plus" />
+                                      </button>
+                                    )}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
                     </tbody>
                   </table>
                 </div>
@@ -437,26 +438,30 @@ export default class criarProvaScreen extends Component {
               <CardHead>
                 <CardTitle>{question.title}</CardTitle>
               </CardHead>
-                <CardBody>
-                  <Row>
-                    <b>Descrição: </b>
-                  </Row>
-                  <Row>
-                    {question.description}
-                  </Row>
-                  <Row>
-                    <Col xs={12} textCenter>
-                      <BlockMath>{question.katexDescription|| ''}</BlockMath>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12} >
-                        <TableIO
-                          results={question.results || []}
-                        />
-                    </Col>
-                  </Row>
-                </CardBody>
+              <CardBody>
+                <Row>
+                  <b>Descrição: </b>
+                </Row>
+                <Row>
+                  <span style={{ overflow: 'auto' }}>
+                    <HTMLFormat>
+                      {question && question.description}
+                    </HTMLFormat>
+                  </span>
+                </Row>
+                <Row>
+                  <Col xs={12} textCenter>
+                    <BlockMath>{question.katexDescription || ''}</BlockMath>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={12} >
+                    <TableIO
+                      results={question.results || []}
+                    />
+                  </Col>
+                </Row>
+              </CardBody>
             </Card>
           </SwalModal>
         </Card>

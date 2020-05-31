@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
-import {formatDate} from "../../../util/auxiliaryFunctions.util";
+import { formatDate } from "../../../util/auxiliaryFunctions.util";
 import NavPagination from "components/ui/navs/navPagination";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
@@ -16,6 +16,7 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import HTMLFormat from "components/ui/htmlFormat"
 
 const botao2 = {
   float: "right",
@@ -72,15 +73,15 @@ export default class CriarListaScreen extends Component {
 
   async criarLista(e) {
     e.preventDefault();
-    const {title,selecionados} = this.state
-    let msg=""
-    msg += !title?"Informe o título da turma<br/>":"" ;
-    msg += selecionados.length === 0? "Escolha pelo menos um exercício<br/>":"";
-    if(msg){
+    const { title, selecionados } = this.state
+    let msg = ""
+    msg += !title ? "Informe o título da turma<br/>" : "";
+    msg += selecionados.length === 0 ? "Escolha pelo menos um exercício<br/>" : "";
+    if (msg) {
       Swal.fire({
         type: "error",
         title: "Erro: Não foi possivel criar lista",
-        html:  msg
+        html: msg
       });
       return null
     }
@@ -103,13 +104,13 @@ export default class CriarListaScreen extends Component {
         title: "Lista criada com sucesso!"
       });
       this.props.history.push("/professor/listas")
-    }catch (err) {
+    } catch (err) {
       Swal.hideLoading();
       Swal.fire({
         type: "error",
         title: "Erro: Não foi possivel criar lista"
       });
-        this.setState({ msg: "Erro: Não foi possivel Criar a lista" });
+      this.setState({ msg: "Erro: Não foi possivel Criar a lista" });
     }
   }
   selecionar(questao) {
@@ -191,18 +192,18 @@ export default class CriarListaScreen extends Component {
 
     return (
       <TemplateSistema active="listas">
-          <Row mb={15}>
-            <Col xs={12}>
-              <h5 style={{margin:'0px'}}>
-                <Link to="/professor/listas">
-                  Listas
+        <Row mb={15}>
+          <Col xs={12}>
+            <h5 style={{ margin: '0px' }}>
+              <Link to="/professor/listas">
+                Listas
                 </Link>
-                <i className="fa fa-angle-left ml-2 mr-2"/> 
+              <i className="fa fa-angle-left ml-2 mr-2" />
                 Criar lista
               </h5>
-            </Col>
-          </Row>
-          <Card>
+          </Col>
+        </Row>
+        <Card>
           <CardBody>
             <form onSubmit={e => this.criarLista(e)}>
               <div className="form-row">
@@ -275,47 +276,47 @@ export default class CriarListaScreen extends Component {
                           </td>
                         </tr>
                       ) : (
-                        this.state.exercicios.map((questao, index) => {
-                          return (
-                            <tr key={questao.id}>
-                              <td>{questao.title}</td>
-                              <td>{questao.code}</td>
-                              <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
-                              <td>{questao.author.email}</td>
-                              <td>{formatDate(questao.createdAt)}</td>
-                              <td className="d-inline-flex">
-                                <button
-                                  type="button"
-                                  className="btn btn-primary mr-2"
-                                  onClick={() =>
-                                    this.handleShowModalInfo(questao)
-                                  }
-                                >
-                                  <i className="fa fa-info" />
-                                </button>
-                                {selecionados
-                                  .map(s => s.id)
-                                  .includes(questao.id) ? (
+                          this.state.exercicios.map((questao, index) => {
+                            return (
+                              <tr key={questao.id}>
+                                <td>{questao.title}</td>
+                                <td>{questao.code}</td>
+                                <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
+                                <td>{questao.author.email}</td>
+                                <td>{formatDate(questao.createdAt)}</td>
+                                <td className="d-inline-flex">
                                   <button
                                     type="button"
-                                    className="float-right btn btn-indigo disabled"
+                                    className="btn btn-primary mr-2"
+                                    onClick={() =>
+                                      this.handleShowModalInfo(questao)
+                                    }
                                   >
-                                    Selecionada
+                                    <i className="fa fa-info" />
                                   </button>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    className="float-right btn btn-primary"
-                                    onClick={e => this.selecionar(questao)}
-                                  >
-                                    Adicionar <i className="fe fe-file-plus" />
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
-                      )}
+                                  {selecionados
+                                    .map(s => s.id)
+                                    .includes(questao.id) ? (
+                                      <button
+                                        type="button"
+                                        className="float-right btn btn-indigo disabled"
+                                      >
+                                        Selecionada
+                                      </button>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        className="float-right btn btn-primary"
+                                        onClick={e => this.selecionar(questao)}
+                                      >
+                                        Adicionar <i className="fe fe-file-plus" />
+                                      </button>
+                                    )}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
                     </tbody>
                   </table>
                 </div>
@@ -392,26 +393,30 @@ export default class CriarListaScreen extends Component {
               <CardHead>
                 <CardTitle>{question.title}</CardTitle>
               </CardHead>
-                <CardBody>
+              <CardBody>
                 <Row>
-                        <b>Descrição: </b>
-                    </Row>
-                    <Row>
-                        {question.description}
-                    </Row>
-                    <Row>
-                        <Col xs={12} textCenter>
-                          <BlockMath>{question.katexDescription|| ''}</BlockMath>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12}>
-                          <TableIO
-                            results={question.results || []}
-                          />
-                        </Col>
-                    </Row>
-                </CardBody>
+                  <b>Descrição: </b>
+                </Row>
+                <Row>
+                  <span style={{ overflow: 'auto' }}>
+                    <HTMLFormat>
+                      {question && question.description}
+                    </HTMLFormat>
+                  </span>
+                </Row>
+                <Row>
+                  <Col xs={12} textCenter>
+                    <BlockMath>{question.katexDescription || ''}</BlockMath>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={12}>
+                    <TableIO
+                      results={question.results || []}
+                    />
+                  </Col>
+                </Row>
+              </CardBody>
             </Card>
           </SwalModal>
         </Card>

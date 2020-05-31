@@ -18,46 +18,46 @@ export default class Pagina extends Component {
       loading: false,
       loadingUsers: true,
       loadingInfoTurma: true,
-      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
-      turma:"",      
+      myClasses: JSON.parse(sessionStorage.getItem('myClasses')) || '',
+      turma: "",
     };
   }
   async componentDidMount() {
     await this.getInfoTurma();
     this.getUsuarios();
-    
-    const {turma} = this.state
+
+    const { turma } = this.state
     document.title = `${turma && turma.name} - Solicitações`;
     this.getUsuariosRealTime();
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.io && this.io.close();
   }
 
-  async getInfoTurma(){
+  async getInfoTurma() {
     const id = this.props.match.params.id
-    const {myClasses} = this.state
-    if(myClasses && typeof myClasses==="object"){
-        const index = myClasses.map(c=>c.id).indexOf(id)
-        if(index!==-1){
-            this.setState({
-                turma:myClasses[index]
-            })
-        }
-        this.setState({loadingInfoTurma:false})
-        return null
-    }
-    try{
-        const response = await api.get(`/class/${id}`)
+    const { myClasses } = this.state
+    if (myClasses && typeof myClasses === "object") {
+      const index = myClasses.map(c => c.id).indexOf(id)
+      if (index !== -1) {
         this.setState({
-            turma:response.data,
-            loadingInfoTurma:false,
+          turma: myClasses[index]
         })
+      }
+      this.setState({ loadingInfoTurma: false })
+      return null
     }
-    catch(err){
-        this.setState({loadingInfoTurma:false})
-        console.log(err);
+    try {
+      const response = await api.get(`/class/${id}`)
+      this.setState({
+        turma: response.data,
+        loadingInfoTurma: false,
+      })
+    }
+    catch (err) {
+      this.setState({ loadingInfoTurma: false })
+      console.log(err);
     }
   }
   async getUsuarios(loadingResponse = true) {
@@ -91,23 +91,69 @@ export default class Pagina extends Component {
     this.io.on("soliciteClass", response => {
       console.log("no socket");
       console.log(response);
-      const {usuarios} = this.state
-      this.setState({usuarios:[...usuarios,response]})
+      const { usuarios } = this.state
+      this.setState({ usuarios: [...usuarios, response] })
     });
     this.io.on("cancelSolicitClass", response => {
 
       console.log("cancelSolicitClass no socket");
       console.log(response);
-      const {usuarios} = this.state
-      this.setState({usuarios:[...usuarios.filter(s=>s.id!==response)]})
-    });  
+      const { usuarios } = this.state
+      this.setState({ usuarios: [...usuarios.filter(s => s.id !== response)] })
+    });
   }
+  async aceitarTodos(){
+    const idClass = this.props.match.params.id;
+    let query = `?idClass=${idClass}`
+    const {usuarios} = this.state;
+    console.log('usuários: ',usuarios)
+    const request = {
+      users: usuarios
+    }
+    try {
+      const { value } = await Swal.fire({
+        title: `Tem certeza que deseja adicionar todo mundo à turma?`,
+        //text: "You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sim, Adicionar!",
+        cancelButtonText: "Não!",
+      });
+      if (!value) return null;
+      Swal.fire({
+        title: "Adicionando alunos",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false
+      });
+      Swal.showLoading();
 
+      await api.put(`/solicitation/deleteall${query}`,request);
+      await api.post(`/classHasUser/storeall${query}`,request);
+      this.setState({
+        usuarios:[]
+      })
+      Swal.fire({
+        title: "Alunos Adicionados à turma!",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+      });
+    } catch (err) {
+      Swal.hideLoading();
+      Swal.fire({
+        type: "error",
+        title: "ops... Falha na operação :("
+      });
+    }
+  }
   async aceitaSolicitacao(user) {
     const idClass = this.props.match.params.id;
-    const request={
-      idUser:user.id,
-      enrollment:user.enrollment,
+    const request = {
+      idUser: user.id,
+      enrollment: user.enrollment,
       idClass,
     }
     let query = `?userEmail=${user.email}`
@@ -120,11 +166,11 @@ export default class Pagina extends Component {
       });
       Swal.showLoading();
 
-      await this.removeSolicitacao(user,false);
-      await api.post(`/classHasUser/store${query}`,request);
-      const {usuarios}= this.state
+      await this.removeSolicitacao(user, false);
+      await api.post(`/classHasUser/store${query}`, request);
+      const { usuarios } = this.state
       this.setState({
-        usuarios : usuarios.filter(u=>u.id!==user.id)
+        usuarios: usuarios.filter(u => u.id !== user.id)
       })
       Swal.hideLoading();
       Swal.fire({
@@ -140,7 +186,7 @@ export default class Pagina extends Component {
     }
   }
 
-  async removeSolicitacao(user,msg=true) {
+  async removeSolicitacao(user, msg = true) {
     const idUser = user.id
     const emailUser = user.email
     const idClass = this.props.match.params.id;
@@ -148,7 +194,7 @@ export default class Pagina extends Component {
     query += `&idUser=${idUser}`
     query += `&emailUser=${emailUser}`
     try {
-      if(msg){
+      if (msg) {
         Swal.fire({
           title: "Processando",
           allowOutsideClick: false,
@@ -157,11 +203,11 @@ export default class Pagina extends Component {
         });
         Swal.showLoading();
       }
-      
+
       await api.delete(`/solicitation/delete${query}`);
-      const {usuarios} = this.state
-      this.setState({usuarios:usuarios.filter(u=>u.id!==idUser)})
-      if(msg){
+      const { usuarios } = this.state
+      this.setState({ usuarios: usuarios.filter(u => u.id !== idUser) })
+      if (msg) {
         Swal.hideLoading();
         Swal.fire({
           type: "success",
@@ -186,14 +232,28 @@ export default class Pagina extends Component {
       >
         <Row mb={15}>
           <Col xs={12}>
-              {loadingInfoTurma?
-              <div className="loader"  style={{margin:'0px auto'}}></div>
+            {loadingInfoTurma ?
+              <div className="loader" style={{ margin: '0px auto' }}></div>
               :
-              <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
-                <i className="fa fa-angle-left ml-2 mr-2"/> Solicitações
-              </h5>                        
-              }
+              <h5 style={{ margin: '0px' }}><i className="fa fa-users mr-2" aria-hidden="true" />
+                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester}
+                <i className="fa fa-angle-left ml-2 mr-2" /> Solicitações
+              </h5>
+            }
+          </Col>
+        </Row>
+        <Row mb={15}>
+          <Col xs={12} textRight>
+            {usuarios.length > 0 ?
+              <button
+                onClick={() => this.aceitarTodos()}
+                className="btn btn-success"
+              >
+                Adicionar todos <i className="fa fa-users mr-2" /><i className="fa fa-plus" />
+              </button>
+              :
+              null
+            }
           </Col>
         </Row>
         <Row mb={15}>
@@ -225,36 +285,36 @@ export default class Pagina extends Component {
                     </td>
                   </tr>
                 ) : (
-                  usuarios.map((user, i) => (
-                    <tr key={i}>
-                      <td className="text-center">
-                        <div
-                          className="avatar d-block"
-                          style={{
-                            backgroundImage: `url(${user.urlImage || profileImg})`
-                          }}
-                        />
-                      </td>
-                      <td>{user.name}</td>
-                      <td>{user.email}</td>
-                      <td>{user.enrollment}</td>
-                      <td>
-                        <button
-                          onClick={() => this.aceitaSolicitacao(user)}
-                          className="btn btn-success mr-2"
-                        >
-                          <i className="fa fa-user-plus" />
-                        </button>
-                        <button
-                          onClick={() => this.removeSolicitacao(user)}
-                          className="btn btn-danger mr-2"
-                        >
-                          <i className="fa fa-user-times" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                    usuarios.map((user, i) => (
+                      <tr key={i}>
+                        <td className="text-center">
+                          <div
+                            className="avatar d-block"
+                            style={{
+                              backgroundImage: `url(${user.urlImage || profileImg})`
+                            }}
+                          />
+                        </td>
+                        <td>{user.name}</td>
+                        <td>{user.email}</td>
+                        <td>{user.enrollment}</td>
+                        <td>
+                          <button
+                            onClick={() => this.aceitaSolicitacao(user)}
+                            className="btn btn-success mr-2"
+                          >
+                            <i className="fa fa-user-plus" />
+                          </button>
+                          <button
+                            onClick={() => this.removeSolicitacao(user)}
+                            className="btn btn-danger mr-2"
+                          >
+                            <i className="fa fa-user-times" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
               </tbody>
             </table>
           </Col>

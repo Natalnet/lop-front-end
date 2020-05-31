@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
+import { getStateFormQuestionsFromStorage } from '../../../util/auxiliaryFunctions.util'
 import api from '../../../services/api'
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -13,33 +14,37 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import ExerciciosPaginadosScreen from "components/screens/exerciciosPaginados.componenete.screen"
-
+import HTMLFormat from "components/ui/htmlFormat"
 export default class ExerciciosScreen extends Component {
     constructor(props){
         super(props)
         this.state = {
-            contentInputSeach:'',
+            contentInputSeach: getStateFormQuestionsFromStorage('contentInputSeach'),
+            radioAsc: getStateFormQuestionsFromStorage('radioAsc'),
+            radioDesc: getStateFormQuestionsFromStorage('radioDesc'),
+            valueRadioSort: getStateFormQuestionsFromStorage('valueRadioSort'),
+            sortBy: getStateFormQuestionsFromStorage('sortBy'),
+            tagsSelecionadas: getStateFormQuestionsFromStorage('tagsSelecionadas'),
+            fildFilter: getStateFormQuestionsFromStorage('fildFilter'),
+            docsPerPage: getStateFormQuestionsFromStorage('docsPerPage'),
+            numPageAtual: sessionStorage.getItem('pageQuestions') || 1,
+            tags:[],
+            totalItens:0,
+            totalPages:0,
             exercicios: [],
-            radioAsc:false,
-            radioDesc:true,
-            valueRadioSort:"DESC",
-            sortBy:"createdAt",
             showModalInfo:false,
             question:"",
             showModal:false,
             loadingExercicios:false,
             loadingTags:false,
-            tags:[],
             showFilter:false,
-            tagsSelecionadas:[],
-            fildFilter:'title',
-            docsPerPage:15,
-            numPageAtual:1,
-            totalItens:0,
-            totalPages:0,
         }
+
         this.handlePage = this.handlePage.bind(this)
 
+    }
+    getStateFormQuestionsFromStorage(){
+        return null
     }
     async componentDidMount() {
         document.title = "Exercícios";
@@ -63,8 +68,18 @@ export default class ExerciciosScreen extends Component {
                 exercicios : [...response.data.docs],
                 totalItens : response.data.total,
                 totalPages : response.data.totalPages,
+                numPageAtual: response.data.currentPage,
                 loadingExercicios:false
             })
+            sessionStorage.setItem('pageQuestions',response.data.currentPage);
+            sessionStorage.setItem('contentInputSeach',contentInputSeach);
+            sessionStorage.setItem('docsPerPage',docsPerPage);
+            sessionStorage.setItem('fildFilter',fildFilter);
+            sessionStorage.setItem('sortBy',sortBy);
+            sessionStorage.setItem('valueRadioSort',valueRadioSort);
+            sessionStorage.setItem('radioAsc',valueRadioSort==="ASC"?true:false);
+            sessionStorage.setItem('radioDesc',valueRadioSort==="DESC"?true:false);
+            sessionStorage.setItem('tagsSelecionadas',JSON.stringify(tagsSelecionadas));
         }catch(err){
             this.setState({loadingExercicios:false})
             console.log(err);
@@ -91,13 +106,18 @@ export default class ExerciciosScreen extends Component {
         }
     }
     handleRadio(e){
-
         console.log('radio:',e.target.value)
+        const valueRadioSort = e.target.value
+        const radioAsc = valueRadioSort==="ASC"?true:false
+        const radioDesc = valueRadioSort==="DESC"?true:false
         this.setState({
-            radioAsc:e.target.value==="ASC"?true:false,
-            radioDesc:e.target.value==="DESC"?true:false,
-            valueRadioSort:e.target.value
+            valueRadioSort,
+            radioDesc,
+            radioAsc,
         })
+        sessionStorage.setItem('valueRadioSort',valueRadioSort);
+        sessionStorage.setItem('radioAsc',radioAsc);
+        sessionStorage.setItem('radioDesc',radioDesc);
     }
     handleDocsPerPage(e){
         console.log("documentos por página:",e.target.value)
@@ -212,7 +232,11 @@ export default class ExerciciosScreen extends Component {
                         <b>Descrição: </b>
                     </Row>
                     <Row>
-                        {question && question.description}
+                        <span style={{overflow:'auto'}}>
+                            <HTMLFormat>
+                                {question && question.description}
+                            </HTMLFormat>
+                        </span>
                     </Row>
                     <Row>
                         <Col xs={12} textCenter>

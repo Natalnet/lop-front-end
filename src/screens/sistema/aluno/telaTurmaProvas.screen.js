@@ -65,6 +65,8 @@ export default class Provas extends Component {
     try {
       this.setState({ loandingListas: true });
       const response = await api.get(`/test${query}`);
+      console.log("provas");
+      console.log(response.data);
       this.setState({
         provas: [...response.data],
         loandingListas: false
