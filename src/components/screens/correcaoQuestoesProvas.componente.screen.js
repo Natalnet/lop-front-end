@@ -237,7 +237,7 @@ export default (props) => {
                   <div className="loader" style={{ margin: "0px auto" }}></div>
                 ) : (
                   <CardBody className=" p-0 ">
-                    <div class="alert alert-icon alert-danger" role="alert">
+                    <div className="alert alert-icon alert-danger" role="alert">
                       <HTMLFormat>{descriptionErro}</HTMLFormat>
                     </div>
                   </CardBody>

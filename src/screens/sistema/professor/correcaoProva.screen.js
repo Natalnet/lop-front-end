@@ -85,11 +85,14 @@ export default class AlunosProvas extends Component {
   //função que submete o codigo ao carregar a pagina
   async initialSubmission() {
     const { answer, language, results } = this.state;
+    console.log('answer: ',answer)
+    if(!answer) return null;
     const request = {
       codigo: answer,
       linguagem: language,
       results: results,
     };
+    
     this.setState({ loadingReponse: true });
     try {
       const response = await apiCompiler.post("/apiCompiler", request);
@@ -301,6 +304,7 @@ export default class AlunosProvas extends Component {
       test_id: idProva,
       question_id: question_id,
       class_id: idTurma,
+      submissions: questoes.map(q=>q.lastSubmission)
     };
     try {
       await api.post("/feedBacksTest/store", requestInfo);
@@ -370,11 +374,14 @@ export default class AlunosProvas extends Component {
   async submeter(e) {
     e.preventDefault();
     const { answer, language, results } = this.state;
+    console.log('answer: ',answer)
+    if(!answer) return null;
     const request = {
       codigo: answer,
       linguagem: language,
       results: results,
     };
+    
     this.setState({ loadingReponse: true });
     try {
       const response = await apiCompiler.post("/apiCompiler", request);
