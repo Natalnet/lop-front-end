@@ -252,9 +252,11 @@ export default class Editor extends Component {
     await this.setState({ language: e.target.value });
   }
   async changeTheme(e) {
+    console.log('change theme')
     await this.setState({ theme: e.target.value });
   }
   handleSolution(newValue) {
+    console.log('handleSolution :', this.state.char_change_number)
     this.setState({ 
       solution: newValue,
       char_change_number:this.state.char_change_number+1,
@@ -321,132 +323,6 @@ export default class Editor extends Component {
             submeter ={this.submeter.bind(this)}
             salvaRascunho={this.salvaRascunho.bind(this)}
           />
-        /*
-        <Fragment>
-        <Row>
-          <Col xs={12} md={7}>
-            <Card ref={this.cardEnunciadoRef}>
-              <CardHead>
-                <CardTitle>
-                <b>{title}</b>
-                </CardTitle>
-              </CardHead>
-              <CardBody>
-                <Row> 
-                  {description}
-                </Row>
-                {katexDescription?<BlockMath>{katexDescription}</BlockMath>:''}                
-              </CardBody>
-            </Card>
-
-          </Col>
-          <Col xs={12} md={5}>
-            <Card ref={this.cardExemplos}>
-              <CardHead>
-                <CardTitle>
-                  Exemplos
-                </CardTitle>
-              </CardHead>
-              <CardBody>
-                <table className="table">
-                  <tbody>
-                    <tr>
-                      <td><b>Exemplo de entrada</b></td>
-                      <td><b>Exemplo de saída</b></td>                       
-                    </tr>
-                      {results.map((res,i)=> 
-                      <tr key={i}>
-                        <td>
-                          <HTMLFormat>
-                            {res.inputs}
-                          </HTMLFormat>
-                        </td>
-                        <td>
-                          <HTMLFormat>
-                            {res.output}
-                          </HTMLFormat>
-                        </td>
-                      </tr>
-                    ).filter((res,i) => i<2)}
-                  </tbody>
-                </table>
-            </CardBody>
-            </Card>
-          </Col>
-          </Row>
-          <Row mb={10}>
-              <FormSelect
-                loadingReponse={loadingReponse}
-                languages = {this.state.turma.languages}
-                changeLanguage={this.changeLanguage.bind(this)}
-                changeTheme={this.changeTheme.bind(this)}
-                executar={this.submeter.bind(this)}
-              />
-
-            <Col xs={5} md={3}>
-                <label htmlFor="rascunho">&nbsp;</label>
-                <button 
-                  style={{width:"100%"}} 
-                  className={`btn btn-azure ${salvandoRascunho && 'btn-loading'}`} 
-                  onClick={()=>this.salvaRascunho()}
-                >
-                  <i className="fa fa-floppy-o"/>&nbsp;&nbsp; Salvar rascunho
-                </button>
-            </Col>
-            <Col xs={5} md={2}>
-              <label htmlFor="selectDifficulty">Dificuldade: </label>
-              <select defaultValue = {userDifficulty} className="form-control"  id='selectDifficulty' disabled={loadDifficulty?'disabled':''} onChange={(e)=>this.handleDifficulty(e)} >
-                <option value =  {''} ></option>
-                <option value = '1' >Muito fácil</option>
-                <option value = '2' >Fácil</option>
-                <option value = '3' >Médio</option>
-                <option value = '4' >Difícil</option>
-                <option value = '5' >Muito difícil</option>
-              </select>
-            </Col>
-          </Row>
-          <Row>
-           <Col xs={12} md={7}>
-              <Card>
-              <AceEditor
-                mode={language==='cpp'?'c_cpp':language}
-                theme={theme}
-                focus={false}
-                onChange={this.handleSolution.bind(this)}
-                value={solution}
-                fontSize={14}
-                width='100%'
-                showPrintMargin={false}
-                name="ACE_EDITOR"
-                showGutter={true}
-                 
-                 
-                highlightActiveLine={true}
-              />
-              </Card>
-           </Col>
-           <Col xs={12} md={5}> 
-            {loadingReponse?
-              <div className="loader"  style={{margin:'0px auto'}}></div>
-            :
-              <Card style={{minHeight:'500px'}}>
-                <CardHead>
-                  <CardTitle>
-                    Resultados
-                  </CardTitle>
-                </CardHead>
-                <TableResults2 
-                  response={response}
-                  showAllTestCases={true}
-                  descriptionErro={descriptionErro}
-                  percentualAcerto={percentualAcerto}
-                />
-              </Card>
-            }
-          </Col>
-        </Row>
-        </Fragment>
-        */
         }
         
     </TemplateSistema>

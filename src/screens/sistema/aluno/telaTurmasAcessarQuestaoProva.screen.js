@@ -224,6 +224,7 @@ export default class Editor extends Component {
     try {
       this.salvaRascunho();
       const response = await apiCompiler.post("/apiCompiler", request);
+      
       await this.saveSubmission(
         request,
         response.data.percentualAcerto,
@@ -260,6 +261,7 @@ export default class Editor extends Component {
         timeConsuming: timeConsuming,
         ip: ip[0],
         environment: "desktop",
+        char_change_number,
         idQuestion:idExercicio,
         idClass:id,
         idTest:idTest,
@@ -280,6 +282,7 @@ export default class Editor extends Component {
     await this.setState({ theme: e.target.value });
   }
   handleSolution(newValue) {
+    console.log('handleSolution :', this.state.char_change_number)
     this.setState({ 
       solution: newValue,
       char_change_number:this.state.char_change_number+1,

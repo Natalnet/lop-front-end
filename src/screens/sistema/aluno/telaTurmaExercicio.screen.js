@@ -259,6 +259,7 @@ export default class Editor extends Component {
     await this.setState({ theme: e.target.value });
   }
   handleSolution(newValue) {
+    console.log('handleSolution :', this.state.char_change_number)
     this.setState({ 
       solution: newValue,
       char_change_number:this.state.char_change_number+1,
