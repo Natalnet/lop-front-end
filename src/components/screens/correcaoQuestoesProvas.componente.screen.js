@@ -34,13 +34,7 @@ export default (props) => {
   } = props;
   const { loadingReponse } = props;
   const { language, theme, descriptionErro } = props;
-  const {
-    changeLanguage,
-    changeTheme,
-    handleAnswer,
-    submeter,
-    SaveData,
-  } = props;
+  const { changeLanguage, changeTheme, submeter, SaveData } = props;
   const {
     checkBox1,
     checkBox2,
@@ -49,6 +43,7 @@ export default (props) => {
     checkBox5,
     commentQuestion,
     funcTeacherNote,
+    alteredCode,
   } = props;
   const themes = [
     "monokai",
@@ -85,10 +80,8 @@ export default (props) => {
                   <div className="loader" style={{ margin: "0px auto" }}></div>
                 ) : (
                   <Col xs={12} md={7}>
-                      <HTMLFormat>
-                          {description}
-                      </HTMLFormat>
-                 
+                    <HTMLFormat>{description}</HTMLFormat>
+
                     {katexDescription ? (
                       <BlockMath>{katexDescription}</BlockMath>
                     ) : (
@@ -186,8 +179,8 @@ export default (props) => {
                 mode={language === "cpp" ? "c_cpp" : language}
                 theme={theme}
                 focus={false}
-                onChange={handleAnswer}
-                value={answer}
+                onChange={(e) => alteredCode(e)}
+                value={props.answer}
                 fontSize={14}
                 width="100%"
                 showPrintMargin={false}
@@ -204,7 +197,6 @@ export default (props) => {
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
               <AceEditor
-                mode={language === "cpp" ? "c_cpp" : language}
                 theme={theme}
                 focus={false}
                 value={solution}
@@ -415,7 +407,7 @@ export default (props) => {
                         onChange={(e) => funcTeacherNote(e)}
                         type={"text"}
                         maxLength={"5"}
-                        value={props.teacherNote || ''}
+                        value={props.teacherNote || ""}
                       ></input>
                     </Col>
 

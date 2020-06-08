@@ -72,7 +72,16 @@ export default (props) => {
                     <td>{user.enrollment}</td>
                     <td>{user.triedQuestions + "/" + numQuestions}</td>
                     <td>{(user.scoreSystem / 10).toFixed(2)}</td>
-                    <td>{user.scoreTeacher!==null?(user.scoreTeacher / 10).toFixed(2):""}</td>
+                    {user.isEditedByTeacher ? (
+                      <td style={{ color: "#5EBA00", fontWeight: "bold" }}>
+                        {(user.scoreTeacher / 10).toFixed(2)}
+                      </td>
+                    ) : (
+                      <td style={{ color: "#CD201F", fontWeight: "bold" }}>
+                        {(user.scoreTeacher / 10).toFixed(2)}
+                      </td>
+                    )}
+
                     <td>
                       <Link
                         to={`/professor/turma/${idTurma}/prova/${idProva}/aluno/${

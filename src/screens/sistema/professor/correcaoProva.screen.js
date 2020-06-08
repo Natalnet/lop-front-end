@@ -85,14 +85,14 @@ export default class AlunosProvas extends Component {
   //função que submete o codigo ao carregar a pagina
   async initialSubmission() {
     const { answer, language, results } = this.state;
-    console.log('answer: ',answer)
-    if(!answer) return null;
+    console.log("answer: ", answer);
+    if (!answer) return null;
     const request = {
       codigo: answer,
       linguagem: language,
       results: results,
     };
-    
+
     this.setState({ loadingReponse: true });
     try {
       const response = await apiCompiler.post("/apiCompiler", request);
@@ -128,8 +128,9 @@ export default class AlunosProvas extends Component {
         wrong_answer: questoes[numPageAtual - 1].feedBackTest.wrong_answer,
         invalid_algorithm:
           questoes[numPageAtual - 1].feedBackTest.invalid_algorithm,
-        teacherNote: (questoes[numPageAtual - 1].feedBackTest.hitPercentage / 10).toFixed(2),
-
+        teacherNote: (
+          questoes[numPageAtual - 1].feedBackTest.hitPercentage / 10
+        ).toFixed(2),
       });
     }
     this.setState({
@@ -148,13 +149,13 @@ export default class AlunosProvas extends Component {
       this.setState({
         answer: questoes[numPageAtual - 1].lastSubmission.answer,
         language: questoes[numPageAtual - 1].lastSubmission.language,
-        hitPercentage: (questoes[numPageAtual - 1].lastSubmission.hitPercentage / 10).toFixed(2)
-
+        hitPercentage: (
+          questoes[numPageAtual - 1].lastSubmission.hitPercentage / 10
+        ).toFixed(2),
       });
     }
-    if (questoes[numPageAtual - 1].feedBackTest) {
+    if (questoes[numPageAtual - 1].feedBackTest.isEditedByTeacher) {
       this.setState({
-        notaProfessor: questoes[numPageAtual - 1].feedBackTest,
         corrected: true,
       });
     }
@@ -179,6 +180,7 @@ export default class AlunosProvas extends Component {
         checkBox5={this.checkBox5.bind(this)}
         commentQuestion={this.commentQuestion.bind(this)}
         funcTeacherNote={this.funcTeacherNote.bind(this)}
+        alteredCode={this.alteredCode.bind(this)}
       />
     );
   }
@@ -243,14 +245,21 @@ export default class AlunosProvas extends Component {
       comments: e.target.value,
     });
   }
+  alteredCode(e) {
+    this.setState({
+      answer: e,
+    });
+  }
   funcTeacherNote(e) {
-    let teacherNote = e.target.value.replace('^[0-9]{1,2}([,.][0-9]{1,2})?$', ''); 
-    console.log(teacherNote)
-    if(teacherNote>=0 && teacherNote<=10){
+    let teacherNote = e.target.value.replace(
+      "^[0-9]{1,2}([,.][0-9]{1,2})?$",
+      ""
+    );
+    console.log(teacherNote);
+    if (teacherNote >= 0 && teacherNote <= 10) {
       this.setState({
         teacherNote,
       });
-
     }
   }
 
@@ -304,7 +313,7 @@ export default class AlunosProvas extends Component {
       test_id: idProva,
       question_id: question_id,
       class_id: idTurma,
-      submissions: questoes.map(q=>q.lastSubmission)
+      submissions: questoes.map((q) => q.lastSubmission),
     };
     try {
       await api.post("/feedBacksTest/store", requestInfo);
@@ -341,8 +350,8 @@ export default class AlunosProvas extends Component {
     try {
       if (loading) this.setState({ loadingQuestoes: true });
       const response = await api.get(`/feedBacksTest/show/${query}`);
-      console.log('questions: ',response.data.questions)
-      console.log('user: ',response.data.user)
+      console.log("questions: ", response.data.questions);
+      console.log("user: ", response.data.user);
       this.setState({
         questoes: [...response.data.questions],
         user: response.data.user,
@@ -374,14 +383,14 @@ export default class AlunosProvas extends Component {
   async submeter(e) {
     e.preventDefault();
     const { answer, language, results } = this.state;
-    console.log('answer: ',answer)
-    if(!answer) return null;
+    console.log("answer: ", answer);
+    if (!answer) return null;
     const request = {
       codigo: answer,
       linguagem: language,
       results: results,
     };
-    
+
     this.setState({ loadingReponse: true });
     try {
       const response = await apiCompiler.post("/apiCompiler", request);
@@ -418,7 +427,7 @@ export default class AlunosProvas extends Component {
       idAluno,
       idTurma,
       idProva,
-      user
+      user,
     } = this.state;
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
