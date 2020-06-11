@@ -46,6 +46,7 @@ export default class Editor extends Component {
       loadDifficulty: false,
       salvandoRascunho: false,
       char_change_number: 0,
+      oldTimeConsuming:0
     };
   }
 
@@ -163,6 +164,9 @@ export default class Editor extends Component {
         char_change_number: response.data.questionDraft
           ? response.data.questionDraft.char_change_number
           : 0,
+        oldTimeConsuming: response.data.lastSubmission
+        ? response.data.lastSubmission.timeConsuming
+        : 0,
         loadingExercicio: false,
       });
     } catch (err) {
@@ -210,8 +214,8 @@ export default class Editor extends Component {
       });
       return null;
     }
-    const timeConsuming = new Date() - this.state.tempo_inicial;
-    const { solution, language, results, char_change_number } = this.state;
+    const { solution, language, results, char_change_number ,tempo_inicial, oldTimeConsuming} = this.state;
+    const timeConsuming = (new Date() - tempo_inicial) + oldTimeConsuming;
     const request = {
       codigo: solution,
       linguagem: language,
@@ -219,7 +223,7 @@ export default class Editor extends Component {
     };
     this.setState({ loadingReponse: true });
     try {
-      this.salvaRascunho();
+      this.salvaRascunho(false);
       const response = await apiCompiler.post("/apiCompiler", request);
 
       await this.saveSubmission(

@@ -77,7 +77,7 @@ export default (props) => {
                         {(user.scoreTeacher / 10).toFixed(2)}
                       </td>
                     ) : (
-                      <td style={{ color: "#CD201F", fontWeight: "bold" }}>
+                      <td style={{ color: "#c88d04", fontWeight: "bold" }}>
                         {(user.scoreTeacher / 10).toFixed(2)}
                       </td>
                     )}

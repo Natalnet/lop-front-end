@@ -59,7 +59,6 @@ export default class AlunosProvas extends Component {
       loadingExercicio: true,
       userDifficulty: "",
       loadDifficulty: false,
-      char_change_number: 0,
       feedBackTest: "",
       corrected: false,
       answer: "",
@@ -78,6 +77,7 @@ export default class AlunosProvas extends Component {
     };
   }
   async componentDidMount() {
+
     document.title = "Questoes Feitas do aluno";
     await this.getStudentQuestions();
     await this.currentQuestion();
@@ -413,12 +413,15 @@ export default class AlunosProvas extends Component {
 
   redirecionar(i) {
     const { idTurma, idProva, idAluno } = this.state;
-    window.location.replace(
-      `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${i}`
-    );
+    // console.log('redirecionar: ',i)
+    // this.props.history.push(
+    //   `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${i}` 
+    // )
+    window.location.href = `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${i}`;
   }
 
   render() {
+    //window.addEventListener("popstate", this.setHistory);
     const {
       loadingInfoTurma,
       // turma,

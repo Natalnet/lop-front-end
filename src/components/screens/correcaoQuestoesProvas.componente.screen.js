@@ -180,7 +180,7 @@ export default (props) => {
                 theme={theme}
                 focus={false}
                 onChange={(e) => alteredCode(e)}
-                value={props.answer}
+                value={answer}
                 fontSize={14}
                 width="100%"
                 showPrintMargin={false}
@@ -332,39 +332,22 @@ export default (props) => {
                         }}
                         htmlFor="selectDifficulty"
                       >
-                        (Questão já corrigida)
+                        (Nota editada)
                       </label>
-                      <i
-                        style={{
-                          color: "green",
-                          fontSize: "16px",
-                        }}
-                        className="fa fa-check"
-                        data-toggle="tooltip"
-                        title="fa fa-check"
-                      ></i>
                     </>
                   ) : (
                     <>
                       <label
                         style={{
-                          color: "#CD201F",
+                          color: "#c88d04",
                           fontSize: "16px",
                           marginLeft: "15px",
                         }}
                         htmlFor="selectDifficulty"
                       >
-                        (Questão não corrigida)
+                        (Nota não editada)
                       </label>
-                      <i
-                        style={{
-                          color: "#CD201F",
-                          fontSize: "16px",
-                        }}
-                        className="fa fa-remove"
-                        data-toggle="tooltip"
-                        title="fa fa-remove"
-                      ></i>
+
                     </>
                   )}
                 </CardTitle>
@@ -446,7 +429,7 @@ export default (props) => {
 
                     <Col xs={10} md={6}>
                       <label htmlFor="selectDifficulty">
-                        Nº de caracteres digitados:
+                        Nº de variação de caracteres:
                       </label>
                       <input
                         readOnly

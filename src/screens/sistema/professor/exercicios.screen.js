@@ -72,6 +72,7 @@ export default class HomeExerciciosScreen extends Component {
     try {
       this.setState({ loadingExercicios: true });
       const response = await api.get(`/question/page/${numPageAtual}?${query}`);
+      console.log('questions: ',response.data)
       this.setState({
         exercicios: [...response.data.docs],
         totalItens: response.data.total,

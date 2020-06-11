@@ -14,7 +14,7 @@ export default props =>{
     const {exercicios,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,showFilter,docsPerPage,tags,loadingTags,radioAsc,radioDesc,sortBy, tagsSelecionadas} = props
     const {handleShowfilter ,filterSeash,handleContentInputSeach ,handleSelectfildFilter ,handleSort,handleRadio ,handleDocsPerPage ,handleTagsChangeTags,handleShowModalInfo,handlePage} = props
     
-    const arrDifficulty = [null,"Muito fácil","Fácil","Médio","Difício","Muito difício"]
+    const arrDifficulty = [null,"Muito fácil","Fácil","Médio","Difícil","Muito difícil"]
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
     const email = sessionStorage.getItem("user.email")
     return (
