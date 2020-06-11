@@ -9,14 +9,14 @@ import NavPagination from "components/ui/navs/navPagination";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
-import TableIO from 'components/ui/tables/tableIO.component'
+import TableIO from "components/ui/tables/tableIO.component";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import HTMLFormat from "components/ui/htmlFormat"
+import HTMLFormat from "components/ui/htmlFormat";
 
 const botao2 = {
   float: "right",
@@ -39,7 +39,7 @@ export default class CriarListaScreen extends Component {
       totalItens: 0,
       totalPages: 0,
       showModalInfo: false,
-      question: ""
+      question: "",
     };
   }
 
@@ -55,7 +55,6 @@ export default class CriarListaScreen extends Component {
     this.setState({ loadingExercicios: true });
     try {
       const response = await api.get(`/question?${query}`);
-      console.log("questoes selecionadas: ", response.data.list.title);
       this.setState({
         title: response.data.list.title,
         selecionados: response.data.questions,
@@ -71,8 +70,6 @@ export default class CriarListaScreen extends Component {
 
     try {
       const response = await api.get(`/question/page/${numPageAtual}${query}`);
-      console.log("exercicios:");
-      console.log(response.data);
       this.setState({
         exercicios: [...response.data.docs],
         totalItens: response.data.total,
@@ -146,7 +143,6 @@ export default class CriarListaScreen extends Component {
     });
   }
   handleShowModalInfo(question) {
-    console.log(question);
     this.setState({
       question: question,
       showModalInfo: true,
@@ -169,7 +165,6 @@ export default class CriarListaScreen extends Component {
     );
   }
   handleSelectfildFilter(e) {
-    console.log(e.target.value);
     this.setState(
       {
         fildFilter: e.target.value,
@@ -291,47 +286,47 @@ export default class CriarListaScreen extends Component {
                           </td>
                         </tr>
                       ) : (
-                          this.state.exercicios.map((questao, index) => {
-                            return (
-                              <tr key={questao.id}>
-                                <td>{questao.title}</td>
-                                <td>{questao.code}</td>
-                                <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
-                                <td>{questao.author.email}</td>
-                                <td>{formatDate(questao.createdAt)}</td>
-                                <td className="d-inline-flex">
+                        this.state.exercicios.map((questao, index) => {
+                          return (
+                            <tr key={questao.id}>
+                              <td>{questao.title}</td>
+                              <td>{questao.code}</td>
+                              <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
+                              <td>{questao.author.email}</td>
+                              <td>{formatDate(questao.createdAt)}</td>
+                              <td className="d-inline-flex">
+                                <button
+                                  type="button"
+                                  className="btn btn-primary mr-2"
+                                  onClick={() =>
+                                    this.handleShowModalInfo(questao)
+                                  }
+                                >
+                                  <i className="fa fa-info " />
+                                </button>
+                                {selecionados
+                                  .map((s) => s.id)
+                                  .includes(questao.id) ? (
                                   <button
                                     type="button"
-                                    className="btn btn-primary mr-2"
-                                    onClick={() =>
-                                      this.handleShowModalInfo(questao)
-                                    }
+                                    className="float-right btn btn-indigo ml-2 disabled"
                                   >
-                                    <i className="fa fa-info " />
+                                    Selecionada
                                   </button>
-                                  {selecionados
-                                    .map((s) => s.id)
-                                    .includes(questao.id) ? (
-                                      <button
-                                        type="button"
-                                        className="float-right btn btn-indigo ml-2 disabled"
-                                      >
-                                        Selecionada
-                                      </button>
-                                    ) : (
-                                      <button
-                                        type="button"
-                                        className="float-right btn btn-primary"
-                                        onClick={(e) => this.selecionar(questao)}
-                                      >
-                                        Adicionar <i className="fe fe-file-plus" />
-                                      </button>
-                                    )}
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
+                                ) : (
+                                  <button
+                                    type="button"
+                                    className="float-right btn btn-primary"
+                                    onClick={(e) => this.selecionar(questao)}
+                                  >
+                                    Adicionar <i className="fe fe-file-plus" />
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -390,7 +385,7 @@ export default class CriarListaScreen extends Component {
                     type="submit"
                     className={`btn btn-primary float-right col-3 ${
                       loadingExercicios ? "btn-loading" : ""
-                      }`}
+                    }`}
                     style={{ width: "100%" }}
                   >
                     Salvar Lista
@@ -415,10 +410,8 @@ export default class CriarListaScreen extends Component {
                   <b>Descrição: </b>
                 </Row>
                 <Row>
-                  <span style={{ overflow: 'auto' }}>
-                    <HTMLFormat>
-                      {question && question.description}
-                    </HTMLFormat>
+                  <span style={{ overflow: "auto" }}>
+                    <HTMLFormat>{question && question.description}</HTMLFormat>
                   </span>
                 </Row>
                 <Row>

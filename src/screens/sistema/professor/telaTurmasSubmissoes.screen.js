@@ -4,7 +4,7 @@ import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
 import api, { baseUrlBackend } from "../../../services/api";
-import {formatDate} from "../../../util/auxiliaryFunctions.util";
+import { formatDate } from "../../../util/auxiliaryFunctions.util";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import AceEditor from "react-ace";
@@ -15,7 +15,7 @@ import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
 const lista = {
-  backgroundColor: "white"
+  backgroundColor: "white",
 };
 
 export default class HomesubmissoesScreen extends Component {
@@ -25,8 +25,8 @@ export default class HomesubmissoesScreen extends Component {
       loadingInfoTurma: true,
       contentInputSeach: "",
       submissoes: [],
-      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
-      turma:"",        
+      myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
+      turma: "",
       showModal: false,
       loadingSubmissoes: false,
       fieldFilter: "name",
@@ -34,43 +34,42 @@ export default class HomesubmissoesScreen extends Component {
       totalItens: 0,
       totalPages: 0,
       docsPerPage: 15,
-      submissao: ""
+      submissao: "",
     };
   }
   async componentDidMount() {
     await this.getInfoTurma();
     this.getSubmissoes();
     this.getSubmissoesRealTime();
-    
-    const {turma} = this.state
+
+    const { turma } = this.state;
     document.title = `${turma && turma.name} - Submissões`;
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.io && this.io.close();
   }
-  async getInfoTurma(){
-    const id = this.props.match.params.id
-    const {myClasses} = this.state
-    if(myClasses && typeof myClasses==="object"){
-        const index = myClasses.map(c=>c.id).indexOf(id)
-        if(index!==-1){
-            this.setState({
-                turma:myClasses[index]
-            })
-        }
-        this.setState({loadingInfoTurma:false})
-        return null
-    }
-    try{
-        const response = await api.get(`/class/${id}`)
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    const { myClasses } = this.state;
+    if (myClasses && typeof myClasses === "object") {
+      const index = myClasses.map((c) => c.id).indexOf(id);
+      if (index !== -1) {
         this.setState({
-            turma:response.data,
-            loadingInfoTurma:false,
-        })
+          turma: myClasses[index],
+        });
+      }
+      this.setState({ loadingInfoTurma: false });
+      return null;
     }
-    catch(err){
-        this.setState({loadingInfoTurma:false})
-        console.log(err);
+    try {
+      const response = await api.get(`/class/${id}`);
+      this.setState({
+        turma: response.data,
+        loadingInfoTurma: false,
+      });
+    } catch (err) {
+      this.setState({ loadingInfoTurma: false });
+      console.log(err);
     }
   }
   async getSubmissoes(loading = true) {
@@ -79,24 +78,24 @@ export default class HomesubmissoesScreen extends Component {
       numPageAtual,
       contentInputSeach,
       fieldFilter,
-      docsPerPage
+      docsPerPage,
     } = this.state;
     let query = `?idClass=${id}`;
-    query += `&include=${contentInputSeach.trim()}`
+    query += `&include=${contentInputSeach.trim()}`;
     query += `&profile=ALUNO`;
     query += `&field=${fieldFilter}`;
     query += `&docsPerPage=${docsPerPage}`;
     try {
       if (loading) this.setState({ loadingSubmissoes: true });
-      const response = await api.get(`/submissions/page/${numPageAtual}${query}`);
-      console.log("submissoes:");
-      console.log(response.data);
+      const response = await api.get(
+        `/submissions/page/${numPageAtual}${query}`
+      );
       this.setState({
         submissoes: [...response.data.docs],
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
-        loadingSubmissoes: false
+        loadingSubmissoes: false,
       });
     } catch (err) {
       this.setState({ loadingSubmissoes: false });
@@ -107,12 +106,9 @@ export default class HomesubmissoesScreen extends Component {
     this.io = socket(baseUrlBackend);
     const id = this.props.match.params.id;
     this.io.emit("connectRoonClass", id); //conectando à sala
-    this.io.on("SubmissionClass", response => {
-      console.log("socket response");
-      console.log(response);
+    this.io.on("SubmissionClass", (response) => {
       const { numPageAtual, submissoes, docsPerPage } = this.state;
       if (numPageAtual === 1) {
-        console.log("estado");
         let sub = [...submissoes];
         if (submissoes.length === docsPerPage) {
           sub.pop();
@@ -128,7 +124,7 @@ export default class HomesubmissoesScreen extends Component {
     //console.log(question);
     this.setState({
       submissao: submissao,
-      showModalInfo: true
+      showModalInfo: true,
     });
   }
   handleCloseshowModalInfo(e) {
@@ -139,16 +135,15 @@ export default class HomesubmissoesScreen extends Component {
     //console.log(numPage);
     this.setState(
       {
-        numPageAtual: numPage
+        numPageAtual: numPage,
       },
       () => this.getSubmissoes()
     );
   }
   handleSelectFieldFilter(e) {
-    console.log(e.target.value);
     this.setState(
       {
-        fieldFilter: e.target.value
+        fieldFilter: e.target.value,
       } /*,()=>this.getSubmissoes()*/
     );
   }
@@ -156,7 +151,7 @@ export default class HomesubmissoesScreen extends Component {
   handleContentInputSeach(e) {
     this.setState(
       {
-        contentInputSeach: e.target.value
+        contentInputSeach: e.target.value,
       } /*,()=>this.getSubmissoes()*/
     );
   }
@@ -167,7 +162,7 @@ export default class HomesubmissoesScreen extends Component {
   clearContentInputSeach() {
     this.setState(
       {
-        contentInputSeach: ""
+        contentInputSeach: "",
       },
       () => this.getSubmissoes()
     );
@@ -183,7 +178,7 @@ export default class HomesubmissoesScreen extends Component {
       totalPages,
       submissao,
       loadingInfoTurma,
-      turma
+      turma,
     } = this.state;
     return (
       <TemplateSistema
@@ -192,16 +187,18 @@ export default class HomesubmissoesScreen extends Component {
         submenu={"telaTurmas"}
       >
         <Row mb={15}>
-            <Col xs={12}>
-                {loadingInfoTurma?
-                <div className="loader"  style={{margin:'0px auto'}}></div>
-                :
-                <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
-                    {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
-                    <i className="fa fa-angle-left ml-2 mr-2"/> Submissões
-                </h5>                        
-                }
-            </Col>
+          <Col xs={12}>
+            {loadingInfoTurma ? (
+              <div className="loader" style={{ margin: "0px auto" }}></div>
+            ) : (
+              <h5 style={{ margin: "0px" }}>
+                <i className="fa fa-users mr-2" aria-hidden="true" />
+                {turma && turma.name} - {turma && turma.year}.
+                {turma && turma.semester}
+                <i className="fa fa-angle-left ml-2 mr-2" /> Submissões
+              </h5>
+            )}
+          </Col>
         </Row>
         <Row mb={15}>
           <Col xs={12} mb={3}>
@@ -219,7 +216,7 @@ export default class HomesubmissoesScreen extends Component {
               handleSelect={this.handleSelectFieldFilter.bind(this)}
               options={[
                 { value: "name", content: "Aluno" },
-                { value: "title", content: "Questão" }
+                { value: "title", content: "Questão" },
               ]}
               clearContentInputSeach={this.clearContentInputSeach.bind(this)}
               loading={loadingSubmissoes}
@@ -277,8 +274,10 @@ export default class HomesubmissoesScreen extends Component {
                         <div
                           className="avatar d-block"
                           style={{
-                            backgroundImage: `url(${submission.user.urlImage ||
-                              "https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"})`
+                            backgroundImage: `url(${
+                              submission.user.urlImage ||
+                              "https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"
+                            })`,
                           }}
                         />
                       </td>
@@ -290,7 +289,7 @@ export default class HomesubmissoesScreen extends Component {
                             parseFloat(submission.hitPercentage) === 100
                               ? "#0f0"
                               : "#f00"
-                          }`
+                          }`,
                         }}
                       >
                         <b>{parseFloat(submission.hitPercentage)}%</b>

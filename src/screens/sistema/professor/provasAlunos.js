@@ -20,7 +20,7 @@ export default class AlunosProvas extends Component {
       showFilter: false,
       fildFilter: "title",
       docsPerPage: 15,
-      numPageAtual: sessionStorage.getItem('studentCorrectionPage') || 1,
+      numPageAtual: sessionStorage.getItem("studentCorrectionPage") || 1,
       totalItens: 0,
       totalPages: 0,
       loadingInfoTurma: true,
@@ -32,9 +32,7 @@ export default class AlunosProvas extends Component {
   async componentDidMount() {
     document.title = "Provas dos alunos";
     await this.getAlunosPresentes();
-    console.log(this.state.myClasses);
     await this.getInfoTurma();
-    console.log(this.props);
   }
 
   async getInfoTurma() {
@@ -49,7 +47,6 @@ export default class AlunosProvas extends Component {
       this.setState({ loadingInfoTurma: true });
       console.log(err);
     }
-    console.log(this.state.turma);
   }
 
   async getAlunosPresentes(loading = true) {
@@ -64,8 +61,6 @@ export default class AlunosProvas extends Component {
       const response = await api.get(
         `/feedBacksTest/page/${numPageAtual}${query}`
       );
-      console.log("Presentes");
-      console.log(response.data);
       this.setState({
         presentes: [...response.data.docs],
         totalItens: response.data.total,
@@ -74,7 +69,10 @@ export default class AlunosProvas extends Component {
         loadingPresentes: false,
         numQuestions: response.data.totalQuestions,
       });
-      sessionStorage.setItem('studentCorrectionPage',response.data.currentPage)
+      sessionStorage.setItem(
+        "studentCorrectionPage",
+        response.data.currentPage
+      );
     } catch (err) {
       this.setState({ loadingPresentes: false });
       console.log(err);

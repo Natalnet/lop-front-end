@@ -17,7 +17,7 @@ export default class Pagina extends Component {
       turma: "",
       loadingInfoTurma: true,
       docsPerPage: 15,
-      numPageAtual: sessionStorage.getItem('pagePatcipants') || 1,
+      numPageAtual: sessionStorage.getItem("pagePatcipants") || 1,
       totalItens: 0,
       totalPages: 0,
     };
@@ -65,8 +65,6 @@ export default class Pagina extends Component {
     try {
       if (loading) this.setState({ loadingParticipantes: true });
       const response = await api.get(`/user/page/${numPageAtual}${query}`);
-      console.log("participantes");
-      console.log(response.data);
       this.setState({
         participantes: [...response.data.docs],
         totalItens: response.data.total,
@@ -74,7 +72,7 @@ export default class Pagina extends Component {
         numPageAtual: response.data.currentPage,
         loadingParticipantes: false,
       });
-      sessionStorage.setItem('pagePatcipants',response.data.currentPage)
+      sessionStorage.setItem("pagePatcipants", response.data.currentPage);
     } catch (err) {
       this.setState({ loadingParticipantes: false });
       console.log(err);
@@ -139,7 +137,6 @@ export default class Pagina extends Component {
     );
   }
   handleSelectfildFilter(e) {
-    console.log(e.target.value);
     this.setState(
       {
         fildFilter: e.target.value,

@@ -82,13 +82,11 @@ export default class AlunosProvas extends Component {
     await this.getStudentQuestions();
     await this.currentQuestion();
     await this.initialSubmission();
-    console.log(this.state.questoes);
   }
 
   //função que submete o codigo ao carregar a pagina
   async initialSubmission() {
     const { answer, language, results } = this.state;
-    console.log("answer: ", answer);
     if (!answer) return null;
     const request = {
       codigo: answer,
@@ -261,7 +259,6 @@ export default class AlunosProvas extends Component {
       "^[0-9]{1,2}([,.][0-9]{1,2})?$",
       ""
     );
-    console.log(teacherNote);
     if (teacherNote >= 0 && teacherNote <= 10) {
       this.setState({
         teacherNote,
@@ -356,8 +353,6 @@ export default class AlunosProvas extends Component {
     try {
       if (loading) this.setState({ loadingQuestoes: true });
       const response = await api.get(`/feedBacksTest/show/${query}`);
-      console.log("questions: ", response.data.questions);
-      console.log("user: ", response.data.user);
       this.setState({
         questoes: [...response.data.questions],
         user: response.data.user,
@@ -389,7 +384,6 @@ export default class AlunosProvas extends Component {
   async submeter(e) {
     e.preventDefault();
     const { answer, language, results } = this.state;
-    console.log("answer: ", answer);
     if (!answer) return null;
     const request = {
       codigo: answer,
