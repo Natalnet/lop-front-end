@@ -9,7 +9,7 @@ export default (props) => {
     // idProva,
     // idAluno,
     // idTurma,
-    teste,
+    redirecionar,
   } = props;
   const prox = parseInt(numQuestion) + 1;
   const ante = parseInt(numQuestion) - 1;
@@ -17,8 +17,11 @@ export default (props) => {
   for (let i = 1; i <= totalPages; i++) {
     elementNavs = [
       ...elementNavs,
-      <li key={i} className={`page-item ${i === parseInt(numQuestion) ? "active" : ""}`}>
-        <button className="page-link" onClick={() => teste(i)}>
+      <li
+        key={i}
+        className={`page-item ${i === parseInt(numQuestion) ? "active" : ""}`}
+      >
+        <button className="page-link" onClick={() => redirecionar(i)}>
           {i}
         </button>
       </li>,
@@ -28,7 +31,7 @@ export default (props) => {
     <nav aria-label="...">
       <ul className="pagination pagination justify-content-center">
         <li className={`page-item ${numQuestion <= 1 ? "disabled" : ""}`}>
-          <button className="page-link" onClick={() => teste(ante)}>
+          <button className="page-link" onClick={() => redirecionar(ante)}>
             Anterior
           </button>
         </li>
@@ -42,7 +45,7 @@ export default (props) => {
             className={`page-link ${
               numQuestion >= totalPages || totalPages === 0 ? "disabled" : ""
             }`}
-            onClick={() => teste(prox)}
+            onClick={() => redirecionar(prox)}
           >
             Próximo
           </button>

@@ -348,7 +348,7 @@ export default (props) => {
                     <>
                       <label
                         style={{
-                          color: "red",
+                          color: "#CD201F",
                           fontSize: "16px",
                           marginLeft: "15px",
                         }}
@@ -358,7 +358,7 @@ export default (props) => {
                       </label>
                       <i
                         style={{
-                          color: "red",
+                          color: "#CD201F",
                           fontSize: "16px",
                         }}
                         className="fa fa-remove"
@@ -423,6 +423,42 @@ export default (props) => {
                       </button>
                     </Col>
                   </Row>
+
+                  <Row style={{ marginTop: "10px" }}>
+                    <Col xs={10} md={6}>
+                      <label htmlFor="selectDifficulty">
+                        Tempo gasto na questão:
+                      </label>
+                      <input
+                        readOnly
+                        style={{ paddingRight: "14px" }}
+                        className={"form-control"}
+                        type={"text"}
+                        maxLength={"5"}
+                        value={`
+                          ${parseInt(
+                            props.timeConsuming / 1000 / 60
+                          )} min ${parseInt(
+                          (props.timeConsuming / 1000) % 60
+                        )} seg`}
+                      ></input>
+                    </Col>
+
+                    <Col xs={10} md={6}>
+                      <label htmlFor="selectDifficulty">
+                        Nº de caracteres digitados:
+                      </label>
+                      <input
+                        readOnly
+                        style={{ textAlign: "center" }}
+                        className={"form-control"}
+                        type={"text"}
+                        maxLength={"5"}
+                        value={parseFloat(props.char_change_number)}
+                      ></input>
+                    </Col>
+                  </Row>
+
                   <label
                     className="form-label"
                     style={{ marginLeft: "10px", marginTop: "5px" }}

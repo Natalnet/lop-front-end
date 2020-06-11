@@ -37,6 +37,8 @@ export default class AlunosProvas extends Component {
       totalPages: 0,
       loadingInfoTurma: false,
       turma: "",
+      timeConsuming: 0,
+      char_change_number: 0,
 
       editor: "",
       editorRes: "",
@@ -80,6 +82,7 @@ export default class AlunosProvas extends Component {
     await this.getStudentQuestions();
     await this.currentQuestion();
     await this.initialSubmission();
+    console.log(this.state.questoes);
   }
 
   //função que submete o codigo ao carregar a pagina
@@ -152,6 +155,9 @@ export default class AlunosProvas extends Component {
         hitPercentage: (
           questoes[numPageAtual - 1].lastSubmission.hitPercentage / 10
         ).toFixed(2),
+        timeConsuming: questoes[numPageAtual - 1].lastSubmission.timeConsuming,
+        char_change_number:
+          questoes[numPageAtual - 1].lastSubmission.char_change_number,
       });
     }
     if (questoes[numPageAtual - 1].feedBackTest.isEditedByTeacher) {
@@ -411,7 +417,7 @@ export default class AlunosProvas extends Component {
     }
   }
 
-  teste(i) {
+  redirecionar(i) {
     const { idTurma, idProva, idAluno } = this.state;
     window.location.replace(
       `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${i}`
@@ -458,7 +464,7 @@ export default class AlunosProvas extends Component {
               numQuestion={numPageAtual}
               idTurma={idTurma}
               idProva={idProva}
-              teste={this.teste.bind(this)}
+              redirecionar={this.redirecionar.bind(this)}
             />
           </Col>
         </Row>
