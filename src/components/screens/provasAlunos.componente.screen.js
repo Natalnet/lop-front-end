@@ -86,7 +86,7 @@ export default (props) => {
                       <Link
                         to={`/professor/turma/${idTurma}/prova/${idProva}/aluno/${
                           user.id
-                        }/page:${1}`}
+                        }/page/${1}`}
                       >
                         <button className="btn btn-primary mr-2">
                           Corrigir

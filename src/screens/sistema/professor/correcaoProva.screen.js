@@ -32,7 +32,7 @@ export default class AlunosProvas extends Component {
       showFilter: false,
       fildFilter: "title",
       docsPerPage: 15,
-      numPageAtual: this.props.match.url.split(":").slice(1, 2),
+      numPageAtual: this.props.match.params.idQuestion,
       totalItens: 0,
       totalPages: 0,
       loadingInfoTurma: false,
@@ -77,11 +77,14 @@ export default class AlunosProvas extends Component {
     };
   }
   async componentDidMount() {
-
     document.title = "Questoes Feitas do aluno";
     await this.getStudentQuestions();
     await this.currentQuestion();
     await this.initialSubmission();
+  }
+
+  async componentWillUnmount() {
+    window.removeEventListener("popstate", this.redirecionar);
   }
 
   //função que submete o codigo ao carregar a pagina
@@ -118,7 +121,7 @@ export default class AlunosProvas extends Component {
   currentQuestion(loading = true) {
     const { questoes, numPageAtual } = this.state;
     if (loading) this.setState({ loadingquestion: true });
-    if (questoes[numPageAtual - 1].feedBackTest) {
+    if (!!questoes[numPageAtual - 1].feedBackTest) {
       this.setState({
         comments: questoes[numPageAtual - 1].feedBackTest.comments,
         compilation_error:
@@ -321,9 +324,8 @@ export default class AlunosProvas extends Component {
     try {
       await api.post("/feedBacksTest/store", requestInfo);
       if (!msg && numPageAtual < questoes.length) {
-        await window.location.replace(
-          `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${proxPage}`
-        );
+        let proxPage = parseInt(numPageAtual) + 1;
+        await this.redirecionar(proxPage);
       } else {
         Swal.fire({
           type: "success",
@@ -334,6 +336,7 @@ export default class AlunosProvas extends Component {
         );
       }
     } catch (err) {
+      console.log(err);
       Swal.hideLoading();
       Swal.fire({
         type: "error",
@@ -411,17 +414,23 @@ export default class AlunosProvas extends Component {
     }
   }
 
-  redirecionar(i) {
+  async redirecionar(i) {
     const { idTurma, idProva, idAluno } = this.state;
-    // console.log('redirecionar: ',i)
-    // this.props.history.push(
-    //   `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${i}` 
-    // )
-    window.location.href = `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${i}`;
+    this.props.history.push(
+      `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page/${i}`
+    );
+    await this.setState({
+      numPageAtual: i,
+    });
+
+    //window.location.href = `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${i}`;
+    this.getStudentQuestions();
+    this.currentQuestion();
+    this.initialSubmission();
   }
 
   render() {
-    //window.addEventListener("popstate", this.setHistory);
+    window.addEventListener("popstate", this.redirecionar);
     const {
       loadingInfoTurma,
       // turma,

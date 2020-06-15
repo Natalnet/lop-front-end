@@ -174,7 +174,7 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/prova/:idProva/aluno/:idAluno/page:idQuestion",
+    path: "/professor/turma/:id/prova/:idProva/aluno/:idAluno/page/:idQuestion",
     component: CorrecaoProvas,
     private: true,
     perfil: "PROFESSOR",
