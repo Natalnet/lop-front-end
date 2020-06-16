@@ -55,6 +55,8 @@ export default class Editor extends Component {
     await this.getExercicio();
     this.salvaAcesso();
 
+    this.setState({ language: this.state.turma.languages[0] });
+
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
     this.time = setInterval(
@@ -143,8 +145,8 @@ export default class Editor extends Component {
           ? response.data.questionDraft.char_change_number
           : 0,
         oldTimeConsuming: response.data.lastSubmission
-        ? response.data.lastSubmission.timeConsuming
-        : 0,
+          ? response.data.lastSubmission.timeConsuming
+          : 0,
         loadingExercicio: false,
       });
     } catch (err) {
@@ -185,8 +187,15 @@ export default class Editor extends Component {
   }
   async submeter(e) {
     e.preventDefault();
-    const { solution, language, results, char_change_number ,tempo_inicial, oldTimeConsuming} = this.state;
-    const timeConsuming = (new Date() - tempo_inicial) + oldTimeConsuming;
+    const {
+      solution,
+      language,
+      results,
+      char_change_number,
+      tempo_inicial,
+      oldTimeConsuming,
+    } = this.state;
+    const timeConsuming = new Date() - tempo_inicial + oldTimeConsuming;
     const request = {
       codigo: solution,
       linguagem: language,
@@ -250,6 +259,7 @@ export default class Editor extends Component {
   }
 
   async changeLanguage(e) {
+    console.log(e.target.value);
     await this.setState({ language: e.target.value });
   }
   async changeTheme(e) {

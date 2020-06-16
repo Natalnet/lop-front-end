@@ -288,7 +288,6 @@ export default class AlunosProvas extends Component {
       teacherNote,
     } = this.state;
     let { hitPercentage } = this.state;
-    const proxPage = parseInt(numPageAtual) + 1;
     let msg = "";
     teacherNote !== null
       ? (hitPercentage = teacherNote * 10)
