@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import TemplateSistema from "components/templates/sistema.template";
 import api, { baseUrlBackend } from "../../../services/api";
 import Swal from "sweetalert2";
-import {generateHash} from "../../../util/auxiliaryFunctions.util";
+import { generateHash } from "../../../util/auxiliaryFunctions.util";
 import "katex/dist/katex.min.css";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import socket from "socket.io-client";
-import TurmaProvasScreen from "components/screens/turmaProvas.componente.screen"
+import TurmaProvasScreen from "components/screens/turmaProvas.componente.screen";
 
 export default class Provas extends Component {
   constructor(props) {
@@ -15,10 +15,10 @@ export default class Provas extends Component {
     this.state = {
       provas: [],
       loadingInfoTurma: true,
-      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
-      turma:"",      
+      myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
+      turma: "",
       loandingListas: false,
-      password: ""
+      password: "",
     };
   }
 
@@ -29,45 +29,44 @@ export default class Provas extends Component {
     document.title = `${this.state.turma.name} - provas`;
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.io && this.io.close();
   }
-  
-  async getInfoTurma(){
-    const id = this.props.match.params.id
-    const {myClasses} = this.state
-    if(myClasses && typeof myClasses==="object"){
-        const index = myClasses.map(c=>c.id).indexOf(id)
-        if(index!==-1){
-            this.setState({
-                turma:myClasses[index]
-            })
-        }
-        this.setState({loadingInfoTurma:false})
-        return null
-    }
-    try{
-        const response = await api.get(`/class/${id}`)
+
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    const { myClasses } = this.state;
+    if (myClasses && typeof myClasses === "object") {
+      const index = myClasses.map((c) => c.id).indexOf(id);
+      if (index !== -1) {
         this.setState({
-            turma:response.data,
-            loadingInfoTurma:false,
-        })
+          turma: myClasses[index],
+        });
+      }
+      this.setState({ loadingInfoTurma: false });
+      return null;
     }
-    catch(err){
-        this.setState({loadingInfoTurma:false})
-        console.log(err);
+    try {
+      const response = await api.get(`/class/${id}`);
+      this.setState({
+        turma: response.data,
+        loadingInfoTurma: false,
+      });
+    } catch (err) {
+      this.setState({ loadingInfoTurma: false });
+      console.log(err);
     }
   }
 
   async getProvas() {
     const id = this.props.match.params.id;
-    let query = `?idClass=${id}`
+    let query = `?idClass=${id}`;
     try {
       this.setState({ loandingListas: true });
       const response = await api.get(`/test${query}`);
       this.setState({
         provas: [...response.data],
-        loandingListas: false
+        loandingListas: false,
       });
     } catch (err) {
       this.setState({ loandingListas: false });
@@ -78,9 +77,9 @@ export default class Provas extends Component {
     this.io = socket(baseUrlBackend);
     this.io.emit("connectRoonClass", this.props.match.params.id);
 
-    this.io.on("changeStatusTest", reponse => {
+    this.io.on("changeStatusTest", (reponse) => {
       let { provas } = this.state;
-      provas = provas.map(prova => {
+      provas = provas.map((prova) => {
         const provaCopia = JSON.parse(JSON.stringify(prova));
         if (reponse.idTest === prova.id) {
           provaCopia.status = reponse.status;
@@ -89,14 +88,14 @@ export default class Provas extends Component {
       });
       this.setState({ provas });
     });
-    this.io.on("addTestToClass", response => {
+    this.io.on("addTestToClass", (response) => {
       let { provas } = this.state;
       this.setState({ provas: [...provas, response] });
     });
-    this.io.on("removeTestFromClass", response => {
+    this.io.on("removeTestFromClass", (response) => {
       let { provas } = this.state;
       this.setState({
-        provas: provas.filter(prova => prova.id !== response.id)
+        provas: provas.filter((prova) => prova.id !== response.id),
       });
     });
   }
@@ -115,13 +114,13 @@ export default class Provas extends Component {
           input: "password",
           showCancelButton: true,
           inputValue: "", //valor inicial
-          inputValidator: value => {
+          inputValidator: (value) => {
             if (!value) {
               return "Você precisa escrever algo!";
             } else if (value !== prova.password) {
               return "Senha incorreta :(";
             }
-          }
+          },
         });
         if (value) {
           //gera hash da senha
@@ -136,19 +135,21 @@ export default class Provas extends Component {
 
   render() {
     const { loadingInfoTurma, turma, provas } = this.state;
-    const {  loandingListas } = this.state;
+    const { loandingListas } = this.state;
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <Row mb={15}>
           <Col xs={12}>
-            {loadingInfoTurma?
-              <div className="loader"  style={{margin:'0px auto'}}></div>
-              :
-              <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
-                <i className="fa fa-angle-left ml-2 mr-2"/> Provas
-              </h5>                        
-            }
+            {loadingInfoTurma ? (
+              <div className="loader" style={{ margin: "0px auto" }}></div>
+            ) : (
+              <h5 style={{ margin: "0px" }}>
+                <i className="fa fa-users mr-2" aria-hidden="true" />
+                {turma && turma.name} - {turma && turma.year}.
+                {turma && turma.semester}
+                <i className="fa fa-angle-left ml-2 mr-2" /> Provas
+              </h5>
+            )}
           </Col>
         </Row>
         {loandingListas ? (
@@ -162,8 +163,7 @@ export default class Provas extends Component {
             provas={provas}
             acessar={this.acessar.bind(this)}
           />
-        )
-        }
+        )}
       </TemplateSistema>
     );
   }

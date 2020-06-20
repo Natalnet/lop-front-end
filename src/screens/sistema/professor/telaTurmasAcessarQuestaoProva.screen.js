@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 //import PropTypes from "prop-types";
 import api from "../../../services/api";
-import {findLocalIp} from "../../../util/auxiliaryFunctions.util";
+import { findLocalIp } from "../../../util/auxiliaryFunctions.util";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import apiCompiler from "../../../services/apiCompiler";
@@ -32,46 +32,45 @@ export default class Editor extends Component {
       loadingEditor: false,
       title: "",
       description: "",
-      prova:"",
+      prova: "",
       inputs: "",
       outputs: "",
       percentualAcerto: "",
-      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
-      turma:"",        
+      myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
+      turma: "",
       loadingInfoTurma: true,
       loadingExercicio: true,
       userDifficulty: "",
       loadDifficulty: false,
       salvandoRascunho: false,
-      char_change_number: 0
+      char_change_number: 0,
     };
-    
   }
 
   async componentDidMount() {
     this.setState({ tempo_inicial: new Date() });
     await this.getInfoTurma();
-    this.getProva()
+    this.getProva();
     await this.getExercicio();
     this.salvaAcesso();
-    
+
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
     setInterval(
-      function() {
+      function () {
         this.salvaRascunho(false);
       }.bind(this),
       60000
     );
   }
-  
+
   async salvaAcesso() {
     const ip = await findLocalIp(false);
     const idQuestion = this.props.match.params.idExercicio;
     const request = {
       ip: ip[0],
       environment: "desktop",
-      idQuestion
+      idQuestion,
     };
     try {
       await api.post(`/access/store`, request);
@@ -79,55 +78,52 @@ export default class Editor extends Component {
       console.log(err);
     }
   }
-  async getInfoTurma(){
-    const id = this.props.match.params.id
-    const {myClasses} = this.state
-    if(myClasses && typeof myClasses==="object"){
-        const index = myClasses.map(c=>c.id).indexOf(id)
-        if(index!==-1){
-            this.setState({
-                turma:myClasses[index]
-            })
-        }
-        this.setState({loadingInfoTurma:false})
-        return null
-    }
-    try{
-        const response = await api.get(`/class/${id}`)
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    const { myClasses } = this.state;
+    if (myClasses && typeof myClasses === "object") {
+      const index = myClasses.map((c) => c.id).indexOf(id);
+      if (index !== -1) {
         this.setState({
-            turma:response.data,
-            loadingInfoTurma:false,
-        })
+          turma: myClasses[index],
+        });
+      }
+      this.setState({ loadingInfoTurma: false });
+      return null;
     }
-    catch(err){
-        this.setState({loadingInfoTurma:false})
-        console.log(err);
+    try {
+      const response = await api.get(`/class/${id}`);
+      this.setState({
+        turma: response.data,
+        loadingInfoTurma: false,
+      });
+    } catch (err) {
+      this.setState({ loadingInfoTurma: false });
+      console.log(err);
     }
   }
   async getProva() {
-    const {id,idTest} = this.props.match.params;
-    const idClass = id
-    let query = `?idClass=${idClass}`
+    const { id, idTest } = this.props.match.params;
+    const idClass = id;
+    let query = `?idClass=${idClass}`;
     try {
       const response = await api.get(`/test/${idTest}${query}`);
       this.setState({
-        prova:response.data
-      })
+        prova: response.data,
+      });
     } catch (err) {
       console.log(err);
     }
   }
   async getExercicio() {
-    const {id,idTest,idExercicio} = this.props.match.params;
-    let query = `?exclude=id code status createdAt updatedAt author_id solution`
-    query += `&draft=yes`
-    query += `&idClass=${id}`
-    query += `&idTest=${idTest}`
-    query += `&difficulty=yes`
+    const { id, idTest, idExercicio } = this.props.match.params;
+    let query = `?exclude=id code status createdAt updatedAt author_id solution`;
+    query += `&draft=yes`;
+    query += `&idClass=${id}`;
+    query += `&idTest=${idTest}`;
+    query += `&difficulty=yes`;
     try {
       const response = await api.get(`/question/${idExercicio}${query}`);
-      console.log("questão");
-      console.log(response.data);
       this.setState({
         results: [...response.data.results],
         title: response.data.title,
@@ -135,8 +131,12 @@ export default class Editor extends Component {
         katexDescription: response.data.katexDescription || "",
         difficulty: response.data.difficulty,
         userDifficulty: response.data.userDifficulty || "",
-        solution: response.data.questionDraft?response.data.questionDraft.answer:'',
-        char_change_number:response.data.questionDraft?response.data.questionDraft.char_change_number:0,
+        solution: response.data.questionDraft
+          ? response.data.questionDraft.answer
+          : "",
+        char_change_number: response.data.questionDraft
+          ? response.data.questionDraft.char_change_number
+          : 0,
         loadingExercicio: false,
       });
     } catch (err) {
@@ -144,14 +144,14 @@ export default class Editor extends Component {
     }
   }
   async salvaRascunho(showMsg = true) {
-    const {id,idTest,idExercicio} = this.props.match.params;
-    const {solution,char_change_number} = this.state
+    const { id, idTest, idExercicio } = this.props.match.params;
+    const { solution, char_change_number } = this.state;
     const request = {
       answer: solution,
       char_change_number,
-      idQuestion : idExercicio,
-      idTest : idTest,
-      idClass : id
+      idQuestion: idExercicio,
+      idTest: idTest,
+      idClass: id,
     };
     try {
       this.setState({ salvandoRascunho: true });
@@ -162,11 +162,11 @@ export default class Editor extends Component {
           toast: true,
           position: "top-end",
           showConfirmButton: false,
-          timer: 3000
+          timer: 3000,
         });
         Toast.fire({
           icon: "success",
-          title: "Rascunho salvo com sucesso!"
+          title: "Rascunho salvo com sucesso!",
         });
       }
     } catch (err) {
@@ -178,15 +178,11 @@ export default class Editor extends Component {
     e.preventDefault();
     const timeConsuming = new Date() - this.state.tempo_inicial;
     const { solution, language, results, char_change_number } = this.state;
-    console.log("solution:");
-    console.log(solution);
     const request = {
       codigo: solution,
       linguagem: language,
-      results: results
+      results: results,
     };
-    console.log("codigo aparado");
-    console.log(request.codigo);
     this.setState({ loadingReponse: true });
     try {
       this.salvaRascunho();
@@ -197,21 +193,19 @@ export default class Editor extends Component {
         timeConsuming,
         char_change_number
       );
-      console.log("sumbissão: ");
-      console.log(response.data);
       this.setState({
         loadingReponse: false,
         response: response.data.results,
         percentualAcerto: response.data.percentualAcerto,
-        descriptionErro: response.data.descriptionErro
+        descriptionErro: response.data.descriptionErro,
       });
     } catch (err) {
       Object.getOwnPropertyDescriptors(err);
       this.setState({ loadingReponse: false });
       Swal.fire({
-        type: 'error',
-        title: 'ops... Algum erro aconteceu na operação :(',
-      })
+        type: "error",
+        title: "ops... Algum erro aconteceu na operação :(",
+      });
     }
   }
   async saveSubmission(
@@ -220,11 +214,10 @@ export default class Editor extends Component {
     timeConsuming,
     char_change_number
   ) {
-    const {id,idTest,idExercicio} = this.props.match.params;
+    const { id, idTest, idExercicio } = this.props.match.params;
 
     try {
       const ip = await findLocalIp(false);
-      console.log(ip);
       const request = {
         answer: codigo,
         language: linguagem,
@@ -233,11 +226,11 @@ export default class Editor extends Component {
         ip: ip[0],
         environment: "desktop",
         char_change_number,
-        idQuestion:idExercicio,
-        idClass:id,
-        idTest:idTest,
+        idQuestion: idExercicio,
+        idClass: id,
+        idTest: idTest,
       };
-      await api.post(`/submission/store`,request);
+      await api.post(`/submission/store`, request);
 
       this.setState({ tempo_inicial: new Date() });
     } catch (err) {
@@ -255,7 +248,7 @@ export default class Editor extends Component {
   handleSolution(newValue) {
     this.setState({
       solution: newValue,
-      char_change_number: this.state.char_change_number + 1
+      char_change_number: this.state.char_change_number + 1,
     });
   }
   async handleDifficulty(e) {
@@ -263,14 +256,14 @@ export default class Editor extends Component {
     const idQuestion = this.props.match.params.idExercicio;
     const request = {
       userDifficulty: userDifficulty,
-      idQuestion
+      idQuestion,
     };
     try {
       this.setState({ loadDifficulty: true });
-      await api.post(`/difficulty/store`,request);
+      await api.post(`/difficulty/store`, request);
       this.setState({
         userDifficulty: userDifficulty,
-        loadDifficulty: false
+        loadDifficulty: false,
       });
     } catch (err) {
       this.setState({ loadDifficulty: false });
@@ -279,7 +272,13 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {turma,loadingExercicio,loadingInfoTurma,prova,title} = this.state;
+    const {
+      turma,
+      loadingExercicio,
+      loadingInfoTurma,
+      prova,
+      title,
+    } = this.state;
 
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
@@ -288,19 +287,45 @@ export default class Editor extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
-              {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
-              <i className="fa fa-angle-left ml-2 mr-2"/> 
-              <Link to={`/professor/turma/${this.props.match.params.id}/provas`}>
-                Provas
-              </Link>
-              <i className="fa fa-angle-left ml-2 mr-2"/>
-              <Link to={`/professor/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`} >
-                {prova?prova.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
-              </Link>
-              <i className="fa fa-angle-left ml-2 mr-2"/>
-              {title || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
-            </h5>
+              <h5 style={{ margin: "0px", display: "inline" }}>
+                <i className="fa fa-users mr-2" aria-hidden="true" />
+                {turma && turma.name} - {turma && turma.year}.
+                {turma && turma.semester}
+                <i className="fa fa-angle-left ml-2 mr-2" />
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/provas`}
+                >
+                  Provas
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2" />
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`}
+                >
+                  {prova ? (
+                    prova.title
+                  ) : (
+                    <div
+                      style={{
+                        width: "140px",
+                        backgroundColor: "#e5e5e5",
+                        height: "12px",
+                        display: "inline-block",
+                      }}
+                    />
+                  )}
+                </Link>
+                <i className="fa fa-angle-left ml-2 mr-2" />
+                {title || (
+                  <div
+                    style={{
+                      width: "140px",
+                      backgroundColor: "#e5e5e5",
+                      height: "12px",
+                      display: "inline-block",
+                    }}
+                  />
+                )}
+              </h5>
             )}
           </Col>
         </Row>
@@ -312,11 +337,11 @@ export default class Editor extends Component {
             {...this.props}
             languages={turma && turma.languages}
             showAllTestCases={prova && prova.showAlltestCases}
-            changeLanguage ={this.changeLanguage.bind(this)}
-            changeTheme ={this.changeTheme.bind(this)}
-            handleSolution ={this.handleSolution.bind(this)}
-            handleDifficulty ={this.handleDifficulty.bind(this)}
-            submeter ={this.submeter.bind(this)}
+            changeLanguage={this.changeLanguage.bind(this)}
+            changeTheme={this.changeTheme.bind(this)}
+            handleSolution={this.handleSolution.bind(this)}
+            handleDifficulty={this.handleDifficulty.bind(this)}
+            submeter={this.submeter.bind(this)}
             salvaRascunho={this.salvaRascunho.bind(this)}
           />
         )}

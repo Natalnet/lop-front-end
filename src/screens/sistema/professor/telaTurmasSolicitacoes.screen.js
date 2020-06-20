@@ -5,10 +5,10 @@ import socket from "socket.io-client";
 import api, { baseUrlBackend } from "../../../services/api";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import profileImg from "../../../assets/perfil.png"
+import profileImg from "../../../assets/perfil.png";
 
 const lista = {
-  backgroundColor: "white"
+  backgroundColor: "white",
 };
 export default class Pagina extends Component {
   constructor(props) {
@@ -18,67 +18,64 @@ export default class Pagina extends Component {
       loading: false,
       loadingUsers: true,
       loadingInfoTurma: true,
-      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
-      turma:"",      
+      myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
+      turma: "",
     };
   }
   async componentDidMount() {
     await this.getInfoTurma();
     this.getUsuarios();
-    
-    const {turma} = this.state
+
+    const { turma } = this.state;
     document.title = `${turma && turma.name} - Solicitações`;
     this.getUsuariosRealTime();
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.io && this.io.close();
   }
 
-  async getInfoTurma(){
-    const id = this.props.match.params.id
-    const {myClasses} = this.state
-    if(myClasses && typeof myClasses==="object"){
-        const index = myClasses.map(c=>c.id).indexOf(id)
-        if(index!==-1){
-            this.setState({
-                turma:myClasses[index]
-            })
-        }
-        this.setState({loadingInfoTurma:false})
-        return null
-    }
-    try{
-        const response = await api.get(`/class/${id}`)
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    const { myClasses } = this.state;
+    if (myClasses && typeof myClasses === "object") {
+      const index = myClasses.map((c) => c.id).indexOf(id);
+      if (index !== -1) {
         this.setState({
-            turma:response.data,
-            loadingInfoTurma:false,
-        })
+          turma: myClasses[index],
+        });
+      }
+      this.setState({ loadingInfoTurma: false });
+      return null;
     }
-    catch(err){
-        this.setState({loadingInfoTurma:false})
-        console.log(err);
+    try {
+      const response = await api.get(`/class/${id}`);
+      this.setState({
+        turma: response.data,
+        loadingInfoTurma: false,
+      });
+    } catch (err) {
+      this.setState({ loadingInfoTurma: false });
+      console.log(err);
     }
   }
   async getUsuarios(loadingResponse = true) {
     const id = this.props.match.params.id;
-    let query = `?idClass=${id}`
-    query += `&solicitations=yes`
-    query += `&fields=id name email`
+    let query = `?idClass=${id}`;
+    query += `&solicitations=yes`;
+    query += `&fields=id name email`;
     try {
       if (loadingResponse) this.setState({ loading: true });
       const response = await api.get(`/user${query}`);
-      console.log("solicitações");
-      console.log(response.data);
       this.setState({
         usuarios: [...response.data],
         loading: false,
-        loadingUsers: false
+        loadingUsers: false,
       });
     } catch (err) {
       this.setState({
         loading: false,
-        loadingUsers: false
+        loadingUsers: false,
       });
       console.log(err);
     }
@@ -88,91 +85,133 @@ export default class Pagina extends Component {
     const id = this.props.match.params.id;
     this.io.emit("connectRoonClass", id); //conectando à sala
 
-    this.io.on("soliciteClass", response => {
-      console.log("no socket");
-      console.log(response);
-      const {usuarios} = this.state
-      this.setState({usuarios:[...usuarios,response]})
+    this.io.on("soliciteClass", (response) => {
+      const { usuarios } = this.state;
+      this.setState({ usuarios: [...usuarios, response] });
     });
-    this.io.on("cancelSolicitClass", response => {
-
-      console.log("cancelSolicitClass no socket");
-      console.log(response);
-      const {usuarios} = this.state
-      this.setState({usuarios:[...usuarios.filter(s=>s.id!==response)]})
-    });  
+    this.io.on("cancelSolicitClass", (response) => {
+      const { usuarios } = this.state;
+      this.setState({
+        usuarios: [...usuarios.filter((s) => s.id !== response)],
+      });
+    });
   }
+  async aceitarTodos() {
+    const idClass = this.props.match.params.id;
+    let query = `?idClass=${idClass}`;
+    const { usuarios } = this.state;
+    const request = {
+      users: usuarios,
+    };
+    try {
+      const { value } = await Swal.fire({
+        title: `Tem certeza que deseja adicionar todo mundo à turma?`,
+        //text: "You won't be able to revert this!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sim, Adicionar!",
+        cancelButtonText: "Não!",
+      });
+      if (!value) return null;
+      Swal.fire({
+        title: "Adicionando alunos",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+      });
+      Swal.showLoading();
 
+      await api.put(`/solicitation/deleteall${query}`, request);
+      await api.post(`/classHasUser/storeall${query}`, request);
+      this.setState({
+        usuarios: [],
+      });
+      Swal.fire({
+        title: "Alunos Adicionados à turma!",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+      });
+    } catch (err) {
+      Swal.hideLoading();
+      Swal.fire({
+        type: "error",
+        title: "ops... Falha na operação :(",
+      });
+    }
+  }
   async aceitaSolicitacao(user) {
     const idClass = this.props.match.params.id;
-    const request={
-      idUser:user.id,
-      enrollment:user.enrollment,
+    const request = {
+      idUser: user.id,
+      enrollment: user.enrollment,
       idClass,
-    }
-    let query = `?userEmail=${user.email}`
+    };
+    let query = `?userEmail=${user.email}`;
     try {
       Swal.fire({
         title: "Processando",
         allowOutsideClick: false,
         allowEscapeKey: false,
-        allowEnterKey: false
+        allowEnterKey: false,
       });
       Swal.showLoading();
 
-      await this.removeSolicitacao(user,false);
-      await api.post(`/classHasUser/store${query}`,request);
-      const {usuarios}= this.state
+      await this.removeSolicitacao(user, false);
+      await api.post(`/classHasUser/store${query}`, request);
+      const { usuarios } = this.state;
       this.setState({
-        usuarios : usuarios.filter(u=>u.id!==user.id)
-      })
+        usuarios: usuarios.filter((u) => u.id !== user.id),
+      });
       Swal.hideLoading();
       Swal.fire({
         type: "success",
-        title: "Usuário adicionado á turma com sucesso!"
+        title: "Usuário adicionado á turma com sucesso!",
       });
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
         type: "error",
-        title: "ops... Usuário não pôde ser adicionado"
+        title: "ops... Usuário não pôde ser adicionado",
       });
     }
   }
 
-  async removeSolicitacao(user,msg=true) {
-    const idUser = user.id
-    const emailUser = user.email
+  async removeSolicitacao(user, msg = true) {
+    const idUser = user.id;
+    const emailUser = user.email;
     const idClass = this.props.match.params.id;
-    let query = `?idClass=${idClass}`
-    query += `&idUser=${idUser}`
-    query += `&emailUser=${emailUser}`
+    let query = `?idClass=${idClass}`;
+    query += `&idUser=${idUser}`;
+    query += `&emailUser=${emailUser}`;
     try {
-      if(msg){
+      if (msg) {
         Swal.fire({
           title: "Processando",
           allowOutsideClick: false,
           allowEscapeKey: false,
-          allowEnterKey: false
+          allowEnterKey: false,
         });
         Swal.showLoading();
       }
-      
+
       await api.delete(`/solicitation/delete${query}`);
-      const {usuarios} = this.state
-      this.setState({usuarios:usuarios.filter(u=>u.id!==idUser)})
-      if(msg){
+      const { usuarios } = this.state;
+      this.setState({ usuarios: usuarios.filter((u) => u.id !== idUser) });
+      if (msg) {
         Swal.hideLoading();
         Swal.fire({
           type: "success",
-          title: "Solicitação rejeitada com sucesso!"
+          title: "Solicitação rejeitada com sucesso!",
         });
       }
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
         type: "error",
-        title: "ops... algo deu errado na operação"
+        title: "ops... algo deu errado na operação",
       });
     }
   }
@@ -186,14 +225,29 @@ export default class Pagina extends Component {
       >
         <Row mb={15}>
           <Col xs={12}>
-              {loadingInfoTurma?
-              <div className="loader"  style={{margin:'0px auto'}}></div>
-              :
-              <h5 style={{margin:'0px'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
-                <i className="fa fa-angle-left ml-2 mr-2"/> Solicitações
-              </h5>                        
-              }
+            {loadingInfoTurma ? (
+              <div className="loader" style={{ margin: "0px auto" }}></div>
+            ) : (
+              <h5 style={{ margin: "0px" }}>
+                <i className="fa fa-users mr-2" aria-hidden="true" />
+                {turma && turma.name} - {turma && turma.year}.
+                {turma && turma.semester}
+                <i className="fa fa-angle-left ml-2 mr-2" /> Solicitações
+              </h5>
+            )}
+          </Col>
+        </Row>
+        <Row mb={15}>
+          <Col xs={12} textRight>
+            {usuarios.length > 0 ? (
+              <button
+                onClick={() => this.aceitarTodos()}
+                className="btn btn-success"
+              >
+                Adicionar todos <i className="fa fa-users mr-2" />
+                <i className="fa fa-plus" />
+              </button>
+            ) : null}
           </Col>
         </Row>
         <Row mb={15}>
@@ -231,7 +285,9 @@ export default class Pagina extends Component {
                         <div
                           className="avatar d-block"
                           style={{
-                            backgroundImage: `url(${user.urlImage || profileImg})`
+                            backgroundImage: `url(${
+                              user.urlImage || profileImg
+                            })`,
                           }}
                         />
                       </td>

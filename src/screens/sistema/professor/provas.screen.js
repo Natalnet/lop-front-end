@@ -7,7 +7,7 @@ import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import {formatDate} from "../../../util/auxiliaryFunctions.util";
+import { formatDate } from "../../../util/auxiliaryFunctions.util";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -17,11 +17,11 @@ import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
 const lista = {
-  backgroundColor: "white"
+  backgroundColor: "white",
 };
 
 const botao = {
-  width: "100%"
+  width: "100%",
 };
 
 export default class HomeProvasScreen extends Component {
@@ -37,7 +37,7 @@ export default class HomeProvasScreen extends Component {
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
-      showModalInfo: false
+      showModalInfo: false,
     };
     this.handlePage = this.handlePage.bind(this);
   }
@@ -51,19 +51,16 @@ export default class HomeProvasScreen extends Component {
     const { numPageAtual, contentInputSeach, fieldFilter } = this.state;
     let query = `include=${contentInputSeach.trim()}`;
     query += `&field=${fieldFilter}`;
-    console.log(query);
 
     try {
       this.setState({ loadingProvas: true });
       const response = await api.get(`/test/page/${numPageAtual}?${query}`);
-      console.log("provas");
-      console.log(response.data);
       this.setState({
         provas: [...response.data.docs],
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
-        loadingProvas: false
+        loadingProvas: false,
       });
     } catch (err) {
       this.setState({ loadingProvas: false });
@@ -73,7 +70,7 @@ export default class HomeProvasScreen extends Component {
   handleShowModalInfo(questions) {
     this.setState({
       showModalInfo: true,
-      questions: [...questions]
+      questions: [...questions],
     });
   }
   handleCloseshowModalInfo(e) {
@@ -84,16 +81,15 @@ export default class HomeProvasScreen extends Component {
     //console.log(numPage);
     this.setState(
       {
-        numPageAtual: numPage
+        numPageAtual: numPage,
       },
       () => this.getProvas()
     );
   }
   handleSelectFieldFilter(e) {
-    console.log(e.target.value);
     this.setState(
       {
-        fieldFilter: e.target.value
+        fieldFilter: e.target.value,
       } /*,()=>this.getProvas()*/
     );
   }
@@ -101,7 +97,7 @@ export default class HomeProvasScreen extends Component {
   handleContentInputSeach(e) {
     this.setState(
       {
-        contentInputSeach: e.target.value
+        contentInputSeach: e.target.value,
       } /*,()=>this.getProvas()*/
     );
   }
@@ -111,7 +107,7 @@ export default class HomeProvasScreen extends Component {
   clearContentInputSeach() {
     this.setState(
       {
-        contentInputSeach: ""
+        contentInputSeach: "",
       },
       () => this.getProvas()
     );
@@ -126,26 +122,24 @@ export default class HomeProvasScreen extends Component {
       numPageAtual,
       totalPages,
       showModalInfo,
-      questions
+      questions,
     } = this.state;
     return (
       <TemplateSistema active="provas">
         <Row mb={15}>
-          <Col xs={12} >
-              <h5 style={{margin:'0px'}}> 
-                Provas
-              </h5> 
+          <Col xs={12}>
+            <h5 style={{ margin: "0px" }}>Provas</h5>
           </Col>
         </Row>
         <Row mb={15}>
-          <Col xs={3} >
+          <Col xs={3}>
             <Link to="/professor/criarProva">
               <button className="btn btn-primary" type="button" style={botao}>
                 Criar Prova <i className="fe fe-file-plus" />
               </button>
             </Link>
           </Col>
-          <Col xs={9} >
+          <Col xs={9}>
             <InputGroup
               placeholder={`Perquise pelo ${
                 fieldFilter === "title"
@@ -160,7 +154,7 @@ export default class HomeProvasScreen extends Component {
               handleSelect={this.handleSelectFieldFilter.bind(this)}
               options={[
                 { value: "title", content: "Nome" },
-                { value: "code", content: "Código" }
+                { value: "code", content: "Código" },
               ]}
               clearContentInputSeach={this.clearContentInputSeach.bind(this)}
               loading={loadingProvas}
@@ -247,39 +241,41 @@ export default class HomeProvasScreen extends Component {
           <Modal.Body>
             <div className="row">
               {questions.map((questao, index) => (
-                <Fragment  key={index}>
-                <Col xs={12}>
-                  <Card style={{ marginBottom: "0" }}>
-                    <CardHead style={{ marginBottom: "0" }}>
-                      <CardTitle>{questao.title}</CardTitle>
-                      <CardOptions>
-                        <button
-                          className="btn btn-primary"
-                          data-toggle="collapse"
-                          data-target={"#collapse" + questao.id}
-                          style={{ position: "relative" }}
-                        >
-                          <i className={`fe fe-chevron-down`} />
-                        </button>
-                      </CardOptions>
-                    </CardHead>
-                    <div className="collapse" id={"collapse" + questao.id}>
-                      <CardBody>
-                        <Row>
-                          <b>Descrição: </b>
-                        </Row>
-                        <Row>
-                          <p>{questao.description}</p>
-                        </Row>
-                        <Row>
-                          <Col xs={12} textCenter>
-                            <BlockMath>{questao.katexDescription|| ''}</BlockMath>
-                          </Col>
-                        </Row>
-                      </CardBody>
-                    </div>
-                  </Card>
-                </Col>
+                <Fragment key={index}>
+                  <Col xs={12}>
+                    <Card style={{ marginBottom: "0" }}>
+                      <CardHead style={{ marginBottom: "0" }}>
+                        <CardTitle>{questao.title}</CardTitle>
+                        <CardOptions>
+                          <button
+                            className="btn btn-primary"
+                            data-toggle="collapse"
+                            data-target={"#collapse" + questao.id}
+                            style={{ position: "relative" }}
+                          >
+                            <i className={`fe fe-chevron-down`} />
+                          </button>
+                        </CardOptions>
+                      </CardHead>
+                      <div className="collapse" id={"collapse" + questao.id}>
+                        <CardBody>
+                          <Row>
+                            <b>Descrição: </b>
+                          </Row>
+                          <Row>
+                            <p>{questao.description}</p>
+                          </Row>
+                          <Row>
+                            <Col xs={12} textCenter>
+                              <BlockMath>
+                                {questao.katexDescription || ""}
+                              </BlockMath>
+                            </Col>
+                          </Row>
+                        </CardBody>
+                      </div>
+                    </Card>
+                  </Col>
                 </Fragment>
               ))}
             </div>

@@ -11,12 +11,12 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 
 export default props =>{
-    const {exercicios,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,showFilter,docsPerPage,tags,loadingTags,radioAsc,radioDesc,sortBy} = props
+    const {exercicios,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,showFilter,docsPerPage,tags,loadingTags,radioAsc,radioDesc,sortBy, tagsSelecionadas} = props
     const {handleShowfilter ,filterSeash,handleContentInputSeach ,handleSelectfildFilter ,handleSort,handleRadio ,handleDocsPerPage ,handleTagsChangeTags,handleShowModalInfo,handlePage} = props
-    
     const arrDifficulty = [null,"Muito fácil","Fácil","Médio","Difícil","Muito Difícil"]
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
     const email = sessionStorage.getItem("user.email")
+    
     return (
         <>
         <Card>
@@ -104,6 +104,7 @@ export default props =>{
                         <label>Tags </label>
                         <Select
                             style={{boxShadow: "white"}}
+                            defaultValue={tagsSelecionadas}
                             placeholder="informe as tags"
                             options={tags || []}
                             isMulti

@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component"
+import CardTitle from "components/ui/card/cardTitle.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
-import IconCPP from "../../../assets/icons/icons-cpp.svg"
-import IconJS from "../../../assets/icons/icons-javascript.svg"
-import { range} from "../../../util/auxiliaryFunctions.util"
+import IconCPP from "../../../assets/icons/icons-cpp.svg";
+import IconJS from "../../../assets/icons/icons-javascript.svg";
+import { range } from "../../../util/auxiliaryFunctions.util";
 import Swal from "sweetalert2";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import NavPagination from "components/ui/navs/navPagination";
@@ -25,7 +25,7 @@ import Switch from "../../../components/ui/switch/switch.component";
 };*/
 
 const botao = {
-  width: "100%"
+  width: "100%",
 };
 
 export default class TurmasScreen extends Component {
@@ -41,7 +41,7 @@ export default class TurmasScreen extends Component {
       totalItens: 0,
       totalPages: 0,
       descriptions: [],
-      status: ""
+      status: "",
     };
     this.handlePage = this.handlePage.bind(this);
   }
@@ -52,16 +52,16 @@ export default class TurmasScreen extends Component {
     this.getMinhasTurmasRealTime();
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.io && this.io.close();
   }
-  
+
   async getMinhasTurmas(loadingResponse = true) {
     const {
       numPageAtual,
       contentInputSeach,
       fieldFilter,
-      docsPerPage
+      docsPerPage,
     } = this.state;
     let query = `?include=${contentInputSeach}`;
     query += `&field=${fieldFilter}`;
@@ -70,21 +70,19 @@ export default class TurmasScreen extends Component {
     try {
       if (loadingResponse) this.setState({ loadingTurmas: true });
       const response = await api.get(`/class/page/${numPageAtual}${query}`);
-      console.log("minhas turmas");
-      console.log(response.data);
       this.setState({
         minhasTurmas: [...response.data.docs],
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
-        loadingTurmas: false
+        loadingTurmas: false,
       });
       let myClasses = sessionStorage.getItem("myClasses");
       if (myClasses && typeof JSON.parse(myClasses) === "object") {
         myClasses = JSON.parse(myClasses);
         let newClasses = response.data.docs;
-        newClasses.forEach(c => {
-          if (!myClasses.map(t => t.id).includes(c.id)) {
+        newClasses.forEach((c) => {
+          if (!myClasses.map((t) => t.id).includes(c.id)) {
             myClasses = [
               ...myClasses,
               {
@@ -92,8 +90,8 @@ export default class TurmasScreen extends Component {
                 year: c.year,
                 name: c.name,
                 semester: c.semester,
-                languages:c.languages
-              }
+                languages: c.languages,
+              },
             ];
           }
         });
@@ -102,13 +100,13 @@ export default class TurmasScreen extends Component {
         sessionStorage.setItem(
           "myClasses",
           JSON.stringify(
-            response.data.docs.map(t => {
+            response.data.docs.map((t) => {
               return {
                 id: t.id,
                 year: t.year,
                 name: t.name,
                 semester: t.semester,
-                languages: t.languages
+                languages: t.languages,
               };
             })
           )
@@ -124,38 +122,36 @@ export default class TurmasScreen extends Component {
     for (let turma of this.state.minhasTurmas) {
       this.io.emit("connectRoonClass", turma.id); //conectando à todas salas (minhas Turmas)
     }
-    this.io.on("RequestsClass", async response => {
-      console.log(response);
+    this.io.on("RequestsClass", async (response) => {
       this.getMinhasTurmas(false);
     });
   }
-  async handleState(state,idClass){
+  async handleState(state, idClass) {
     const request = {
-      updatedClass :{
+      updatedClass: {
         state,
-      } 
-    }
-    try{
+      },
+    };
+    try {
       Swal.fire({
         title: "Atualizando estado a turma",
         allowOutsideClick: false,
         allowEscapeKey: false,
-        allowEnterKey: false
+        allowEnterKey: false,
       });
       Swal.showLoading();
-      await api.put(`/class/${idClass}/update`,request)
+      await api.put(`/class/${idClass}/update`, request);
       Swal.fire({
         type: "success",
-        title: "Estado da turma atualizado com sucesso!"
+        title: "Estado da turma atualizado com sucesso!",
       });
-      console.log("ok")
-    }
-    catch(err){
-      console.log(err)
+      console.log("ok");
+    } catch (err) {
+      console.log(err);
       Swal.hideLoading();
       Swal.fire({
         type: "error",
-        title: "Erro: Não foi possivel atualizar estado da turma"
+        title: "Erro: Não foi possivel atualizar estado da turma",
       });
     }
   }
@@ -164,18 +160,17 @@ export default class TurmasScreen extends Component {
     //console.log(numPage);
     this.setState(
       {
-        numPageAtual: numPage
+        numPageAtual: numPage,
       },
       () => this.getMinhasTurmas()
     );
   }
 
   handleContentInputSeach(e) {
-    console.log(e.target.value);
     this.setState(
       {
         ...this.state,
-        contentInputSeach: e.target.value
+        contentInputSeach: e.target.value,
       } /*,()=>this.getMinhasTurmas()*/
     );
   }
@@ -183,17 +178,16 @@ export default class TurmasScreen extends Component {
     this.getMinhasTurmas();
   }
   handleSelectFieldFilter(e) {
-    console.log(e.target.value);
     this.setState(
       {
-        fieldFilter: e.target.value
+        fieldFilter: e.target.value,
       } /*,()=>this.getMinhasTurmas()*/
     );
   }
   clearContentInputSeach() {
     this.setState(
       {
-        contentInputSeach: ""
+        contentInputSeach: "",
       },
       () => this.getMinhasTurmas()
     );
@@ -246,10 +240,10 @@ export default class TurmasScreen extends Component {
       contentInputSeach,
       minhasTurmas,
       numPageAtual,
-      totalPages
+      totalPages,
       //descriptions
     } = this.state;
-    
+
     return (
       <TemplateSistema active="home">
         <Row mb={24}>
@@ -277,7 +271,7 @@ export default class TurmasScreen extends Component {
               handleSelect={this.handleSelectFieldFilter.bind(this)}
               options={[
                 { value: "name", content: "Nome" },
-                { value: "code", content: "Código" }
+                { value: "code", content: "Código" },
               ]}
               clearContentInputSeach={this.clearContentInputSeach.bind(this)}
               loading={loadingTurmas}
@@ -286,7 +280,7 @@ export default class TurmasScreen extends Component {
         </Row>
         <Row mb={24}>
           {loadingTurmas
-            ? range(8).map(i => (
+            ? range(8).map((i) => (
                 <Fragment key={i}>
                   <Col xs={12} md={6}>
                     <Card style={{ height: "178px" }}>
@@ -302,22 +296,22 @@ export default class TurmasScreen extends Component {
                 <Fragment key={turma.id}>
                   <Col xs={12} lg={6}>
                     <Card>
-                      <CardHead      
+                      <CardHead
                         style={{
                           backgroundColor: "rgba(190,190,190,0.2)",
                           maxHeight: "56px",
-                          
                         }}
                       >
                         <CardTitle>
-                            <i className="fa fa-users" /> {turma.name} - {turma.year}.{turma.semester}  
+                          <i className="fa fa-users" /> {turma.name} -{" "}
+                          {turma.year}.{turma.semester}
                         </CardTitle>
                         <CardOptions>
                           <p
                             style={{
                               fontSize: "11px",
                               fontWeight: "bold",
-                              margin:"0px"
+                              margin: "0px",
                             }}
                           >
                             Código: {turma.code}
@@ -328,33 +322,34 @@ export default class TurmasScreen extends Component {
                         <p>
                           <b>Linguagens: </b>
                           {turma.languages.map((language) => {
-                            const src= {
-                              cpp:IconCPP,
-                              javascript:IconJS
-                            }
+                            const src = {
+                              cpp: IconCPP,
+                              javascript: IconJS,
+                            };
                             return (
                               <img
                                 className="ml-2"
-                                width ="25px"
+                                width="25px"
                                 key={language}
                                 src={src[language]}
                                 alt={language}
                               />
-                            )
-                          })
-                          }
+                            );
+                          })}
                         </p>
-                        <p><b>Descrição da turma:</b> &nbsp; {turma.description}</p>
+                        <p>
+                          <b>Descrição da turma:</b> &nbsp; {turma.description}
+                        </p>
                       </CardBody>
                       <CardFooter>
                         <div className="d-inline-flex">
-                          <Switch 
-                            status={turma.state} 
+                          <Switch
+                            status={turma.state}
                             id={turma.id}
-                            style={{ margin: "auto 8px auto 0px"}}
+                            style={{ margin: "auto 8px auto 0px" }}
                             onChange={this.handleState.bind(this)}
-                          /> 
-                          <p style={{ margin: "8px 8px"}}>{turma.state}</p>
+                          />
+                          <p style={{ margin: "8px 8px" }}>{turma.state}</p>
                           <ul className="social-links list-inline mb-0 mt-2">
                             <li
                               className="list-inline-item  ml-4"
@@ -363,11 +358,17 @@ export default class TurmasScreen extends Component {
                               <i className="fa fa-users mr-1" />
                               {turma.usersCount}
                             </li>
-                            <li className="list-inline-item" title={`${turma.listsCount} lista(s)`}>
+                            <li
+                              className="list-inline-item"
+                              title={`${turma.listsCount} lista(s)`}
+                            >
                               <i className="fe fe-file-text mr-1" />
                               {turma.listsCount}
                             </li>
-                            <li className="list-inline-item" title={`${turma.testsCount} prova(s)`}>
+                            <li
+                              className="list-inline-item"
+                              title={`${turma.testsCount} prova(s)`}
+                            >
                               <i className="fa fa-file-text-o mr-1" />
                               {turma.testsCount}
                             </li>
@@ -381,23 +382,21 @@ export default class TurmasScreen extends Component {
                               backgroundColor: "white",
                               color: "807D85",
                               border: "solid 1px",
-                              borderColor: "#DFDFDF"
+                              borderColor: "#DFDFDF",
                             }}
                             className="btn  mr-2"
                           >
                             <i className="fa fa-edit" /> Editar
                           </button>
                         </Link>
-                        <Link
-                            to={`/professor/turma/${turma.id}/participantes`}
-                        >
+                        <Link to={`/professor/turma/${turma.id}/participantes`}>
                           <button
                             style={{ float: "right", margin: "2px" }}
                             className="btn btn-primary mr-2"
                           >
                             <i className="fe fe-corner-down-right" /> Entrar
                           </button>
-                        </Link>        
+                        </Link>
                       </CardFooter>
                     </Card>
                   </Col>

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import NavPagination from "components/ui/navs/navPagination";
 import api from "../../../services/api";
-import {formatDate} from "../../../util/auxiliaryFunctions.util";
+import { formatDate } from "../../../util/auxiliaryFunctions.util";
 import SwalModal from "components/ui/modal/swalModal.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -14,7 +14,7 @@ import "brace/mode/javascript";
 import "brace/theme/monokai";
 
 const lista = {
-  backgroundColor: "white"
+  backgroundColor: "white",
 };
 
 export default class HomesubmissoesScreen extends Component {
@@ -23,61 +23,55 @@ export default class HomesubmissoesScreen extends Component {
     this.state = {
       loadingInfoTurma: true,
       submissoes: [],
-      usuario : null,
-      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
-      turma:"",
-      prova:"",
-      questao:"",
+      usuario: null,
+      myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
+      turma: "",
+      prova: "",
+      questao: "",
       showModal: false,
       loadingSubmissoes: false,
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
       docsPerPage: 15,
-      submissao: ""
+      submissao: "",
     };
     this.handlePage = this.handlePage.bind(this);
   }
   async componentDidMount() {
     await this.getInfoTurma();
     this.getSubmissoes();
-    
-    const {turma} = this.state
+
+    const { turma } = this.state;
     document.title = `${turma && turma.name} - Submissões`;
   }
-  async getInfoTurma(){
-    const id = this.props.match.params.id
-    const {myClasses} = this.state
-    if(myClasses && typeof myClasses==="object"){
-        const index = myClasses.map(c=>c.id).indexOf(id)
-        if(index!==-1){
-            this.setState({
-                turma:myClasses[index]
-            })
-        }
-        this.setState({loadingInfoTurma:false})
-        return null
-    }
-    try{
-        const response = await api.get(`/class/${id}`)
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    const { myClasses } = this.state;
+    if (myClasses && typeof myClasses === "object") {
+      const index = myClasses.map((c) => c.id).indexOf(id);
+      if (index !== -1) {
         this.setState({
-            turma:response.data,
-            loadingInfoTurma:false,
-        })
+          turma: myClasses[index],
+        });
+      }
+      this.setState({ loadingInfoTurma: false });
+      return null;
     }
-    catch(err){
-        this.setState({loadingInfoTurma:false})
-        console.log(err);
+    try {
+      const response = await api.get(`/class/${id}`);
+      this.setState({
+        turma: response.data,
+        loadingInfoTurma: false,
+      });
+    } catch (err) {
+      this.setState({ loadingInfoTurma: false });
+      console.log(err);
     }
   }
   async getSubmissoes(loading = true) {
-    const {id,idProva,idExercicio,idUser} = this.props.match.params;
-    console.log('ir prova');
-    console.log(idProva);
-    const {
-      numPageAtual,
-      docsPerPage
-    } = this.state;
+    const { id, idProva, idExercicio, idUser } = this.props.match.params;
+    const { numPageAtual, docsPerPage } = this.state;
     let query = `?idClass=${id}`;
     query += `&idTest=${idProva}`;
     query += `&idQuestion=${idExercicio}`;
@@ -85,18 +79,18 @@ export default class HomesubmissoesScreen extends Component {
     query += `&docsPerPage=${docsPerPage}`;
     try {
       if (loading) this.setState({ loadingSubmissoes: true });
-      const response = await api.get(`/submissions/page/${numPageAtual}${query}`);
-      console.log("todas submissoes:");
-      console.log(response.data);
+      const response = await api.get(
+        `/submissions/page/${numPageAtual}${query}`
+      );
       this.setState({
         submissoes: [...response.data.docs],
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
         loadingSubmissoes: false,
-        usuario : response.data.user,
+        usuario: response.data.user,
         prova: response.data.test,
-        questao: response.data.question
+        questao: response.data.question,
       });
     } catch (err) {
       this.setState({ loadingSubmissoes: false });
@@ -107,7 +101,7 @@ export default class HomesubmissoesScreen extends Component {
     //console.log(question);
     this.setState({
       submissao: submissao,
-      showModalInfo: true
+      showModalInfo: true,
     });
   }
   handleCloseshowModalInfo(e) {
@@ -118,12 +112,11 @@ export default class HomesubmissoesScreen extends Component {
     //console.log(numPage);
     this.setState(
       {
-        numPageAtual: numPage
+        numPageAtual: numPage,
       },
       () => this.getSubmissoes()
     );
   }
-
 
   render() {
     const {
@@ -150,26 +143,63 @@ export default class HomesubmissoesScreen extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
-                <i className="fa fa-angle-left ml-2 mr-2"/> 
-                <Link to={`/professor/turma/${this.props.match.params.id}/participantes`}>
+              <h5 style={{ margin: "0px", display: "inline" }}>
+                <i className="fa fa-users mr-2" aria-hidden="true" />
+                {turma && turma.name} - {turma && turma.year}.
+                {turma && turma.semester}
+                <i className="fa fa-angle-left ml-2 mr-2" />
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/participantes`}
+                >
                   Participantes
                 </Link>
-                <i className="fa fa-angle-left ml-2 mr-2"/>
+                <i className="fa fa-angle-left ml-2 mr-2" />
                 <Link
                   to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/listas`}
                 >
-                  {usuario?`${usuario.name} `:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                  {usuario ? (
+                    `${usuario.name} `
+                  ) : (
+                    <div
+                      style={{
+                        width: "140px",
+                        backgroundColor: "#e5e5e5",
+                        height: "12px",
+                        display: "inline-block",
+                      }}
+                    />
+                  )}
                 </Link>
-                <i className="fa fa-angle-left ml-2 mr-2"/>
+                <i className="fa fa-angle-left ml-2 mr-2" />
                 <Link
                   to={`/professor/turma/${this.props.match.params.id}/participantes/${this.props.match.params.idUser}/provas/${this.props.match.params.idProva}/exercicios`}
                 >
-                  {prova?`${prova.title}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                  {prova ? (
+                    `${prova.title}`
+                  ) : (
+                    <div
+                      style={{
+                        width: "140px",
+                        backgroundColor: "#e5e5e5",
+                        height: "12px",
+                        display: "inline-block",
+                      }}
+                    />
+                  )}
                 </Link>
-                <i className="fa fa-angle-left ml-2 mr-2"/>
-                {questao?`${questao.title}`:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}  
+                <i className="fa fa-angle-left ml-2 mr-2" />
+                {questao ? (
+                  `${questao.title}`
+                ) : (
+                  <div
+                    style={{
+                      width: "140px",
+                      backgroundColor: "#e5e5e5",
+                      height: "12px",
+                      display: "inline-block",
+                    }}
+                  />
+                )}
               </h5>
             )}
           </Col>
@@ -192,7 +222,6 @@ export default class HomesubmissoesScreen extends Component {
               <tbody>
                 {loadingSubmissoes ? (
                   <tr>
-
                     <td>
                       <div className="loader" />
                     </td>
@@ -222,8 +251,10 @@ export default class HomesubmissoesScreen extends Component {
                         <div
                           className="avatar d-block"
                           style={{
-                            backgroundImage: `url(${submission.user.urlImage ||
-                              "https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"})`
+                            backgroundImage: `url(${
+                              submission.user.urlImage ||
+                              "https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"
+                            })`,
                           }}
                         />
                       </td>
@@ -233,7 +264,7 @@ export default class HomesubmissoesScreen extends Component {
                             parseFloat(submission.hitPercentage) === 100
                               ? "#0f0"
                               : "#f00"
-                          }`
+                          }`,
                         }}
                       >
                         <b>{parseFloat(submission.hitPercentage)}%</b>

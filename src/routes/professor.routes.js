@@ -27,180 +27,194 @@ import TelaTurmasSubmissoes from "../screens/sistema/professor/telaTurmasSubmiss
 import EditarTurma from "../screens/sistema/professor/editarTurma.screen";
 import RealizarQuestao from "../screens/sistema/professor/telaTurmasAcessarQuestaoProva.screen";
 import QuestoesProva from "../screens/sistema/professor/telaTurmasAcessarProva.screen";
+import ProvasAlunos from "../screens/sistema/professor/provasAlunos";
+import CorrecaoProvas from "../screens/sistema/professor/correcaoProva.screen";
 
 const routes = [
   {
     path: "/professor/novasturmas",
     component: NovasTurmasScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor",
     component: HomeProfessorScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/listas",
     component: ListasScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/provas",
     component: ProvaScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/exercicios",
     component: ExerciciosScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/exercicio/:id",
     component: Exercicio,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/exercicios/:id/editar",
     component: AtualizarexercicioScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
 
   {
     path: "/professor/criarLista",
     component: CriarListaScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/listas/:id/editar",
     component: EditarListaScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/criarProva",
     component: CriarProvaScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/criarExercicio",
     component: CriarExercicioScreen,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/401",
     component: Erro401,
-    private: true
+    private: true,
   },
   {
     path: "/professor/turma/:id/listas",
     component: TelaTurmaLista,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/lista/:idLista",
     component: TurmaExercicios,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/lista/:idLista/exercicio/:idExercicio",
     component: TurmaExercicio,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/participantes",
     component: TelaTurmaParticipantes,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/participantes/:idUser/listas",
     component: TelaTurmaParticipantesListas,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path:
       "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicios",
     component: TelaTurmaParticipantesLista,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path:
       "/professor/turma/:id/participantes/:idUser/provas/:idProva/exercicios",
     component: TelaTurmaParticipantesProva,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path:
       "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicio/:idExercicio",
     component: TelaTurmaParticipantesListaSubmissoes,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path:
       "/professor/turma/:id/participantes/:idUser/provas/:idProva/exercicio/:idExercicio",
     component: TelaTurmaParticipantesProvaSubmissoes,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/provas",
     component: TelaTurmaProvas,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/turma/:id/correcaoprovas/:idProva",
+    component: ProvasAlunos,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/turma/:id/prova/:idProva/aluno/:idAluno/page/:idQuestion",
+    component: CorrecaoProvas,
+    private: true,
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/solicitacoes",
     component: TelaTurmaSolicitacoes,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/submissoes",
     component: TelaTurmasSubmissoes,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/dashboard",
     component: TelaTurmasDashboard,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/editar",
     component: EditarTurma,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/prova/:idTest/questao/:idExercicio",
     component: RealizarQuestao,
     private: true,
-    perfil: "PROFESSOR"
+    perfil: "PROFESSOR",
   },
   {
     path: "/professor/turma/:id/prova/:idTest",
     component: QuestoesProva,
     private: true,
-    perfil: "PROFESSOR"
-  }
+    perfil: "PROFESSOR",
+  },
 ];
 
 export default exportRoutes(routes);

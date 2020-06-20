@@ -82,3 +82,43 @@ export const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) =>
         console.log();
     };
 });
+
+export function getStateFormQuestionsFromStorage(field){
+    switch (field) {
+        case 'contentInputSeach':
+            return sessionStorage.getItem('C') || '';
+
+        case 'radioAsc':
+            if(sessionStorage.getItem('radioAsc')){
+                return JSON.parse(sessionStorage.getItem('radioAsc'))
+            }
+            return false;
+
+        case 'radioDesc':
+            if(sessionStorage.getItem('radioDesc')){
+                return JSON.parse(sessionStorage.getItem('radioDesc'))
+            }
+            return true;
+
+        case 'valueRadioSort':
+            return sessionStorage.getItem('valueRadioSort') || 'DESC';
+
+        case 'sortBy':
+            return sessionStorage.getItem('sortBy') || 'createdAt';
+
+        case 'tagsSelecionadas':
+            if(sessionStorage.getItem('tagsSelecionadas')){
+                return JSON.parse(sessionStorage.getItem('tagsSelecionadas'))
+            }
+            return [];
+
+        case 'fildFilter':
+            return sessionStorage.getItem('fildFilter') || 'title';
+
+        case 'docsPerPage':
+            return sessionStorage.getItem('docsPerPage') || 15;
+    
+        default:
+           return null;
+    }
+}
