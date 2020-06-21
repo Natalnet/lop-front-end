@@ -190,7 +190,7 @@ export default class Exercicios extends Component {
             >
               {lista && dateLimit
                 ? "Editar data limite para submissões"
-                : "Adicionar data limite para submmissões"}
+                : "Adicionar data limite para submissões"}
             </button>
           </Col>
         </Row>
