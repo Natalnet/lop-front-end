@@ -7,6 +7,7 @@ const baseUrlBackend = process.env.REACT_APP_BASE_URL_BACKEND || "https://api.lo
 const api = axios.create({
   baseURL: baseUrlBackend,
 });
+
 api.interceptors.request.use((config) => {
   const token = sessionStorage.getItem("auth-token");
   const profile = sessionStorage.getItem("user.profile");

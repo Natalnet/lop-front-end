@@ -108,14 +108,26 @@ export default props =>{
                                 )
                                 :
                                 (profile==="professor")?(
-                                    <Link to={`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}>
-                                    <button
-                                        className="btn btn-success mr-2"
-                                        style={{ float: "right" }}
-                                    >
-                                        Acessar <i className="fa fa-wpexplorer" />
-                                    </button>
+                                    <>
+                                    <Link to={`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes`}>
+                                        <button
+                                            className="btn btn-primary mr-2"
+                                            style={{ float: "right" }}
+                                        >
+                                            Ver última submissão dos alunos <i className="fa fa-wpexplorer" />
+                                        </button>
                                     </Link>
+
+                                    <Link to={`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}>
+                                        <button
+                                            className="btn btn-success mr-2"
+                                            style={{ float: "right" }}
+                                        >
+                                            Acessar <i className="fa fa-wpexplorer" />
+                                        </button>
+                                    </Link>
+                                    </>
+                                    
                                 )
                                 :
                                     null
