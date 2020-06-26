@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
@@ -27,8 +27,8 @@ export default class Listas extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
     this.getUsersByClasse();
-    this.getUserLists();
-    this.getUserTests();
+    this.getUserLists(this.props.match.params.idUser);
+    this.getUserTests(this.props.match.params.idUser);
 
     const { turma } = this.state;
     document.title = `${turma && turma.name} - listas`;
@@ -72,9 +72,9 @@ export default class Listas extends Component {
       console.log(err)
     }
   }
-  async getUserLists() {
+  async getUserLists(idUser) {
     try {
-      const { id, idUser } = this.props.match.params;
+      const { id } = this.props.match.params;
       let query = `?idClass=${id}`;
       query += `&idUser=${idUser}`;
       this.setState({ loandingListas: true });
@@ -90,9 +90,9 @@ export default class Listas extends Component {
     }
   }
 
-  async getUserTests() {
+  async getUserTests(idUser) {
     try {
-      const { id, idUser } = this.props.match.params;
+      const { id } = this.props.match.params;
       let query = `?idClass=${id}`;
       query += `&idUser=${idUser}`;
       this.setState({ loandingProvas: true });
@@ -130,8 +130,8 @@ export default class Listas extends Component {
   handleRedirect(idUser){
     const { id  } = this.props.match.params;
     this.props.history.push(`/professor/turma/${id}/participantes/${idUser}/listas`);
-    this.getUserLists();
-    this.getUserTests()
+    this.getUserLists(idUser);
+    this.getUserTests(idUser)
   }
 
 
@@ -185,37 +185,7 @@ export default class Listas extends Component {
             )}
           </Col>
         </Row>
-        <Row mb={15}>
-          <Col md={12} >
-            <div
-              style={{
-                width:'100%',
-                display:'flex',
-                justifyContent:'space-between'
-              }}
-            >
-              <span>
-                <button 
-                  onClick={()=>this.handleRedirect(this.getPrevUser() && this.getPrevUser().id)}
-                  className= {`btn btn-outline-primary ${!this.getPrevUser()?'d-none':''}`}
-                >
-                  <i className="fa fa-chevron-left mr-2" />
-                  {this.getPrevUser() &&  this.getPrevUser().name} - {this.getPrevUser() && this.getPrevUser().email}
-                </button>
-              </span>
-              
-              <span>
-                <button 
-                  onClick={()=>this.handleRedirect(this.getNextUser() && this.getNextUser().id)}
-                  className= {`btn btn-outline-primary ${!this.getNextUser()?'d-none':''}`}
-                >
-                  { this.getNextUser() && this.getNextUser().name} - { this.getNextUser() && this.getNextUser().email}
-                  <i className="fa fa-chevron-right ml-2" />
-                </button>
-              </span>
-            </div>
-          </Col>
-        </Row>
+
         {loadingUsers || loandingListas || loandingProvas?
           <div className="loader" style={{ margin: "0px auto" }}></div>
         :
@@ -281,7 +251,38 @@ export default class Listas extends Component {
             participant
           />
         </>
-        }        
+        } 
+        <Row mb={15}>
+          <Col md={12} >
+            <div
+              style={{
+                width:'100%',
+                display:'flex',
+                justifyContent:'space-between'
+              }}
+            >
+              <span>
+                <button 
+                  onClick={()=>this.handleRedirect(this.getPrevUser() && this.getPrevUser().id)}
+                  className= {`btn btn-outline-primary ${!this.getPrevUser()?'d-none':''}`}
+                >
+                  <i className="fa fa-chevron-left mr-2" />
+                  {this.getPrevUser() &&  this.getPrevUser().name} - {this.getPrevUser() && this.getPrevUser().email}
+                </button>
+              </span>
+              
+              <span>
+                <button 
+                  onClick={()=>this.handleRedirect(this.getNextUser() && this.getNextUser().id)}
+                  className= {`btn btn-outline-primary ${!this.getNextUser()?'d-none':''}`}
+                >
+                  { this.getNextUser() && this.getNextUser().name} - { this.getNextUser() && this.getNextUser().email}
+                  <i className="fa fa-chevron-right ml-2" />
+                </button>
+              </span>
+            </div>
+          </Col>
+        </Row>       
       </TemplateSistema>
     );
   }
