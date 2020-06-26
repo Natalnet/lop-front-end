@@ -13,9 +13,12 @@ export default class Listas extends Component {
     this.state = {
       listas: [],
       provas: [],
+      users: [],
       user: {},
-      loandingListas: false,
-      loandingProvas: false,
+
+      loandingListas: true,
+      loandingProvas: true,
+      loadingUsers : true,
       loadingInfoTurma: true,
       myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
       turma: "",
@@ -23,8 +26,9 @@ export default class Listas extends Component {
   }
   async componentDidMount() {
     await this.getInfoTurma();
-    this.getListas();
-    this.getProvas();
+    this.getUsersByClasse();
+    this.getUserLists();
+    this.getUserTests();
 
     const { turma } = this.state;
     document.title = `${turma && turma.name} - listas`;
@@ -53,7 +57,22 @@ export default class Listas extends Component {
       console.log(err);
     }
   }
-  async getListas() {
+  async getUsersByClasse(){
+    this.setState({loadingUsers:true})
+    const id = this.props.match.params.id;
+    try{
+      const response = await api.get(`/user/class/${id}`)
+      console.log('users: ',response.data);
+      this.setState({
+        users: response.data,
+        loadingUsers: false
+      })
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+  async getUserLists() {
     try {
       const { id, idUser } = this.props.match.params;
       let query = `?idClass=${id}`;
@@ -71,7 +90,7 @@ export default class Listas extends Component {
     }
   }
 
-  async getProvas() {
+  async getUserTests() {
     try {
       const { id, idUser } = this.props.match.params;
       let query = `?idClass=${id}`;
@@ -89,15 +108,44 @@ export default class Listas extends Component {
     }
   }
 
+  getCurretIndexUser(){
+    const { users } = this.state;
+    const { idUser } = this.props.match.params;
+    const currentUser = users.findIndex(user=>user.id ===idUser)
+    return currentUser;
+  }
+  getPrevUser(){
+    const { users } = this.state;
+    const index = this.getCurretIndexUser();
+    const prevUser = users.find((user,i)=>i===index-1)
+    console.log('index: ',index,'prevuser: ',prevUser)
+    return prevUser !== -1?prevUser:null;
+  }
+  getNextUser(){
+    const { users } = this.state;
+    const index = this.getCurretIndexUser();
+    const nextUser = users.find((user,i)=>i===index+1)
+    return nextUser !== -1?  nextUser:null;
+  }
+  handleRedirect(idUser){
+    const { id  } = this.props.match.params;
+    this.props.history.push(`/professor/turma/${id}/participantes/${idUser}/listas`);
+    this.getUserLists();
+    this.getUserTests()
+  }
+
+
   render() {
     const {
       loadingInfoTurma,
       turma,
       loandingListas,
       loandingProvas,
+      loadingUsers,
       listas,
       provas,
       usuario,
+      users,
     } = this.state;
     return (
       <TemplateSistema
@@ -137,40 +185,103 @@ export default class Listas extends Component {
             )}
           </Col>
         </Row>
-        {loandingListas || loandingProvas ? (
+        <Row mb={15}>
+          <Col md={12} >
+            <div
+              style={{
+                width:'100%',
+                display:'flex',
+                justifyContent:'space-between'
+              }}
+            >
+              <span>
+                <button 
+                  onClick={()=>this.handleRedirect(this.getPrevUser() && this.getPrevUser().id)}
+                  className= {`btn btn-outline-primary ${!this.getPrevUser()?'d-none':''}`}
+                >
+                  <i className="fa fa-chevron-left mr-2" />
+                  {this.getPrevUser() &&  this.getPrevUser().name} - {this.getPrevUser() && this.getPrevUser().email}
+                </button>
+              </span>
+              
+              <span>
+                <button 
+                  onClick={()=>this.handleRedirect(this.getNextUser() && this.getNextUser().id)}
+                  className= {`btn btn-outline-primary ${!this.getNextUser()?'d-none':''}`}
+                >
+                  { this.getNextUser() && this.getNextUser().name} - { this.getNextUser() && this.getNextUser().email}
+                  <i className="fa fa-chevron-right ml-2" />
+                </button>
+              </span>
+            </div>
+          </Col>
+        </Row>
+        {loadingUsers || loandingListas || loandingProvas?
           <div className="loader" style={{ margin: "0px auto" }}></div>
-        ) : (
-          <Fragment>
-            <Row mb={10}>
-              <Col md={12} textCenter>
-                <h4 style={{ margin: "0px" }}>
-                  {listas.length > 0 && "Listas"}
-                </h4>
-              </Col>
-            </Row>
-            <TurmaListasScrren
-              {...this.state}
-              {...this.props}
-              listas={listas}
-              user={usuario}
-              participant
-            />
-            <Row mb={10}>
-              <Col md={12} textCenter>
-                <h4 style={{ margin: "0px" }}>
-                  {provas.length > 0 && "Provas"}
-                </h4>
-              </Col>
-            </Row>
-            <TurmaProvasScreen
-              {...this.state}
-              {...this.props}
-              provas={provas}
-              user={usuario}
-              participant
-            />
-          </Fragment>
-        )}
+        :
+        <Row mb={15}>
+          <Col xs={4}>
+            <label htmlFor="selectAluno">Participante: </label>
+            <select
+              id="selectAluno"
+              className="form-control"
+              defaultValue={this.props.match.params.idUser}
+              onChange={(e) => this.handleRedirect(e.target.value)}
+            >
+              {users.map(user=>
+                <option
+                  key={user.id} 
+                  value={user.id}
+                  onChange={(e)=>this.handleRedirect(e.target.value)}
+                >
+                  {user.name} - {user.email}
+                </option>
+              )}
+            </select>
+          </Col>
+        </Row>
+        }
+
+        {loandingListas?
+          <div className="loader" style={{ margin: "0px auto" }}></div>
+        :
+        <>
+          <Row mb={15}>
+            <Col md={12} textCenter>
+              <h4 style={{ margin: "0px" }}>
+                {listas.length > 0 && "Listas"}
+              </h4>
+            </Col>
+          </Row>
+          <TurmaListasScrren
+            {...this.state}
+            {...this.props}
+            listas={listas}
+            user={usuario}
+            participant
+          />
+        </>
+        }
+        {loandingProvas?
+          <div className="loader" style={{ margin: "0px auto" }}></div>
+        :
+        <>
+          <Row mb={10}>
+            <Col md={12} textCenter>
+              <h4 style={{ margin: "0px" }}>
+                {provas.length > 0 && "Provas"}
+              </h4>
+            </Col>
+          </Row>
+          <TurmaProvasScreen
+            {...this.state}
+            {...this.props}
+            provas={provas}
+            user={usuario}
+            participant
+          />
+        </>
+        }        
       </TemplateSistema>
     );
   }

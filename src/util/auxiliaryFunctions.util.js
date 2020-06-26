@@ -86,7 +86,7 @@ export const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) =>
 export function getStateFormQuestionsFromStorage(field){
     switch (field) {
         case 'contentInputSeach':
-            return sessionStorage.getItem('C') || '';
+            return sessionStorage.getItem('contentInputSeach') || '';
 
         case 'radioAsc':
             if(sessionStorage.getItem('radioAsc')){
