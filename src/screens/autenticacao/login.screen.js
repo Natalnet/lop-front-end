@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import TemplateAutenticacao from "components/templates/autenticacao.template";
 
 import api from "../../services/api";
-
+import NatalNet from "../../assets/images/logo.jpeg"
 import { Link } from "react-router-dom";
 import LogoLOP from "components/ui/logoLOP.component";
 
@@ -119,10 +119,37 @@ export default class LoginScreen extends Component {
               </button>
             </div>
           </div>
+          
         </form>
         <div className="text-center text-muted">
           Não tem conta? <Link to="/autenticacao/cadastro"> cadastre-se</Link>
         </div>
+        <div
+            style={{
+              padding:"0 32px",
+              paddingTop:"32px",
+              display:"flex",
+              justifyContent:"center",
+              alignItems: "center"
+            }}
+          >
+
+            <a
+              href="http://www.natalnet.br"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img
+                src={NatalNet}
+                alt="natalnet"
+                style={{
+                  maxWidth:"65px",
+                  pointer:"cursor"
+                }}
+              />
+              
+            </a>
+          </div>
         <br />
       </TemplateAutenticacao>
     );
