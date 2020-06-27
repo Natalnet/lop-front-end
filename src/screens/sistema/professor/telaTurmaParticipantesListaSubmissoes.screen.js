@@ -262,7 +262,7 @@ export default class HomesubmissoesScreen extends Component {
                         style={{
                           color: `${
                             parseFloat(submission.hitPercentage) === 100
-                              ? "#0f0"
+                              ? "#5eba00"
                               : "#f00"
                           }`,
                         }}
@@ -283,7 +283,7 @@ export default class HomesubmissoesScreen extends Component {
                             new Date(submission.submissionDeadline) <
                               new Date(submission.createdAt)
                               ? "#f00"
-                              : "#0f0"
+                              : "#5eba00"
                           }`,
                         }}
                       >
