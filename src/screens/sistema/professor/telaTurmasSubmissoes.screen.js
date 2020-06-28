@@ -287,7 +287,7 @@ export default class HomesubmissoesScreen extends Component {
                         style={{
                           color: `${
                             parseFloat(submission.hitPercentage) === 100
-                              ? "#0f0"
+                              ? "#5eba00"
                               : "#f00"
                           }`,
                         }}

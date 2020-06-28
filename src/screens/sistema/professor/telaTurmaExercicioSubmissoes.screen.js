@@ -10,6 +10,8 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import { formatDate } from "../../../util/auxiliaryFunctions.util";
+import { BlockMath } from "react-katex";
+import HTMLFormat from "components/ui/htmlFormat";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
 import "brace/mode/javascript";
@@ -61,12 +63,11 @@ export default class telaTurmaExercicioSubmissoes extends Component {
         }
       }
     async getUserSubmissionsByList(idExercicio =this.props.match.params.idExercicio ){
-        //"/professor/turma/:id/lista/:idLista/exercicio/:idExercicio/submissoes",
         this.setState({loadUserSubmissionsByList:true})
         const {id, idLista} = this.props.match.params;
         try{
             const response = await api.get(`/listQuestion/${idLista}/class/${id}/question/${idExercicio}`)
-            console.log(response.data)
+            console.log('question: ',response.data)
             this.setState({
                 users: response.data.users,
                 lista:  response.data.list,
@@ -103,7 +104,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                             <i className="fa fa-angle-left ml-2 mr-2" />
                             <Link
                                 
-                                to={`#/professor/turma/${this.props.match.params.id}/listas`}
+                                to={`/professor/turma/${this.props.match.params.id}/listas`}
                                 >
                                 Listas
                             </Link>
@@ -156,6 +157,31 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                     <div className="loader" style={{ margin: "0px auto" }}></div>
                 :
                 <>
+                <Row mb={20}>
+                    <Col xs={12}>
+                        <Card className="card-primary card-status-primary">
+                            <CardHead>
+                                <CardTitle>
+                                <b><i className="fa fa-code mr-2"/> {question.title}</b>
+                                </CardTitle>
+                            </CardHead>
+                            <CardBody className="overflow-auto">
+                                <Row>
+                                    <Col xs={12}>
+                                        <HTMLFormat>
+                                            {question.description}
+                                        </HTMLFormat>
+                                        {question.katexDescription ? (
+                                            <BlockMath>{question.katexDescription}</BlockMath>
+                                        ) : (
+                                            ""
+                                        )}
+                                    </Col>
+                                </Row>
+                            </CardBody>
+                        </Card>
+                    </Col>
+                </Row>
                 <Row>
                 {
                     users.map((user, j) => 
@@ -170,18 +196,28 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                                     <CardBody>
                                         <Row>
                                             <Col xs={6}>
-                                                <b>Score:</b> {user.lastSubmission.hitPercentage}%
+                                                <b>Score:
+                                                <span
+                                                    style={{
+                                                        color: `${
+                                                            parseFloat(user.lastSubmission.hitPercentage) === 100
+                                                            ? "#5eba00"
+                                                            : "#f00"
+                                                        }`,
+                                                    }}
+                                                > {user.lastSubmission.hitPercentage}% 
+                                                </span>
+                                                </b> 
                                             </Col>
                                             <Col xs={6}>
                                                 <b>N° de variação de caracteres:</b> {user.lastSubmission.char_change_number}
                                             </Col>
                                             
                                             <Col xs={6}>
-                                                <b>Tempo gasto:</b> {user.lastSubmission.timeConsuming}
-                                                {parseInt(user.lastSubmission.timeConsuming / 1000 / 60)} min {parseInt((user.lastSubmission.timeConsuming / 1000) % 60)} seg
+                                                <b>Tempo gasto:</b> {parseInt(user.lastSubmission.timeConsuming / 1000 / 60)} min {parseInt((user.lastSubmission.timeConsuming / 1000) % 60)} seg
                                             </Col>
                                             <Col xs={6}>
-                                                <b>Abiente:</b> {user.lastSubmission.environment}
+                                                <b>Ambiente:</b> {user.lastSubmission.environment}
                                             </Col>
                                             <Col xs={6}>
                                                 <b>Data:</b> {formatDate(user.lastSubmission.createdAt)}
