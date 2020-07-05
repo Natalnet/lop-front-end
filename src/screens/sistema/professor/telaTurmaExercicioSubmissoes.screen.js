@@ -9,7 +9,7 @@ import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
-import { formatDate } from "../../../util/auxiliaryFunctions.util";
+import moment from "moment";
 import { BlockMath } from "react-katex";
 import HTMLFormat from "components/ui/htmlFormat";
 import AceEditor from "react-ace";
@@ -220,7 +220,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                                                 <b>Ambiente:</b> {user.lastSubmission.environment}
                                             </Col>
                                             <Col xs={6}>
-                                                <b>Data:</b> {formatDate(user.lastSubmission.createdAt)}
+                                                <b>Data:</b> {moment(user.lastSubmission.createdAt).local().format('DD/MM/YYYY - HH:mm')}
                                             </Col>
                                             <Col xs={6}>
                                                 <b>Linguagem: </b> {user.lastSubmission.language}

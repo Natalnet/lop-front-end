@@ -1,45 +1,52 @@
-import React from "react";
-import {formatDate} from '../../../util/auxiliaryFunctions.util'
+import React, { useMemo } from "react";
+import moment from "moment";
 
-export default props => {
-  let {numQuestions,numQuestionsCompleted,width,dateBegin,dateEnd} = props
-  const percentage = numQuestions && numQuestionsCompleted && (
-    (numQuestionsCompleted / numQuestions) *
-    100
-  ).toFixed(2)
-  let cor; 
-  if (percentage < 30) {
-    cor = "bg-red";
-  } else if (percentage >= 30 && percentage < 70) {
-    cor = "bg-yellow";
-  } else {
-    cor = "bg-green";
-  }
 
-  let largura;
-  if (width) {
-    largura = width;
-  } else {
-    largura = 45;
-  }
+export default ({numQuestions,numQuestionsCompleted,width,dateBegin,dateEnd}) => {
 
+  const percentage = useMemo(()=>(
+    numQuestions && numQuestionsCompleted && ((numQuestionsCompleted / numQuestions) * 100).toFixed(2)
+  ),[numQuestions, numQuestionsCompleted]);
+
+  const percentageInfo = useMemo(()=>(
+    `${percentage}% (${numQuestionsCompleted} de ${numQuestions})`
+  ),[percentage]);
+
+  const color = useMemo(()=>{
+    if (percentage < 30) {
+      return "bg-red";
+    } else if (percentage >= 30 && percentage < 70) {
+      return "bg-yellow";
+    } else {
+      return "bg-green";
+    }  
+  },[percentage])
+
+  const widthPercentage = useMemo(()=> 
+    width || 45
+  ,[width])
+
+  const dateRange = useMemo(()=>{
+    const begin = dateBegin?moment(dateBegin).format("DD/MM/YYYY"):'';
+    const end = dateEnd?moment(dateEnd).format("DD/MM/YYYY"):'';
+    return `${begin?  begin: ''}${end? ` - ${end}`: ''}`
+  },[dateBegin, dateEnd])
 
   return (
-    <div style={{ width: largura + "%" }}>
+    <div style={{ width: widthPercentage + "%" }}>
       <div className="clearfix">
         <div className="float-left">
-          <strong>{`${percentage}% (${numQuestionsCompleted} de ${numQuestions})`}</strong>
+          <strong>{`${percentageInfo}`}</strong>
         </div>
         <div className="float-right">
           <small className="text-muted">
-            {dateBegin?formatDate(dateBegin).split(' - ')[0]:''}
-            {dateEnd?` - ${formatDate(dateEnd).split(' - ')[0]}`:''}
+            {dateRange}
           </small>
         </div>
       </div>
       <div className="progress progress-xs">
         <div
-          className={("progress-bar", cor)}
+          className={("progress-bar", color)}
           role="progressbar"
           style={{ width: percentage + "%" }}
           aria-valuenow={percentage}

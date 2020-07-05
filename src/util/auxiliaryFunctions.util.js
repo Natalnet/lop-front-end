@@ -106,12 +106,8 @@ export function getStateFormQuestionsFromStorage(field){
         case 'sortBy':
             return sessionStorage.getItem('sortBy') || 'createdAt';
 
-        case 'tagsSelecionadas':
-            if(sessionStorage.getItem('tagsSelecionadas')){
-                return JSON.parse(sessionStorage.getItem('tagsSelecionadas'))
-            }
-            return [];
-
+        case 'tagSelecionada':
+            return sessionStorage.getItem('tagSelecionada');
         case 'fildFilter':
             return sessionStorage.getItem('fildFilter') || 'title';
 

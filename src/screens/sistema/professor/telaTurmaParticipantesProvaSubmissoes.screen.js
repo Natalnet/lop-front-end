@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import api from "../../../services/api";
-import { formatDate } from "../../../util/auxiliaryFunctions.util";
+import moment from "moment";
 import SwalModal from "components/ui/modal/swalModal.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -276,7 +278,7 @@ export default class HomesubmissoesScreen extends Component {
                       <td>{submission.ip}</td>
                       <td>{submission.char_change_number}</td>
                       <td>{submission.environment}</td>
-                      <td>{formatDate(submission.createdAt)}</td>
+                      <td>{moment(submission.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                       <td>
                         <button
                           className="btn btn-primary mr-2"
@@ -294,10 +296,13 @@ export default class HomesubmissoesScreen extends Component {
         </div>
         <div className="row" style={{ marginBottom: "15px" }}>
           <div className="col-12 text-center">
-            <NavPagination
-              totalPages={totalPages}
-              pageAtual={numPageAtual}
-              handlePage={this.handlePage}
+            <Pagination 
+              count={totalPages} 
+              page={Number(numPageAtual)} 
+              onChange={this.handlePage} 
+              color="primary" 
+              size="large"
+              disabled={loadingSubmissoes}
             />
           </div>
         </div>

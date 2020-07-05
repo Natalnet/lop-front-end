@@ -1,17 +1,19 @@
 import React from "react"
 import { Link } from "react-router-dom";
-import NavPagination from "components/ui/navs/navPagination";
+import { Pagination } from "components/ui/navs";
+// 
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import 'katex/dist/katex.min.css';
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
-import Select from 'react-select';
+//import Select from 'react-select';
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+//import { Pagination } from '@material-ui/lab';
 
 export default props =>{
-    const {exercicios,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,showFilter,docsPerPage,tags,loadingTags,radioAsc,radioDesc,sortBy, tagsSelecionadas} = props
+    const {exercicios,fildFilter,loadingExercicios,contentInputSeach,numPageAtual,totalPages,showFilter,docsPerPage,tags, tagSelecionada,loadingTags,radioAsc,radioDesc,sortBy} = props
     const {handleShowfilter ,filterSeash,handleContentInputSeach ,handleSelectfildFilter ,handleSort,handleRadio ,handleDocsPerPage ,handleTagsChangeTags,handleShowModalInfo,handlePage} = props
     const arrDifficulty = [null,"Muito fácil","Fácil","Médio","Difícil","Muito Difícil"]
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
@@ -33,15 +35,16 @@ export default props =>{
             ?
             <CardBody className="card-filter-exercicio" overflow="visible">
             <form onSubmit={(e)=>filterSeash(e)}>
-                <div className="form-row">
-                    <div className="form-group col-12 col-md-6 col-lg-7">
-                        <label htmlFor="nome">{`${fildFilter==='title'?'Título da ':fildFilter==='code'?'Código':'...'} da questão`} </label>
+                <Row mb={10}>
+                
+                    <Col xs={12} md={6} lg={7}>
+                        <label htmlFor="nome">{`${fildFilter==='title'?'Título ':fildFilter==='code'?'Código':'...'} da exercício`} </label>
                         <div className="input-group">
                             <input
                                 id="nome"
                                 type="text" 
                                 className="form-control" 
-                                placeholder={`Perquise pelo ${fildFilter==='title'?'Título':fildFilter==='code'?'Código':'...'} da questão`}
+                                placeholder={`Perquise pelo ${fildFilter==='title'?'Título':fildFilter==='code'?'Código':'...'} do exercício`}
                                 aria-label="Recipient's username" 
                                 aria-describedby="button-addon2"
                                 value={contentInputSeach}
@@ -54,10 +57,11 @@ export default props =>{
                                 </select>     
                             </div>
                         </div>
-                    </div>
-                    <div className="form-group col-12 col-md-6 col-lg-3">
+                    </Col>
+                    
+                    <Col xs={12} md={6} lg={3}>
                         <label htmlFor="ordem">Ordenar por:</label>
-                        <div className="selectgroup" >
+                        <div className="selectgroup" style={{display:'flex',width:'100%'}}>
                             <select id={"ordem"} defaultValue={sortBy} className="form-control" onChange={(e)=> handleSort(e)} style={{cursor:"pointer"}}>
                                 <option value={'createdAt'}>Data de criação</option>
                                 <option value={'title'}>Ordem alfabética</option>
@@ -90,8 +94,9 @@ export default props =>{
                                 </span>
                             </label>
                         </div>
-                    </div>
-                    <div className="form-group  col-4 col-lg-2">
+                    </Col>
+
+                    <Col xs={6} lg={2}>
                         <label htmlFor="pag">N° de ítems por página:</label>
                         <select id="pag" defaultValue={docsPerPage} className="form-control" onChange={(e)=>handleDocsPerPage(e)}>
                             <option value={15}>15</option>
@@ -99,27 +104,43 @@ export default props =>{
                             <option value={40}>40</option>
                             <option value={60}>60</option>
                         </select>
-                    </div>
-                    <div className="form-group  col-12">
-                        <label>Tags </label>
-                        <Select
+                    </Col>
+
+                    <Col xs={6} lg={3}>
+                        <label>Tag: </label>
+                        <select
+                            onChange={(e)=>handleTagsChangeTags(e)}
+                            className="form-control"
+                            defaultValue={tagSelecionada}
+                        >
+                            {[{id:'',name:'Todas'},...tags].map(tag=>(
+                                <option 
+                                    key={tag.id}
+                                    value={tag.id}
+                                >
+                                    {tag.name}
+                                </option>
+                            ))}
+                        </select>
+                        {/* <Select
                             style={{boxShadow: "white"}}
-                            defaultValue={tagsSelecionadas}
+                            defaultValue={tagSelecionada}
                             placeholder="informe as tags"
                             options={tags || []}
                             isMulti
                             isLoading={loadingTags}
                             isClearable={false}
                             onChange={handleTagsChangeTags}
-                        />
-                    </div>
-                    <div className="form-group  col-12">
-                        <button type='submit' className={`btn btn-primary ${loadingExercicios && 'btn-loading'}`}>
+                        /> */}
+                    </Col>
+
+                    <Col xs={4}>
+                        <label htmlFor="app">&nbsp;</label>
+                        <button type='submit' className={`form-control btn btn-primary ${loadingExercicios && 'btn-loading'}`}>
                             Aplicar filtro <i className="fe fe-search" />
                         </button>
-                        
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             </form>
             </CardBody>
                 :null
@@ -236,13 +257,17 @@ export default props =>{
         </Row>
         <Row>
             <Col xs={12} textCenter>
-                <NavPagination
-                    totalPages={totalPages}
-                    pageAtual={numPageAtual}
-                    handlePage={handlePage}
+                <Pagination 
+                    count={totalPages} 
+                    page={Number(numPageAtual)} 
+                    onChange={handlePage} 
+                    color="primary" 
+                    size="large"
+                    disabled={loadingExercicios}
                 />
             </Col>
         </Row>
+
     </>
     )
 }

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { getStateFormQuestionsFromStorage } from "../../../util/auxiliaryFunctions.util";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import { formatDate } from "../../../util/auxiliaryFunctions.util";
+import moment from "moment";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
@@ -27,7 +27,7 @@ export default class HomeExerciciosScreen extends Component {
       radioDesc: getStateFormQuestionsFromStorage("radioDesc"),
       valueRadioSort: getStateFormQuestionsFromStorage("valueRadioSort"),
       sortBy: getStateFormQuestionsFromStorage("sortBy"),
-      tagsSelecionadas: getStateFormQuestionsFromStorage("tagsSelecionadas"),
+      tagSelecionada: getStateFormQuestionsFromStorage("tagSelecionada"),
       fildFilter: getStateFormQuestionsFromStorage("fildFilter"),
       docsPerPage: getStateFormQuestionsFromStorage("docsPerPage"),
       numPageAtual: sessionStorage.getItem("pageQuestions") || 1,
@@ -48,7 +48,7 @@ export default class HomeExerciciosScreen extends Component {
   }
   async componentDidMount() {
     document.title = "Exercícios - professor";
-    this.getTags();
+    await this.getTags();
     this.getExercicios();
   }
   async getExercicios() {
@@ -59,16 +59,14 @@ export default class HomeExerciciosScreen extends Component {
       docsPerPage,
       valueRadioSort,
       sortBy,
-      tagsSelecionadas,
+      tagSelecionada,
     } = this.state;
     let query = `include=${contentInputSeach.trim()}`;
     query += `&docsPerPage=${docsPerPage}`;
     query += `&field=${fildFilter}`;
     query += `&sortBy=${sortBy}`;
     query += `&sort=${valueRadioSort}`;
-    query += `&tags=${JSON.stringify(
-      tagsSelecionadas.map((tag) => tag.label)
-    )}`;
+    query += `&tag=${tagSelecionada || ''}`;
     try {
       this.setState({ loadingExercicios: true });
       const response = await api.get(`/question/page/${numPageAtual}?${query}`);
@@ -94,10 +92,8 @@ export default class HomeExerciciosScreen extends Component {
         "radioDesc",
         valueRadioSort === "DESC" ? true : false
       );
-      sessionStorage.setItem(
-        "tagsSelecionadas",
-        JSON.stringify(tagsSelecionadas)
-      );
+      sessionStorage.setItem("tagSelecionada",tagSelecionada || '');
+
     } catch (err) {
       this.setState({ loadingExercicios: false });
       console.log(err);
@@ -107,12 +103,7 @@ export default class HomeExerciciosScreen extends Component {
     try {
       this.setState({ loadingTags: true });
       const response = await api.get("/tag");
-      const tags = response.data.map((tag) => {
-        return {
-          value: tag.id,
-          label: tag.name,
-        };
-      });
+      const tags = response.data;
       this.setState({
         tags,
         loadingTags: false,
@@ -139,9 +130,9 @@ export default class HomeExerciciosScreen extends Component {
       sortBy: e.target.value,
     });
   }
-  async handleTagsChangeTags(tags) {
+  async handleTagsChangeTags(e) {
     this.setState({
-      tagsSelecionadas: tags || [],
+      tagSelecionada: e.target.value,
     });
   }
   handleShowfilter() {
@@ -273,7 +264,7 @@ export default class HomeExerciciosScreen extends Component {
                 </Col>
                 <Col xs={12}>
                   <b>Data de criação:</b>{" "}
-                  {question && formatDate(question.createdAt)}
+                  {question && moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}
                 </Col>
               </Row>
             </CardFooter>

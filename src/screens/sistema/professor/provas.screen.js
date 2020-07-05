@@ -1,13 +1,15 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import { formatDate } from "../../../util/auxiliaryFunctions.util";
+import moment from "moment";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -197,7 +199,7 @@ export default class HomeProvasScreen extends Component {
                           <td>{prova.title}</td>
                           <td>{prova.code}</td>
                           <td>{prova.password}</td>
-                          <td>{formatDate(prova.createdAt)}</td>
+                          <td>{moment(prova.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                           <td className="text-center">
                             <button
                               className="btn btn-primary float-right"
@@ -219,10 +221,13 @@ export default class HomeProvasScreen extends Component {
         </Row>
         <Row>
           <Col xs={12} textCenter>
-            <NavPagination
-              totalPages={totalPages}
-              pageAtual={numPageAtual}
-              handlePage={this.handlePage}
+            <Pagination 
+              count={totalPages} 
+              page={Number(numPageAtual)} 
+              onChange={this.handlePage} 
+              color="primary" 
+              size="large"
+              disabled={loadingProvas}
             />
           </Col>
         </Row>

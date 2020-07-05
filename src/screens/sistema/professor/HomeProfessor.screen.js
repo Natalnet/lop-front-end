@@ -12,7 +12,9 @@ import IconJS from "../../../assets/icons/icons-javascript.svg";
 import { range } from "../../../util/auxiliaryFunctions.util";
 import Swal from "sweetalert2";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import api, { baseUrlBackend } from "../../../services/api";
@@ -405,10 +407,13 @@ export default class TurmasScreen extends Component {
         </Row>
         <Row>
           <Col xs={12} textCenter>
-            <NavPagination
-              totalPages={totalPages}
-              pageAtual={numPageAtual}
-              handlePage={this.handlePage}
+            <Pagination 
+              count={totalPages} 
+              page={Number(numPageAtual)} 
+              onChange={this.handlePage} 
+              color="primary" 
+              size="large"
+              disabled={loadingTurmas}
             />
           </Col>
         </Row>

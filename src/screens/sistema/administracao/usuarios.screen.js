@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import api from "../../../services/api";
 import AdministracaoTemplate from "components/templates/administracao.template";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import Swal from "sweetalert2";
 import profileImg from "../../../assets/perfil.png";
@@ -221,10 +223,13 @@ export default class HomeAdministradorScreen extends Component {
         </table>
         <div className="row">
           <div className="col-12 text-center">
-            <NavPagination
-              totalPages={totalPages}
-              pageAtual={numPageAtual}
-              handlePage={this.handlePage.bind(this)}
+            <Pagination 
+              count={totalPages} 
+              page={Number(numPageAtual)} 
+              onChange={this.handlePage.bind(this)} 
+              color="primary" 
+              size="large"
+              disabled={loadingUsers}
             />
           </div>
         </div>
