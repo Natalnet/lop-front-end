@@ -62,7 +62,7 @@ export default class Listas extends Component {
     const id = this.props.match.params.id;
     try{
       const response = await api.get(`/user/class/${id}`)
-      console.log('users: ',response.data);
+      //console.log('users: ',response.data);
       this.setState({
         users: response.data,
         loadingUsers: false
@@ -118,7 +118,7 @@ export default class Listas extends Component {
     const { users } = this.state;
     const index = this.getCurretIndexUser();
     const prevUser = users.find((user,i)=>i===index-1)
-    console.log('index: ',index,'prevuser: ',prevUser)
+    //console.log('index: ',index,'prevuser: ',prevUser)
     return prevUser !== -1?prevUser:null;
   }
   getNextUser(){
@@ -190,8 +190,8 @@ export default class Listas extends Component {
           <div className="loader" style={{ margin: "0px auto" }}></div>
         :
         <Row mb={15}>
-          <Col xs={4}>
-            <label htmlFor="selectAluno">Participante: </label>
+          <Col xs={5}>
+            <label htmlFor="selectAluno">Participantes: </label>
             <select
               id="selectAluno"
               className="form-control"

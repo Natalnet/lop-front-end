@@ -85,34 +85,37 @@ export const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) =>
 
 export function getStateFormQuestionsFromStorage(field){
     switch (field) {
-        case 'contentInputSeach':
-            return sessionStorage.getItem('contentInputSeach') || '';
+        case 'pageQuestions':
+            return sessionStorage.getItem('pageQuestions') || 1;
+        case 'titleOrCodeInputQuestions':
+            return sessionStorage.getItem('titleOrCodeInputQuestions') || '';
 
-        case 'radioAsc':
-            if(sessionStorage.getItem('radioAsc')){
-                return JSON.parse(sessionStorage.getItem('radioAsc'))
+        case 'radioAscQuestions':
+            if(sessionStorage.getItem('radioAscQuestions')){
+                return JSON.parse(sessionStorage.getItem('radioAscQuestions'))
             }
             return false;
 
-        case 'radioDesc':
-            if(sessionStorage.getItem('radioDesc')){
-                return JSON.parse(sessionStorage.getItem('radioDesc'))
+        case 'radioDescQuestions':
+            if(sessionStorage.getItem('radioDescQuestions')){
+                return JSON.parse(sessionStorage.getItem('radioDescQuestions'))
             }
             return true;
 
-        case 'valueRadioSort':
-            return sessionStorage.getItem('valueRadioSort') || 'DESC';
+        case 'sortRadioQuestions':
+            return sessionStorage.getItem('sortRadioQuestions') || 'DESC';
 
-        case 'sortBy':
-            return sessionStorage.getItem('sortBy') || 'createdAt';
+        case 'sortBySelectQuestions':
+            return sessionStorage.getItem('sortBySelectQuestions') || 'createdAt';
 
-        case 'tagSelecionada':
-            return sessionStorage.getItem('tagSelecionada');
-        case 'fildFilter':
-            return sessionStorage.getItem('fildFilter') || 'title';
+        case 'tagSelectQuestion':
+            return sessionStorage.getItem('tagSelectQuestion') || '';
 
-        case 'docsPerPage':
-            return sessionStorage.getItem('docsPerPage') || 15;
+        case 'fieldSelectQuestions':
+            return sessionStorage.getItem('fieldSelectQuestions') || 'title';
+
+        case 'docsPerPageQuestions':
+            return sessionStorage.getItem('docsPerPageQuestions') || 15;
     
         default:
            return null;

@@ -12,6 +12,7 @@
     "react": "^16.8.5",
     "react-ace": "^7.0.4",
     "react-bootstrap": "^1.0.0-beta.12",
+    "react-csv": "^2.0.3",
     "react-dom": "^16.8.5",
     "react-input-switch": "^2.2.1",
     "react-katex": "^2.0.2",

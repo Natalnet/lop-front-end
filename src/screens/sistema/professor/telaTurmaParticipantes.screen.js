@@ -5,6 +5,9 @@ import Swal from "sweetalert2";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import ParticioantesScreenfrom from "components/screens/participantes.componentes.screen";
+import { CSVLink } from "react-csv";
+import SwalModal from "components/ui/modal/swalModal.component";
+import moment from "moment";
 
 export default class Pagina extends Component {
   constructor(props) {
@@ -20,6 +23,7 @@ export default class Pagina extends Component {
       numPageAtual: sessionStorage.getItem("pagePatcipants") || 1,
       totalItens: 0,
       totalPages: 0,
+      csvData: []
     };
     this.handlePage = this.handlePage.bind(this);
   }
@@ -120,9 +124,6 @@ export default class Pagina extends Component {
       });
     }
   }
-  handleShowModal() {
-    this.setState({ showModal: true });
-  }
   handleCloseModal() {
     this.setState({ showModal: false });
   }
@@ -161,8 +162,53 @@ export default class Pagina extends Component {
       () => this.getParticipantes()
     );
   }
+
+  async generateCsv(){
+    const { id } = this.props.match.params;
+    Swal.showLoading();
+    try{
+      const response = await api.get(`/class/${id}/csv`);
+      // console.log('csv',response.data);
+      // console.log('formated csv',this.formatCsv(response.data));
+      this.setState({
+        csvData: this.formatCsv(response.data),
+        showModal: true
+      })
+    }
+    catch(err){
+      console.log(err);
+    }
+    Swal.hideLoading();
+  }
+  formatCsv(rows){
+    let tableHeader  = rows[0].lists.map(row=>{
+      const dateBegin = row.classHasListQuestion.createdAt;
+      const dateEnd = row.classHasListQuestion.submissionDeadline;
+      return `${row.title} (${dateBegin?moment(dateBegin).format("DD/MM/YYYY"):''}${dateEnd?` - ${moment(dateEnd).format("DD/MM/YYYY")}`:''})` ;
+    })
+    tableHeader = [
+      'Nome',
+      'Matrícula',
+      ...tableHeader
+    ]
+    //console.log('tableHeader: ', tableHeader)
+    const tableBody = rows.map(row=>{
+      let colsLists = row.lists.map(colList=>
+        Math.round((colList.questionsCompletedSumissionsCount/colList.questionsCount)*100)
+      )
+      return [
+        row.name,
+        row.enrollment,
+        ...colsLists
+      ];
+    })
+    //console.log('result: ',typeresult)
+    const table = [tableHeader,...tableBody];
+    //console.log('table: ',table);
+    return table;
+  }
   render() {
-    const { turma, loadingInfoTurma } = this.state;
+    const { turma, loadingInfoTurma, csvData, showModal } = this.state;
     return (
       <TemplateSistema
         {...this.props}
@@ -183,12 +229,48 @@ export default class Pagina extends Component {
             )}
           </Col>
         </Row>
+        <Row  mb={15}>
+          <Col xs={12}>
+              <button
+                className={'btn btn-primary'}
+                onClick={()=>this.generateCsv()}
+              >
+                Gerar CSV
+
+              </button>
+              {/* <CSVLink
+                data={csvData}
+                className={'btn btn-primary'}
+                asyncOnClick={true}
+                onClick={this.generateCsv}
+              >
+                Baixar CSV
+              </CSVLink> */}
+          </Col> 
+        </Row>
         <ParticioantesScreenfrom
           {...this.props}
           {...this.state}
           handlePage={this.handlePage.bind(this)}
           removerParticipante={this.removerParticipante.bind(this)}
         />
+        <SwalModal
+          show={showModal}
+          handleModal={() =>  this.setState({showModal:false})}
+        >
+          <Row>
+            <Col xs={12} textCenter>
+              <CSVLink
+                data={csvData}
+                filename={`${turma && turma.name}-${moment().local().format("YYYY-MM-DD-HH-mm")}.csv`}
+                className={'btn btn-primary btn-lg'}
+                onClick={()=>this.setState({showModal: false})}
+              >
+                Baixar CSV <i className=" fa fa-download ml-5" />
+              </CSVLink>
+            </Col>
+          </Row>
+        </SwalModal>
       </TemplateSistema>
     );
   }

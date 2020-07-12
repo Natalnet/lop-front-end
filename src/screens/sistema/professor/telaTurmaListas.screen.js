@@ -205,7 +205,7 @@ export default class Pagina extends Component {
         this.setState({ loadingDateLimit: false });
         Swal.fire({
           type: "success",
-          title: "Data limite para submissoões adicionada com sucesso!",
+          title: "Data limite para submissões adicionada com sucesso!",
         });
       } catch (err) {
         console.log(err);
