@@ -2,9 +2,11 @@ import React, { Component } from "react";
 import socket from "socket.io-client";
 import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import api, { baseUrlBackend } from "../../../services/api";
-import { formatDate } from "../../../util/auxiliaryFunctions.util";
+import moment from "moment";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import AceEditor from "react-ace";
@@ -300,7 +302,7 @@ export default class HomesubmissoesScreen extends Component {
                       </td>
                       <td>{submission.ip}</td>
                       <td>{submission.environment}</td>
-                      <td>{formatDate(submission.createdAt)}</td>
+                      <td>{moment(submission.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                       <td>
                         <button
                           className="btn btn-primary mr-2"
@@ -318,10 +320,13 @@ export default class HomesubmissoesScreen extends Component {
         </Row>
         <Row>
           <Col xs={12} textCenter>
-            <NavPagination
-              totalPages={totalPages}
-              pageAtual={numPageAtual}
-              handlePage={this.handlePage.bind(this)}
+            <Pagination 
+              count={totalPages} 
+              page={Number(numPageAtual)} 
+              onChange={this.handlePage.bind(this)} 
+              color="primary" 
+              size="large"
+              disabled={loadingSubmissoes}
             />
           </Col>
         </Row>

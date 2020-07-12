@@ -1,13 +1,15 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import { formatDate } from "../../../util/auxiliaryFunctions.util";
+import moment from "moment";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -203,7 +205,7 @@ export default class HomeListasScreen extends Component {
                           <td>{lista.title}</td>
                           <td>{lista.code}</td>
                           <td>{lista.author && lista.author.email}</td>
-                          <td>{formatDate(lista.createdAt)}</td>
+                          <td>{moment(lista.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                           <td className="d-inline-flex ">
                             <button
                               className="btn btn-primary float-right mr-2"
@@ -241,10 +243,13 @@ export default class HomeListasScreen extends Component {
         </Row>
         <Row>
           <Col xs={12} textCenter>
-            <NavPagination
-              totalPages={totalPages}
-              pageAtual={numPageAtual}
-              handlePage={this.handlePage}
+            <Pagination 
+              count={totalPages} 
+              page={Number(numPageAtual)} 
+              onChange={this.handlePage} 
+              color="primary" 
+              size="large"
+              disabled={loadingListas}
             />
           </Col>
         </Row>

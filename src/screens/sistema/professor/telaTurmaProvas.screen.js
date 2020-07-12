@@ -5,7 +5,9 @@ import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -384,10 +386,13 @@ export default class Provas extends Component {
               </Row>
               <Row mb={15}>
                 <Col xs={12} textCenter>
-                  <NavPagination
-                    totalPages={totalPages}
-                    pageAtual={numPageAtual}
-                    handlePage={this.handlePage.bind(this)}
+                  <Pagination 
+                    count={totalPages} 
+                    page={Number(numPageAtual)} 
+                    onChange={this.handlePage.bind(this)} 
+                    color="primary" 
+                    size="large"
+                    disabled={loandingTodasProvas}
                   />
                 </Col>
               </Row>

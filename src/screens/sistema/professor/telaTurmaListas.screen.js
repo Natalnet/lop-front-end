@@ -4,7 +4,9 @@ import api from "../../../services/api";
 import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -203,7 +205,7 @@ export default class Pagina extends Component {
         this.setState({ loadingDateLimit: false });
         Swal.fire({
           type: "success",
-          title: "Data limite para submissoões adicionada com sucesso!",
+          title: "Data limite para submissões adicionada com sucesso!",
         });
       } catch (err) {
         console.log(err);
@@ -435,10 +437,13 @@ export default class Pagina extends Component {
               </Row>
               <Row>
                 <Col xs={12} textCenter>
-                  <NavPagination
-                    totalPages={totalPages}
-                    pageAtual={numPageAtual}
-                    handlePage={this.handlePage.bind(this)}
+                  <Pagination 
+                    count={totalPages} 
+                    page={Number(numPageAtual)} 
+                    onChange={this.handlePage.bind(this)} 
+                    color="primary" 
+                    size="large"
+                    disabled={loandingTodasListas}
                   />
                 </Col>
               </Row>

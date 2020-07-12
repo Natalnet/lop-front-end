@@ -26,10 +26,11 @@ export default (props)=>{
     const {response,loadingReponse,title,description,results,katexDescription} = props;
     const {language,theme,descriptionErro,solution,userDifficulty,loadDifficulty,salvandoRascunho} = props;
     const {changeLanguage,changeTheme,handleSolution,handleDifficulty,submeter,salvaRascunho} = props
-    
     const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal']
     const languages = props.languages || ['javascript','cpp']
     let tests = props.showAllTestCases?response:response.filter((t,i)=>i===0)
+
+
     
     return(
     <>

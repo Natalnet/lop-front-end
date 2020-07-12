@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import NavPagination from "components/ui/navs/navPagination";
+
+import { Pagination } from "components/ui/navs";
+
 import Table from "components/ui/tables/tableType1.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -104,10 +106,13 @@ export default (props) => {
 
       <Row>
         <Col xs={12} textCenter>
-          <NavPagination
-            totalPages={totalPages}
-            pageAtual={numPageAtual}
-            handlePage={handlePage}
+          <Pagination 
+            count={totalPages} 
+            page={Number(numPageAtual)} 
+            onChange={handlePage} 
+            color="primary" 
+            size="large"
+            disabled={loadingPresentes}
           />
         </Col>
       </Row>

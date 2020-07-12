@@ -7,6 +7,7 @@ import { Modal } from "react-bootstrap";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import TurmaListaScrren from "components/screens/turmaLista.componente.screen";
+import moment from "moment";
 
 export default class Exercicios extends Component {
   constructor(props) {
@@ -62,23 +63,14 @@ export default class Exercicios extends Component {
       let query = `?idClass=${idClass}`;
       const response = await api.get(`/listQuestion/${idLista}${query}`);
       const lista = response.data;
-      let dateLimit = "";
       let timeLimit = "";
+      let dateLimit= "";
       if (lista.classHasListQuestion.submissionDeadline) {
-        dateLimit = new Date(lista.classHasListQuestion.submissionDeadline);
-        const yarn = dateLimit.getFullYear();
-        const month = dateLimit.getMonth() + 1;
-        const day = dateLimit.getDate();
-        const hours = dateLimit.getHours();
-        const minutes = dateLimit.getMinutes();
-        dateLimit = `${yarn}-${month < 10 ? "0" + month : month}-${
-          day < 10 ? "0" + day : day
-        }`;
-        timeLimit = `${hours < 10 ? "0" + hours : hours}:${
-          minutes < 10 ? "0" + minutes : minutes
-        }`;
+        // console.log('dateLimit: ',moment(lista.classHasListQuestion.submissionDeadline).local().format("YYYY-MM-DD"))//locsl
+        // console.log('dateLimit: ',moment(lista.classHasListQuestion.submissionDeadline).utc().format("YYYY-MM-DD"))//utc
+        dateLimit = moment(lista.classHasListQuestion.submissionDeadline).format("YYYY-MM-DD");
+        timeLimit = moment(lista.classHasListQuestion.submissionDeadline).format("HH:mm");
       }
-
       this.setState({
         lista,
         dateLimit,
@@ -97,7 +89,7 @@ export default class Exercicios extends Component {
     const { dateLimit, timeLimit } = this.state;
     if (dateLimit) {
       const request = {
-        submissionDeadline: `${dateLimit}-${timeLimit.replace(":", "-")}`,
+        submissionDeadline: moment(`${dateLimit} ${timeLimit}:59`).utc(),
       };
       try {
         this.setState({ loadingDateLimit: true });
@@ -107,10 +99,10 @@ export default class Exercicios extends Component {
         );
         this.handleCloseShowModalDate();
         this.setState({ loadingDateLimit: false });
-        this.getLista();
+        await this.getLista();
         Swal.fire({
           type: "success",
-          title: "Data limite para submissoões adicionada com sucesso!",
+          title: "Data limite para submissões adicionada com sucesso!",
         });
       } catch (err) {
         console.log(err);
