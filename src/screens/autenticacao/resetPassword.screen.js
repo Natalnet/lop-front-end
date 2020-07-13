@@ -57,7 +57,7 @@ export default class resetScreen extends Component {
           allowEnterKey:false 
         }).then(result => {
           if (result.value) {
-            this.props.histoty.push("/autenticacao/recuperar-senha")
+            this.props.history.push("/")
           }
         })
       }

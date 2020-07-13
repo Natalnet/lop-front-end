@@ -9,7 +9,7 @@ import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import ProgressBar from "components/ui/ProgressBar/progressBar.component";
-
+import HTMLFormat from "components/ui/htmlFormat"
 export default props =>{
     const {lista,participant} = props
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
@@ -71,7 +71,11 @@ export default props =>{
                                 className="collapse"
                                 id={"collapse2" + j + (lista && lista.id)}
                             >
-                                <CardBody>{question.description}</CardBody>
+                                <CardBody>
+                                    <HTMLFormat>
+                                        {question.description}
+                                    </HTMLFormat>
+                                </CardBody>
                             </div>
                             <CardFooter>
                                 
@@ -104,14 +108,26 @@ export default props =>{
                                 )
                                 :
                                 (profile==="professor")?(
-                                    <Link to={`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}>
-                                    <button
-                                        className="btn btn-success mr-2"
-                                        style={{ float: "right" }}
-                                    >
-                                        Acessar <i className="fa fa-wpexplorer" />
-                                    </button>
+                                    <>
+                                    <Link to={`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes`}>
+                                        <button
+                                            className="btn btn-primary mr-2"
+                                            style={{ float: "right" }}
+                                        >
+                                            Ver última submissão dos alunos <i className="fa fa-wpexplorer" />
+                                        </button>
                                     </Link>
+
+                                    <Link to={`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}`}>
+                                        <button
+                                            className="btn btn-success mr-2"
+                                            style={{ float: "right" }}
+                                        >
+                                            Acessar <i className="fa fa-wpexplorer" />
+                                        </button>
+                                    </Link>
+                                    </>
+                                    
                                 )
                                 :
                                     null

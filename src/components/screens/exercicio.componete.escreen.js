@@ -26,12 +26,11 @@ export default (props)=>{
     const {response,loadingReponse,title,description,results,katexDescription} = props;
     const {language,theme,descriptionErro,solution,userDifficulty,loadDifficulty,salvandoRascunho} = props;
     const {changeLanguage,changeTheme,handleSolution,handleDifficulty,submeter,salvaRascunho} = props
-    
     const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal']
-    console.log('languages: ',props.languages)
     const languages = props.languages || ['javascript','cpp']
-    console.log("showAllTestCases:",props.showAllTestCases)
     let tests = props.showAllTestCases?response:response.filter((t,i)=>i===0)
+
+
     
     return(
     <>
@@ -46,7 +45,9 @@ export default (props)=>{
                     <CardBody className="overflow-auto">
                     <Row>
                         <Col xs={12} md={7}>
-                            {description}
+                            <HTMLFormat>
+                                {description}
+                            </HTMLFormat>
                             {katexDescription ? (
                                 <BlockMath>{katexDescription}</BlockMath>
                             ) : (

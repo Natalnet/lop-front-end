@@ -4,24 +4,27 @@ import Swal from "sweetalert2";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
-import {formatDate} from "../../../util/auxiliaryFunctions.util";
-import NavPagination from "components/ui/navs/navPagination";
+import moment from "moment";
+
+import { Pagination } from "components/ui/navs";
+
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
-import TableIO from 'components/ui/tables/tableIO.component'
+import TableIO from "components/ui/tables/tableIO.component";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+import HTMLFormat from "components/ui/htmlFormat";
 
 const botao2 = {
   float: "right",
   backgroundColor: "red",
   borderColor: "red",
-  color: "white"
+  color: "white",
 };
 
 export default class criarProvaScreen extends Component {
@@ -34,7 +37,7 @@ export default class criarProvaScreen extends Component {
       fildFilter: "title",
       title: "",
       password: "",
-      showAllTestCases:false,
+      showAllTestCases: false,
       loadingExercicios: false,
       numPageAtual: 1,
       totalItens: 0,
@@ -57,14 +60,12 @@ export default class criarProvaScreen extends Component {
     try {
       this.setState({ loadingExercicios: true });
       const response = await api.get(`/question/page/${numPageAtual}?${query}`);
-      console.log("exercicios:");
-      console.log(response.data);
       this.setState({
         exercicios: [...response.data.docs],
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
-        loadingExercicios: false
+        loadingExercicios: false,
       });
     } catch (err) {
       this.setState({ loadingExercicios: false });
@@ -73,58 +74,56 @@ export default class criarProvaScreen extends Component {
   }
 
   async criarProva(e) {
-    console.log("criar prva");
     e.preventDefault();
-    const {title,password,showAllTestCases,selecionados} = this.state
-    let msg=""
-    msg += !title?"Informe o título da turma<br/>":"" ;
-    msg += !password?"Informe uma senha para prova<br/>":"" ;
-    msg += selecionados.length === 0? "Escolha pelo menos um exercício<br/>":"";
-    
-    if(msg){
+    const { title, password, showAllTestCases, selecionados } = this.state;
+    let msg = "";
+    msg += !title ? "Informe o título da turma<br/>" : "";
+    msg += !password ? "Informe uma senha para prova<br/>" : "";
+    msg +=
+      selecionados.length === 0 ? "Escolha pelo menos um exercício<br/>" : "";
+
+    if (msg) {
       Swal.fire({
         type: "error",
         title: "Erro: Não foi possivel criar lista",
-        html:  msg
+        html: msg,
       });
-      return null
+      return null;
     }
-     const requestInfo = {
-       title,
-       password,
-       questions: selecionados.map(q => q.id),
-       showAllTestCases,
-     };
-     try {
-       Swal.fire({
-         title: "Criando prova",
-         allowOutsideClick: false,
-         allowEscapeKey: false,
-         allowEnterKey: false
-       });
-     Swal.showLoading();
-     await api.post("/test/store", requestInfo);
-     Swal.hideLoading();
-     Swal.fire({
-       type: "success",
-       title: "Prova criada com sucesso!"
-     });
-     this.props.history.push("/professor/provas")
-    }
-    catch (err) {
+    const requestInfo = {
+      title,
+      password,
+      questions: selecionados.map((q) => q.id),
+      showAllTestCases,
+    };
+    try {
+      Swal.fire({
+        title: "Criando prova",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+      });
+      Swal.showLoading();
+      await api.post("/test/store", requestInfo);
+      Swal.hideLoading();
+      Swal.fire({
+        type: "success",
+        title: "Prova criada com sucesso!",
+      });
+      this.props.history.push("/professor/provas");
+    } catch (err) {
       Swal.hideLoading();
       Swal.fire({
         type: "error",
-        title: "Erro: Não foi possivel criar prova"
+        title: "Erro: Não foi possivel criar prova",
       });
       this.setState({ msg: "Erro: Não foi possivel Criar a lista" });
     }
-
   }
 
   selecionar(questao) {
     this.setState({
-      selecionados: [...this.state.selecionados, questao]
+      selecionados: [...this.state.selecionados, questao],
     });
     //console.log(this.state.selecionados)
   }
@@ -132,16 +131,15 @@ export default class criarProvaScreen extends Component {
   excluir(questao) {
     this.setState({
       selecionados: [...this.state.selecionados].filter(
-        q => q.id !== questao.id
-      )
+        (q) => q.id !== questao.id
+      ),
       //exercicios: [...this.state.exercicios,questao]
     });
   }
   handleShowModalInfo(question) {
-    console.log(question);
     this.setState({
       question: question,
-      showModalInfo: true
+      showModalInfo: true,
     });
   }
   handleCloseshowModalInfo(e) {
@@ -157,23 +155,22 @@ export default class criarProvaScreen extends Component {
 
   handleshowAllTestCasesChange(e) {
     this.setState({ showAllTestCases: e.target.value });
-  } 
+  }
 
   handlePage(e, numPage) {
     e.preventDefault();
     //console.log(numPage);
     this.setState(
       {
-        numPageAtual: numPage
+        numPageAtual: numPage,
       },
       () => this.getExercicios()
     );
   }
   handleSelectfildFilter(e) {
-    console.log(e.target.value);
     this.setState(
       {
-        fildFilter: e.target.value
+        fildFilter: e.target.value,
       } /*,()=>this.getExercicios()*/
     );
   }
@@ -181,7 +178,7 @@ export default class criarProvaScreen extends Component {
   handleContentInputSeach(e) {
     this.setState(
       {
-        contentInputSeach: e.target.value
+        contentInputSeach: e.target.value,
       } /*,()=>this.getExercicios()*/
     );
   }
@@ -191,12 +188,11 @@ export default class criarProvaScreen extends Component {
   clearContentInputSeach() {
     this.setState(
       {
-        contentInputSeach: ""
+        contentInputSeach: "",
       },
       () => this.getExercicios()
     );
   }
-
 
   render() {
     const {
@@ -206,25 +202,23 @@ export default class criarProvaScreen extends Component {
       totalPages,
       selecionados,
       question,
-      showModalInfo
+      showModalInfo,
     } = this.state;
 
     return (
       <TemplateSistema active="provas">
-          <Row mb={15}>
-            <Col xs={12}>
-              <h5 style={{margin:'0px'}}>
-                <Link to="/professor/provas">
-                  Provas
-                </Link>
-                <i className="fa fa-angle-left ml-2 mr-2"/> 
-                Criar prova
-              </h5>
-            </Col>
-          </Row>
+        <Row mb={15}>
+          <Col xs={12}>
+            <h5 style={{ margin: "0px" }}>
+              <Link to="/professor/provas">Provas</Link>
+              <i className="fa fa-angle-left ml-2 mr-2" />
+              Criar prova
+            </h5>
+          </Col>
+        </Row>
         <Card>
           <CardBody>
-            <form onSubmit={e => this.criarProva(e)}>
+            <form onSubmit={(e) => this.criarProva(e)}>
               <div className="form-row">
                 <div className="form-group col-12 col-md-4 ">
                   <label htmlFor="inputTitulo">Título</label>
@@ -233,7 +227,7 @@ export default class criarProvaScreen extends Component {
                     type="text"
                     required
                     value={this.state.title}
-                    onChange={e => this.handleTitleChange(e)}
+                    onChange={(e) => this.handleTitleChange(e)}
                     className="form-control"
                     placeholder="Título da prova:"
                   />
@@ -245,7 +239,7 @@ export default class criarProvaScreen extends Component {
                     type="text"
                     required
                     value={this.state.password}
-                    onChange={e => this.handlePasswordChange(e)}
+                    onChange={(e) => this.handlePasswordChange(e)}
                     className="form-control"
                     placeholder="Senha para abrir a prova"
                   />
@@ -255,9 +249,8 @@ export default class criarProvaScreen extends Component {
                   <select
                     id="select"
                     defaultValue={this.state.showAllTestCases}
-                    onChange={e => this.handleshowAllTestCasesChange(e)}
+                    onChange={(e) => this.handleshowAllTestCasesChange(e)}
                     className="form-control"
-  
                   >
                     <option value={false}>Mostrar apenas primeiro</option>
                     <option value={true}>Mostrar todos</option>
@@ -276,7 +269,7 @@ export default class criarProvaScreen extends Component {
                     handleSelect={this.handleSelectfildFilter.bind(this)}
                     options={[
                       { value: "title", content: "Nome" },
-                      { value: "code", content: "Código" }
+                      { value: "code", content: "Código" },
                     ]}
                     clearContentInputSeach={this.clearContentInputSeach.bind(
                       this
@@ -327,7 +320,7 @@ export default class criarProvaScreen extends Component {
                               <td>{questao.code}</td>
                               <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
                               <td>{questao.author.email}</td>
-                              <td>{formatDate(questao.createdAt)}</td>
+                              <td>{moment(questao.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                               <td className="d-inline-flex">
                                 <button
                                   type="button"
@@ -336,10 +329,10 @@ export default class criarProvaScreen extends Component {
                                     this.handleShowModalInfo(questao)
                                   }
                                 >
-                                  <i className="fa fa-info" /> 
+                                  <i className="fa fa-info" />
                                 </button>
                                 {selecionados
-                                  .map(s => s.id)
+                                  .map((s) => s.id)
                                   .includes(questao.id) ? (
                                   <button
                                     type="button"
@@ -351,7 +344,7 @@ export default class criarProvaScreen extends Component {
                                   <button
                                     type="button"
                                     className="float-right btn  btn-primary"
-                                    onClick={e => this.selecionar(questao)}
+                                    onClick={(e) => this.selecionar(questao)}
                                   >
                                     Adicionar <i className="fe fe-file-plus" />
                                   </button>
@@ -367,10 +360,13 @@ export default class criarProvaScreen extends Component {
               </div>
               <Row>
                 <Col xs={12} textCenter>
-                  <NavPagination
-                    totalPages={totalPages}
-                    pageAtual={numPageAtual}
-                    handlePage={this.handlePage.bind(this)}
+                  <Pagination 
+                    count={totalPages} 
+                    page={Number(numPageAtual)} 
+                    onChange={this.handlePage.bind(this)} 
+                    color="primary" 
+                    size="large"
+                    disabled={loadingExercicios}
                   />
                 </Col>
               </Row>
@@ -396,7 +392,7 @@ export default class criarProvaScreen extends Component {
                           <td>{questao.code}</td>
                           <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
                           <td>{questao.author.email}</td>
-                          <td>{formatDate(questao.createdAt)}</td>
+                          <td>{moment(questao.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                           <td>
                             <button
                               type="button"
@@ -437,26 +433,26 @@ export default class criarProvaScreen extends Component {
               <CardHead>
                 <CardTitle>{question.title}</CardTitle>
               </CardHead>
-                <CardBody>
-                  <Row>
-                    <b>Descrição: </b>
-                  </Row>
-                  <Row>
-                    {question.description}
-                  </Row>
-                  <Row>
-                    <Col xs={12} textCenter>
-                      <BlockMath>{question.katexDescription|| ''}</BlockMath>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs={12} >
-                        <TableIO
-                          results={question.results || []}
-                        />
-                    </Col>
-                  </Row>
-                </CardBody>
+              <CardBody>
+                <Row>
+                  <b>Descrição: </b>
+                </Row>
+                <Row>
+                  <span style={{ overflow: "auto" }}>
+                    <HTMLFormat>{question && question.description}</HTMLFormat>
+                  </span>
+                </Row>
+                <Row>
+                  <Col xs={12} textCenter>
+                    <BlockMath>{question.katexDescription || ""}</BlockMath>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={12}>
+                    <TableIO results={question.results || []} />
+                  </Col>
+                </Row>
+              </CardBody>
             </Card>
           </SwalModal>
         </Card>

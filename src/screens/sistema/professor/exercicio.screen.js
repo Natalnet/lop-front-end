@@ -1,6 +1,6 @@
-import React, { Component} from "react";
+import React, { Component } from "react";
 //import PropTypes from "prop-types";
-import {findLocalIp} from "../../../util/auxiliaryFunctions.util";
+import { findLocalIp } from "../../../util/auxiliaryFunctions.util";
 import api from "../../../services/api";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -38,51 +38,50 @@ export default class Editor extends Component {
       userDifficulty: "",
       loadDifficulty: false,
       salvandoRascunho: false,
-      char_change_number:0,
+      char_change_number: 0,
+      oldTimeConsuming: 0
     };
-    
   }
 
   async componentDidMount() {
     this.setState({ tempo_inicial: new Date() });
     await this.getExercicio();
-    this.salvaAcesso()
-    
+    this.salvaAcesso();
+
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
-    this.time = setInterval(function() {
+    this.time = setInterval(
+      function () {
         this.salvaRascunho(false);
-    }.bind(this),60000);
+      }.bind(this),
+      60000
+    );
   }
-  componentWillUnmount(){
-    clearInterval(this.time)
+  componentWillUnmount() {
+    clearInterval(this.time);
   }
 
-  
-  async salvaAcesso(){
+  async salvaAcesso() {
     const ip = await findLocalIp(false);
     const idQuestion = this.props.match.params.id;
     const request = {
-      ip : ip[0],
-      environment:'desktop',
+      ip: ip[0],
+      environment: "desktop",
       idQuestion,
-    }
-    try{
-      await api.post(`/access/store`,request)
-    }
-    catch(err){
+    };
+    try {
+      await api.post(`/access/store`, request);
+    } catch (err) {
       console.log(err);
     }
   }
   async getExercicio() {
     const idQuestion = this.props.match.params.id;
     let query = `?exclude=id code status createdAt updatedAt author_id solution`;
-    query += `&draft=yes`
-    query += `&difficulty=yes`
+    query += `&draft=yes`;
+    query += `&difficulty=yes`;
     try {
       const response = await api.get(`/question/${idQuestion}${query}`);
-      console.log("questão");
-      console.log(response.data);
       this.setState({
         results: [...response.data.results],
         title: response.data.title,
@@ -90,20 +89,27 @@ export default class Editor extends Component {
         katexDescription: response.data.katexDescription || "",
         difficulty: response.data.difficulty,
         userDifficulty: response.data.userDifficulty || "",
-        solution: response.data.questionDraft?response.data.questionDraft.answer:'',
-        char_change_number:response.data.questionDraft?response.data.questionDraft.char_change_number:0,
+        solution: response.data.questionDraft
+          ? response.data.questionDraft.answer
+          : "",
+        char_change_number: response.data.questionDraft
+          ? response.data.questionDraft.char_change_number
+          : 0,
+        oldTimeConsuming: response.data.lastSubmission
+        ? response.data.lastSubmission.timeConsuming
+        : 0,
         author: response.data.author,
-        loadingExercicio: false, 
+        loadingExercicio: false,
       });
     } catch (err) {
       console.log(err);
       //this.setState({ loadingExercicio: false });
     }
   }
-  
+
   async salvaRascunho(showMsg = true) {
     const idQuestion = this.props.match.params.id;
-    const {solution,char_change_number} = this.state
+    const { solution, char_change_number } = this.state;
     const request = {
       answer: solution,
       char_change_number,
@@ -119,11 +125,11 @@ export default class Editor extends Component {
           toast: true,
           position: "top-end",
           showConfirmButton: false,
-          timer: 3000
+          timer: 3000,
         });
         Toast.fire({
           icon: "success",
-          title: "Rascunho salvo com sucesso!"
+          title: "Rascunho salvo com sucesso!",
         });
       }
     } catch (err) {
@@ -131,11 +137,11 @@ export default class Editor extends Component {
       this.setState({ salvandoRascunho: false });
     }
   }
-  
+
   async submeter(e) {
     e.preventDefault();
-    const timeConsuming = new Date() - this.state.tempo_inicial;
-    const { solution, language, results,char_change_number } = this.state;
+    const { solution, language, results, char_change_number ,tempo_inicial, oldTimeConsuming} = this.state;
+    const timeConsuming = (new Date() - tempo_inicial) + oldTimeConsuming;
     const request = {
       codigo: solution,
       linguagem: language,
@@ -151,31 +157,32 @@ export default class Editor extends Component {
         timeConsuming,
         char_change_number
       );
-      console.log("sumbissão: ");
-      console.log(response.data);
       this.setState({
         loadingReponse: false,
         response: response.data.results,
         percentualAcerto: response.data.percentualAcerto,
-        descriptionErro: response.data.descriptionErro
+        descriptionErro: response.data.descriptionErro,
       });
     } catch (err) {
       console.log(Object.getOwnPropertyDescriptors(err));
       this.setState({ loadingReponse: false });
       Swal.fire({
-        type: 'error',
-        title: 'ops... Algum erro aconteceu na operação :(',
-      })
-      console.log(err);    
+        type: "error",
+        title: "ops... Algum erro aconteceu na operação :(",
+      });
+      console.log(err);
     }
   }
-  
-  async saveSubmission({ codigo, linguagem }, hitPercentage, timeConsuming,char_change_number) {
+
+  async saveSubmission(
+    { codigo, linguagem },
+    hitPercentage,
+    timeConsuming,
+    char_change_number
+  ) {
     const idQuestion = this.props.match.params.id;
     try {
       const ip = await findLocalIp(false);
-      console.log("local ips:");
-      console.log(ip);
       const request = {
         answer: codigo,
         language: linguagem,
@@ -186,7 +193,7 @@ export default class Editor extends Component {
         char_change_number,
         idQuestion,
       };
-      await api.post(`/submission/store`,request); 
+      await api.post(`/submission/store`, request);
       this.setState({ tempo_inicial: new Date() });
     } catch (err) {
       this.setState({ tempo_inicial: new Date() });
@@ -202,25 +209,25 @@ export default class Editor extends Component {
     await this.setState({ theme: e.target.value });
   }
   handleSolution(newValue) {
-    this.setState({ 
+    this.setState({
       solution: newValue,
-      char_change_number:this.state.char_change_number+1,
+      char_change_number: this.state.char_change_number + 1,
     });
   }
-  
+
   async handleDifficulty(e) {
     const userDifficulty = e.target ? e.target.value : "";
     const idQuestion = this.props.match.params.id;
     const request = {
       userDifficulty: userDifficulty,
-      idQuestion
+      idQuestion,
     };
     try {
       this.setState({ loadDifficulty: true });
       await api.post(`/difficulty/store`, request);
       this.setState({
         userDifficulty: userDifficulty,
-        loadDifficulty: false
+        loadDifficulty: false,
       });
     } catch (err) {
       this.setState({ loadDifficulty: false });
@@ -229,30 +236,36 @@ export default class Editor extends Component {
   }
 
   render() {
-    const {title,loadingExercicio,author} = this.state;
+    const { title, loadingExercicio, author } = this.state;
     return (
       <TemplateSistema active="exercicios">
         <Row mb={15}>
           <Col xs={12}>
-            <h5 style={{margin:'0px'}}>
-              <Link to="/professor/exercicios">
-                Exercícios
-              </Link>
-              <i className="fa fa-angle-left ml-2 mr-2"/> 
-              {title || <div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+            <h5 style={{ margin: "0px" }}>
+              <Link to="/professor/exercicios">Exercícios</Link>
+              <i className="fa fa-angle-left ml-2 mr-2" />
+              {title || (
+                <div
+                  style={{
+                    width: "140px",
+                    backgroundColor: "#e5e5e5",
+                    height: "12px",
+                    display: "inline-block",
+                  }}
+                />
+              )}
             </h5>
           </Col>
         </Row>
         <Row mb={15}>
-            <Col xs={12}>
-              {
-                author && sessionStorage.getItem("user.email")===author.email?
-                  <Link to={`/professor/exercicios/${this.props.match.params.id}/editar`}>
-                    Editar Exercício
-                  </Link>            
-                :
-                null
-              }
+          <Col xs={12}>
+            {author && sessionStorage.getItem("user.email") === author.email ? (
+              <Link
+                to={`/professor/exercicios/${this.props.match.params.id}/editar`}
+              >
+                Editar Exercício
+              </Link>
+            ) : null}
           </Col>
         </Row>
 
@@ -264,11 +277,11 @@ export default class Editor extends Component {
             {...this.props}
             showAllTestCases={true}
             cardExemplos={this.cardEnunciadoRef}
-            changeLanguage ={this.changeLanguage.bind(this)}
-            changeTheme ={this.changeTheme.bind(this)}
-            handleSolution ={this.handleSolution.bind(this)}
-            handleDifficulty ={this.handleDifficulty.bind(this)}
-            submeter ={this.submeter.bind(this)}
+            changeLanguage={this.changeLanguage.bind(this)}
+            changeTheme={this.changeTheme.bind(this)}
+            handleSolution={this.handleSolution.bind(this)}
+            handleDifficulty={this.handleDifficulty.bind(this)}
+            submeter={this.submeter.bind(this)}
             salvaRascunho={this.salvaRascunho.bind(this)}
           />
         )}

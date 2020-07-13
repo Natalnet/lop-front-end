@@ -6,7 +6,8 @@ import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import TurmaListaScrren from "components/screens/turmaLista.componente.screen" 
+import TurmaListaScrren from "components/screens/turmaLista.componente.screen";
+import moment from "moment";
 
 export default class Exercicios extends Component {
   constructor(props) {
@@ -14,137 +15,130 @@ export default class Exercicios extends Component {
     this.state = {
       lista: null,
       loandingLista: true,
-      showModalDate:false,
+      showModalDate: false,
       loadingInfoTurma: true,
-      loadingDateLimit:false,
-      dateLimit:'',
-      timeLimit:'',
-      myClasses : JSON.parse(sessionStorage.getItem('myClasses')) || '',
-      turma:"",        
-      todasListas: []
+      loadingDateLimit: false,
+      dateLimit: "",
+      timeLimit: "",
+      myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
+      turma: "",
+      todasListas: [],
     };
   }
 
   async componentDidMount() {
     await this.getInfoTurma();
     await this.getLista();
-    const {turma,lista} = this.state
+    const { turma, lista } = this.state;
     document.title = `${turma && turma.name} - ${lista && lista.title}`;
   }
-  async getInfoTurma(){
-    const id = this.props.match.params.id
-    const {myClasses} = this.state
-    if(myClasses && typeof myClasses==="object"){
-        const index = myClasses.map(c=>c.id).indexOf(id)
-        if(index!==-1){
-            this.setState({
-                turma:myClasses[index]
-            })
-        }
-        this.setState({loadingInfoTurma:false})
-        return null
-    }
-    try{
-        const response = await api.get(`/class/${id}`)
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    const { myClasses } = this.state;
+    if (myClasses && typeof myClasses === "object") {
+      const index = myClasses.map((c) => c.id).indexOf(id);
+      if (index !== -1) {
         this.setState({
-            turma:response.data,
-            loadingInfoTurma:false,
-        })
+          turma: myClasses[index],
+        });
+      }
+      this.setState({ loadingInfoTurma: false });
+      return null;
     }
-    catch(err){
-        this.setState({loadingInfoTurma:false})
-        console.log(err);
+    try {
+      const response = await api.get(`/class/${id}`);
+      this.setState({
+        turma: response.data,
+        loadingInfoTurma: false,
+      });
+    } catch (err) {
+      this.setState({ loadingInfoTurma: false });
+      console.log(err);
     }
   }
   async getLista() {
     try {
       const idClass = this.props.match.params.id;
       const idLista = this.props.match.params.idLista;
-      let query = `?idClass=${idClass}`
-      const response = await api.get(
-        `/listQuestion/${idLista}${query}`
-      );
-      console.log("lista");
-      console.log(response.data);
-      const lista = response.data
-      let dateLimit = ''
-      let timeLimit = ''
-      if(lista.classHasListQuestion.submissionDeadline){
-        dateLimit = new Date(lista.classHasListQuestion.submissionDeadline)
-        const yarn = dateLimit.getFullYear()
-        const month = dateLimit.getMonth()+1
-        const day = dateLimit.getDate()
-        const hours = dateLimit.getHours();
-        const minutes = dateLimit.getMinutes();
-        dateLimit = `${yarn}-${month<10?'0'+month:month}-${day<10?'0'+day:day}`
-        timeLimit = `${hours<10?'0'+hours:hours}:${minutes<10?'0'+minutes:minutes}`
+      let query = `?idClass=${idClass}`;
+      const response = await api.get(`/listQuestion/${idLista}${query}`);
+      const lista = response.data;
+      let timeLimit = "";
+      let dateLimit= "";
+      if (lista.classHasListQuestion.submissionDeadline) {
+        // console.log('dateLimit: ',moment(lista.classHasListQuestion.submissionDeadline).local().format("YYYY-MM-DD"))//locsl
+        // console.log('dateLimit: ',moment(lista.classHasListQuestion.submissionDeadline).utc().format("YYYY-MM-DD"))//utc
+        dateLimit = moment(lista.classHasListQuestion.submissionDeadline).format("YYYY-MM-DD");
+        timeLimit = moment(lista.classHasListQuestion.submissionDeadline).format("HH:mm");
       }
-      console.log('dateLimit');
-      console.log(dateLimit);
-      console.log('timeLimit');
-      console.log(timeLimit);
-
       this.setState({
         lista,
         dateLimit,
         timeLimit,
-        loandingLista: false
+        loandingLista: false,
       });
     } catch (err) {
       console.log(err);
     }
   }
 
-  async addDateLimit(list){
+  async addDateLimit(list) {
     const idClass = this.props.match.params.id;
-    const idList = list.id
-    const query = `?idClass=${idClass}`
-    const {dateLimit, timeLimit} = this.state
-    if(dateLimit){
+    const idList = list.id;
+    const query = `?idClass=${idClass}`;
+    const { dateLimit, timeLimit } = this.state;
+    if (dateLimit) {
       const request = {
-        submissionDeadline:`${dateLimit}-${timeLimit.replace(':','-')}`
-      }
-      try{
-        this.setState({loadingDateLimit:true})
-        await api.put(`/classHasListQuestion/${idList}/update${query}`,request)
-        this.handleCloseShowModalDate()
-        this.setState({loadingDateLimit:false})
-        this.getLista()
+        submissionDeadline: moment(`${dateLimit} ${timeLimit}:59`).utc(),
+      };
+      try {
+        this.setState({ loadingDateLimit: true });
+        await api.put(
+          `/classHasListQuestion/${idList}/update${query}`,
+          request
+        );
+        this.handleCloseShowModalDate();
+        this.setState({ loadingDateLimit: false });
+        await this.getLista();
         Swal.fire({
           type: "success",
-          title: "Data limite para submissoões adicionada com sucesso!"
+          title: "Data limite para submissões adicionada com sucesso!",
         });
-      }
-      catch(err){
+      } catch (err) {
         console.log(err);
-        this.setState({loadingDateLimit:false})
+        this.setState({ loadingDateLimit: false });
         Swal.fire({
           type: "error",
-          title: "ops... data limite não pôde ser adicionada"
+          title: "ops... data limite não pôde ser adicionada",
         });
       }
     }
   }
-  changeDate(e){
-    console.log('data');
-    console.log(e.target.value);
-    this.setState({dateLimit: e.target.value})
+  changeDate(e) {
+    this.setState({ dateLimit: e.target.value });
   }
-  changeTime(e){
-    console.log('time');
-    console.log(e.target.value);
-    this.setState({timeLimit: e.target.value})
+  changeTime(e) {
+    this.setState({ timeLimit: e.target.value });
   }
-  handleShowModalDate(){
-      this.setState({
-          showModalDate:true,
-      })
+  handleShowModalDate() {
+    this.setState({
+      showModalDate: true,
+    });
   }
-  handleCloseShowModalDate(e){
-      this.setState({showModalDate:false})
+  handleCloseShowModalDate(e) {
+    this.setState({ showModalDate: false });
   }
   render() {
-    const { loadingInfoTurma, turma,loadingDateLimit,showModalDate,dateLimit, timeLimit, loandingLista, lista } = this.state;
+    const {
+      loadingInfoTurma,
+      turma,
+      loadingDateLimit,
+      showModalDate,
+      dateLimit,
+      timeLimit,
+      loandingLista,
+      lista,
+    } = this.state;
 
     return (
       <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>
@@ -153,14 +147,29 @@ export default class Exercicios extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h5 style={{margin:'0px',display:'inline'}}><i className="fa fa-users mr-2" aria-hidden="true"/> 
-                {turma && turma.name} - {turma && turma.year}.{turma && turma.semester} 
-                <i className="fa fa-angle-left ml-2 mr-2"/> 
-                <Link to={`/professor/turma/${this.props.match.params.id}/listas`}>
+              <h5 style={{ margin: "0px", display: "inline" }}>
+                <i className="fa fa-users mr-2" aria-hidden="true" />
+                {turma && turma.name} - {turma && turma.year}.
+                {turma && turma.semester}
+                <i className="fa fa-angle-left ml-2 mr-2" />
+                <Link
+                  to={`/professor/turma/${this.props.match.params.id}/listas`}
+                >
                   Listas
                 </Link>
-                <i className="fa fa-angle-left ml-2 mr-2"/>
-                {lista?lista.title:<div style={{width:'140px',backgroundColor:'#e5e5e5',height:'12px',display: "inline-block"}}/>}
+                <i className="fa fa-angle-left ml-2 mr-2" />
+                {lista ? (
+                  lista.title
+                ) : (
+                  <div
+                    style={{
+                      width: "140px",
+                      backgroundColor: "#e5e5e5",
+                      height: "12px",
+                      display: "inline-block",
+                    }}
+                  />
+                )}
               </h5>
             )}
           </Col>
@@ -168,14 +177,12 @@ export default class Exercicios extends Component {
         <Row mb={15}>
           <Col xs={6}>
             <button
-              className={`btn btn-primary ${loandingLista && 'btn-loading'}`}
-              onClick={()=>this.handleShowModalDate()}
+              className={`btn btn-primary ${loandingLista && "btn-loading"}`}
+              onClick={() => this.handleShowModalDate()}
             >
-              {lista && dateLimit?
-                'Editar data limite para submissões'
-                :
-                'Adicionar data limite para submmissões'
-              }
+              {lista && dateLimit
+                ? "Editar data limite para submissões"
+                : "Adicionar data limite para submissões"}
             </button>
           </Col>
         </Row>
@@ -183,10 +190,7 @@ export default class Exercicios extends Component {
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <Fragment>
-            <TurmaListaScrren
-            {...this.props}
-            lista={lista}
-          />
+            <TurmaListaScrren {...this.props} lista={lista} />
             <Modal
               show={showModalDate}
               onHide={this.handleCloseShowModalDate.bind(this)}
@@ -196,25 +200,41 @@ export default class Exercicios extends Component {
             >
               <Modal.Header>
                 <Modal.Title id="contained-modal-title">
-                  {`Adicionar data limite para as submissões na lista '${lista && lista.title}'`} 
+                  {`Adicionar data limite para as submissões na lista '${
+                    lista && lista.title
+                  }'`}
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Row>
                   <Col xs={12} textCenter>
-                    <input type='date' value={dateLimit} onChange={(e)=>this.changeDate(e)}/> - <input type='time' value={timeLimit} onChange={(e)=>this.changeTime(e)}/>
+                    <input
+                      type="date"
+                      value={dateLimit}
+                      onChange={(e) => this.changeDate(e)}
+                    />{" "}
+                    -{" "}
+                    <input
+                      type="time"
+                      value={timeLimit}
+                      onChange={(e) => this.changeTime(e)}
+                    />
                   </Col>
                 </Row>
               </Modal.Body>
               <Modal.Footer>
                 <button
-                  className={`btn btn-primary ${loadingDateLimit && 'btn-loading'}`}
-                  onClick={()=>this.addDateLimit(lista)}
+                  className={`btn btn-primary ${
+                    loadingDateLimit && "btn-loading"
+                  }`}
+                  onClick={() => this.addDateLimit(lista)}
                 >
                   Adicionar
                 </button>
                 <button
-                  className={`btn btn-danger  ${loadingDateLimit && 'btn-loading'}`}
+                  className={`btn btn-danger  ${
+                    loadingDateLimit && "btn-loading"
+                  }`}
                   onClick={this.handleCloseShowModalDate.bind(this)}
                 >
                   Não adicionar data limite

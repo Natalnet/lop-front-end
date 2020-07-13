@@ -20,7 +20,8 @@ export default class recoverScreen extends Component {
       msgEmail: "",
       msg: "",
       erro: false,
-      loading: false
+      loading: false,
+      enviado: false,
     };
   }
   componentDidMount() {
@@ -29,7 +30,7 @@ export default class recoverScreen extends Component {
   async send(e) {
     e.preventDefault();
     const request = {
-      email: this.state.email
+      email: this.state.email,
     };
     try {
       this.setState({ loading: true });
@@ -38,7 +39,8 @@ export default class recoverScreen extends Component {
         loading: false,
         erro: false,
         msg: response.data.msg,
-        msgEmail: ""
+        msgEmail: "",
+        enviado: true,
       });
     } catch (err) {
       console.log(Object.getOwnPropertyDescriptors(err));
@@ -46,54 +48,67 @@ export default class recoverScreen extends Component {
         loading: false,
         msgEmail: "",
         erro: false,
-        msg: ""
+        msg: "",
+        enviado: false,
       });
-      if (err.response && err.response.status===400) {
+      if (err.response && err.response.status === 400) {
         this.setState({ msgEmail: err.response.data.msg });
       } else {
         this.setState({
           msg: "Falha na conexão com o servidor :(",
-          erro: true
+          erro: true,
         });
       }
     }
   }
 
-  handleEmailChange = e => {
+  handleEmailChange = (e) => {
     this.setState({ email: e.target.value });
   };
   render() {
-    const { email, msgEmail, erro, msg, loading } = this.state;
+    const { email, msgEmail, erro, msg, loading, enviado } = this.state;
     return (
       <TemplateAutenticacao>
-        <form className="card" onSubmit={e => this.send(e)}>
+        <form className="card" onSubmit={(e) => this.send(e)}>
           <div className="card-body p-6">
             <LogoLOP />
-            <div className="card-title">Recuperação de senha</div>
-            <div className="form-group">
-              <span className={`alert-${erro ? "danger" : "success"}`}>
-                {msg}
-              </span>
-              <label className="form-label">Endereço de e-mail</label>
-              <input
-                type="email"
-                className={`form-control ${msgEmail && "is-invalid"}`}
-                placeholder="Digite seu e-mail"
-                value={email}
-                onChange={this.handleEmailChange}
-                required
-              />
-              <div className="invalid-feedback">{msgEmail}</div>
-            </div>
-            <div className="form-footer">
-              <button
-                type="submit"
-                className={`btn btn-primary btn-block ${loading &&
-                  "btn-loading"}`}
-              >
-                Enviar
-              </button>
-            </div>
+            {enviado ? (
+              <>
+                <div className="card-title">Recuperação de senha</div>
+                <div className="form-group" style={{ textAlign: "center" }}>
+                  <span className={"alert-success"}>{msg}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="card-title">Recuperação de senha</div>
+                <div className="form-group">
+                  <span className={`alert-${erro ? "danger" : "success"}`}>
+                    {msg}
+                  </span>
+                  <label className="form-label">Endereço de e-mail</label>
+                  <input
+                    type="email"
+                    className={`form-control ${msgEmail && "is-invalid"}`}
+                    placeholder="Digite seu e-mail"
+                    value={email}
+                    onChange={this.handleEmailChange}
+                    required
+                  />
+                  <div className="invalid-feedback">{msgEmail}</div>
+                </div>
+                <div className="form-footer">
+                  <button
+                    type="submit"
+                    className={`btn btn-primary btn-block ${
+                      loading && "btn-loading"
+                    }`}
+                  >
+                    Enviar
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </form>
         <div className="text-center text-muted">
