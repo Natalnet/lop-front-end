@@ -158,7 +158,7 @@ export default props => {
                             <Row mb={10}>
 
                                 <Col xs={12} md={6} lg={7}>
-                                    <label htmlFor="nome">{`${fieldSelect === 'title' ? 'Título ' : fieldSelect === 'code' ? 'Código' : '...'} da exercício`} </label>
+                                    <label htmlFor="nome">{`${fieldSelect === 'title' ? 'Título ' : fieldSelect === 'code' ? 'Código' : '...'} do exercício`} </label>
                                     <div className="input-group">
                                         <input
                                             id="nome"
@@ -217,7 +217,7 @@ export default props => {
                                 </Col>
 
                                 <Col xs={6} lg={2}>
-                                    <label htmlFor="pag">N° de ítems por página:</label>
+                                    <label htmlFor="pag">N° de itens por página:</label>
                                     <select id="pag" defaultValue={docsPerPage} className="form-control" onChange={(e) => setDocsPerPage(e.target.value)}>
                                         <option value={15}>15</option>
                                         <option value={25}>25</option>
