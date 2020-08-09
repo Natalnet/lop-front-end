@@ -408,7 +408,7 @@ export default (props) => {
                   </Row>
 
                   <Row style={{ marginTop: "10px" }}>
-                    <Col xs={10} md={6}>
+                    {props.timeConsuming && <Col xs={10} md={6}>
                       <label htmlFor="selectDifficulty">
                         Tempo gasto na questão:
                       </label>
@@ -425,9 +425,9 @@ export default (props) => {
                           (props.timeConsuming / 1000) % 60
                         )} seg`}
                       ></input>
-                    </Col>
+                    </Col>}
 
-                    <Col xs={10} md={6}>
+                    {props.char_change_number && <Col xs={10} md={6}>
                       <label htmlFor="selectDifficulty">
                         Nº de variação de caracteres:
                       </label>
@@ -439,7 +439,7 @@ export default (props) => {
                         maxLength={"5"}
                         value={parseFloat(props.char_change_number)}
                       ></input>
-                    </Col>
+                    </Col>}
                   </Row>
 
                   <label

@@ -9,10 +9,12 @@ import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
+import { Load } from "components/ui/load";
 import moment from "moment";
 import { BlockMath } from "react-katex";
 import HTMLFormat from "components/ui/htmlFormat";
 import AceEditor from "react-ace";
+
 import "brace/mode/c_cpp";
 import "brace/mode/javascript";
 import "brace/theme/monokai";
@@ -63,11 +65,11 @@ export default class telaTurmaExercicioSubmissoes extends Component {
         }
       }
     async getUserSubmissionsByList(idExercicio =this.props.match.params.idExercicio ){
-        this.setState({loadUserSubmissionsByList:true})
+        this.setState({loadUserSubmissionsByList: true})
         const {id, idLista} = this.props.match.params;
         try{
             const response = await api.get(`/listQuestion/${idLista}/class/${id}/question/${idExercicio}`)
-            console.log('question: ',response.data)
+            //console.log('question: ',response.data)
             this.setState({
                 users: response.data.users,
                 lista:  response.data.list,
@@ -84,7 +86,6 @@ export default class telaTurmaExercicioSubmissoes extends Component {
     async handleQuestion(url,idQuestion){
         this.props.history.push(url);
         this.getUserSubmissionsByList(idQuestion);
-
     }
     
     render(){
@@ -95,7 +96,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                 <Row mb={15}>
                     <Col xs={12}>
                         {loadingInfoTurma ? (
-                        <div className="loader" style={{ margin: "0px auto" }}></div>
+                            <Load/>
                         ) : (
                         <h5 style={{ margin: "0px", display: "inline" }}>
                             <i className="fa fa-users mr-2" aria-hidden="true" />
@@ -135,7 +136,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                     </Col>
                 </Row>
                 {loadingPage?
-                    <div className="loader" style={{ margin: "0px auto" }}></div>
+                    <Load/>
                 :
                 <>
                 <Row>
@@ -143,6 +144,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                     {
                         lista && lista.questions.map(question=>
                             <button 
+                                key={question.id}
                                 onClick={()=>this.handleQuestion(`/professor/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes`,question.id)}
                                 className={`btn ${question.id===this.props.match.params.idExercicio?'btn-primary disabled':'btn-outline-primary'} mr-5 mb-5`}
                             >
@@ -154,7 +156,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                 </Row>
                 {
                 loadUserSubmissionsByList?
-                    <div className="loader" style={{ margin: "0px auto" }}></div>
+                    <Load/>
                 :
                 <>
                 <Row mb={20}>
@@ -257,6 +259,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                         {
                             lista && users && users.length > 2 && lista.questions.map(question=>
                                 <button 
+                                    key={question.id}
                                     onClick={()=>this.handleQuestion(`/professor/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes`,question.id)}
                                     className={`btn ${question.id===this.props.match.params.idExercicio?'btn-primary disabled':'btn-outline-primary'} mr-5 mb-5`}
                                 >
