@@ -161,7 +161,7 @@ export default class AlunosProvas extends Component {
           questoes[numPageAtual - 1].lastSubmission.char_change_number,
       });
     }
-    if (questoes[numPageAtual - 1].feedBackTest.isEditedByTeacher) {
+    if (questoes[numPageAtual - 1].feedBackTest && questoes[numPageAtual - 1].feedBackTest.isEditedByTeacher) {
       this.setState({
         corrected: true,
       });
@@ -355,6 +355,7 @@ export default class AlunosProvas extends Component {
     try {
       if (loading) this.setState({ loadingQuestoes: true });
       const response = await api.get(`/feedBacksTest/show/${query}`);
+      console.log('questoes: ', response.data.questions);
       this.setState({
         questoes: [...response.data.questions],
         user: response.data.user,
