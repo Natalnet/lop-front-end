@@ -1,4 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
 import { Pagination } from "components/ui/navs";
 import { getStateFormQuestionsFromStorage } from "../../util/auxiliaryFunctions.util";
@@ -15,7 +19,7 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import HTMLFormat from "components/ui/htmlFormat";
+//import HTMLFormat from "components/ui/htmlFormat";
 import useQuestion from '../../hooks/useQuestion';
 import usePagination from '../../hooks/usePagination';
 import useTag from '../../hooks/useTag';
@@ -378,7 +382,21 @@ export default props => {
                         </Row>
                         <Row>
                             <span style={{ overflow: "auto" }}>
-                                <HTMLFormat>{selectedQuestionToShowInModal && selectedQuestionToShowInModal.description}</HTMLFormat>
+                                {/* <HTMLFormat>{selectedQuestionToShowInModal && selectedQuestionToShowInModal.description}</HTMLFormat> */}
+                                {selectedQuestionToShowInModal  && <SunEditor 
+                                    lang="pt_br"
+                                    height="auto"
+                                    disable={true}
+                                    showToolbar={false}
+                                    // onChange={this.handleDescriptionChange.bind(this)}
+                                    setContents={selectedQuestionToShowInModal.description}
+                                    setDefaultStyle="font-size: 15px; text-align: justify"
+                                    setOptions={{
+                                        toolbarContainer : '#toolbar_container',
+                                        resizingBar : false,
+                                        katex: katex,
+                                    }}
+                                />}
                             </span>
                         </Row>
                         <Row>

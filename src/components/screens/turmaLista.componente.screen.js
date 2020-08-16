@@ -1,5 +1,9 @@
 import React,{Fragment} from "react"
 import { Link } from "react-router-dom";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardOptions from "components/ui/card/cardOptions.component";
@@ -9,7 +13,7 @@ import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import ProgressBar from "components/ui/ProgressBar/progressBar.component";
-import HTMLFormat from "components/ui/htmlFormat"
+//import HTMLFormat from "components/ui/htmlFormat"
 export default props =>{
     const {lista,participant} = props
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()
@@ -72,9 +76,23 @@ export default props =>{
                                 id={"collapse2" + j + (lista && lista.id)}
                             >
                                 <CardBody>
-                                    <HTMLFormat>
+                                    {/* <HTMLFormat>
                                         {question.description}
-                                    </HTMLFormat>
+                                    </HTMLFormat> */}
+                                    <SunEditor 
+                                        lang="pt_br"
+                                        height="auto"
+                                        disable={true}
+                                        showToolbar={false}
+                                        // onChange={this.handleDescriptionChange.bind(this)}
+                                        setContents={question.description}
+                                        setDefaultStyle="font-size: 15px; text-align: justify"
+                                        setOptions={{
+                                            toolbarContainer : '#toolbar_container',
+                                            resizingBar : false,
+                                            katex: katex,
+                                        }}
+                                    />
                                 </CardBody>
                             </div>
                             <CardFooter>
@@ -153,12 +171,12 @@ export default props =>{
                                                         className="btn btn-primary mr-2"
                                                         style={{ float: "right" }}
                                                     > */}
-                                                        <i className="fa fa-wpexplorer mr-2" />
+                                                        {/* <i className="fa fa-wpexplorer mr-2" /> */}
                                                         Ver última submissão dos alunos 
                                                     {/* </button> */}
                                                 </Link>
                                                 <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes/plagio`}>
-                                                    <i className="fa fa-alert-triangle mr-2" />
+                                                    {/* <i className="fa fa-alert-triangle mr-2" /> */}
                                                     Verificar Plágios
                                                 </Link>
                                             </div>

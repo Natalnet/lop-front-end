@@ -33,6 +33,7 @@ export default class HomeAlunoScreen extends Component {
   }
   async getMinhasTurmas() {
     let query = `?myClasses=yes`;
+    query+=`&state=ATIVA`
     try {
       this.setState({ loadingTurmas: true });
       const response = await api.get(`/class${query}`);

@@ -1,4 +1,8 @@
 import React, { Component } from "react";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import TemplateSistema from "components/templates/sistema.template";
@@ -18,7 +22,7 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-import HTMLFormat from "components/ui/htmlFormat";
+//import HTMLFormat from "components/ui/htmlFormat";
 
 const botao2 = {
   float: "right",
@@ -399,7 +403,23 @@ export default class CriarListaScreen extends Component {
                 </Row>
                 <Row>
                   <span style={{ overflow: "auto" }}>
-                    <HTMLFormat>{question && question.description}</HTMLFormat>
+                    {/* <HTMLFormat>{question && question.description}</HTMLFormat> */}
+                    {question && 
+                      <SunEditor 
+                        lang="pt_br"
+                        height="auto"
+                        disable={true}
+                        showToolbar={false}
+                        // onChange={this.handleDescriptionChange.bind(this)}
+                        setContents={question.description}
+                        setDefaultStyle="font-size: 15px; text-align: justify"
+                        setOptions={{
+                            toolbarContainer : '#toolbar_container',
+                            resizingBar : false,
+                            katex: katex,
+                        }}
+                      />
+                    }
                   </span>
                 </Row>
                 <Row>

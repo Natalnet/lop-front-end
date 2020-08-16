@@ -1,4 +1,8 @@
 import React from "react";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
@@ -66,7 +70,7 @@ export default (props) => {
     <>
       <Row mb={10}>
         <Col xs={12}>
-          <Card className="card-primary card-status-primary">
+          <Card className="card-status-primary">
             <CardHead>
               <CardTitle>
                 <b>
@@ -80,7 +84,21 @@ export default (props) => {
                   <div className="loader" style={{ margin: "0px auto" }}></div>
                 ) : (
                   <Col xs={12} md={7}>
-                    <HTMLFormat>{description}</HTMLFormat>
+                    {/* <HTMLFormat>{description}</HTMLFormat> */}
+                    <SunEditor 
+                        lang="pt_br"
+                        height="auto"
+                        disable={true}
+                        showToolbar={false}
+                        // onChange={this.handleDescriptionChange.bind(this)}
+                        setContents={description}
+                        setDefaultStyle="font-size: 15px; text-align: justify"
+                        setOptions={{
+                            toolbarContainer : '#toolbar_container',
+                            resizingBar : false,
+                            katex: katex,
+                        }}
+                    />
 
                     {katexDescription ? (
                       <BlockMath>{katexDescription}</BlockMath>
@@ -93,7 +111,12 @@ export default (props) => {
                   <div className="loader" style={{ margin: "0px auto" }}></div>
                 ) : (
                   <Col xs={12} md={5}>
-                    <table className="table table-exemplo">
+                    <table 
+                      className="table table-exemplo"
+                      style={{
+                        border: "1px solid rgba(0, 40, 100, 0.12)"
+                      }}
+                    >
                       <tbody>
                         <tr>
                           <td className="pt-0">
@@ -279,7 +302,11 @@ export default (props) => {
                         {teste.descriptionErro ? (
                           <HTMLFormat>{`${teste.descriptionErro}`}</HTMLFormat>
                         ) : (
-                          <table className="table" wrap="off">
+                          <table 
+                            className="table" 
+                            wrap="off"
+
+                          >
                             <tbody>
                               <tr>
                                 <td>

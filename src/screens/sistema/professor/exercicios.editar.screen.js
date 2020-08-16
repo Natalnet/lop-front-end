@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import apiCompiler from "../../../services/apiCompiler";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import Swal from "sweetalert2";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
@@ -148,10 +152,24 @@ export default class Editor extends Component {
       title: e.target.value,
     });
   }
-  async handleDescriptionChange(e) {
+  async handleDescriptionChange(content) {
     this.setState({
-      description: e.target.value,
+      description: content,
     });
+  }
+  handleImageUploadBefore(){
+    Swal.fire({
+      type: "error",
+      title: "Não é permitido o upload de imagens, carregue-as a partir de um link 😃",
+    });
+    return false;
+  }
+  handleVideoUploadBefore(){
+    Swal.fire({
+      type: "error",
+      title: "Não é permitido o upload de vídeos, carregue-os a partir de um link 😃",
+    });
+    return false;
   }
   async handlekatexDescription(e) {
     this.setState({
@@ -395,13 +413,38 @@ export default class Editor extends Component {
                 </div>
                 <div className="form-group col-md-12">
                   <label>Enunciado:</label>
-                  <textarea
+                  <SunEditor 
+                    lang="pt_br"
+                    minHeight="250"
+                    height="auto"
+                    // disable={true}
+                    // showToolbar={false}
+                    onChange={this.handleDescriptionChange.bind(this)}
+                    setContents={description}
+                    onImageUploadBefore={this.handleImageUploadBefore.bind(this)}
+                    onVideoUploadBefore={this.handleVideoUploadBefore.bind(this)}
+                    setDefaultStyle="font-size: 15px; text-align: justify"
+                    setOptions={{
+                      toolbarContainer : '#toolbar_container',
+                      // resizingBar : false,
+                      //charCounter : true,
+                      //maxCharCount : 720,
+                      katex: katex,
+                      buttonList : [
+                        ['undo', 'redo', 'font', 'fontSize', 'formatBlock'],
+                        ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript', 'removeFormat','textStyle','paragraphStyle'],
+                        ['fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table','codeView','math'],
+                        ['link', 'image', 'video', 'fullScreen', 'showBlocks', 'codeView', 'preview', 'print', 'save']
+                      ],
+                    }}
+                  />
+                  {/* <textarea
                     onChange={(e) => this.handleDescriptionChange(e)}
                     style={{ height: "150px" }}
                     className={`form-control ${msgDescription && "is-invalid"}`}
                     value={description}
                     required
-                  ></textarea>
+                  ></textarea> */}
                   <div className="invalid-feedback">{msgDescription}</div>
                 </div>
                 <div className="form-group col-md-6">

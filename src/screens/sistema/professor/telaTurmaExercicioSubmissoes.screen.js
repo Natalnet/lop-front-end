@@ -1,4 +1,8 @@
 import React, { Component, Fragment } from "react";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
@@ -12,7 +16,7 @@ import CardFooter from "components/ui/card/cardFooter.component";
 import { Load } from "components/ui/load";
 import moment from "moment";
 import { BlockMath } from "react-katex";
-import HTMLFormat from "components/ui/htmlFormat";
+//import HTMLFormat from "components/ui/htmlFormat";
 import AceEditor from "react-ace";
 
 import "brace/mode/c_cpp";
@@ -161,7 +165,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                 <>
                 <Row mb={20}>
                     <Col xs={12}>
-                        <Card className="card-primary card-status-primary">
+                        <Card className="card-status-primary">
                             <CardHead>
                                 <CardTitle>
                                 <b><i className="fa fa-code mr-2"/> {question.title}</b>
@@ -170,9 +174,23 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                             <CardBody className="overflow-auto">
                                 <Row>
                                     <Col xs={12}>
-                                        <HTMLFormat>
+                                        {/* <HTMLFormat>
                                             {question.description}
-                                        </HTMLFormat>
+                                        </HTMLFormat> */}
+                                        <SunEditor 
+                                            lang="pt_br"
+                                            height="auto"
+                                            disable={true}
+                                            showToolbar={false}
+                                            // onChange={this.handleDescriptionChange.bind(this)}
+                                            setContents={question.description}
+                                            setDefaultStyle="font-size: 15px; text-align: justify"
+                                            setOptions={{
+                                                toolbarContainer : '#toolbar_container',
+                                                resizingBar : false,
+                                                katex: katex,
+                                            }}
+                                        />
                                         {question.katexDescription ? (
                                             <BlockMath>{question.katexDescription}</BlockMath>
                                         ) : (
