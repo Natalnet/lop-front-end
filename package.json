@@ -23,6 +23,7 @@
     "socket.io-client": "^2.3.0",
     "stringquery": "^1.0.8",
     "styled-components": "^5.1.1",
+    "suneditor-react": "^2.13.1",
     "sweetalert2": "^8.0.5",
     "sweetalert2-react-content": "^1.1.0"
   },

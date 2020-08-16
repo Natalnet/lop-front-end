@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Link, useHistory } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
-import api,{baseUrlBackend} from "../../../services/api";
+import api from "../../../services/api";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import { Load } from "components/ui/load";
@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 
 export default props=> {
     const [loadingInfoTurma, setLoadingInfoTurma] = useState(false);
-    const [loadingPage, setLoadingPage] = useState(true);
+    const [, setLoadingPage] = useState(true);
     const [loadingPlagiarisms, setLoadingPlagiarisms] = useState(false);
     const [loadUserSubmissionsByList, setLoadUserSubmissionsByList] = useState(false);
     const [language,setLanguage] = useState("javascript")
@@ -68,6 +68,10 @@ export default props=> {
         getUserSubmissionsByList(props.match.params.idExercicio);
     },[])
 
+    const question = useMemo(()=> 
+        lista && lista.questions.find(q=>q.id === props.match.params.idExercicio)
+    ,[lista]);
+
     const getUserSubmissionsByList = useCallback(async (idExercicio)=>{
         setLoadUserSubmissionsByList(true);
         const {id, idLista} = props.match.params;
@@ -116,9 +120,7 @@ export default props=> {
         getUserSubmissionsByList(idQuestion);
     },[])
 
-    const question = useMemo(()=> 
-        lista && lista.questions.find(q=>q.id === props.match.params.idExercicio)
-    ,[lista]);
+
 
     useEffect(()=>{
         

@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from "react";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
-
 import { Pagination } from "components/ui/navs";
-
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
@@ -268,7 +270,21 @@ export default class HomeProvasScreen extends Component {
                             <b>Descrição: </b>
                           </Row>
                           <Row>
-                            <p>{questao.description}</p>
+                            {/* <p>{questao.description}</p> */}
+                            <SunEditor 
+                                lang="pt_br"
+                                height="auto"
+                                disable={true}
+                                showToolbar={false}
+                                // onChange={this.handleDescriptionChange.bind(this)}
+                                setContents={questao.description}
+                                setDefaultStyle="font-size: 15px; text-align: justify"
+                                setOptions={{
+                                    toolbarContainer : '#toolbar_container',
+                                    resizingBar : false,
+                                    katex: katex,
+                                }}
+                            />
                           </Row>
                           <Row>
                             <Col xs={12} textCenter>

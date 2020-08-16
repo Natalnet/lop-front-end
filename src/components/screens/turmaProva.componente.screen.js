@@ -1,4 +1,8 @@
 import React,{Fragment} from "react"
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -70,7 +74,22 @@ export default props =>{
                                 className="collapse"
                                 id={"collapse2" + j + (prova && prova.id)}
                             >
-                                <CardBody>{question.description}</CardBody>
+                                <CardBody>
+                                    <SunEditor 
+                                        lang="pt_br"
+                                        height="auto"
+                                        disable={true}
+                                        showToolbar={false}
+                                        // onChange={this.handleDescriptionChange.bind(this)}
+                                        setContents={question.description}
+                                        setDefaultStyle="font-size: 15px; text-align: justify"
+                                        setOptions={{
+                                            toolbarContainer : '#toolbar_container',
+                                            resizingBar : false,
+                                            katex: katex,
+                                        }}
+                                    />
+                                </CardBody>
                             </div>
                             <CardFooter>
                                 {(profile==="professor" && participant)?

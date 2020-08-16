@@ -1,4 +1,8 @@
 import React, { Component, Fragment } from "react";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
@@ -441,7 +445,21 @@ export default class Provas extends Component {
                     <div className="collapse" id={"collapse" + questao.id}>
                       <CardBody>
                         <b>Descrição: </b>
-                        <p>{questao.description}</p>
+                        {/* <p>{questao.description}</p> */}
+                        <SunEditor 
+                                lang="pt_br"
+                                height="auto"
+                                disable={true}
+                                showToolbar={false}
+                                // onChange={this.handleDescriptionChange.bind(this)}
+                                setContents={questao.description}
+                                setDefaultStyle="font-size: 15px; text-align: justify"
+                                setOptions={{
+                                    toolbarContainer : '#toolbar_container',
+                                    resizingBar : false,
+                                    katex: katex,
+                                }}
+                            />
                         <br />
                         <BlockMath>{questao.katexDescription || ""}</BlockMath>
                         <br />

@@ -1,4 +1,8 @@
 import React from 'react';
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
@@ -30,13 +34,12 @@ export default (props)=>{
     const languages = props.languages || ['javascript','cpp']
     let tests = props.showAllTestCases?response:response.filter((t,i)=>i===0)
 
-
     
     return(
     <>
         <Row mb={10}>
             <Col xs={12}>
-                <Card className="card-primary card-status-primary">
+                <Card className=" card-status-primary">
                     <CardHead>
                         <CardTitle>
                         <b><i className="fa fa-code mr-2"/> {title}</b>
@@ -45,9 +48,23 @@ export default (props)=>{
                     <CardBody className="overflow-auto">
                     <Row>
                         <Col xs={12} md={7}>
-                            <HTMLFormat>
+                            {/* <HTMLFormat>
                                 {description}
-                            </HTMLFormat>
+                            </HTMLFormat> */}
+                            <SunEditor 
+                                lang="pt_br"
+                                height="auto"
+                                disable={true}
+                                showToolbar={false}
+                                // onChange={this.handleDescriptionChange.bind(this)}
+                                setContents={description}
+                                setDefaultStyle="font-size: 15px; text-align: justify"
+                                setOptions={{
+                                    toolbarContainer : '#toolbar_container',
+                                    resizingBar : false,
+                                    katex: katex,
+                                }}
+                            />
                             {katexDescription ? (
                                 <BlockMath>{katexDescription}</BlockMath>
                             ) : (
@@ -55,7 +72,12 @@ export default (props)=>{
                             )}
                         </Col>
                         <Col xs={12} md={5}>
-                            <table className="table table-exemplo">
+                            <table 
+                                className="table table-exemplo"
+                                style={{
+                                    border: "1px solid rgba(0, 40, 100, 0.12)"
+                                }}
+                            >
                             <tbody >
                             <tr>
                                 <td className="pt-0">
