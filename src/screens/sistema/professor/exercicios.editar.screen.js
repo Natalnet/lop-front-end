@@ -434,7 +434,7 @@ export default class Editor extends Component {
                         ['undo', 'redo', 'font', 'fontSize', 'formatBlock'],
                         ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript', 'removeFormat','textStyle','paragraphStyle'],
                         ['fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table','codeView','math'],
-                        ['link', 'image', 'video', 'fullScreen', 'showBlocks', 'codeView', 'preview', 'print', 'save']
+                        ['link', 'image', 'video','audio', 'fullScreen', 'showBlocks', 'codeView', 'preview', 'print', 'save']
                       ],
                     }}
                   />
