@@ -6,6 +6,8 @@ import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
+import "brace/mode/python";
+
 import "brace/mode/javascript";
 import "brace/theme/monokai";
 import "brace/theme/github";
@@ -61,7 +63,7 @@ export default (props) => {
     "solarized_light",
     "terminal",
   ];
-  const languages = props.languages || ["javascript", "cpp"];
+  const languages = props.languages || ["javascript", "cpp", "python"];
   let tests = props.showAllTestCases
     ? results
     : results.filter((t, i) => i === 0);
@@ -156,7 +158,10 @@ export default (props) => {
                 lang === "javascript"
                   ? "JavaScript"
                   : lang === "cpp"
-                  ? "C++"
+                  ? "C/C++"
+                  : lang === "python"
+                  ?
+                  "Python"
                   : "";
               return (
                 <option key={lang} value={lang}>

@@ -10,6 +10,9 @@ import 'katex/dist/katex.min.css'
 import Swal from "sweetalert2";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
+import "brace/mode/python";
+
+import "brace/mode/python";
 import "brace/mode/javascript";
 import "brace/theme/monokai";
 import "brace/theme/github";
@@ -29,7 +32,6 @@ import TableResults2 from "../../../components/ui/tables/tableResults2.component
 import TableIO from "../../../components/ui/tables/tableIO.component";
 import Select from "react-select";
 import "katex/dist/katex.min.css";
-import { BlockMath } from "react-katex";
 import FormSelect2 from "../../../components/ui/forms/formSelect2.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -45,7 +47,7 @@ export default class Editor extends Component {
       language: "javascript",
       theme: "monokai",
       response: [],
-      katexDescription: "",
+      //katexDescription: "",
       status: "PÚBLICA",
       difficulty: "3",
       solution: "",
@@ -102,7 +104,7 @@ export default class Editor extends Component {
       this.setState({
         title: response.data.title,
         description: response.data.description,
-        katexDescription: response.data.katexDescription || "",
+        //katexDescription: response.data.katexDescription || "",
         tests: this.appInputFormat(response.data.results),
         status: response.data.status,
         difficulty: response.data.difficulty,
@@ -171,11 +173,11 @@ export default class Editor extends Component {
     });
     return false;
   }
-  async handlekatexDescription(e) {
-    this.setState({
-      katexDescription: e.target.value,
-    });
-  }
+  // async handlekatexDescription(e) {
+  //   this.setState({
+  //     katexDescription: e.target.value,
+  //   });
+  // }
 
   async handleStatus(e) {
     this.setState({ status: e.target.value });
@@ -293,7 +295,7 @@ export default class Editor extends Component {
       solution,
       status,
       difficulty,
-      katexDescription,
+      //katexDescription,
     } = this.state;
     if (this.isTestEmpty(tests)) return null;
     const results = this.rTrimAll(tests);
@@ -309,7 +311,7 @@ export default class Editor extends Component {
       title,
       description,
       tags: tagsSelecionadas.map((tag) => tag.value),
-      katexDescription,
+      //katexDescription,
       status,
       difficulty,
       solution,
@@ -365,7 +367,7 @@ export default class Editor extends Component {
       response,
       status,
       difficulty,
-      katexDescription,
+      //katexDescription,
       savingQuestion,
       loadingReponse,
       title,
@@ -488,7 +490,7 @@ export default class Editor extends Component {
                     onChange={this.handleTagsChangeTags.bind(this)}
                   />
                 </div>
-                <div className="form-group col-md-6">
+                {/* <div className="form-group col-md-6">
                   <label>
                     Katex: &nbsp;
                     <a
@@ -517,7 +519,7 @@ export default class Editor extends Component {
                   >
                     <BlockMath>{katexDescription}</BlockMath>
                   </div>
-                </div>
+                </div> */}
                 {/*teste*/}
                 <div className="form-group col-md-12">
                   <label className="mr-2">Entradas para testes: </label>

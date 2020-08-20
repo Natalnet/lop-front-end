@@ -11,6 +11,8 @@ import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
+import "brace/mode/python";
+
 import "brace/mode/javascript";
 import "brace/theme/monokai";
 import Row from "components/ui/grid/row.component";

@@ -2,7 +2,7 @@ import React,{Fragment} from 'react'
 
 export default (props) =>{
 	let {changeLanguage,changeTheme,executar,loadingReponse,languages} = props
-  languages = languages || ['javascript','cpp']
+  languages = languages || ['javascript','cpp','python']
   const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal']
   return(
     <Fragment>
@@ -10,7 +10,15 @@ export default (props) =>{
       <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
         <select className="form-control" onChange={changeLanguage}>
           {languages.map(lang=>{
-            const language = lang==='javascript'?'JavaScript':lang==='cpp'?'C++':''
+            const language =
+            lang === "javascript"
+              ? "JavaScript"
+              : lang === "cpp"
+              ? "C/C++"
+              : lang === "python"
+              ?
+              "Python"
+              : "";
             return(
               <option key={lang} value = {lang}>{language}</option>
             )

@@ -6,6 +6,8 @@ import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
+import "brace/mode/python";
+
 import "brace/mode/javascript";
 import "brace/theme/monokai";
 import "brace/theme/github";
@@ -31,7 +33,8 @@ export default (props)=>{
     const {language,theme,descriptionErro,solution,userDifficulty,loadDifficulty,salvandoRascunho} = props;
     const {changeLanguage,changeTheme,handleSolution,handleDifficulty,submeter,salvaRascunho} = props
     const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal']
-    const languages = props.languages || ['javascript','cpp']
+    const languages = props.languages || ['javascript','cpp','python']
+    console.log('languages: ',languages)
     let tests = props.showAllTestCases?response:response.filter((t,i)=>i===0)
 
     
@@ -112,7 +115,15 @@ export default (props)=>{
                 <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
                 <select className="form-control" onChange={(e)=>changeLanguage(e)}>
                     {languages.map(lang=>{
-                        const language = lang==='javascript'?'JavaScript':lang==='cpp'?'C++':''
+                    const language =
+                        lang === "javascript"
+                        ? "JavaScript"
+                        : lang === "cpp"
+                        ? "C/C++"
+                        : lang === "python"
+                        ?
+                        "Python"
+                        : "";                        
                         return(
                         <option key={lang} value = {lang}>
                             {language}

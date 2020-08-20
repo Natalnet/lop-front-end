@@ -253,7 +253,7 @@ export default props=> {
                         disabled={loadUrl}
                     >
                         <option value="javascript">JavaScript</option>
-                        <option value="cc">C++</option>
+                        <option value="cc">C/C++</option>
                     </select>
                     
                 </Col>

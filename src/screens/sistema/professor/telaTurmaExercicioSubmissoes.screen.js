@@ -20,6 +20,8 @@ import { BlockMath } from "react-katex";
 import AceEditor from "react-ace";
 
 import "brace/mode/c_cpp";
+import "brace/mode/python";
+
 import "brace/mode/javascript";
 import "brace/theme/monokai";
 

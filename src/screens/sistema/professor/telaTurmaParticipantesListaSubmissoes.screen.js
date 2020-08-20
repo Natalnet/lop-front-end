@@ -12,6 +12,8 @@ import Col from "components/ui/grid/col.component";
 import "katex/dist/katex.min.css";
 import AceEditor from "react-ace";
 import "brace/mode/c_cpp";
+import "brace/mode/python";
+
 import "brace/mode/javascript";
 import "brace/theme/monokai";
 
