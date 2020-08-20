@@ -211,12 +211,12 @@ export default class Editor extends Component {
   isTestEmpty(results) {
     let isTestEmpty = false;
     const testsChecked = results.map((test) => {
-      if (!test.inputs || !test.output) isTestEmpty = true;
+      if (/*!test.inputs || */!test.output) isTestEmpty = true;
       return {
         inputs: test.inputs.replace(/\s+$/, ""),
         output: test.output.replace(/\s+$/, "").replace(/\n+$/, ""),
-        msgInputs: !test.inputs ? "Este campo obrigatório" : "",
-        msgOutput: !test.output ? "Este campo obrigatório" : "",
+        //msgInputs: !test.inputs ? "Este campo é obrigatório" : "",
+        msgOutput: !test.output ? "Este campo é obrigatório" : "",
       };
     });
     this.setState({ tests: testsChecked });
@@ -563,7 +563,7 @@ export default class Editor extends Component {
                             }`}
                             placeholder="Ex: 12\n16.4\nOlá mundo!\n"
                             value={tests[i].inputs}
-                            required
+                            //required
                           />
                           <div className="invalid-feedback">
                             {!tests[i].inputs && tests[i].msgInputs
