@@ -32,7 +32,11 @@ export default class NovasTurmasScreen extends Component {
       },
       {
         value: "cpp",
-        label: "C++",
+        label: "C/C++",
+      },
+      {
+        value: "python",
+        label: "Python",
       },
     ],
   };

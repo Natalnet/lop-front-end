@@ -31,7 +31,11 @@ export default class NovasTurmasScreen extends Component {
       },
       {
         value: "cpp",
-        label: "C++",
+        label: "C/C++",
+      },
+      {
+        value: "python",
+        label: "Python",
       },
     ],
   };
@@ -67,7 +71,9 @@ export default class NovasTurmasScreen extends Component {
               language === "javascript"
                 ? "JavaScript"
                 : language === "cpp"
-                ? "C++"
+                ? "C/C++"
+                : language = "python"
+                ? "Python"
                 : "",
           };
         }),
