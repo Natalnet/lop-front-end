@@ -4,21 +4,8 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
-import AceEditor from "react-ace";
-import "brace/mode/c_cpp";
-import "brace/mode/python";
 
-import "brace/mode/javascript";
-import "brace/theme/monokai";
-import "brace/theme/github";
-import "brace/theme/tomorrow";
-import "brace/theme/kuroir";
-import "brace/theme/twilight";
-import "brace/theme/xcode";
-import "brace/theme/textmate";
-import "brace/theme/solarized_dark";
-import "brace/theme/solarized_light";
-import "brace/theme/terminal";
+import AceEditorWrapper from "components/templates/aceEditorWrapper.template"
 import HTMLFormat from "components/ui/htmlFormat";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -177,8 +164,8 @@ export default (props)=>{
         <Row>
             <Col xs={12} md={7}>
             <Card>
-                <AceEditor
-                    mode={DefaultLanguages.getAceName(language)}
+                <AceEditorWrapper
+                    mode={language}
                     theme={theme}
                     focus={false}
                     onChange={handleSolution}
