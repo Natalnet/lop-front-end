@@ -8,21 +8,7 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import Swal from "sweetalert2";
-import AceEditor from "react-ace";
-import "brace/mode/c_cpp";
-import "brace/mode/python";
-
-import "brace/mode/javascript";
-import "brace/theme/monokai";
-import "brace/theme/github";
-import "brace/theme/tomorrow";
-import "brace/theme/kuroir";
-import "brace/theme/twilight";
-import "brace/theme/xcode";
-import "brace/theme/textmate";
-import "brace/theme/solarized_dark";
-import "brace/theme/solarized_light";
-import "brace/theme/terminal";
+import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
@@ -36,6 +22,8 @@ import FormSelect2 from "../../../components/ui/forms/formSelect2.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
+import DefaultLanguages from "config/DefaultLanguages";
+
 export default class Editor extends Component {
   constructor(props) {
     super(props);
@@ -43,7 +31,7 @@ export default class Editor extends Component {
       editor: "",
       editorRes: "",
       descriptionErro: "",
-      language: "javascript",
+      language: DefaultLanguages.list[0],
       theme: "monokai",
       response: [],
       //katexDescription: "",
@@ -560,8 +548,8 @@ export default class Editor extends Component {
               </div>
               <div className="row">
                 <div className="col-12 col-md-7">
-                  <AceEditor
-                    mode={language === "cpp" ? "c_cpp" : language}
+                  <AceEditorWrapper
+                    mode={language}
                     theme={theme}
                     focus={false}
                     onChange={this.handleSolution.bind(this)}

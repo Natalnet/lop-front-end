@@ -1,26 +1,20 @@
 import React,{Fragment} from 'react'
 
+import DefaultLanguages from "config/DefaultLanguages"
+
 export default (props) =>{
-	let {changeLanguage,changeTheme,executar,loadingReponse,languages} = props
-  languages = languages || ['javascript','cpp','python']
-  const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal']
+	let {changeLanguage,changeTheme,executar,loadingReponse,languages} = props;
+  languages = languages || DefaultLanguages.list;
+  const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal'];
   return(
     <Fragment>
       <div className="col-4 col-md-2">
       <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
         <select className="form-control" onChange={changeLanguage}>
           {languages.map(lang=>{
-            const language =
-            lang === "javascript"
-              ? "JavaScript"
-              : lang === "cpp"
-              ? "C/C++"
-              : lang === "python"
-              ?
-              "Python"
-              : "";
+            const languageIdx = DefaultLanguages.list.indexOf(lang);
             return(
-              <option key={lang} value = {lang}>{language}</option>
+              <option key={lang} value = {lang}>{DefaultLanguages.niceNames[languageIdx]}</option>
             )
           })}
         </select>

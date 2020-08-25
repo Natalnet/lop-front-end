@@ -4,21 +4,7 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
-import AceEditor from "react-ace";
-import "brace/mode/c_cpp";
-import "brace/mode/python";
 
-import "brace/mode/javascript";
-import "brace/theme/monokai";
-import "brace/theme/github";
-import "brace/theme/tomorrow";
-import "brace/theme/kuroir";
-import "brace/theme/twilight";
-import "brace/theme/xcode";
-import "brace/theme/textmate";
-import "brace/theme/solarized_dark";
-import "brace/theme/solarized_light";
-import "brace/theme/terminal";
 import HTMLFormat from "components/ui/htmlFormat";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -27,6 +13,10 @@ import CardBody from "components/ui/card/cardBody.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
+
+import DefaultLanguages from "config/DefaultLanguages";
+import AceEditorWrapper from "components/templates/aceEditorWrapper.template"
+
 
 export default (props) => {
   const {
@@ -63,7 +53,7 @@ export default (props) => {
     "solarized_light",
     "terminal",
   ];
-  const languages = props.languages || ["javascript", "cpp", "python"];
+  const languages = props.languages || DefaultLanguages.list;
   let tests = props.showAllTestCases
     ? results
     : results.filter((t, i) => i === 0);
@@ -154,18 +144,10 @@ export default (props) => {
           <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
           <select className="form-control" onChange={(e) => changeLanguage(e)}>
             {languages.map((lang) => {
-              const language =
-                lang === "javascript"
-                  ? "JavaScript"
-                  : lang === "cpp"
-                  ? "C/C++"
-                  : lang === "python"
-                  ?
-                  "Python"
-                  : "";
+              const languageIdx = DefaultLanguages.list.indexOf(lang);
               return (
                 <option key={lang} value={lang}>
-                  {language}
+                  {DefaultLanguages.niceNames[languageIdx]}
                 </option>
               );
             })}
@@ -203,8 +185,8 @@ export default (props) => {
             {props.loadingQuestoes ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <AceEditor
-                mode={language === "cpp" ? "c_cpp" : language}
+              <AceEditorWrapper
+                mode={language}
                 theme={theme}
                 focus={false}
                 onChange={(e) => alteredCode(e)}
@@ -224,7 +206,8 @@ export default (props) => {
             {props.loadingQuestoes ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <AceEditor
+              <AceEditorWrapper
+                mode={language}
                 theme={theme}
                 focus={false}
                 value={solution}
