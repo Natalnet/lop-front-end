@@ -28,13 +28,16 @@ import CardOptions from "components/ui/card/cardOptions.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
+import DefaultLanguages from "config/DefaultLanguages";
+
+
 export default (props)=>{
     const {response,loadingReponse,title,description,results,katexDescription} = props;
     const {language,theme,descriptionErro,solution,userDifficulty,loadDifficulty,salvandoRascunho} = props;
     const {changeLanguage,changeTheme,handleSolution,handleDifficulty,submeter,salvaRascunho} = props
     const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal']
-    const languages = props.languages || ['javascript','cpp','python']
-    console.log('languages: ',languages)
+    const languages = props.languages || DefaultLanguages.list
+    // console.log('languages: ',languages)
     let tests = props.showAllTestCases?response:response.filter((t,i)=>i===0)
 
     
@@ -114,22 +117,15 @@ export default (props)=>{
             <Col xs={4} md={2}>
                 <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
                 <select className="form-control" onChange={(e)=>changeLanguage(e)}>
-                    {languages.map(lang=>{
-                    const language =
-                        lang === "javascript"
-                        ? "JavaScript"
-                        : lang === "cpp"
-                        ? "C/C++"
-                        : lang === "python"
-                        ?
-                        "Python"
-                        : "";                        
+                    {languages.map( lang =>{
+                        const languageIdx = DefaultLanguages.list.indexOf(lang);
                         return(
-                        <option key={lang} value = {lang}>
-                            {language}
+                        <option key={lang} value ={lang}>
+                            {DefaultLanguages.niceNames[languageIdx]}
                         </option>
                         )
-                    })}
+                    })
+                    }
                 </select>
             </Col>
             <Col xs={4} md={2}>
@@ -182,7 +178,7 @@ export default (props)=>{
             <Col xs={12} md={7}>
             <Card>
                 <AceEditor
-                    mode={language === "cpp" ? "c_cpp" : language}
+                    mode={DefaultLanguages.getAceName(language)}
                     theme={theme}
                     focus={false}
                     onChange={handleSolution}
