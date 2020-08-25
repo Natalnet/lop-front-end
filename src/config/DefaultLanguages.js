@@ -16,7 +16,13 @@ const languageObject = {
 */
 const DefaultLanguages = {
     list : [],
-    niceNames : []
+    niceNames : [],
+    /*workaround since Ace editor uses cpp and c as the same name*/
+    getAceName : function (languageName){
+        if(languageName === "cpp" || languageName === 'c')
+            return "c_cpp"
+        return languageName;
+    }
 };
 
 //creating language names list
