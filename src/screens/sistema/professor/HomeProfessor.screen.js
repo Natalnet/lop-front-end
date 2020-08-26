@@ -7,10 +7,6 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
-import IconCPP from "../../../assets/icons/icons-cpp.svg";
-import IconPython from "../../../assets/icons/icons-python.svg";
-
-import IconJS from "../../../assets/icons/icons-javascript.svg";
 import { range } from "../../../util/auxiliaryFunctions.util";
 import Swal from "sweetalert2";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
@@ -22,6 +18,8 @@ import Col from "components/ui/grid/col.component";
 import api, { baseUrlBackend } from "../../../services/api";
 import socket from "socket.io-client";
 import Switch from "../../../components/ui/switch/switch.component";
+
+import SupportedLanguages from "config/SupportedLanguages"
 //import Shimmer from "react-shimmer-effect";
 
 /*const botaoV = {
@@ -326,17 +324,12 @@ export default class TurmasScreen extends Component {
                         <p>
                           <b>Linguagens: </b>
                           {turma.languages.map((language) => {
-                            const src = {
-                              cpp: IconCPP,
-                              javascript: IconJS,
-                              python: IconPython,
-                            };
                             return (
                               <img
                                 className="ml-2"
                                 width="25px"
                                 key={language}
-                                src={src[language]}
+                                src={SupportedLanguages[language].icon}
                                 alt={language}
                               />
                             );

@@ -8,6 +8,8 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import TemplateSistema from "components/templates/sistema.template";
 
+import SupportedLanguages from "config/SupportedLanguages"
+
 const botao = {
   marginTop: "10px",
   float: "right",
@@ -25,21 +27,16 @@ export default class NovasTurmasScreen extends Component {
     professoresSelecionados: [],
     loadingProfessores: true,
     linguagensSelecionadas: [],
-    linguagens: [
-      {
-        value: "javascript",
-        label: "JavaScript",
-      },
-      {
-        value: "cpp",
-        label: "C/C++",
-      },
-      {
-        value: "python",
-        label: "Python",
-      },
-    ],
+    linguagens: []
   };
+
+  constructor(){
+    super();
+    /*populate linguagens vector using the supported languages structure*/
+    for(var i=0; i<SupportedLanguages.list.length; i++)
+      this.state.linguagens.push({value: SupportedLanguages.list[i], label: SupportedLanguages.niceNames[i]})
+  }
+
   componentDidMount() {
     this.getProfessores();
     document.title = "Cadastro de turmas - Plataforma LOP";
