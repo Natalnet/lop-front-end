@@ -187,7 +187,8 @@ export default props => {
                                     <label htmlFor="ordem">Ordenar por:</label>
                                     <div className="selectgroup" style={{ display: 'flex', width: '100%' }}>
                                         <select id={"ordem"} defaultValue={sortBySelect} className="form-control" onChange={(e) => setSortBySelect(e.target.value)} style={{ cursor: "pointer" }}>
-                                            <option value={'createdAt'}>Data de criação</option>
+                                            <option value={''}>Aleatório</option>
+                                            {/* <option value={'createdAt'}>Data de criação</option> */}
                                             <option value={'title'}>Ordem alfabética</option>
                                             <option value={'difficulty'}>Dificuldade</option>
                                             {/*<option value={'isCorrect'}>Resolvidas por mim</option>
