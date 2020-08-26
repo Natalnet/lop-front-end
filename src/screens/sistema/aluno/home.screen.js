@@ -10,13 +10,12 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardOptions from "components/ui/card/cardOptions.component";
 import CardBody from "components/ui/card/cardBody.component";
 import CardFooter from "components/ui/card/cardFooter.component";
-import IconCPP from "../../../assets/icons/icons-cpp.svg";
-import IconPython from "../../../assets/icons/icons-python.svg";
-import IconJS from "../../../assets/icons/icons-javascript.svg";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import CardLoader from "components/ui/card/cardLoader.component";
 import profileImg from "../../../assets/perfil.png";
+
+import SupportedLanguages from "config/SupportedLanguages";
 
 export default class HomeAlunoScreen extends Component {
   constructor(props) {
@@ -145,17 +144,12 @@ export default class HomeAlunoScreen extends Component {
                       <p>
                         <b>Linguagens: </b>
                         {turma.languages.map((language) => {
-                          const src = {
-                            cpp: IconCPP,
-                            javascript: IconJS,
-                            python: IconPython,
-                          };
                           return (
                             <img
                               className="ml-2"
                               width="25px"
                               key={language}
-                              src={src[language]}
+                              src={SupportedLanguages[language].icon}
                               alt={language}
                             />
                           );
