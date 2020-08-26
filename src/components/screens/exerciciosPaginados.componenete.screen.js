@@ -188,7 +188,7 @@ export default props => {
                                     <div className="selectgroup" style={{ display: 'flex', width: '100%' }}>
                                         <select id={"ordem"} defaultValue={sortBySelect} className="form-control" onChange={(e) => setSortBySelect(e.target.value)} style={{ cursor: "pointer" }}>
                                             <option value={''}>Aleatório</option>
-                                            <option value={'createdAt'}>Data de criação</option>
+                                            {/* <option value={'createdAt'}>Data de criação</option> */}
                                             <option value={'title'}>Ordem alfabética</option>
                                             <option value={'difficulty'}>Dificuldade</option>
                                             {/*<option value={'isCorrect'}>Resolvidas por mim</option>
