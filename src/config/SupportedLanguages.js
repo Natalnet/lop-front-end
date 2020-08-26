@@ -1,12 +1,17 @@
+import js_icon from "assets/icons/icons-javascript.svg";
+import cpp_icon from "assets/icons/icons-cpp.svg";
+import c_icon from "assets/icons/icons-c.svg";
+import python_icon from "assets/icons/icons-python.svg";
+
 /*object representation,
- key : ["backend_name", "frontend_name"]
+ backend_name : { backendName: "backend_name", niceName: "frontend_name", icon: "path" }
  ADD NEW LANGUAGES HERE!!!
  */
 const LanguageObject = {
-    javascript: {backendName : "javascript", niceName: "JavaScript", icon : 'assets/icons/icons-javascript.svg'},
-    cpp : {backendName:"cpp" , niceName:"C++", icon : 'assets/icons/icons-c.svg'},
-    c : {backendName:"c", niceName:"C", icon : 'assets/icons/icons-c.svg'},
-    python : {backendName:"python", niceName:"Python", icon : 'assets/icons/icons-python.svg'},
+    javascript: {backendName : "javascript", niceName: "JavaScript", icon : js_icon},
+    cpp : {backendName:"cpp" , niceName:"C++", icon : cpp_icon},
+    c : {backendName:"c", niceName:"C", icon : c_icon},
+    python : {backendName:"python", niceName:"Python", icon : python_icon},
 };
 
 /*
