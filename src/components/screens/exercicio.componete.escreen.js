@@ -15,7 +15,7 @@ import CardOptions from "components/ui/card/cardOptions.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
-import DefaultLanguages from "config/SupportedLanguages";
+import SupportedLanguages from "config/SupportedLanguages";
 
 
 export default (props)=>{
@@ -23,7 +23,7 @@ export default (props)=>{
     const {language,theme,descriptionErro,solution,userDifficulty,loadDifficulty,salvandoRascunho} = props;
     const {changeLanguage,changeTheme,handleSolution,handleDifficulty,submeter,salvaRascunho} = props;
     const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal'];
-    const languages = props.languages || DefaultLanguages.list;
+    const languages = props.languages || SupportedLanguages.list;
     // console.log('languages: ',languages)
     let tests = props.showAllTestCases?response:response.filter((t,i)=>i===0)
 
@@ -105,10 +105,10 @@ export default (props)=>{
                 <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
                 <select className="form-control" onChange={(e)=>changeLanguage(e)}>
                     {languages.map( lang =>{
-                        const languageIdx = DefaultLanguages.list.indexOf(lang);
+                        const languageIdx = SupportedLanguages.list.indexOf(lang);
                         return(
                         <option key={lang} value ={lang}>
-                            {DefaultLanguages.niceNames[languageIdx]}
+                            {SupportedLanguages.niceNames[languageIdx]}
                         </option>
                         )
                     })

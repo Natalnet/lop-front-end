@@ -1,10 +1,10 @@
 import React,{Fragment} from 'react'
 
-import DefaultLanguages from "config/SupportedLanguages"
+import SupportedLanguages from "config/SupportedLanguages"
 
 export default (props) =>{
 	let {changeLanguage,changeTheme,executar,loadingReponse,languages} = props;
-  languages = languages || DefaultLanguages.list;
+  languages = languages || SupportedLanguages.list;
   const themes = ['monokai','github','tomorrow','kuroir','twilight','xcode','textmate','solarized_dark','solarized_light','terminal'];
   return(
     <Fragment>
@@ -12,9 +12,9 @@ export default (props) =>{
       <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
         <select className="form-control" onChange={changeLanguage}>
           {languages.map(lang=>{
-            const languageIdx = DefaultLanguages.list.indexOf(lang);
+            const languageIdx = SupportedLanguages.list.indexOf(lang);
             return(
-              <option key={lang} value = {lang}>{DefaultLanguages.niceNames[languageIdx]}</option>
+              <option key={lang} value = {lang}>{SupportedLanguages.niceNames[languageIdx]}</option>
             )
           })}
         </select>

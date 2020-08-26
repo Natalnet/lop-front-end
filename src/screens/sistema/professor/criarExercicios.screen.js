@@ -22,7 +22,7 @@ import FormSelect2 from "../../../components/ui/forms/formSelect2.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
-import DefaultLanguages from "config/SupportedLanguages";
+import SupportedLanguages from "config/SupportedLanguages";
 
 export default class Editor extends Component {
   constructor(props) {
@@ -31,7 +31,7 @@ export default class Editor extends Component {
       editor: "",
       editorRes: "",
       descriptionErro: "",
-      language: DefaultLanguages.list[0],
+      language: SupportedLanguages.list[0],
       theme: "monokai",
       response: [],
       //katexDescription: "",
