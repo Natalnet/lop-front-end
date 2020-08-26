@@ -32,5 +32,5 @@ Object.values(LanguageObject).map( l => SupportedLanguages.niceNames.push(l.nice
 
 //adding the language object in the DefaultLanguages object
 Object.keys(LanguageObject).map( k => SupportedLanguages[k]=LanguageObject[k] );
-
+console.log('SupportedLanguages: ',SupportedLanguages)
 export default SupportedLanguages;
