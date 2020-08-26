@@ -8,6 +8,8 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import TemplateSistema from "components/templates/sistema.template";
 
+import SupportedLanguages from "config/SupportedLanguages";
+
 const botao = {
   marginTop: "10px",
   float: "right",
@@ -24,21 +26,15 @@ export default class NovasTurmasScreen extends Component {
     todosProfessores: [],
     loadingInfoTurma: true,
     linguagensSelecionadas: [],
-    linguagens: [
-      {
-        value: "javascript",
-        label: "JavaScript",
-      },
-      {
-        value: "cpp",
-        label: "C/C++",
-      },
-      {
-        value: "python",
-        label: "Python",
-      },
-    ],
+    linguagens: []
   };
+
+  constructor(){
+    super();
+    /*populate linguagens vector using the supported languages structure*/
+    for(var i=0; i<SupportedLanguages.list.length; i++)
+      this.state.linguagens.push({value: SupportedLanguages.list[i], label: SupportedLanguages.niceNames[i]})
+  }
   async componentDidMount() {
     document.title = "Editar Turma - professor";
     await this.getProfessores();
@@ -64,18 +60,15 @@ export default class NovasTurmasScreen extends Component {
               label: p.email,
             };
           }),
-        linguagensSelecionadas: response.data.languages.map((language) => {
-          return {
-            value: language,
-            label:
-              language === "javascript"
-                ? "JavaScript"
-                : language === "cpp"
-                ? "C/C++"
-                : language = "python"
-                ? "Python"
-                : "",
-          };
+        linguagensSelecionadas: response.data.languages.map( (language) => {
+          if (SupportedLanguages.list.indexOf(language) !== -1){
+            return {
+              value: language,
+              label: SupportedLanguages[language].niceName,
+            };
+          }
+          else /*fail safe to avoid old backend information to crash the frontend*/
+            return {value:language, label:language+"-deprecated"}
         }),
         loadingInfoTurma: false,
       });
