@@ -14,7 +14,7 @@ import CardOptions from "components/ui/card/cardOptions.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
-import DefaultLanguages from "config/DefaultLanguages";
+import DefaultLanguages from "config/SupportedLanguages";
 import AceEditorWrapper from "components/templates/aceEditorWrapper.template"
 
 

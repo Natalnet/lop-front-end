@@ -1,6 +1,6 @@
 import React,{Fragment} from 'react'
 
-import DefaultLanguages from "config/DefaultLanguages"
+import DefaultLanguages from "config/SupportedLanguages"
 
 export default (props) =>{
 	let {changeLanguage,changeTheme,executar,loadingReponse,languages} = props;
