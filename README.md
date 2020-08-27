@@ -39,10 +39,11 @@ import r_icon from 'https://commons.wikimedia.org/wiki/File:R_logo.svg'
 LanguageObject {
 ...
 python...
-r : {  backendName: "r", nice name: "R", icone: r_icon}
+r : {  backendName: "r", niceName: "R", icon: r_icon}
 };
 ```
 
+No front end, quando precisar acessar a lista de nomes do backend das linguagens, use ```SupportedLanguages.list```, depois de importar o SupportedLanguages.js. Caso precise acessar os nomes para exibição use ```SupportedLanguages.niceNames```. Ex: na versão atual, SupportedLanguages.list == ["javascript", "cpp", "c", "python"] e SupportedLanguages.niceNames == ["JavaScript", "C++", "C", "Python"].
 
 ### Colaboradores
 <hr>
