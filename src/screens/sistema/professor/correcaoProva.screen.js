@@ -10,6 +10,9 @@ import Swal from "sweetalert2";
 import apiCompiler from "../../../services/apiCompiler";
 import { Link } from "react-router-dom";
 
+import SupportedLanguages from "config/SupportedLanguages"
+
+
 export default class AlunosProvas extends Component {
   constructor(props) {
     super(props);
@@ -43,7 +46,7 @@ export default class AlunosProvas extends Component {
       editor: "",
       editorRes: "",
       descriptionErro: "",
-      language: "javascript",
+      language: SupportedLanguages.list[0],
       theme: "monokai",
       katexDescription: "",
       status: "PÚBLICA",
