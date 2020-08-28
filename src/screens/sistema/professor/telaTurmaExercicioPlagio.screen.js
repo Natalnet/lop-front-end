@@ -34,6 +34,7 @@ export default props=> {
             try {
               const response = await api.get(`/class/${id}`);
               setTurma(response.data);
+              setLanguage(response.data.languages[0]);
               setLoadingInfoTurma(false);
             } catch (err) {
                 setLoadingInfoTurma(false);
