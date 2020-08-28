@@ -20,6 +20,30 @@ Atualmente só existem poucas rotas de testes que são:
 `/sistema/aluno`=> Mostra página base do sistema.<br>
 `*` => Qualquer outra rota mostra página de erro 404.<br>
 
+### Adicionando novas linguagens
+<hr>
+
+A partir do updade de 26/08/2020, novas linguagens são adicionadas no arquivo src/config/SupportedLanguages.js, para adicionar uma linguagem são necessários 3 elementos:
+
+1. O nome da linguagem como conhecido no backend, backendName ex: (cpp, para c++)
+2. O nome da linguagem como deve ser mostrado nas listas e outras entradas do frontend, niceName ex: (C++ para cpp, ou Python para python)
+3. Um ícone para a linguagem no formato svg que é usado em lugares onde tal icone é necessário
+
+As mudanças no arquivo SupportedLanguages.js são refletidas em todo frontend, mas devem ser incorporadas nos backends individualmente, segue abaixo um exemplo para adicionar a linguagem R ao frontend. backendName: "r", nice name: "R", icone: https://commons.wikimedia.org/wiki/File:R_logo.svg. De preferencia adicione os ícones aos assets.
+
+```js
+...
+import r_icon from 'https://commons.wikimedia.org/wiki/File:R_logo.svg'
+...
+
+LanguageObject {
+...
+python...
+r : {  backendName: "r", niceName: "R", icon: r_icon}
+};
+```
+
+No front end, quando precisar acessar a lista de nomes do backend das linguagens, use ```SupportedLanguages.list```, depois de importar o SupportedLanguages.js. Caso precise acessar os nomes para exibição use ```SupportedLanguages.niceNames```. Ex: na versão atual, SupportedLanguages.list == ["javascript", "cpp", "c", "python"] e SupportedLanguages.niceNames == ["JavaScript", "C++", "C", "Python"].
 
 ### Colaboradores
 <hr>
