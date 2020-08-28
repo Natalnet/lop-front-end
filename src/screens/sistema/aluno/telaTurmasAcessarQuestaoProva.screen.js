@@ -12,6 +12,8 @@ import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import ExercicioScreen from "components/screens/exercicio.componete.escreen";
 
+import SupportedLanguages from "config/SupportedLanguages"
+
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts
   // (https://github.com/Microsoft/monaco-editor/blob/master/monaco.d.ts):
@@ -21,7 +23,7 @@ export default class Editor extends Component {
       editor: "",
       editorRes: "",
       descriptionErro: "",
-      language: "javascript",
+      language: SupportedLanguages.list[0],
       theme: "monokai",
       response: [],
       katexDescription: "",
@@ -58,6 +60,8 @@ export default class Editor extends Component {
     this.getProvasRealTime();
     this.salvaAcesso();
 
+    this.setState({ language: this.state.turma.languages[0] });
+    
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
     this.time = setInterval(

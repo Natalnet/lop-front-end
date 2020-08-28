@@ -10,6 +10,8 @@ import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import ExercicioScreen from "components/screens/exercicio.componete.escreen";
 
+import SupportedLanguages from "config/SupportedLanguages"
+
 export default class Editor extends Component {
   constructor(props) {
     super(props);
@@ -17,7 +19,7 @@ export default class Editor extends Component {
       editor: "",
       editorRes: "",
       descriptionErro: "",
-      language: "javascript",
+      language: SupportedLanguages.list[0],
       theme: "monokai",
       response: [],
       katexDescription: "",
