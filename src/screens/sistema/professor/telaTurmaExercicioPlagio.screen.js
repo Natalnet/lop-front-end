@@ -9,12 +9,14 @@ import moment from "moment";
 //import io from "socket.io-client";
 import Swal from "sweetalert2";
 
+import SupportedLanguages from "config/SupportedLanguages"
+
 export default props=> {
     const [loadingInfoTurma, setLoadingInfoTurma] = useState(false);
     const [, setLoadingPage] = useState(true);
     const [loadingPlagiarisms, setLoadingPlagiarisms] = useState(false);
     const [loadUserSubmissionsByList, setLoadUserSubmissionsByList] = useState(false);
-    const [language,setLanguage] = useState("javascript")
+    const [language,setLanguage] = useState(SupportedLanguages.list[0])
     const [loadUrl, setLoadUrl] = useState(false);
     const [turma, setTurma] = useState("");
     const [lista, setLista] = useState(null);
@@ -35,6 +37,7 @@ export default props=> {
               const response = await api.get(`/class/${id}`);
               setTurma(response.data);
               setLanguage(response.data.languages[0]);
+              //console.log("turma %j", turma)
               setLoadingInfoTurma(false);
             } catch (err) {
                 setLoadingInfoTurma(false);
@@ -208,7 +211,7 @@ export default props=> {
                                 </Link>
                                 <i className="fa fa-angle-left ml-2 mr-2" /> 
                                 <span> {question && question.title}</span>
-                        </>
+                            </>
                         ) : (
                         <div
                             style={{
@@ -245,18 +248,31 @@ export default props=> {
             </Row>
             <Row  mb={15}>
                 <Col xs={3}>
-                    <label htmlFor="lenguage">&nbsp; Linguagem a ser verificada o plágio: </label>
-                    <select 
-                        id="lenguage" 
-                        className="form-control"
-                        defaultValue={language}
-                        onChange={ e=> setLanguage(e.target.value)}
-                        disabled={loadUrl}
-                    >
-                        <option value="javascript">JavaScript</option>
-                        <option value="cc">C/C++</option>
-                    </select>
-                    
+                    { loadingInfoTurma ? 
+                        (
+                        <div className="loader" style={{ margin: "0px auto" }}></div>) 
+                        :
+                        (
+                            <>
+                            <label htmlFor="lenguage">&nbsp; Linguagem a ser verificada o plágio: </label>
+                            <select 
+                                id="lenguage" 
+                                className="form-control"
+                                defaultValue={turma && turma.languages[0]}
+                                onChange={ e=> setLanguage(e.target.value)}
+                                disabled={loadUrl}>
+
+                                {turma && turma.languages.map( (lang) => {
+                                    const languageIdx = SupportedLanguages.list.indexOf(lang);
+                                    return(
+                                    <option key={lang} value={lang}>{SupportedLanguages.niceNames[languageIdx]}</option>
+                                    )
+                                })
+                                }
+                            </select>
+                            </>
+                        )
+                    }
                 </Col>
                 <Col xs={3}>
                     <label>&nbsp;{""} </label>

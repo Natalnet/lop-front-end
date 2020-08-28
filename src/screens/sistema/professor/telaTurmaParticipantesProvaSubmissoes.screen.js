@@ -10,12 +10,7 @@ import SwalModal from "components/ui/modal/swalModal.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import "katex/dist/katex.min.css";
-import AceEditor from "react-ace";
-import "brace/mode/c_cpp";
-import "brace/mode/python";
-
-import "brace/mode/javascript";
-import "brace/theme/monokai";
+import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
 
 const lista = {
   backgroundColor: "white",
@@ -317,10 +312,8 @@ export default class HomesubmissoesScreen extends Component {
         >
           <div className="row">
             <div className="col-12 offset-md-2 col-md-8 text-center">
-              <AceEditor
-                mode={
-                  submissao.language === "cpp" ? "c_cpp" : submissao.language
-                }
+              <AceEditorWrapper
+                mode={submissao.language}
                 readOnly={true}
                 width={"100%"}
                 focus={false}

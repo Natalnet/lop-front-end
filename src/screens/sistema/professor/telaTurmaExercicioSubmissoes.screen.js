@@ -17,13 +17,7 @@ import { Load } from "components/ui/load";
 import moment from "moment";
 import { BlockMath } from "react-katex";
 //import HTMLFormat from "components/ui/htmlFormat";
-import AceEditor from "react-ace";
-
-import "brace/mode/c_cpp";
-import "brace/mode/python";
-
-import "brace/mode/javascript";
-import "brace/theme/monokai";
+import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
 
 export default class telaTurmaExercicioSubmissoes extends Component {
     constructor(props) {
@@ -253,10 +247,8 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                                         </Row>
                                     </CardBody>
                                     <CardFooter>
-                                    <AceEditor
-                                        mode={
-                                            user.lastSubmission.language === "cpp" ? "c_cpp" : user.lastSubmission.language
-                                        }
+                                    <AceEditorWrapper
+                                        mode={user.lastSubmission.language}
                                         readOnly={true}
                                         width={"100%"}
                                         focus={false}
