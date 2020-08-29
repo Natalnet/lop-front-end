@@ -22,7 +22,9 @@ import TelaTurmaSolicitacoes from "../screens/sistema/professor/telaTurmasSolici
 import TelaTurmaLista from "../screens/sistema/professor/telaTurmaListas.screen";
 import TurmaExercicio from "../screens/sistema/professor/telaTurmaExercicio.screen";
 import TurmaExercicioSubmissoes from "../screens/sistema/professor/telaTurmaExercicioSubmissoes.screen";
+import TurmaExercicioProvaSubmissoes from "../screens/sistema/professor/telaTurmaExercicioProvaSubmissoes.screen";
 import TurmaExercicioPlagio from "../screens/sistema/professor/telaTurmaExercicioPlagio.screen";
+import TurmaExercicioProvaPlagio from "../screens/sistema/professor/telaTurmaExercicioProvaPlagio.screen";
 import TurmaExercicios from "../screens/sistema/professor/telaTurmaExercicios.screen";
 import TelaTurmasDashboard from "../screens/sistema/professor/telaTurmasDashboard.screen";
 import TelaTurmasSubmissoes from "../screens/sistema/professor/telaTurmasSubmissoes.screen";
@@ -130,8 +132,20 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
+    path: "/professor/turma/:id/prova/:idTest/exercicio/:idExercicio/submissoes",
+    component: TurmaExercicioProvaSubmissoes,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
     path: "/professor/turma/:id/lista/:idLista/exercicio/:idExercicio/submissoes/plagio",
     component: TurmaExercicioPlagio,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/turma/:id/prova/:idTest/exercicio/:idQuestion/submissoes/plagio",
+    component: TurmaExercicioProvaPlagio,
     private: true,
     perfil: "PROFESSOR",
   },

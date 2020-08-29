@@ -162,7 +162,7 @@ export default props =>{
                                                 Mais
                                             </span>
                                             <div className="dropdown-menu dropdown-menu-demo">
-                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}/submissoes`}>
+                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/exercicio/${question.id}/submissoes`}>
                                                     {/* <button
                                                         className="btn btn-primary mr-2"
                                                         style={{ float: "right" }}
@@ -171,7 +171,7 @@ export default props =>{
                                                         Ver última submissão dos alunos 
                                                     {/* </button> */}
                                                 </Link>
-                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}/submissoes/plagio`}>
+                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/exercicio/${question.id}/submissoes/plagio`}>
                                                     {/* <i className="fa fa-alert-triangle mr-2" /> */}
                                                     Verificar Plágios
                                                 </Link>

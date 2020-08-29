@@ -15,20 +15,20 @@ export default props => {
     const [loadingInfoTurma, setLoadingInfoTurma] = useState(false);
     const [, setLoadingPage] = useState(true);
     const [loadingPlagiarisms, setLoadingPlagiarisms] = useState(false);
-    const [loadUserSubmissionsByList, setLoadUserSubmissionsByList] = useState(false);
+    const [loadUserSubmissionsByTest, setLoadUserSubmissionsByTest] = useState(false);
     const [mossLanguage, setMossLanguage] = useState(SupportedLanguages.mossNames[0]);
     const [language, setLanguage] = useState(SupportedLanguages.list[0]);
     const [loadUrl, setLoadUrl] = useState(false);
     const [turma, setTurma] = useState("");
-    const [lista, setLista] = useState(null);
+    const [test, setTest] = useState(null);
     const [plagiarisms, setPlagiarisms] = useState([]);
     const history = useHistory();
 
     //const socket = useMemo(()=> io.connect(baseUrlBackend) ,[])
 
     document.title = useMemo(() =>
-        `${turma && turma.name} - ${lista && lista.title}`
-        , [turma, lista]);
+        `${turma && turma.name} - ${test && test.title}`
+        , [turma, test]);
 
 
     useEffect(() => {
@@ -54,8 +54,8 @@ export default props => {
     }, [])
 
     // useEffect(()=>{
-    //     const {id, idLista, idExercicio} = props.match.params;
-    //     socket.emit('connectRoonClass', `${idLista}-${id}-${idExercicio}`);
+    //     const {id, idTest, idQuestion} = props.match.params;
+    //     socket.emit('connectRoonClass', `${idTest}-${id}-${idQuestion}`);
     //     socket.on("urlPlagiarism", ({moss_url, err, createdAt}) =>{
 
     //         if(moss_url){
@@ -75,33 +75,33 @@ export default props => {
     // },[])
 
     useEffect(() => {
-        getUserSubmissionsByList(props.match.params.idExercicio);
+        getUserSubmissionsByTest(props.match.params.idQuestion);
     }, [])
 
     const question = useMemo(() =>
-        lista && lista.questions.find(q => q.id === props.match.params.idExercicio)
-        , [lista]);
+        test && test.questions.find(q => q.id === props.match.params.idQuestion)
+        , [test]);
 
-    const getUserSubmissionsByList = useCallback(async (idExercicio) => {
-        setLoadUserSubmissionsByList(true);
-        const { id, idLista } = props.match.params;
+    const getUserSubmissionsByTest = useCallback(async (idQuestion) => {
+        setLoadUserSubmissionsByTest(true);
+        const { id, idTest } = props.match.params;
         try {
-            const response = await api.get(`/listQuestion/${idLista}/class/${id}/question/${idExercicio}`);
+            const response = await api.get(`/test/${idTest}/class/${id}/question/${idQuestion}`);
             //console.log('reponse:', response.data);
-            setLista(response.data.list);
+            setTest(response.data.test);
             setLoadingPage(false);
         }
         catch (err) {
             console.log(err);
             setLoadingPage(false);
         }
-        setLoadUserSubmissionsByList(false);
+        setLoadUserSubmissionsByTest(false);
     }, []);
 
     const getUrlPlagiarism = useCallback(async () => {
-        const { id, idLista } = props.match.params;
+        const { id, idTest } = props.match.params;
         const request = {
-            idList: idLista,
+            idTest: idTest,
             idClass: id,
             moss_language: mossLanguage,
             language,
@@ -109,7 +109,7 @@ export default props => {
         }
         try {
             setLoadUrl(true);
-            const response = await api.post('/plagiarism/list', request);
+            const response = await api.post('/plagiarism/test', request);
             Swal.fire({
                 type: "success",
                 title: response.data.msg,
@@ -124,11 +124,11 @@ export default props => {
         }
         setLoadUrl(false);
 
-    }, [lista, question, mossLanguage])
+    }, [test, question, mossLanguage])
 
     const handleQuestion = useCallback((url, idQuestion) => {
         history.push(url);
-        getUserSubmissionsByList(idQuestion);
+        getUserSubmissionsByTest(idQuestion);
     }, [])
 
     const handleLanguage = useCallback(e => {
@@ -145,27 +145,27 @@ export default props => {
     useEffect(() => {
 
         // const getPlagiarisms = async ()=>{
-        //     const {id, idLista} = props.match.params;
-        //     const query = `?idList=${idLista}&idClass=${id}&idQuestion=${question.id}`
+        //     const {id, idTest} = props.match.params;
+        //     const query = `?idTest=${idTest}&idClass=${id}&idQuestion=${question.id}`
         //     try{
-        //         const response = await api.get(`/plagiarism/list${query}`);
+        //         const response = await api.get(`/plagiarism/test${query}`);
         //         //console.log('plagiarism: ',response.data)
         //         setPlagiarisms(response.data);
         //     }
         //     catch(err){
 
         //     }
-        //     setLoadUserSubmissionsByList(false);
+        //     setLoadUserSubmissionsByTest(false);
         // }
         question && getPlagiarisms(question.id)
     }, [question])
 
     const getPlagiarisms = useCallback(async (idQuestion) => {
-        const { id, idLista } = props.match.params;
-        const query = `?idList=${idLista}&idClass=${id}&idQuestion=${idQuestion}`;
+        const { id, idTest } = props.match.params;
+        const query = `?idTest=${idTest}&idClass=${id}&idQuestion=${idQuestion}`;
         setLoadingPlagiarisms(true);
         try {
-            const response = await api.get(`/plagiarism/list${query}`);
+            const response = await api.get(`/plagiarism/test${query}`);
             //console.log('plagiarism: ',response.data)
             setPlagiarisms(response.data);
         }
@@ -180,8 +180,8 @@ export default props => {
     //         socket && socket.disconnect();
     //         socket.connect(baseUrlBackend);
     //         socket = io.connect(baseUrlBackend);
-    //         const {id, idLista} = props.match.params;
-    //         socket.emit('connectRoonClass', `${idLista}-${id}-${question.id}`);
+    //         const {id, idTest} = props.match.params;
+    //         socket.emit('connectRoonClass', `${idTest}-${id}-${question.id}`);
     //         socket.on("urlPlagiarism", ({moss_url, err, createdAt}) =>{
     //             console.log('socket response->', moss_url)
     //             if(moss_url){
@@ -200,7 +200,7 @@ export default props => {
     // },[question])
 
     return (
-        <TemplateSistema {...props} active={"listas"} submenu={"telaTurmas"}>
+        <TemplateSistema {...props} active={"provas"} submenu={"telaTurmas"}>
             <Row mb={15}>
                 <Col xs={12}>
                     {loadingInfoTurma ? (
@@ -213,17 +213,17 @@ export default props => {
                                 <i className="fa fa-angle-left ml-2 mr-2" />
                                 <Link
 
-                                    to={`/professor/turma/${props.match.params.id}/listas`}
+                                    to={`/professor/turma/${props.match.params.id}/provas`}
                                 >
-                                    Listas
+                                    Provas
                         </Link>
                                 <i className="fa fa-angle-left ml-2 mr-2" />
-                                {lista ? (
+                                {test ? (
                                     <>
                                         <Link
-                                            to={`/professor/turma/${props.match.params.id}/lista/${props.match.params.idLista}`}
+                                            to={`/professor/turma/${props.match.params.id}/prova/${props.match.params.idTest}`}
                                         >
-                                            {lista.title}
+                                            {test.title}
                                         </Link>
                                         <i className="fa fa-angle-left ml-2 mr-2" />
                                         <span> {question && question.title}</span>
@@ -242,7 +242,7 @@ export default props => {
                         )}
                 </Col>
             </Row>
-            {loadUserSubmissionsByList
+            {loadUserSubmissionsByTest
                 ?
                 <Load />
                 :
@@ -250,11 +250,11 @@ export default props => {
                     <Row mb={15}>
                         <Col xs={12}>
                             {
-                                lista && lista.questions.map(question =>
+                                test && test.questions.map(question =>
                                     <button
                                         key={question.id}
-                                        onClick={() => handleQuestion(`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes/plagio`, question.id)}
-                                        className={`btn ${question.id === props.match.params.idExercicio ? 'btn-primary disabled' : 'btn-outline-primary'} mr-5 mb-5`}
+                                        onClick={() => handleQuestion(`/professor/turma/${props.match.params.id}/prova/${test.id}/exercicio/${question.id}/submissoes/plagio`, question.id)}
+                                        className={`btn ${question.id === props.match.params.idQuestion ? 'btn-primary disabled' : 'btn-outline-primary'} mr-5 mb-5`}
                                     >
                                         {question.title}
                                     </button>

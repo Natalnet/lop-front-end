@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
-
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { Pagination } from "components/ui/navs";
 
 import api from "../../../services/api";
@@ -306,10 +309,28 @@ export default class HomesubmissoesScreen extends Component {
 
         <SwalModal
           show={showModalInfo}
-          title={submissao && submissao.question.description}
           handleModal={this.handleCloseshowModalInfo.bind(this)}
-          width={"100%"}
+          width={"80%"}
         >
+          <>
+          <Row mb={15}>
+            <Col xs={12}>
+              <SunEditor 
+                lang="pt_br"
+                height="auto"
+                disable={true}
+                showToolbar={false}
+                // onChange={this.handleDescriptionChange.bind(this)}
+                setContents={submissao && submissao.question.description}
+                setDefaultStyle="font-size: 15px; text-align: justify"
+                setOptions={{
+                    toolbarContainer : '#toolbar_container',
+                    resizingBar : false,
+                    katex: katex,
+                }}
+              />
+            </Col>
+          </Row>
           <div className="row">
             <div className="col-12 offset-md-2 col-md-8 text-center">
               <AceEditorWrapper
@@ -326,6 +347,7 @@ export default class HomesubmissoesScreen extends Component {
               />
             </div>
           </div>
+          </>
         </SwalModal>
       </TemplateSistema>
     );
