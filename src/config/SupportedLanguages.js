@@ -4,14 +4,14 @@ import c_icon from "assets/icons/icons-c.svg";
 import python_icon from "assets/icons/icons-python.svg";
 
 /*object representation,
- backend_name : { backendName: "backend_name", niceName: "frontend_name", icon: "path" }
+ backend_name : { backendName: "backend_name", niceName: "frontend_name", mossName: "moss_name", icon: "path" }
  ADD NEW LANGUAGES HERE!!!
  */
 const LanguageObject = {
-    javascript: {backendName : "javascript", niceName: "JavaScript", icon : js_icon},
-    cpp : {backendName:"cpp" , niceName:"C++", icon : cpp_icon},
-    c : {backendName:"c", niceName:"C", icon : c_icon},
-    python : {backendName:"python", niceName:"Python", icon : python_icon},
+    javascript: {backendName : "javascript", niceName: "JavaScript", mossName: 'javascript', icon : js_icon},
+    cpp : {backendName:"cpp" , niceName:"C++", mossName: 'cc',  icon : cpp_icon},
+    c : {backendName:"c", niceName:"C", mossName: 'c',  icon : c_icon},
+    python : {backendName:"python", niceName:"Python", mossName: 'python', icon : python_icon},
 };
 
 /*
@@ -21,7 +21,8 @@ const LanguageObject = {
 */
 const SupportedLanguages = {
     list : [],
-    niceNames : []
+    niceNames : [],
+    mossNames: [],
 };
 
 //creating language names list
@@ -30,7 +31,11 @@ Object.values(LanguageObject).map( l => SupportedLanguages.list.push(l.backendNa
 //creating niceNames list
 Object.values(LanguageObject).map( l => SupportedLanguages.niceNames.push(l.niceName) );
 
+//creating mossNames list
+Object.values(LanguageObject).map( l => SupportedLanguages.mossNames.push(l.mossName) );
+
 //adding the language object in the DefaultLanguages object
 Object.keys(LanguageObject).map( k => SupportedLanguages[k]=LanguageObject[k] );
 
+//console.log(SupportedLanguages);
 export default SupportedLanguages;

@@ -4,7 +4,10 @@ import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 
 import { Pagination } from "components/ui/navs";
-
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import api, { baseUrlBackend } from "../../../services/api";
 import moment from "moment";
 import SwalModal from "components/ui/modal/swalModal.component";
@@ -40,7 +43,7 @@ export default class HomesubmissoesScreen extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
     this.getSubmissoes();
-    this.getSubmissoesRealTime();
+    //this.getSubmissoesRealTime();
 
     const { turma } = this.state;
     document.title = `${turma && turma.name} - Submissões`;
@@ -73,6 +76,7 @@ export default class HomesubmissoesScreen extends Component {
     }
   }
   async getSubmissoes(loading = true) {
+    console.log('obtendo submissçoes')
     const id = this.props.match.params.id;
     const {
       numPageAtual,
@@ -331,10 +335,28 @@ export default class HomesubmissoesScreen extends Component {
 
         <SwalModal
           show={showModalInfo}
-          title={submissao && submissao.question.description}
           handleModal={this.handleCloseshowModalInfo.bind(this)}
-          width={"100%"}
+          width={"80%"}
         >
+        <>
+        <Row mb={15}>
+            <Col xs={12}>
+              <SunEditor 
+                lang="pt_br"
+                height="auto"
+                disable={true}
+                showToolbar={false}
+                // onChange={this.handleDescriptionChange.bind(this)}
+                setContents={submissao && submissao.question.description}
+                setDefaultStyle="font-size: 15px; text-align: justify"
+                setOptions={{
+                    toolbarContainer : '#toolbar_container',
+                    resizingBar : false,
+                    katex: katex,
+                }}
+              />
+            </Col>
+          </Row>
           <Row>
             <div className="col-12 offset-md-2 col-md-8 text-center">
               <AceEditorWrapper
@@ -351,6 +373,7 @@ export default class HomesubmissoesScreen extends Component {
               />
             </div>
           </Row>
+          </>
         </SwalModal>
       </TemplateSistema>
     );

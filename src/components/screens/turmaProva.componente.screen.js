@@ -92,47 +92,97 @@ export default props =>{
                                 </CardBody>
                             </div>
                             <CardFooter>
-                                {(profile==="professor" && participant)?
-                                        <span>Submissões do aluno: {question.submissionsCount}</span>
-                                    :
-                                        <span>Suas submissões: {question.submissionsCount}</span>
-                                }
-                                {/* Suas submissões: {question.submissionsCount} */}
-                                {(profile==="aluno")?
-                                <Link to={`/aluno/turma/${props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}`}>
-                                    <button
-                                        className="btn btn-success mr-2"
-                                        style={{ float: "right" }}
+                                <div 
+                                    style={{
+                                        width:"100%",
+                                        height:"100%",
+                                        display:"flex",
+                                        alignItems:"center",
+                                        justifyContent:"space-between"
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            // width:"100%",
+                                            height:"100%",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            
+                                        }}
                                     >
-                                        Acessar <i className="fa fa-wpexplorer" />
-                                    </button>
-                                </Link>
-                                :
-                                (profile==="professor") && participant? (
-                                    <Link to={`/professor/turma/${props.match.params.id}/participantes/${user.id}/provas/${prova && prova.id}/exercicio/${question.id}`} >
-                                        <button
-                                            className="btn btn-success mr-2"
-                                            style={{ float: "right" }}
-                                        >
-                                            Ver submissões{" "}
-                                            <i className="fa fa-wpexplorer" />
-                                        </button>
-                                    </Link>
-                                )
-                                :
-                                (profile==="professor")?(
-                                    <Link to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}`}>
-                                    <button
-                                        className="btn btn-success mr-2"
-                                        style={{ float: "right" }}
+                                        {(profile==="professor" && participant)?
+                                                <span>Submissões do aluno: {question.submissionsCount}</span>
+                                            :
+                                                <span > Suas submissões: {question.submissionsCount}</span>
+                                        }
+                                    </div>
+                                    <div
+                                        style={{
+                                            // width:"100%",
+                                            height:"100%",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            
+                                        }}
                                     >
-                                        Acessar <i className="fa fa-wpexplorer" />
-                                    </button>
-                                </Link>
-                                )
-                                :
-                                    null
-                                }
+                                        {/* Suas submissões: {question.submissionsCount} */}
+                                        {(profile==="aluno")?
+                                        <Link to={`/aluno/turma/${props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}`}>
+                                            <button
+                                                className="btn btn-success mr-2"
+                                                style={{ float: "right" }}
+                                            >
+                                                Acessar <i className="fa fa-wpexplorer" />
+                                            </button>
+                                        </Link>
+                                        :
+                                        (profile==="professor") && participant? (
+                                            <Link to={`/professor/turma/${props.match.params.id}/participantes/${user.id}/provas/${prova && prova.id}/exercicio/${question.id}`} >
+                                                <button
+                                                    className="btn btn-success mr-2"
+                                                    style={{ float: "right" }}
+                                                >
+                                                    Ver submissões{" "}
+                                                    <i className="fa fa-wpexplorer" />
+                                                </button>
+                                            </Link>
+                                        )
+                                        :
+                                        (profile==="professor")?(
+                                            <>
+                                            <Link to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}`}>
+                                                <button
+                                                    className="btn btn-success mr-2"
+                                                    style={{ marginLeft: "auto" }}
+                                                >
+                                                    Acessar <i className="fa fa-wpexplorer" />
+                                                </button>
+                                            </Link>
+                                            <span className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Mais
+                                            </span>
+                                            <div className="dropdown-menu dropdown-menu-demo">
+                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/exercicio/${question.id}/submissoes`}>
+                                                    {/* <button
+                                                        className="btn btn-primary mr-2"
+                                                        style={{ float: "right" }}
+                                                    > */}
+                                                        {/* <i className="fa fa-wpexplorer mr-2" /> */}
+                                                        Ver última submissão dos alunos 
+                                                    {/* </button> */}
+                                                </Link>
+                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/exercicio/${question.id}/submissoes/plagio`}>
+                                                    {/* <i className="fa fa-alert-triangle mr-2" /> */}
+                                                    Verificar Plágios
+                                                </Link>
+                                            </div>
+                                            </>
+                                        )
+                                        :
+                                            null
+                                        }
+                                    </div>
+                                </div>
                             </CardFooter>
                             </Card>
                         </Col>
