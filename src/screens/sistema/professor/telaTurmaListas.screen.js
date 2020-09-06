@@ -4,6 +4,7 @@ import api from "../../../services/api";
 import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
+import moment from "moment";
 
 import { Pagination } from "components/ui/navs";
 
@@ -190,9 +191,10 @@ export default class Pagina extends Component {
     const idList = list.id;
     const query = `?idClass=${idClass}`;
     const { dateLimit, timeLimit } = this.state;
+ 
     if (dateLimit) {
       const request = {
-        submissionDeadline: `${dateLimit}-${timeLimit.replace(":", "-")}`,
+        submissionDeadline: moment(`${dateLimit} ${timeLimit}:59`).utc(),
       };
       try {
         this.setState({ loadingDateLimit: true });
