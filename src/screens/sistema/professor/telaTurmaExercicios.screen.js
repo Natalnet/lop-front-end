@@ -66,8 +66,6 @@ export default class Exercicios extends Component {
       let timeLimit = "";
       let dateLimit= "";
       if (lista.classHasListQuestion.submissionDeadline) {
-        // console.log('dateLimit: ',moment(lista.classHasListQuestion.submissionDeadline).local().format("YYYY-MM-DD"))//locsl
-        // console.log('dateLimit: ',moment(lista.classHasListQuestion.submissionDeadline).utc().format("YYYY-MM-DD"))//utc
         dateLimit = moment(lista.classHasListQuestion.submissionDeadline).format("YYYY-MM-DD");
         timeLimit = moment(lista.classHasListQuestion.submissionDeadline).format("HH:mm");
       }
