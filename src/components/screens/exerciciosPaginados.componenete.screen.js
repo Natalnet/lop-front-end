@@ -85,8 +85,10 @@ export default props => {
         query += `&sortBy=${sortBySelect}`;
         query += `&sort=${sortRadio}`;
         query += `&tag=${tagSelect || ''}`;
+        if(profile === "PROFESSOR")
+            query += `&status=PÚBLICA PRIVADA`;
         return query;
-    }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage]);
+    }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage, profile]);
 
     const saveQuerysInStorage = useCallback(() => {
         setFilteredTitleOrCodeInput(() => titleOrCodeInput);
