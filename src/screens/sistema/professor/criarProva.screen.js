@@ -52,7 +52,7 @@ export default class criarProvaScreen extends Component {
   }
 
   componentDidMount() {
-    document.title = "Criar lista - professor";
+    document.title = "Criar Prova - professor";
     this.getExercicios();
   }
 
@@ -81,8 +81,8 @@ export default class criarProvaScreen extends Component {
     e.preventDefault();
     const { title, password, showAllTestCases, selecionados } = this.state;
     let msg = "";
-    msg += !title ? "Informe o título da turma<br/>" : "";
-    msg += !password ? "Informe uma senha para prova<br/>" : "";
+    msg += !title ? "Informe o título da Prova<br/>" : "";
+    msg += !password ? "Informe uma senha para Prova<br/>" : "";
     msg +=
       selecionados.length === 0 ? "Escolha pelo menos um exercício<br/>" : "";
 
@@ -222,7 +222,7 @@ export default class criarProvaScreen extends Component {
         </Row>
         <Card>
           <CardBody>
-            <form onSubmit={(e) => this.criarProva(e)}>
+            <form onSubmit={(e) => this.criarProva(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
               <div className="form-row">
                 <div className="form-group col-12 col-md-4 ">
                   <label htmlFor="inputTitulo">Título</label>

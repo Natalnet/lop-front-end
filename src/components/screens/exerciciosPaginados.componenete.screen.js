@@ -73,8 +73,10 @@ export default props => {
         query += `&sortBy=${filteredSortBySelect}`;
         query += `&sort=${filteredSortRadio}`;
         query += `&tag=${filteredTagSelect || ''}`;
+        if(profile === "PROFESSOR")
+            query += `&status=PÚBLICA PRIVADA`;
         return query;
-    }, [filteredTitleOrCodeInput, filteredFieldSelect, filteredSortBySelect, filteredSortRadio, filteredTagSelect, filteredDocsPerPage]);
+    }, [filteredTitleOrCodeInput, filteredFieldSelect, filteredSortBySelect, filteredSortRadio, filteredTagSelect, filteredDocsPerPage, profile]);
 
     const getQuerys = useCallback(() => {
         let query = `include=${titleOrCodeInput.trim()}`;
