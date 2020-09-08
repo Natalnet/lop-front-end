@@ -206,7 +206,7 @@ export default class CriarListaScreen extends Component {
         </Row>
         <Card>
           <CardBody>
-            <form onSubmit={(e) => this.criarLista(e)}>
+            <form onSubmit={(e) => this.criarLista(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
               <div className="form-row">
                 <div className="form-group col-12">
                   <label htmlFor="inputTitulo">Título</label>
