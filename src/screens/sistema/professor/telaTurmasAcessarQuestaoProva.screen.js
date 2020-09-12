@@ -55,6 +55,7 @@ export default class Editor extends Component {
     this.getProva();
     await this.getExercicio();
     this.salvaAcesso();
+    this.setState({ language: this.state.turma.languages[0] });
 
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
