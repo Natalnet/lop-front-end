@@ -173,6 +173,7 @@ export default class HomeProvasScreen extends Component {
                   <th>Nome</th>
                   <th>Código</th>
                   <th>Senha</th>
+                  <th>Autor</th>
                   <th>Criado em</th>
                   <th className="text-center"></th>
                 </tr>
@@ -201,16 +202,32 @@ export default class HomeProvasScreen extends Component {
                           <td>{prova.title}</td>
                           <td>{prova.code}</td>
                           <td>{prova.password}</td>
+                          <td>{prova.author && prova.author.email}</td>
                           <td>{moment(prova.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                          <td className="text-center">
+                          <td className="d-inline-flex">
                             <button
-                              className="btn btn-primary float-right"
+                              className="btn btn-primary float-right mr-2"
                               onClick={() =>
                                 this.handleShowModalInfo(prova.questions)
                               }
                             >
                               <i className="fa fa-info" />
                             </button>
+                            {
+                              <Link to={`/professor/provas/${prova.id}/editar`}>
+                                <button
+                                  className={`btn btn-info ${
+                                    prova.author &&
+                                    sessionStorage.getItem("user.email") ===
+                                      prova.author.email
+                                      ? "inline-block"
+                                      : "d-none"
+                                  }`}
+                                >
+                                  <i className="fe fe-edit" />
+                                </button>
+                              </Link>
+                            }
                           </td>
                         </tr>
                       </Fragment>

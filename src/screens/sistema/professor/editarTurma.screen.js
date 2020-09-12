@@ -205,7 +205,7 @@ export default class NovasTurmasScreen extends Component {
               <CardTitle>Cadastro de Turmas</CardTitle>
             </CardHead>
             <CardBody>
-              <form onSubmit={(e) => this.atualizarTurma(e)}>
+              <form onSubmit={(e) => this.atualizarTurma(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
                 <div className="form-row">
                   <div className="form-group col-12">
                     <span className="alert-danger">{this.state.msg}</span>

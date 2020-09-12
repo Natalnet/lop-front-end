@@ -335,7 +335,7 @@ export default class Editor extends Component {
         </Row>
         <Card>
           <CardBody>
-            <form onSubmit={(e) => this.saveQuestion(e)}>
+            <form onSubmit={(e) => this.saveQuestion(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
               <div className="form-row">
                 <div className="form-group col-md-12">
                   <label>Título: </label>
