@@ -9,7 +9,7 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import moment from "moment";
-
+import {Load} from 'components/ui/load';
 import { Pagination } from "components/ui/navs";
 
 import SwalModal from "components/ui/modal/swalModal.component";
@@ -22,7 +22,6 @@ import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-//import HTMLFormat from "components/ui/htmlFormat";
 
 const botao2 = {
   float: "right",
@@ -31,7 +30,7 @@ const botao2 = {
   color: "white",
 };
 
-export default class CriarListaScreen extends Component {
+export default class CriarProvaScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,7 +39,10 @@ export default class CriarListaScreen extends Component {
       selecionados: [],
       fildFilter: "title",
       title: "",
-      loadingExercicios: false,
+      password: "",
+      showAllTestCases: false,
+      loadQuestions: false,
+      loadingTest: false,
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
@@ -49,35 +51,58 @@ export default class CriarListaScreen extends Component {
     };
   }
 
-  componentDidMount() {
-    document.title = "Criar lista - professor";
-    this.getExercicios();
+  async componentDidMount() {
+    document.title = "Criar prova - professor";
+    await this.getQuestionsByTest();
+    this.getQuestions();
   }
 
-  async getExercicios() {
+  async getQuestionsByTest() {
+    const { id } = this.props.match.params;
+    let query = `idTest=${id}`;
+    this.setState({ loadQuestions: true });
+    this.setState({loadingTest: true})
+    try {
+      const response = await api.get(`/question?${query}`);
+      console.log('test: ', response.data)
+      this.setState({
+        title: response.data.test.title,
+        selecionados: response.data.questions,
+        password: response.data.test.password,
+        showAllTestCases: response.data.test.showAllTestCases,
+        loadingTest: false
+      });
+    } catch (err) {
+      console.log(err);
+      this.setState({loadingTest: false})
+
+    }
+  }
+  async getQuestions() {
     let { contentInputSeach, numPageAtual, fildFilter } = this.state;
     let query = `?include=${contentInputSeach.trim()}`;
     query += `&field=${fildFilter}`;
 
     try {
-      this.setState({ loadingExercicios: true });
+      this.setState({ loadQuestions: true });
       const response = await api.get(`/question/page/${numPageAtual}${query}`);
       this.setState({
         exercicios: [...response.data.docs],
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
-        loadingExercicios: false,
+        loadQuestions: false,
       });
     } catch (err) {
-      this.setState({ loadingExercicios: false });
+      this.setState({ loadQuestions: false });
       console.log(err);
     }
   }
 
-  async criarLista(e) {
+  async editTest(e) {
     e.preventDefault();
-    const { title, selecionados } = this.state;
+    const { id } = this.props.match.params;
+    const { title, selecionados, password, showAllTestCases } = this.state;
     let msg = "";
     msg += !title ? "Informe o título da turma<br/>" : "";
     msg +=
@@ -85,7 +110,7 @@ export default class CriarListaScreen extends Component {
     if (msg) {
       Swal.fire({
         type: "error",
-        title: "Erro: Não foi possivel criar lista",
+        title: "Erro: Não foi possivel salvar prova",
         html: msg,
       });
       return null;
@@ -93,29 +118,33 @@ export default class CriarListaScreen extends Component {
     const requestInfo = {
       title,
       questions: selecionados.map((q) => q.id),
+      password,
+      showAllTestCases
+
     };
     try {
       Swal.fire({
-        title: "Criando lista",
+        title: "Editando prova",
         allowOutsideClick: false,
         allowEscapeKey: false,
         allowEnterKey: false,
       });
       Swal.showLoading();
-      await api.post("/listQuestion/store", requestInfo);
+      await api.put(`/test/${id}/update/questions`, requestInfo);
+      
       Swal.hideLoading();
       Swal.fire({
         type: "success",
-        title: "Lista criada com sucesso!",
+        title: "Prova editada com sucesso!",
       });
-      this.props.history.push("/professor/listas");
+      this.props.history.push("/professor/provas");
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
         type: "error",
-        title: "Erro: Não foi possivel criar lista",
+        title: "Erro: Não foi possivel salvar prova",
       });
-      this.setState({ msg: "Erro: Não foi possivel Criar a lista" });
+      this.setState({ msg: "Erro: Não foi possivel salvar a prova" });
     }
   }
   selecionar(questao) {
@@ -145,6 +174,13 @@ export default class CriarListaScreen extends Component {
   handleTitleChange(e) {
     this.setState({ title: e.target.value });
   }
+  handlePasswordChange(e) {
+    this.setState({ password: e.target.value });
+  }
+
+  handleshowAllTestCasesChange(e) {
+    this.setState({ showAllTestCases: e.target.value });
+  }
   handlePage(e, numPage) {
     e.preventDefault();
     //console.log(numPage);
@@ -152,14 +188,14 @@ export default class CriarListaScreen extends Component {
       {
         numPageAtual: numPage,
       },
-      () => this.getExercicios()
+      () => this.getQuestions()
     );
   }
   handleSelectfildFilter(e) {
     this.setState(
       {
         fildFilter: e.target.value,
-      } /*,()=>this.getExercicios()*/
+      } /*,()=>this.getQuestions()*/
     );
   }
 
@@ -167,64 +203,93 @@ export default class CriarListaScreen extends Component {
     this.setState(
       {
         contentInputSeach: e.target.value,
-      } /*,()=>this.getExercicios()*/
+      } /*,()=>this.getQuestions()*/
     );
   }
   filterSeash() {
-    this.getExercicios();
+    this.getQuestions();
   }
   clearContentInputSeach() {
     this.setState(
       {
         contentInputSeach: "",
       },
-      () => this.getExercicios()
+      () => this.getQuestions()
     );
   }
 
   render() {
     const {
-      loadingExercicios,
+      loadQuestions,
       contentInputSeach,
       numPageAtual,
       totalPages,
       selecionados,
       question,
       showModalInfo,
+      loadingTest
     } = this.state;
 
     return (
-      <TemplateSistema active="listas">
+      <TemplateSistema active="provas">
         <Row mb={15}>
           <Col xs={12}>
             <h5 style={{ margin: "0px" }}>
-              <Link to="/professor/listas">Listas</Link>
+              <Link to="/professor/provas">Provas</Link>
               <i className="fa fa-angle-left ml-2 mr-2" />
-              Criar lista
+              Editar prova
             </h5>
           </Col>
         </Row>
         <Card>
           <CardBody>
-            <form onSubmit={(e) => this.criarLista(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
+            {loadingTest?
+              <Load/>
+            :
+            <form onSubmit={(e) => this.editTest(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
               <div className="form-row">
-                <div className="form-group col-12">
+                <div className="form-group col-12 col-md-4 ">
                   <label htmlFor="inputTitulo">Título</label>
                   <input
                     id="inputTitulo"
                     type="text"
                     required
-                    value={this.state.name}
+                    value={this.state.title}
                     onChange={(e) => this.handleTitleChange(e)}
                     className="form-control"
-                    placeholder="Título da lista"
+                    placeholder="Título da prova:"
                   />
+                </div>
+                <div className="form-group col-12 col-md-4">
+                  <label htmlFor="inputSenha">Senha:</label>
+                  <input
+                    id="inputSenha"
+                    type="text"
+                    required
+                    value={this.state.password}
+                    onChange={(e) => this.handlePasswordChange(e)}
+                    className="form-control"
+                    placeholder="Senha para abrir a prova"
+                  />
+                </div>
+                <div className="form-group col-12 col-md-4">
+                  <label htmlFor="select">Casos de teste</label>
+                  <select
+                    id="select"
+                    defaultValue={this.state.showAllTestCases}
+                    onChange={(e) => this.handleshowAllTestCasesChange(e)}
+                    className="form-control"
+                  >
+                    <option value={false}>Mostrar apenas primeiro</option>
+                    <option value={true}>Mostrar todos</option>
+                  </select>
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group col-12">
                   <InputGroupo
-                    placeholder={`Perquise pelo nome ou código...`}
+                    placeholder={`Perquise...`}
+                    loading={loadingTest || loadQuestions}
                     value={contentInputSeach}
                     handleContentInputSeach={this.handleContentInputSeach.bind(
                       this
@@ -258,7 +323,7 @@ export default class CriarListaScreen extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {loadingExercicios ? (
+                      {loadQuestions ? (
                         <tr>
                           <td>
                             <div className="loader" />
@@ -277,7 +342,7 @@ export default class CriarListaScreen extends Component {
                           </td>
                         </tr>
                       ) : (
-                        this.state.exercicios.map((questao, index) => {
+                        this.state.exercicios.map((questao) => {
                           return (
                             <tr key={questao.id}>
                               <td>{questao.title}</td>
@@ -300,14 +365,14 @@ export default class CriarListaScreen extends Component {
                                   .includes(questao.id) ? (
                                   <button
                                     type="button"
-                                    className="float-right btn btn-indigo disabled"
+                                    className="float-right btn  btn-indigo disabled"
                                   >
                                     Selecionada
                                   </button>
                                 ) : (
                                   <button
                                     type="button"
-                                    className="float-right btn btn-primary"
+                                    className="float-right btn  btn-primary"
                                     onClick={(e) => this.selecionar(questao)}
                                   >
                                     Adicionar <i className="fe fe-file-plus" />
@@ -330,13 +395,13 @@ export default class CriarListaScreen extends Component {
                     onChange={this.handlePage.bind(this)} 
                     color="primary" 
                     size="large"
-                    disabled={loadingExercicios}
+                    disabled={loadQuestions}
                   />
                 </Col>
               </Row>
               <hr />
               <Row>
-                <div className="col-12 text-center">
+                <Col xs={12} textCenter>
                   <label>Selecionadas</label>
                   <table className="table table-hover">
                     <thead>
@@ -371,23 +436,24 @@ export default class CriarListaScreen extends Component {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </Col>
               </Row>
               <Row>
                 <Col xs={12} textCenter>
                   <button
                     type="submit"
                     className={`btn btn-primary float-right col-3 ${
-                      loadingExercicios ? "btn-loading" : ""
-                    }`}
-                    style={{ width: "100%" }}                    
+                      loadQuestions || loadingTest ? "btn-loading" : ""
+                    }`}                    
+                    style={{ width: "100%" }}
                   >
-                    Criar Lista
+                    Editar Prova
                   </button>
                 </Col>
               </Row>
             </form>
-          </CardBody>
+            }
+         </CardBody>
 
           <SwalModal
             show={showModalInfo}

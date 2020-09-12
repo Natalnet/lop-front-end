@@ -22,3 +22,4 @@ api.interceptors.request.use((config) => {
 export { baseUrlBackend };
 
 export default api;
+

@@ -9,4 +9,4 @@ const apiCompiler = axios.create({
 	baseURL: base_url
 })
 
-export default apiCompiler
+export default apiCompiler;

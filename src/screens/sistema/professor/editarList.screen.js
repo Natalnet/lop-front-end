@@ -9,9 +9,8 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import moment from "moment";
-
+import {Load} from 'components/ui/load';
 import { Pagination } from "components/ui/navs";
-
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
@@ -39,7 +38,8 @@ export default class CriarListaScreen extends Component {
       selecionados: [],
       fildFilter: "title",
       title: "",
-      loadingExercicios: false,
+      loadQuestions: false,
+      loadList: false,
       numPageAtual: 1,
       totalItens: 0,
       totalPages: 0,
@@ -49,7 +49,7 @@ export default class CriarListaScreen extends Component {
   }
 
   async componentDidMount() {
-    document.title = "Criar lista - professor";
+    document.title = "Editar lista - professor";
     await this.getQuestionsByList();
     this.getExercicios();
   }
@@ -57,15 +57,21 @@ export default class CriarListaScreen extends Component {
   async getQuestionsByList() {
     const { id } = this.props.match.params;
     let query = `idList=${id}`;
-    this.setState({ loadingExercicios: true });
+    this.setState({ 
+      loadQuestions: true ,
+      loadList: true
+    });
     try {
       const response = await api.get(`/question?${query}`);
       this.setState({
         title: response.data.list.title,
         selecionados: response.data.questions,
+        loadList: false
+
       });
     } catch (err) {
       console.log(err);
+      this.setState({loadList: false})
     }
   }
   async getExercicios() {
@@ -74,17 +80,17 @@ export default class CriarListaScreen extends Component {
     query += `&field=${fildFilter}`;
 
     try {
-      this.setState({ loadingExercicios: true });
+      this.setState({ loadQuestions: true });
       const response = await api.get(`/question/page/${numPageAtual}${query}`);
       this.setState({
         exercicios: [...response.data.docs],
         totalItens: response.data.total,
         totalPages: response.data.totalPages,
         numPageAtual: response.data.currentPage,
-        loadingExercicios: false,
+        loadQuestions: false,
       });
     } catch (err) {
-      this.setState({ loadingExercicios: false });
+      this.setState({ loadQuestions: false });
       console.log(err);
     }
   }
@@ -199,13 +205,14 @@ export default class CriarListaScreen extends Component {
 
   render() {
     const {
-      loadingExercicios,
+      loadQuestions,
       contentInputSeach,
       numPageAtual,
       totalPages,
       selecionados,
       question,
       showModalInfo,
+      loadList
     } = this.state;
 
     return (
@@ -221,7 +228,10 @@ export default class CriarListaScreen extends Component {
         </Row>
         <Card>
           <CardBody>
-            <form onSubmit={(e) => this.editarLista(e)}>
+            {loadList?
+            <Load/>
+            :
+            <form onSubmit={(e) => this.editarLista(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
               <div className="form-row">
                 <div className="form-group col-12">
                   <label htmlFor="inputTitulo">Título</label>
@@ -239,6 +249,8 @@ export default class CriarListaScreen extends Component {
               <div className="form-row">
                 <div className="form-group col-12">
                   <InputGroupo
+                    loading={loadList || loadQuestions}
+
                     placeholder={`Perquise pelo nome ou código...`}
                     value={contentInputSeach}
                     handleContentInputSeach={this.handleContentInputSeach.bind(
@@ -273,7 +285,7 @@ export default class CriarListaScreen extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {loadingExercicios ? (
+                      {loadQuestions ? (
                         <tr>
                           <td>
                             <div className="loader" />
@@ -345,7 +357,7 @@ export default class CriarListaScreen extends Component {
                     onChange={this.handlePage.bind(this)} 
                     color="primary" 
                     size="large"
-                    disabled={loadingExercicios}
+                    disabled={loadQuestions}
                   />
                 </Col>
               </Row>
@@ -393,7 +405,7 @@ export default class CriarListaScreen extends Component {
                   <button
                     type="submit"
                     className={`btn btn-primary float-right col-3 ${
-                      loadingExercicios ? "btn-loading" : ""
+                      loadQuestions || loadList ? "btn-loading" : ""
                     }`}
                     style={{ width: "100%" }}
                   >
@@ -402,6 +414,7 @@ export default class CriarListaScreen extends Component {
                 </Col>
               </Row>
             </form>
+            }
           </CardBody>
 
           <SwalModal

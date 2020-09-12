@@ -8,6 +8,7 @@ import Exercicio from "../screens/sistema/professor/exercicio.screen";
 import AtualizarexercicioScreen from "screens/sistema/professor/exercicios.editar.screen";
 import CriarListaScreen from "screens/sistema/professor/criarLista.screen";
 import EditarListaScreen from "screens/sistema/professor/editarList.screen";
+import EditTestScreen from "screens/sistema/professor/editTest.screen";
 import CriarProvaScreen from "screens/sistema/professor/criarProva.screen";
 import CriarExercicioScreen from "screens/sistema/professor/criarExercicios.screen";
 import Erro401 from "../screens/erros/error401.screen";
@@ -87,6 +88,12 @@ const routes = [
   {
     path: "/professor/listas/:id/editar",
     component: EditarListaScreen,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/provas/:id/editar",
+    component: EditTestScreen,
     private: true,
     perfil: "PROFESSOR",
   },
