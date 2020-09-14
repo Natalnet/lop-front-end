@@ -52,7 +52,7 @@ export default class CriarProvaScreen extends Component {
   }
 
   async componentDidMount() {
-    document.title = "Criar prova - professor";
+    document.title = "Editar Prova - professor";
     await this.getQuestionsByTest();
     this.getQuestions();
   }
@@ -64,7 +64,6 @@ export default class CriarProvaScreen extends Component {
     this.setState({loadingTest: true})
     try {
       const response = await api.get(`/question?${query}`);
-      console.log('test: ', response.data)
       this.setState({
         title: response.data.test.title,
         selecionados: response.data.questions,
@@ -73,7 +72,6 @@ export default class CriarProvaScreen extends Component {
         loadingTest: false
       });
     } catch (err) {
-      console.log(err);
       this.setState({loadingTest: false})
 
     }
@@ -82,6 +80,7 @@ export default class CriarProvaScreen extends Component {
     let { contentInputSeach, numPageAtual, fildFilter } = this.state;
     let query = `?include=${contentInputSeach.trim()}`;
     query += `&field=${fildFilter}`;
+    query += `&status=PÚBLICA PRIVADA`;
 
     try {
       this.setState({ loadQuestions: true });
@@ -95,7 +94,6 @@ export default class CriarProvaScreen extends Component {
       });
     } catch (err) {
       this.setState({ loadQuestions: false });
-      console.log(err);
     }
   }
 
