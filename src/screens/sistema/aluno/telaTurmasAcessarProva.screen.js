@@ -60,11 +60,14 @@ export default class Exercicios extends Component {
       const password = sessionStorage.getItem(
         `passwordTest-${prova && prova.id}`
       );
-      const hashCode = `${generateHash(prova && prova.password)}-${
+      const hashCode = `${generateHash(prova && prova.classHasTest.password)}-${
         prova && prova.id
       }`;
+      // console.log('password: ',password)
+      // console.log('hashCode: ',hashCode)
+
       if (
-        (prova && prova.status === "FECHADA") ||
+        (prova && prova.classHasTest.status === "FECHADA") ||
         !password ||
         password !== hashCode
       ) {

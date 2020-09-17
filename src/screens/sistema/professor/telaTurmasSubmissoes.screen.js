@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import socket from "socket.io-client";
 import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
+import profileImg from "../../../assets/perfil.png";
 
 import { Pagination } from "components/ui/navs";
 import SunEditor from 'suneditor-react';
@@ -279,9 +280,7 @@ export default class HomesubmissoesScreen extends Component {
                           className="avatar d-block"
                           style={{
                             backgroundImage: `url(${
-                              submission.user.urlImage ||
-                              "https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"
-                            })`,
+                              submission.user.urlImage || profileImg})`,
                           }}
                         />
                       </td>

@@ -31,7 +31,7 @@ export default (props) => {
                     dateBegin={prova.classHasTest.createdAt}
                   />
                   <CardOptions>
-                    {profile === "aluno" && prova.status === "ABERTA" ? (
+                    {profile === "aluno" && prova.classHasTest.status === "ABERTA" ? (
                       <button
                         className="btn btn-success mr-2"
                         style={{ float: "right" }}

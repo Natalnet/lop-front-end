@@ -27,7 +27,7 @@ export default class Editor extends Component {
       theme: "monokai",
       response: [],
       katexDescription: "",
-      status: "PÚBLICA",
+      status: "ABERTA",
       difficulty: "Médio",
       solution: "",
       results: [],
@@ -122,10 +122,15 @@ export default class Editor extends Component {
     let query = `?idClass=${idClass}`;
     try {
       const response = await api.get(`/test/${idTest}${query}`);
+      //console.log('prova: ',response.data)
+
       const prova = response.data;
       const password = sessionStorage.getItem(`passwordTest-${prova.id}`);
-      const hashCode = `${generateHash(prova.password)}-${prova.id}`;
-      if (prova.status === "FECHADA" || !password || password !== hashCode) {
+      const hashCode = `${generateHash(prova.classHasTest.password)}-${prova.id}`;
+      // console.log('password: ',password)
+      // console.log('hashCode: ',hashCode)        
+    
+      if (prova.classHasTest.status === "FECHADA" || !password || password !== hashCode) {
         this.props.history.push(`/aluno/turma/${idClass}/provas`);
         return null;
       } else {
@@ -142,6 +147,7 @@ export default class Editor extends Component {
     this.io.emit("connectRoonClass", this.props.match.params.id);
 
     this.io.on("changeStatusTest", (reponse) => {
+      console.log('realtime:',reponse)
       this.setState({ status: reponse.status });
     });
   }
@@ -376,7 +382,7 @@ export default class Editor extends Component {
             {...this.state}
             {...this.props}
             languages={turma && turma.languages}
-            showAllTestCases={prova && prova.showAlltestCases}
+            showAllTestCases={prova && prova.classHasTest.showAllTestCases}
             changeLanguage={this.changeLanguage.bind(this)}
             changeTheme={this.changeTheme.bind(this)}
             handleSolution={this.handleSolution.bind(this)}
