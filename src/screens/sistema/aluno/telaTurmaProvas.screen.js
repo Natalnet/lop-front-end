@@ -118,7 +118,7 @@ export default class Provas extends Component {
           inputValidator: (value) => {
             if (!value) {
               return "Você precisa escrever algo!";
-            } else if (value !== prova.password) {
+            } else if (value !== prova.classHasTest.password) {
               return "Senha incorreta :(";
             }
           },
