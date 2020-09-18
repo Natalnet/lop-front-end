@@ -77,9 +77,48 @@ export default class Provas extends Component {
 
   async inserirProva(test) {
     const { id } = this.props.match.params;
+    this.handleCloseshowModalProvas();
+
+    //senha
+    let { value: password } = await Swal.fire({
+      title: `Informe uma senha de acesso à prova: ${test.title} nessa turma`,
+      confirmButtonText: "Ok",
+      cancelButtonText: "Cancelar",
+      input: "text",
+      showCancelButton: true,
+      inputValue: "", //valor inicial
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+      inputValidator: (value) => {
+        if (!value) {
+          return "Você precisa fornecer uma senha";
+        }
+      },
+    });
+    if (!password) return null;
+
+    //todos casos de teste
+    const { value:showAllTestCases } = await Swal.fire({
+      title: `
+        Quando o aluno estiver resolvendo, deseja que apareça todos os casos de teste?`,
+      //text: "You won't be able to revert this!",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sim, Todos!",
+      cancelButtonText: "Não, apenas o primeito!",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      allowEnterKey: false,
+    });
+    //console.log('showAllTestCases', showAllTestCases)
+  
     const request = {
       idClass: id,
       idTest: test.id,
+      password,
+      showAllTestCases
     };
     try {
       Swal.fire({
@@ -152,6 +191,7 @@ export default class Provas extends Component {
     try {
       this.setState({ loandingProvas: true });
       const response = await api.get(`/test${query}`);
+      //console.log('test: ',response.data)
       this.setState({
         provas: [...response.data],
         loandingProvas: false,

@@ -6,6 +6,7 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { Pagination } from "components/ui/navs";
+import profileImg from "../../../assets/perfil.png";
 
 import api from "../../../services/api";
 import moment from "moment";
@@ -254,8 +255,7 @@ export default class HomesubmissoesScreen extends Component {
                           className="avatar d-block"
                           style={{
                             backgroundImage: `url(${
-                              submission.user.urlImage ||
-                              "https://1.bp.blogspot.com/-xhJ5r3S5o18/WqGhLpgUzJI/AAAAAAAAJtA/KO7TYCxUQdwSt4aNDjozeSMDC5Dh-BDhQCLcBGAs/s1600/goku-instinto-superior-completo-torneio-do-poder-ep-129.jpg"
+                              submission.user.urlImage || profileImg                            
                             })`,
                           }}
                         />

@@ -172,7 +172,7 @@ export default class HomeProvasScreen extends Component {
                 <tr>
                   <th>Nome</th>
                   <th>Código</th>
-                  <th>Senha</th>
+                  {/* <th>Senha</th> */}
                   <th>Autor</th>
                   <th>Criado em</th>
                   <th className="text-center"></th>
@@ -201,7 +201,7 @@ export default class HomeProvasScreen extends Component {
                         <tr>
                           <td>{prova.title}</td>
                           <td>{prova.code}</td>
-                          <td>{prova.password}</td>
+                          {/* <td>{prova.password}</td> */}
                           <td>{prova.author && prova.author.email}</td>
                           <td>{moment(prova.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                           <td className="d-inline-flex">

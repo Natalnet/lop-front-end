@@ -39,8 +39,8 @@ export default class CriarProvaScreen extends Component {
       selecionados: [],
       fildFilter: "title",
       title: "",
-      password: "",
-      showAllTestCases: false,
+      //password: "",
+      //showAllTestCases: false,
       loadQuestions: false,
       loadingTest: false,
       numPageAtual: 1,
@@ -67,8 +67,8 @@ export default class CriarProvaScreen extends Component {
       this.setState({
         title: response.data.test.title,
         selecionados: response.data.questions,
-        password: response.data.test.password,
-        showAllTestCases: response.data.test.showAllTestCases,
+        //password: response.data.test.password,
+        //showAllTestCases: response.data.test.showAllTestCases,
         loadingTest: false
       });
     } catch (err) {
@@ -100,7 +100,7 @@ export default class CriarProvaScreen extends Component {
   async editTest(e) {
     e.preventDefault();
     const { id } = this.props.match.params;
-    const { title, selecionados, password, showAllTestCases } = this.state;
+    const { title, selecionados } = this.state;
     let msg = "";
     msg += !title ? "Informe o título da turma<br/>" : "";
     msg +=
@@ -116,8 +116,8 @@ export default class CriarProvaScreen extends Component {
     const requestInfo = {
       title,
       questions: selecionados.map((q) => q.id),
-      password,
-      showAllTestCases
+      //password,
+      //showAllTestCases
 
     };
     try {
@@ -172,13 +172,13 @@ export default class CriarProvaScreen extends Component {
   handleTitleChange(e) {
     this.setState({ title: e.target.value });
   }
-  handlePasswordChange(e) {
-    this.setState({ password: e.target.value });
-  }
+  // handlePasswordChange(e) {
+  //   this.setState({ password: e.target.value });
+  // }
 
-  handleshowAllTestCasesChange(e) {
-    this.setState({ showAllTestCases: e.target.value });
-  }
+  // handleshowAllTestCasesChange(e) {
+  //   this.setState({ showAllTestCases: e.target.value });
+  // }
   handlePage(e, numPage) {
     e.preventDefault();
     //console.log(numPage);
@@ -246,7 +246,7 @@ export default class CriarProvaScreen extends Component {
             :
             <form onSubmit={(e) => this.editTest(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
               <div className="form-row">
-                <div className="form-group col-12 col-md-4 ">
+                <div className="form-group col-12">
                   <label htmlFor="inputTitulo">Título</label>
                   <input
                     id="inputTitulo"
@@ -258,7 +258,7 @@ export default class CriarProvaScreen extends Component {
                     placeholder="Título da prova:"
                   />
                 </div>
-                <div className="form-group col-12 col-md-4">
+                {/* <div className="form-group col-12 col-md-4">
                   <label htmlFor="inputSenha">Senha:</label>
                   <input
                     id="inputSenha"
@@ -269,8 +269,8 @@ export default class CriarProvaScreen extends Component {
                     className="form-control"
                     placeholder="Senha para abrir a prova"
                   />
-                </div>
-                <div className="form-group col-12 col-md-4">
+                </div> */}
+                {/* <div className="form-group col-12 col-md-4">
                   <label htmlFor="select">Casos de teste</label>
                   <select
                     id="select"
@@ -281,7 +281,7 @@ export default class CriarProvaScreen extends Component {
                     <option value={false}>Mostrar apenas primeiro</option>
                     <option value={true}>Mostrar todos</option>
                   </select>
-                </div>
+                </div> */}
               </div>
               <div className="form-row">
                 <div className="form-group col-12">

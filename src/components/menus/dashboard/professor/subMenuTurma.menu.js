@@ -40,12 +40,12 @@ export default props =>{
                             Solicitações
                         </Link>
                         </li>
-                        {/* <li className="nav-item">
+                        <li className="nav-item">
                         <Link to={`/professor/turma/${id}/submissoes`} className={`nav-link ${active==='submissoes'?'active':''}`}>
                             <i className="fa fa-code" />
                             Submissões
                         </Link>
-                        </li> */}
+                        </li>
                         <li className="nav-item">
                         <Link to={`/professor/turma/${id}/dashboard`} className={`nav-link ${active==='dashboard'?'active':''}`}>
                             <i className="fa fa-pie-chart" />

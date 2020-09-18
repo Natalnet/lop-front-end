@@ -26,7 +26,6 @@ export default (props)=>{
     const languages = props.languages || SupportedLanguages.list;
     // console.log('languages: ',languages)
     let tests = props.showAllTestCases?response:response.filter((t,i)=>i===0)
-
     
     return(
     <>

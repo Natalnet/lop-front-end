@@ -40,8 +40,8 @@ export default class criarProvaScreen extends Component {
       selecionados: [],
       fildFilter: "title",
       title: "",
-      password: "",
-      showAllTestCases: false,
+      // password: "",
+      // showAllTestCases: false,
       loadingExercicios: false,
       numPageAtual: 1,
       totalItens: 0,
@@ -79,10 +79,10 @@ export default class criarProvaScreen extends Component {
 
   async criarProva(e) {
     e.preventDefault();
-    const { title, password, showAllTestCases, selecionados } = this.state;
+    const { title, /*password, showAllTestCases,*/ selecionados } = this.state;
     let msg = "";
     msg += !title ? "Informe o título da Prova<br/>" : "";
-    msg += !password ? "Informe uma senha para Prova<br/>" : "";
+    //msg += !password ? "Informe uma senha para Prova<br/>" : "";
     msg +=
       selecionados.length === 0 ? "Escolha pelo menos um exercício<br/>" : "";
 
@@ -96,9 +96,9 @@ export default class criarProvaScreen extends Component {
     }
     const requestInfo = {
       title,
-      password,
+      // password,
+      // showAllTestCases,
       questions: selecionados.map((q) => q.id),
-      showAllTestCases,
     };
     try {
       Swal.fire({
@@ -153,13 +153,13 @@ export default class criarProvaScreen extends Component {
     this.setState({ title: e.target.value });
   }
 
-  handlePasswordChange(e) {
-    this.setState({ password: e.target.value });
-  }
+  // handlePasswordChange(e) {
+  //   this.setState({ password: e.target.value });
+  // }
 
-  handleshowAllTestCasesChange(e) {
-    this.setState({ showAllTestCases: e.target.value });
-  }
+  // handleshowAllTestCasesChange(e) {
+  //   this.setState({ showAllTestCases: e.target.value });
+  // }
 
   handlePage(e, numPage) {
     e.preventDefault();
@@ -224,7 +224,7 @@ export default class criarProvaScreen extends Component {
           <CardBody>
             <form onSubmit={(e) => this.criarProva(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
               <div className="form-row">
-                <div className="form-group col-12 col-md-4 ">
+                <div className="form-group col-12">
                   <label htmlFor="inputTitulo">Título</label>
                   <input
                     id="inputTitulo"
@@ -236,7 +236,7 @@ export default class criarProvaScreen extends Component {
                     placeholder="Título da prova:"
                   />
                 </div>
-                <div className="form-group col-12 col-md-4">
+                {/* <div className="form-group col-12 col-md-4">
                   <label htmlFor="inputSenha">Senha:</label>
                   <input
                     id="inputSenha"
@@ -247,8 +247,8 @@ export default class criarProvaScreen extends Component {
                     className="form-control"
                     placeholder="Senha para abrir a prova"
                   />
-                </div>
-                <div className="form-group col-12 col-md-4">
+                </div> */}
+                {/* <div className="form-group col-12 col-md-4">
                   <label htmlFor="select">Casos de teste</label>
                   <select
                     id="select"
@@ -259,7 +259,7 @@ export default class criarProvaScreen extends Component {
                     <option value={false}>Mostrar apenas primeiro</option>
                     <option value={true}>Mostrar todos</option>
                   </select>
-                </div>
+                </div> */}
               </div>
               <div className="form-row">
                 <div className="form-group col-12">

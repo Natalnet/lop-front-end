@@ -64,6 +64,7 @@ export default class Provas extends Component {
     try {
       this.setState({ loandingListas: true });
       const response = await api.get(`/test${query}`);
+      //console.log('provas: ',response.data);
       this.setState({
         provas: [...response.data],
         loandingListas: false,
@@ -82,7 +83,7 @@ export default class Provas extends Component {
       provas = provas.map((prova) => {
         const provaCopia = JSON.parse(JSON.stringify(prova));
         if (reponse.idTest === prova.id) {
-          provaCopia.status = reponse.status;
+          provaCopia.classHasTest.status = reponse.status;
         }
         return provaCopia;
       });
@@ -102,7 +103,7 @@ export default class Provas extends Component {
   async acessar(prova) {
     const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}`;
     const password = sessionStorage.getItem(`passwordTest-${prova.id}`);
-    const hashCode = `${generateHash(prova.password)}-${prova.id}`;
+    const hashCode = `${generateHash(prova.classHasTest.password)}-${prova.id}`;
     try {
       if (password && password === hashCode) {
         this.props.history.push(url);
