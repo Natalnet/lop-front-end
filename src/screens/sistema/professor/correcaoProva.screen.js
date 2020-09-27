@@ -3,7 +3,7 @@ import TemplateSistema from "components/templates/sistema.template";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import api from "../../../services/api";
-import NavPagination from "components/ui/navs/navPaginationTestCorrection";
+//import NavPagination from "components/ui/navs/navPaginationTestCorrection";
 import CorrecaoQuestao from "components/screens/correcaoQuestoesProvas.componente.screen";
 //import CorrecaoQuestao from "components/screens/teste";
 import Swal from "sweetalert2";
@@ -38,11 +38,10 @@ export default class AlunosProvas extends Component {
       numPageAtual: this.props.match.params.idQuestion,
       totalItens: 0,
       totalPages: 0,
-      loadingInfoTurma: false,
-      turma: "",
+      loadingInfoTurma: true,
+      turma: {},
       timeConsuming: 0,
       char_change_number: 0,
-
       editor: "",
       editorRes: "",
       descriptionErro: "",
@@ -66,7 +65,7 @@ export default class AlunosProvas extends Component {
       corrected: false,
       answer: "",
       teacherNote: null,
-
+      loadingReponse: false,
       //SaveData
       comments: "",
       compilation_error: false,
@@ -81,18 +80,50 @@ export default class AlunosProvas extends Component {
   }
   async componentDidMount() {
     document.title = "Questoes Feitas do aluno";
+    await this.getInfoTurma();
+    this.setState({ language: this.state.turma.languages[0] });
     await this.getStudentQuestions();
-    await this.currentQuestion();
-    await this.initialSubmission();
+    this.setCurrentQuestion(this.props.match.params.idQuestion);
+    this.initialSubmission();
   }
 
-  async componentWillUnmount() {
-    window.removeEventListener("popstate", this.redirecionar);
+  // async componentWillUnmount() {
+  //   window.removeEventListener("popstate", this.redirecionar);
+  // }
+
+  async getInfoTurma() {
+    const id = this.props.match.params.id;
+    const { myClasses } = this.state;
+    if (myClasses && typeof myClasses === "object") {
+      const index = myClasses.map((c) => c.id).indexOf(id);
+      if (index !== -1) {
+        this.setState({
+          turma: myClasses[index],
+        });
+      }
+      this.setState({ loadingInfoTurma: false });
+
+      return null;
+    }
+    try {
+      const response = await api.get(`/class/${id}`);
+      //console.log('found turma: ',response.data)
+
+      this.setState({
+        turma: response.data,
+        loadingInfoTurma: false,
+      });
+    } catch (err) {
+      this.setState({ loadingInfoTurma: false });
+      console.log(err);
+    }
   }
 
   //função que submete o codigo ao carregar a pagina
   async initialSubmission() {
     const { answer, language, results } = this.state;
+    //this.setState({results: []})
+    //console.log('answer: ',!!answer)
     if (!answer) return null;
     const request = {
       codigo: answer,
@@ -121,52 +152,82 @@ export default class AlunosProvas extends Component {
   }
 
   //Coloca os dados da questao atual nos states
-  currentQuestion(loading = true) {
-    const { questoes, numPageAtual } = this.state;
-    if (loading) this.setState({ loadingquestion: true });
-    if (!!questoes[numPageAtual - 1].feedBackTest) {
+  async setCurrentQuestion(index) {
+    const { questoes } = this.state;
+    //if (loading) this.setState({ loadingquestion: true });
+    //console.log('index:', index)
+    const currentQuestion = questoes[index - 1]
+    //verifica se já existe um feedback para questão
+    if (!!currentQuestion.feedBackTest) {
       this.setState({
-        comments: questoes[numPageAtual - 1].feedBackTest.comments,
+        comments: currentQuestion.feedBackTest.comments,
         compilation_error:
-          questoes[numPageAtual - 1].feedBackTest.compilation_error,
-        runtime_error: questoes[numPageAtual - 1].feedBackTest.runtime_error,
+          currentQuestion.feedBackTest.compilation_error,
+        runtime_error: currentQuestion.feedBackTest.runtime_error,
         presentation_error:
-          questoes[numPageAtual - 1].feedBackTest.presentation_error,
-        wrong_answer: questoes[numPageAtual - 1].feedBackTest.wrong_answer,
+          currentQuestion.feedBackTest.presentation_error,
+        wrong_answer: currentQuestion.feedBackTest.wrong_answer,
         invalid_algorithm:
-          questoes[numPageAtual - 1].feedBackTest.invalid_algorithm,
+          currentQuestion.feedBackTest.invalid_algorithm,
         teacherNote: (
-          questoes[numPageAtual - 1].feedBackTest.hitPercentage / 10
+          currentQuestion.feedBackTest.hitPercentage / 10
         ).toFixed(2),
+      });
+    }
+    else{
+      this.setState({
+        comments: "",
+        compilation_error:false,
+        runtime_error: false,
+        presentation_error: false,
+        wrong_answer: false,
+        invalid_algorithm: false,
+        teacherNote: null,
       });
     }
     this.setState({
-      title: questoes[numPageAtual - 1].title,
-      description: questoes[numPageAtual - 1].description,
-      katexDescription: questoes[numPageAtual - 1].katexDescription,
-      solution: questoes[numPageAtual - 1].solution,
-      difficulty: questoes[numPageAtual - 1].difficulty,
-      feedBackTest: questoes[numPageAtual - 1].feedBackTest,
-      results: [...questoes[numPageAtual - 1].results],
-
-      response: [...questoes[numPageAtual - 1].results],
-      question_id: questoes[numPageAtual - 1].id,
+      title: currentQuestion.title,
+      description: currentQuestion.description,
+      katexDescription: currentQuestion.katexDescription,
+      solution: currentQuestion.solution,
+      difficulty: currentQuestion.difficulty,
+      feedBackTest: currentQuestion.feedBackTest,
+      results: [...currentQuestion.results],
+      response: [...currentQuestion.results],
+      question_id: currentQuestion.id,
     });
-    if (questoes[numPageAtual - 1].lastSubmission) {
+    //verifica se há um asubmissão para a questão
+    if (currentQuestion.lastSubmission) {
       this.setState({
-        answer: questoes[numPageAtual - 1].lastSubmission.answer,
-        language: questoes[numPageAtual - 1].lastSubmission.language,
+        answer: currentQuestion.lastSubmission.answer,
+        language: currentQuestion.lastSubmission.language,
         hitPercentage: (
-          questoes[numPageAtual - 1].lastSubmission.hitPercentage / 10
+          currentQuestion.lastSubmission.hitPercentage / 10
         ).toFixed(2),
-        timeConsuming: questoes[numPageAtual - 1].lastSubmission.timeConsuming,
+        timeConsuming: 0,
         char_change_number:
-          questoes[numPageAtual - 1].lastSubmission.char_change_number,
+          currentQuestion.lastSubmission.char_change_number,
       });
     }
-    if (questoes[numPageAtual - 1].feedBackTest && questoes[numPageAtual - 1].feedBackTest.isEditedByTeacher) {
+    else{
+      this.setState({
+        answer: "",
+        language: this.state.turma.languages[0],
+        hitPercentage: 0,
+        timeConsuming: currentQuestion.lastSubmission.timeConsuming,
+        char_change_number:0,
+      });
+    }
+
+    //verifica se a questão já foi editada pelo professor
+    if (currentQuestion.feedBackTest && currentQuestion.feedBackTest.isEditedByTeacher) {
       this.setState({
         corrected: true,
+      });
+    }
+    else{
+      this.setState({
+        corrected: false,
       });
     }
     this.setState({ loadingQuestion: false });
@@ -174,6 +235,7 @@ export default class AlunosProvas extends Component {
 
   //Mostra a questao em tela
   ShowQuestion() {
+    //console.log('turma: ',this.state.turma)
     return (
       <CorrecaoQuestao
         {...this.state}
@@ -333,7 +395,7 @@ export default class AlunosProvas extends Component {
           type: "success",
           title: "Feedback Salvo com sucesso",
         });
-        await window.location.replace(
+        window.location.replace(
           `/professor/turma/${idTurma}/correcaoprovas/${idProva}`
         );
       }
@@ -354,11 +416,10 @@ export default class AlunosProvas extends Component {
     let query = `?idClass=${idTurma}`;
     query += `&idTest=${idProva}`;
     query += `&idUser=${idAluno}`;
-
     try {
       if (loading) this.setState({ loadingQuestoes: true });
       const response = await api.get(`/feedBacksTest/show/${query}`);
-      console.log('questoes: ', response.data.questions);
+      //console.log('questoes: ', response.data.questions);
       this.setState({
         questoes: [...response.data.questions],
         user: response.data.user,
@@ -378,12 +439,12 @@ export default class AlunosProvas extends Component {
 
   //funcao usada para a mudanca de linguegem no ambiente de programação
   async changeLanguage(e) {
-    await this.setState({ language: e.target.value });
+    this.setState({ language: e.target.value });
   }
 
   //função usada na mundança do tema no ambiente de programação
   async changeTheme(e) {
-    await this.setState({ theme: e.target.value });
+    this.setState({ theme: e.target.value });
   }
 
   //função usada para executar o codigo(apenas executa)
@@ -418,31 +479,36 @@ export default class AlunosProvas extends Component {
   }
 
   async redirecionar(i) {
-    const { idTurma, idProva, idAluno } = this.state;
-    this.props.history.push(
-      `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page/${i}`
-    );
-    await this.setState({
+    // idTurma: this.props.match.params.id,
+    // idProva: this.props.match.params.idProva,
+    // idAluno: this.props.match.params.idAluno,
+    const { id, idProva, idAluno } = this.props.match.params;
+    this.setState({
       numPageAtual: i,
     });
+    // this.props.history.push(
+    //   `/professor/turma/${id}/prova/${idProva}/aluno/${idAluno}/page/${i}`
+    // );
+    this.setState({loadingInfoTurma: true})
+    window.location.replace(
+      `/professor/turma/${id}/prova/${idProva}/aluno/${idAluno}/page/${i}`
+    );
 
-    //window.location.href = `/professor/turma/${idTurma}/prova/${idProva}/aluno/${idAluno}/page:${i}`;
-    this.getStudentQuestions();
-    this.currentQuestion();
-    this.initialSubmission();
+    // await this.setCurrentQuestion(i);
+    // this.initialSubmission();
   }
 
   render() {
-    window.addEventListener("popstate", this.redirecionar);
+    //window.addEventListener("popstate",this.redirecionarr.bind(this));
     const {
       loadingInfoTurma,
-      // turma,
       // totalPages,
-      numPageAtual,
-      idAluno,
+      // numPageAtual,
+      // idAluno,
       idTurma,
       idProva,
       user,
+      questoes
     } = this.state;
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
@@ -451,20 +517,26 @@ export default class AlunosProvas extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h5 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />
-                <Link
-                  to={`/professor/turma/${idTurma}/correcaoprovas/${idProva}`}
-                >
-                  Voltar para as provas
+                <h5 style={{ margin: "0px" }}>
+                  <i className="fa fa-users mr-2" aria-hidden="true" />
+                  <Link
+                    to={`/professor/turma/${idTurma}/correcaoprovas/${idProva}`}
+                  >
+                    Voltar para as provas
                 </Link>
-                <i className="fa fa-angle-left ml-2 mr-2" /> {user && user.name}
-              </h5>
-            )}
+                  <i className="fa fa-angle-left ml-2 mr-2" /> {user && user.name}
+                </h5>
+              )}
           </Col>
         </Row>
         {this.ShowQuestion()}
-        <Row>
+        {/* {loadingInfoTurma?
+          <div className="loader" style={{ margin: "0px auto" }}></div>
+          :
+          this.ShowQuestion()
+
+        } */}
+        {/* <Row>
           <Col xs={12} textCenter>
             <NavPagination
               totalPages={this.totalPages()}
@@ -475,6 +547,22 @@ export default class AlunosProvas extends Component {
               idProva={idProva}
               redirecionar={this.redirecionar.bind(this)}
             />
+          </Col>
+        </Row> */}
+        <Row>
+          <Col xs={12}>
+            {
+              questoes.map((question,index) =>
+                <button
+                  key={question.id}
+                  onClick={()=>this.redirecionar(index+1)}
+                  //onClick={()=>this.handleQuestion(`/professor/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes`,question.id)}
+                  className={`btn ${String(index+1) === this.props.match.params.idQuestion ? 'btn-primary disabled' : 'btn-outline-primary'} mr-5 mb-5`}
+                >
+                  {question.title}
+                </button>
+              )
+            }
           </Col>
         </Row>
       </TemplateSistema>
