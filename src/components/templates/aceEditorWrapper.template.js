@@ -25,7 +25,7 @@ export default class AceEditorWrapper extends Component {
         super();
         this.props = props;
 
-        console.log(this.props.mode);
+        //console.log(this.props.mode);
         
     }
 

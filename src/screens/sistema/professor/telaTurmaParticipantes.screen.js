@@ -167,12 +167,13 @@ export default class Pagina extends Component {
     const { id } = this.props.match.params;
     Swal.showLoading();
     try{
-      const response = await api.get(`/class/${id}/csv`);
+      const response = await api.get(`/dataScience/class/${id}/list`);
+      this.setState({showModal: true})
       // console.log('csv',response.data);
       // console.log('formated csv',this.formatCsv(response.data));
       this.setState({
         csvData: this.formatCsv(response.data),
-        showModal: true
+        //showModal: true
       })
     }
     catch(err){
@@ -260,14 +261,14 @@ export default class Pagina extends Component {
         >
           <Row>
             <Col xs={12} textCenter>
-              <CSVLink
+              {csvData && <CSVLink
                 data={csvData}
                 filename={`${turma && turma.name}-${moment().local().format("YYYY-MM-DD-HH-mm")}.csv`}
                 className={'btn btn-primary btn-lg'}
                 onClick={()=>this.setState({showModal: false})}
               >
                 Baixar CSV <i className=" fa fa-download ml-5" />
-              </CSVLink>
+              </CSVLink>}
             </Col>
           </Row>
         </SwalModal>

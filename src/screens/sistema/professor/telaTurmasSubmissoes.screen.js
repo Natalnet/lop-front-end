@@ -3,7 +3,7 @@ import socket from "socket.io-client";
 import TemplateSistema from "components/templates/sistema.template";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import profileImg from "../../../assets/perfil.png";
-
+import Swal from "sweetalert2";
 import { Pagination } from "components/ui/navs";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
@@ -14,7 +14,7 @@ import moment from "moment";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-
+import { CSVLink } from "react-csv";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
@@ -32,6 +32,7 @@ export default class HomesubmissoesScreen extends Component {
       myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
       turma: "",
       showModal: false,
+      showModalCSV:false,
       loadingSubmissoes: false,
       fieldFilter: "name",
       numPageAtual: 1,
@@ -39,6 +40,7 @@ export default class HomesubmissoesScreen extends Component {
       totalPages: 0,
       docsPerPage: 15,
       submissao: "",
+      csvData: []
     };
   }
   async componentDidMount() {
@@ -77,7 +79,7 @@ export default class HomesubmissoesScreen extends Component {
     }
   }
   async getSubmissoes(loading = true) {
-    console.log('obtendo submissçoes')
+    //console.log('obtendo submissçoes')
     const id = this.props.match.params.id;
     const {
       numPageAtual,
@@ -107,6 +109,64 @@ export default class HomesubmissoesScreen extends Component {
       console.log(err);
     }
   }
+
+  async generateCsv(){
+    const { id } = this.props.match.params;
+    Swal.showLoading();
+    try{
+      const response = await api.get(`/dataScience/class/${id}/submission`);
+      console.log('csv',response.data);
+      // console.log('formated csv',this.formatCsv(response.data));
+      this.setState({
+        csvData: this.formatCsv(response.data),
+        showModalCSV: true
+      })
+    }
+    catch(err){
+      console.log(err);
+    }
+    Swal.hideLoading();
+  }
+
+  formatCsv(rows){
+    if(!rows.length){
+      return [];
+    }
+    let tableHeader  = [
+      "Nome",
+      "Email",
+      "Matrícula",
+      "Tempo gasto",
+      "N° de variações de caracteres",
+      "ip",
+      "Linguagem",
+      "data",
+      "idQuestão",
+      "idLista",
+      "idProva",
+    ]
+    //console.log('tableHeader: ', tableHeader)
+    const tableBody = rows.map(row=>{
+      return [
+        row.user.name,
+        row.user.email,
+        row.user.enrollment,
+        row.timeConsuming,
+        row.char_change_number,
+        row.ip,
+        row.language,
+        moment(row.createdAt).local().format("DD/MM/YYYY HH:mm"),
+        row.question_id,
+        row.listQuestions_id,
+        row.question_id,
+      ]
+    })
+    //console.log('result: ',typeresult)
+    const table = [tableHeader,...tableBody];
+    //console.log('table: ',table);
+    return table;
+  }
+
   getSubmissoesRealTime() {
     this.io = socket(baseUrlBackend);
     const id = this.props.match.params.id;
@@ -184,6 +244,8 @@ export default class HomesubmissoesScreen extends Component {
       submissao,
       loadingInfoTurma,
       turma,
+      showModalCSV,
+      csvData
     } = this.state;
     return (
       <TemplateSistema
@@ -205,6 +267,17 @@ export default class HomesubmissoesScreen extends Component {
             )}
           </Col>
         </Row>
+        {/* <Row  mb={15}>
+          <Col xs={12}>
+              <button
+                className={'btn btn-primary'}
+                onClick={()=>this.generateCsv()}
+              >
+                Gerar CSV
+
+              </button>
+          </Col> 
+        </Row> */}
         <Row mb={15}>
           <Col xs={12} mb={3}>
             <InputGroup
@@ -373,6 +446,24 @@ export default class HomesubmissoesScreen extends Component {
             </div>
           </Row>
           </>
+        </SwalModal>
+
+        <SwalModal
+          show={showModalCSV}
+          handleModal={() =>  this.setState({showModalCSV:false})}
+        >
+          <Row>
+            <Col xs={12} textCenter>
+              {csvData && <CSVLink
+                data={csvData}
+                filename={`${turma && turma.name}-${moment().local().format("YYYY-MM-DD-HH-mm")}.csv`}
+                className={'btn btn-primary btn-lg'}
+                onClick={()=>this.setState({showModalCSV: false})}
+              >
+                Baixar CSV <i className=" fa fa-download ml-5" />
+              </CSVLink>}
+            </Col>
+          </Row>
         </SwalModal>
       </TemplateSistema>
     );

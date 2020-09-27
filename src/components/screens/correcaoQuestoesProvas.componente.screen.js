@@ -53,10 +53,8 @@ export default (props) => {
     "solarized_light",
     "terminal",
   ];
-  const languages = props.languages || SupportedLanguages.list;
-  let tests = props.showAllTestCases
-    ? results
-    : results.filter((t, i) => i === 0);
+  const languages = props.turma.languages || SupportedLanguages.list;
+
 
   return (
     <>
@@ -72,7 +70,7 @@ export default (props) => {
             </CardHead>
             <CardBody className="overflow-auto">
               <Row>
-                {props.loadingQuestoes ? (
+                {props.loadingQuestoes || !description ? (
                   <div className="loader" style={{ margin: "0px auto" }}></div>
                 ) : (
                   <Col xs={12} md={7}>
@@ -83,7 +81,7 @@ export default (props) => {
                         disable={true}
                         showToolbar={false}
                         // onChange={this.handleDescriptionChange.bind(this)}
-                        setContents={description}
+                        setContents={description || ""}
                         setDefaultStyle="font-size: 15px; text-align: justify"
                         setOptions={{
                             toolbarContainer : '#toolbar_container',
@@ -118,7 +116,7 @@ export default (props) => {
                             <b>Exemplo de saída</b>
                           </td>
                         </tr>
-                        {results
+                        {results && results
                           .map((res, i) => (
                             <tr key={i}>
                               <td>
@@ -182,7 +180,7 @@ export default (props) => {
       <Row>
         <Col xs={12} md={6}>
           <Card>
-            {props.loadingQuestoes ? (
+            {props.loadingQuestoes? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
               <AceEditorWrapper
@@ -190,7 +188,7 @@ export default (props) => {
                 theme={theme}
                 focus={false}
                 onChange={(e) => alteredCode(e)}
-                value={answer}
+                value={answer || ""}
                 fontSize={14}
                 width="100%"
                 showPrintMargin={false}
@@ -248,7 +246,7 @@ export default (props) => {
               </Card>
             ) : (
               <>
-                {tests.map((teste, i) => (
+                {results && results.map((teste, i) => (
                   <Card
                     key={i}
                     className={`card-status-${

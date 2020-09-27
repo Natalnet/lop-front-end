@@ -191,7 +191,7 @@ export default (props)=>{
                         descriptionErro?
                             <Card>
                                 <CardBody className=" p-0 ">
-                                <div class="alert alert-icon alert-danger" role="alert">
+                                <div className="alert alert-icon alert-danger" role="alert">
                                     <HTMLFormat>
                                         {descriptionErro}
                                     </HTMLFormat>
