@@ -111,6 +111,7 @@ export default class Editor extends Component {
     let query = `?idClass=${idClass}`;
     try {
       const response = await api.get(`/test/${idTest}${query}`);
+      //console.log('prova: ',response.data)
       this.setState({
         prova: response.data,
       });
@@ -339,7 +340,7 @@ export default class Editor extends Component {
             {...this.state}
             {...this.props}
             languages={turma && turma.languages}
-            showAllTestCases={prova && prova.showAlltestCases}
+            showAllTestCases={true}
             changeLanguage={this.changeLanguage.bind(this)}
             changeTheme={this.changeTheme.bind(this)}
             handleSolution={this.handleSolution.bind(this)}
