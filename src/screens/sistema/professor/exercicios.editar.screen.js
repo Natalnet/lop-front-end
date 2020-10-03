@@ -386,7 +386,7 @@ export default class Editor extends Component {
         </Row>
         <Card>
           <CardBody loading={loadingExercicio || loadingTags}>
-            <form onSubmit={(e) => this.updateQuestion(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
+            <form onSubmit={(e) => {e.preventDefault(); this.updateQuestion(e)} }>
               <div className="form-row">
                 <div className="form-group col-md-12">
                   <label>Título: </label>
