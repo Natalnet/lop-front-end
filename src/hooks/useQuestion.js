@@ -3,6 +3,7 @@ import api from '../services/api';
 
 const UseQuestion = () => {
     const [paginedQuestions, setPaginedQuestions] = useState(null);
+    //const [questions, setQuestions] = useState([]);
     const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
     const [errorQuestion, setErrorQuestion] = useState(null);
 
@@ -20,6 +21,7 @@ const UseQuestion = () => {
         }
         setIsLoadingQuestions(false);
     },[])
+
 
     return {paginedQuestions, isLoadingQuestions, errorQuestion, getPaginedQuestions};
 }

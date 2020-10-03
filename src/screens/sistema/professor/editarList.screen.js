@@ -1,15 +1,19 @@
-import React, { Component } from "react";
+import React, { useEffect, useCallback, useMemo, useState } from "react";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
+import FormFilterQuestion from 'components/ui/forms/formFilterQuestions';
 import 'katex/dist/katex.min.css'
-import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
+import { Link, useHistory } from "react-router-dom";
+//import Swal from "sweetalert2";
+import useQuestion from '../../../hooks/useQuestion';
+import usePagination from '../../../hooks/usePagination';
+import useList from '../../../hooks/useList';
+import useTag from '../../../hooks/useTag';
 import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
-import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import moment from "moment";
-import {Load} from 'components/ui/load';
+import { Load } from 'components/ui/load';
 import { Pagination } from "components/ui/navs";
 import SwalModal from "components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
@@ -22,225 +26,165 @@ import CardBody from "components/ui/card/cardBody.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
-const botao2 = {
-  float: "right",
-  backgroundColor: "red",
-  borderColor: "red",
-  color: "white",
-};
+export default props => {
 
-export default class CriarListaScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      contentInputSeach: "",
-      exercicios: [],
-      selecionados: [],
-      fildFilter: "title",
-      title: "",
-      loadQuestions: false,
-      loadList: false,
-      numPageAtual: 1,
-      totalItens: 0,
-      totalPages: 0,
-      showModalInfo: false,
-      question: "",
-    };
-  }
+  const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
+  const { page, totalPages, docsPerPage, handlePage, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination();
+  const {updateList: updateCurrentList} = useList();
+  const { tags, isLoadingTags, getTags } = useTag();
 
-  async componentDidMount() {
+  const [title, setTitle] = useState('');
+  const [selectedQuestions, setSelectedQuestions] = useState([]);
+  const [showModalInfo, setShowModalInfo] = useState(false);
+  const [modalQuestion, setModalQuestion] = useState({});
+
+  const [isLoadingQuestionsByList,setIsLoadingQuestionsByList]= useState(false)
+
+  const [titleOrCodeInput, setTitleOrCodeInput] = useState('');
+  const [fieldSelect, setFieldSelect] = useState('title');
+  const [sortBySelect, setSortBySelect] = useState('');
+  const [sortRadio, setSortRadio] = useState('DESC');
+  const [ascRadio, setAscRadio] = useState(false);
+  const [descRadio, setDescRadio] = useState(true);
+  const [tagSelect, setTagSelect] = useState('');
+
+  // const [filteredTitleOrCodeInput, setFilteredTitleOrCodeInput] = useState('');
+  // const [filteredFieldSelect, setFilteredFieldSelect] = useState('title');
+  // const [filteredSortBySelect, setFilteredSortBySelect] = useState('');
+  // const [filteredDocsPerPage, setFilteredDocsPerPage] = useState(15);
+  // const [filteredSortRadio, setFilteredSortRadio] = useState('DESC');
+  // const [filteredTagSelect, setFilteredTagSelect] = useState('');
+
+  const tagsSelect = useMemo(() => [{ id: '', name: 'Todas' }, ...tags], [tags])
+
+  const history = useHistory();
+
+  // async componentDidMount() {
+  //   document.title = "Editar lista - professor";
+  //   await this.getQuestionsByList();
+  //   this.getExercicios();
+  // }
+  useEffect(() => {
+    getTags();
+  }, [])
+
+  useEffect(() => {
     document.title = "Editar lista - professor";
-    await this.getQuestionsByList();
-    this.getExercicios();
-  }
+    getQuestionsByList()
+  }, [])
 
-  async getQuestionsByList() {
-    const { id } = this.props.match.params;
+  useEffect(() => {
+    getPaginedQuestions(page, getQuerys());
+  }, [page])
+
+  useEffect(() => {
+    //console.log('question: ', paginedQuestions);
+    if (paginedQuestions) {
+      setPage(paginedQuestions.currentPage);
+      setTotalDocs(paginedQuestions.total);
+      setDocsPerPage(paginedQuestions.perPage);
+      setTotalPages(paginedQuestions.totalPages)
+    }
+  }, [paginedQuestions])
+
+
+  const getQuestionsByList = useCallback( async () =>{
+    const { id } = props.match.params;
     let query = `idList=${id}`;
-    this.setState({ 
-      loadQuestions: true ,
-      loadList: true
-    });
+    setIsLoadingQuestionsByList(true);
     try {
       const response = await api.get(`/question?${query}`);
-      this.setState({
-        title: response.data.list.title,
-        selecionados: response.data.questions,
-        loadList: false
-
-      });
+      setTitle(response.data.list.title);
+      setSelectedQuestions(response.data.questions)
     } catch (err) {
       console.log(err);
-      this.setState({loadList: false})
     }
-  }
-  async getExercicios() {
-    let { contentInputSeach, numPageAtual, fildFilter } = this.state;
-    let query = `?include=${contentInputSeach.trim()}`;
-    query += `&field=${fildFilter}`;
+    setIsLoadingQuestionsByList(false);
+  },[])
 
-    try {
-      this.setState({ loadQuestions: true });
-      const response = await api.get(`/question/page/${numPageAtual}${query}`);
-      this.setState({
-        exercicios: [...response.data.docs],
-        totalItens: response.data.total,
-        totalPages: response.data.totalPages,
-        numPageAtual: response.data.currentPage,
-        loadQuestions: false,
-      });
-    } catch (err) {
-      this.setState({ loadQuestions: false });
-      console.log(err);
-    }
-  }
-
-  async editarLista(e) {
+  const updateList = useCallback( async (e)=> {
     e.preventDefault();
-    const { id } = this.props.match.params;
-    const { title, selecionados } = this.state;
-    let msg = "";
-    msg += !title ? "Informe o título da turma<br/>" : "";
-    msg +=
-      selecionados.length === 0 ? "Escolha pelo menos um exercício<br/>" : "";
-    if (msg) {
-      Swal.fire({
-        type: "error",
-        title: "Erro: Não foi possivel salvar lista",
-        html: msg,
-      });
-      return null;
+    const { id } = props.match.params;
+    const isUpdated = await updateCurrentList(id, {title, selectedQuestions})
+    if(isUpdated){
+      history.push("/professor/listas");
     }
-    const requestInfo = {
-      title,
-      questions: selecionados.map((q) => q.id),
-    };
-    try {
-      Swal.fire({
-        title: "Editando lista",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        allowEnterKey: false,
-      });
-      Swal.showLoading();
-      await api.put(`/listQuestion/${id}/update`, requestInfo);
-      Swal.hideLoading();
-      Swal.fire({
-        type: "success",
-        title: "Lista editada com sucesso!",
-      });
-      this.props.history.push("/professor/listas");
-    } catch (err) {
-      Swal.hideLoading();
-      Swal.fire({
-        type: "error",
-        title: "Erro: Não foi possivel salvar lista",
-      });
-      this.setState({ msg: "Erro: Não foi possivel salvar a lista" });
-    }
-  }
-  selecionar(questao) {
-    this.setState({
-      selecionados: [...this.state.selecionados, questao],
-    });
-    //console.log(this.state.selecionados)
-  }
+  },[title, selectedQuestions])
 
-  excluir(questao) {
-    this.setState({
-      selecionados: [...this.state.selecionados].filter(
-        (q) => q.id !== questao.id
-      ),
-      //exercicios: [...this.state.exercicios,questao]
-    });
-  }
-  handleShowModalInfo(question) {
-    this.setState({
-      question: question,
-      showModalInfo: true,
-    });
-  }
-  handleCloseshowModalInfo(e) {
-    this.setState({ showModalInfo: false });
-  }
-  handleTitleChange(e) {
-    this.setState({ title: e.target.value });
-  }
-  handlePage(e, numPage) {
-    e.preventDefault();
-    //console.log(numPage);
-    this.setState(
-      {
-        numPageAtual: numPage,
-      },
-      () => this.getExercicios()
-    );
-  }
-  handleSelectfildFilter(e) {
-    this.setState(
-      {
-        fildFilter: e.target.value,
-      } /*,()=>this.getExercicios()*/
-    );
-  }
+  const getQuerys = useCallback(() => {
+    let query = `include=${titleOrCodeInput.trim()}`;
+    query += `&field=${fieldSelect}`;
+    query += `&docsPerPage=${docsPerPage}`;
+    query += `&sortBy=${sortBySelect}`;
+    query += `&sort=${sortRadio}`;
+    query += `&tag=${tagSelect || ''}`;
+    query += `&status=PÚBLICA PRIVADA`;
+    return query;
+  }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
-  handleContentInputSeach(e) {
-    this.setState(
-      {
-        contentInputSeach: e.target.value,
-      } /*,()=>this.getExercicios()*/
-    );
-  }
-  filterSeash() {
-    this.getExercicios();
-  }
-  clearContentInputSeach() {
-    this.setState(
-      {
-        contentInputSeach: "",
-      },
-      () => this.getExercicios()
-    );
-  }
+  const saveQuerys = useCallback(() => {
+    // setFilteredTitleOrCodeInput(() => titleOrCodeInput);
+    // setFilteredFieldSelect(() => fieldSelect);
+    // setFilteredSortBySelect(() => sortBySelect);
+    // setFilteredDocsPerPage(() => docsPerPage);
+    // setFilteredSortRadio(() => sortRadio);
+    // setFilteredTagSelect(() => tagSelect);
 
-  render() {
-    const {
-      loadQuestions,
-      contentInputSeach,
-      numPageAtual,
-      totalPages,
-      selecionados,
-      question,
-      showModalInfo,
-      loadList
-    } = this.state;
+  }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
-    return (
-      <TemplateSistema active="listas">
-        <Row mb={15}>
-          <Col xs={12}>
-            <h5 style={{ margin: "0px" }}>
-              <Link to="/professor/listas">Listas</Link>
-              <i className="fa fa-angle-left ml-2 mr-2" />
-              Editar lista
+  const addQuestion = useCallback(selectedQuestion => {
+    setSelectedQuestions(oldSelectedQuestions => [...oldSelectedQuestions, selectedQuestion])
+  }, [])
+
+  const removeQuestion = useCallback(removedQuestion => {
+    setSelectedQuestions(oldSelectedQuestions => oldSelectedQuestions.filter(q =>
+      q.id !== removedQuestion.id
+    ))
+  }, [selectedQuestions])
+
+  const handleShowModalInfo = useCallback(question => {
+    setModalQuestion(question);
+    setShowModalInfo(true)
+  }, []);
+
+  const handleSortRadio = useCallback(e => {
+    setAscRadio(e.target.value === "ASC" ? true : false);
+    setDescRadio(e.target.value === "DESC" ? true : false);
+    setSortRadio(e.target.value)
+  }, []);
+
+  const handlleFilter = useCallback(() => {
+    getPaginedQuestions(page, getQuerys());
+  }, [page, saveQuerys, getQuerys]);
+
+  return (
+    <TemplateSistema active="listas">
+
+      <Row mb={15}>
+        <Col xs={12}>
+          <h5 style={{ margin: "0px" }}>
+            <Link to="/professor/listas">Listas</Link>
+            <i className="fa fa-angle-left ml-2 mr-2" />
+              Criar lista
             </h5>
-          </Col>
-        </Row>
-        <Card>
-          <CardBody>
-            {loadList?
+        </Col>
+      </Row>
+      <Card>
+        <CardBody>
+          {
+            isLoadingQuestionsByList?
             <Load/>
-            :
-            <form onSubmit={(e) => this.editarLista(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
+          :
+            <form onSubmit={(e) => updateList(e)} onKeyDown={e => { if (e.key === 'Enter') e.preventDefault(); }}>
               <div className="form-row">
                 <div className="form-group col-12">
-                  <label htmlFor="inputTitulo">Título</label>
+                  <label htmlFor="inputTitulo">Título da lista</label>
                   <input
                     id="inputTitulo"
                     type="text"
                     required
-                    value={this.state.title}
-                    onChange={(e) => this.handleTitleChange(e)}
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                     className="form-control"
                     placeholder="Título da lista"
                   />
@@ -248,23 +192,23 @@ export default class CriarListaScreen extends Component {
               </div>
               <div className="form-row">
                 <div className="form-group col-12">
-                  <InputGroupo
-                    loading={loadList || loadQuestions}
-
-                    placeholder={`Perquise pelo nome ou código...`}
-                    value={contentInputSeach}
-                    handleContentInputSeach={this.handleContentInputSeach.bind(
-                      this
-                    )}
-                    filterSeash={this.filterSeash.bind(this)}
-                    handleSelect={this.handleSelectfildFilter.bind(this)}
-                    options={[
-                      { value: "title", content: "Nome" },
-                      { value: "code", content: "Código" },
-                    ]}
-                    clearContentInputSeach={this.clearContentInputSeach.bind(
-                      this
-                    )}
+                  <FormFilterQuestion
+                    titleOrCodeInput={titleOrCodeInput}
+                    ascRadio={ascRadio}
+                    descRadio={descRadio}
+                    docsPerPage={docsPerPage}
+                    fieldSelect={fieldSelect}
+                    tagSelect={tagSelect}
+                    tagsSelect={tagsSelect}
+                    sortBySelect={sortBySelect}
+                    loading={isLoadingQuestions || isLoadingTags || isLoadingQuestionsByList}
+                    handlleFilter={handlleFilter}
+                    handleSortBySelect={(e) => setSortBySelect(e.target.value)}
+                    handleTitleOrCodeInput={(e) => setTitleOrCodeInput(e.target.value)}
+                    handleDocsPerPage={(e) => setDocsPerPage(e.target.value)}
+                    handleFieldSelect={(e) => setFieldSelect(e.target.value)}
+                    handleTagSelect={(e) => setTagSelect(e.target.value)}
+                    handleSortRadio={handleSortRadio}
                   />
                 </div>
               </div>
@@ -285,7 +229,7 @@ export default class CriarListaScreen extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {loadQuestions ? (
+                      {isLoadingQuestions || isLoadingTags || isLoadingQuestionsByList ? (
                         <tr>
                           <td>
                             <div className="loader" />
@@ -304,60 +248,60 @@ export default class CriarListaScreen extends Component {
                           </td>
                         </tr>
                       ) : (
-                        this.state.exercicios.map((questao, index) => {
-                          return (
-                            <tr key={questao.id}>
-                              <td>{questao.title}</td>
-                              <td>{questao.code}</td>
-                              <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
-                              <td>{questao.author.email}</td>
-                              <td>{moment(questao.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                              <td className="d-inline-flex">
-                                <button
-                                  type="button"
-                                  className="btn btn-primary mr-2"
-                                  onClick={() =>
-                                    this.handleShowModalInfo(questao)
-                                  }
-                                >
-                                  <i className="fa fa-info " />
-                                </button>
-                                {selecionados
-                                  .map((s) => s.id)
-                                  .includes(questao.id) ? (
+                          !paginedQuestions ? [] : paginedQuestions.docs.map((question) => {
+                            return (
+                              <tr key={question.id}>
+                                <td>{question.title}</td>
+                                <td>{question.code}</td>
+                                <td>{`(${question.submissionsCorrectsCount}/${question.submissionsCount})`}</td>
+                                <td>{question.author.email}</td>
+                                <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                                <td className="d-inline-flex">
                                   <button
                                     type="button"
-                                    className="float-right btn btn-indigo ml-2 disabled"
+                                    className="btn btn-primary mr-2"
+                                    onClick={() =>
+                                      handleShowModalInfo(question)
+                                    }
                                   >
-                                    Selecionada
+                                    <i className="fa fa-info" />
                                   </button>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    className="float-right btn btn-primary"
-                                    onClick={(e) => this.selecionar(questao)}
-                                  >
-                                    Adicionar <i className="fe fe-file-plus" />
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
-                      )}
+                                  {selectedQuestions
+                                    .map((s) => s.id)
+                                    .includes(question.id) ? (
+                                      <button
+                                        type="button"
+                                        className="float-right btn btn-indigo disabled"
+                                      >
+                                        Selecionada
+                                      </button>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        className="float-right btn btn-primary"
+                                        onClick={() => addQuestion(question)}
+                                      >
+                                        Adicionar <i className="fe fe-file-plus" />
+                                      </button>
+                                    )}
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
                     </tbody>
                   </table>
                 </div>
               </div>
               <Row>
                 <Col xs={12} textCenter>
-                  <Pagination 
-                    count={totalPages} 
-                    page={Number(numPageAtual)} 
-                    onChange={this.handlePage.bind(this)} 
-                    color="primary" 
+                  <Pagination
+                    count={totalPages}
+                    page={Number(page)}
+                    onChange={handlePage}
+                    color="primary"
                     size="large"
-                    disabled={loadQuestions}
+                    disabled={isLoadingQuestions || isLoadingTags  || isLoadingQuestionsByList}
                   />
                 </Col>
               </Row>
@@ -377,19 +321,24 @@ export default class CriarListaScreen extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {selecionados.map((questao, index) => (
+                      {selectedQuestions.map((question, index) => (
                         <tr key={index}>
-                          <td>{questao.title}</td>
-                          <td>{questao.code}</td>
-                          <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
-                          <td>{questao.author.email}</td>
-                          <td>{moment(questao.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                          <td>{question.title}</td>
+                          <td>{question.code}</td>
+                          <td>{`(${question.submissionsCorrectsCount}/${question.submissionsCount})`}</td>
+                          <td>{question.author.email}</td>
+                          <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                           <td>
                             <button
                               type="button"
-                              className="btn btn-primary"
-                              style={botao2}
-                              onClick={() => this.excluir(questao)}
+                              className={`btn btn-primary ${isLoadingQuestions || isLoadingTags  || isLoadingQuestionsByList? "btn-loading" : ""}`}
+                              style={{
+                                float: "right",
+                                backgroundColor: "red",
+                                borderColor: "red",
+                                color: "white",
+                              }}                              
+                              onClick={() => removeQuestion(question)}
                             >
                               <i className="fe fe-file-minus" />
                             </button>
@@ -404,67 +353,67 @@ export default class CriarListaScreen extends Component {
                 <Col xs={12} textCenter>
                   <button
                     type="submit"
-                    className={`btn btn-primary float-right col-3 ${
-                      loadQuestions || loadList ? "btn-loading" : ""
-                    }`}
+                    className={`btn btn-primary float-right col-3 ${isLoadingQuestions || isLoadingTags  || isLoadingQuestionsByList? "btn-loading" : ""
+                      }`}
                     style={{ width: "100%" }}
                   >
                     Salvar Lista
-                  </button>
+                    </button>
                 </Col>
               </Row>
             </form>
-            }
-          </CardBody>
+          }
+        </CardBody>
 
-          <SwalModal
-            show={showModalInfo}
-            title="Exercício"
-            handleModal={this.handleCloseshowModalInfo.bind(this)}
-            width={"90%"}
-          >
-            <Card>
-              <CardHead>
-                <CardTitle>{question.title}</CardTitle>
-              </CardHead>
-              <CardBody>
-                <Row>
-                  <b>Descrição: </b>
-                </Row>
-                <Row>
-                  <span style={{ overflow: "auto" }}>
-                    {/* <HTMLFormat>{question && question.description}</HTMLFormat> */}
-                    {question && <SunEditor 
+        <SwalModal
+          show={showModalInfo}
+          title="Exercício"
+          handleModal={() => setShowModalInfo(false)}
+          width={"90%"}
+        >
+          <Card>
+            <CardHead>
+              <CardTitle>{modalQuestion.title}</CardTitle>
+            </CardHead>
+            <CardBody>
+              <Row>
+                <b>Descrição: </b>
+              </Row>
+              <Row>
+                <span style={{ overflow: "auto" }}>
+                  {/* <HTMLFormat>{modalQuestion && modalQuestion.description}</HTMLFormat> */}
+                  {modalQuestion.description &&
+                    <SunEditor
                       lang="pt_br"
                       height="auto"
                       disable={true}
                       showToolbar={false}
-                      // onChange={this.handleDescriptionChange.bind(this)}
-                      setContents={question.description}
+                      setContents={modalQuestion.description}
                       setDefaultStyle="font-size: 15px; text-align: justify"
                       setOptions={{
-                          toolbarContainer : '#toolbar_container',
-                          resizingBar : false,
-                          katex: katex,
+                        toolbarContainer: '#toolbar_container',
+                        resizingBar: false,
+                        katex: katex,
                       }}
-                  />}
-                  </span>
-                </Row>
-                <Row>
-                  <Col xs={12} textCenter>
-                    <BlockMath>{question.katexDescription || ""}</BlockMath>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs={12}>
-                    <TableIO results={question.results || []} />
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card>
-          </SwalModal>
-        </Card>
-      </TemplateSistema>
-    );
-  }
+                    />
+                  }
+                </span>
+              </Row>
+              <Row>
+                <Col xs={12} textCenter>
+                  <BlockMath>{modalQuestion.katexDescription || ""}</BlockMath>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12}>
+                  <TableIO results={modalQuestion.results || []} />
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </SwalModal>
+      </Card>
+    </TemplateSistema>
+  );
+
 }
