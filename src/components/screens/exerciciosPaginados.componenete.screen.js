@@ -8,6 +8,7 @@ import { Pagination } from "components/ui/navs";
 import { getStateFormQuestionsFromStorage } from "../../util/auxiliaryFunctions.util";
 import moment from "moment";
 import SwalModal from "components/ui/modal/swalModal.component";
+import FormFilterQuestion from 'components/ui/forms/formFilterQuestions'
 import "katex/dist/katex.min.css";
 import { Load } from 'components/ui/load';
 import { BlockMath } from "react-katex";
@@ -32,13 +33,13 @@ export default props => {
         [null, "Muito fácil", "Fácil", "Médio", "Difícil", "Muito Difícil"]
         , [props])
 
-    const [showFilter, setShowFilter] = useState(false);
+    //const [showFilter, setShowFilter] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
     //question hook
     const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
     const { tags, isLoadingTags, getTags } = useTag();
-    //paginaation hook
+    //pagination hook
     const { page, docsPerPage, totalPages, handlePage, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination(
         getStateFormQuestionsFromStorage("pageQuestions"),
         getStateFormQuestionsFromStorage("docsPerPageQuestions")
@@ -124,8 +125,7 @@ export default props => {
         setSortRadio(e.target.value)
     }, []);
 
-    const handleSubmit = useCallback((e) => {
-        e.preventDefault();
+    const handlleFilter = useCallback(() => {
         getPaginedQuestions(page, getQuerys());
         saveQuerysInStorage()
     }, [page, saveQuerysInStorage, getQuerys]);
@@ -147,134 +147,25 @@ export default props => {
 
     return (
         <>
-            <Card>
-                <CardHead
-                    onClick={() => setShowFilter(oldShowfilter => !oldShowfilter)}
-                    style={{ cursor: "pointer" }}>
-                    <CardTitle center>
-                        {showFilter ? 'Ocultar ' : 'Exibir '} filtro &nbsp;
-                        <i
-                            className="fa fa-chevron-down"
-                            style={{ color: "#00f" }}
-                        />
-                    </CardTitle>
-                </CardHead>
-                {showFilter
-                    ?
-                    <CardBody className="card-filter-exercicio" overflow="visible">
-                        <form onSubmit={handleSubmit}>
-                            <Row mb={10}>
+            <FormFilterQuestion
+                titleOrCodeInput={titleOrCodeInput}
+                ascRadio={ascRadio}
+                descRadio={descRadio}
+                docsPerPage={docsPerPage}
+                fieldSelect={fieldSelect}
+                tagSelect={tagSelect}
+                tagsSelect={tagsSelect}
+                sortBySelect={sortBySelect}
+                loading={isLoadingQuestions}
+                handlleFilter={handlleFilter}
+                handleSortBySelect={(e) => setSortBySelect(e.target.value)}
+                handleTitleOrCodeInput={(e) => setTitleOrCodeInput(e.target.value)}
+                handleDocsPerPage={(e) => setDocsPerPage(e.target.value)}
+                handleFieldSelect={(e) => setFieldSelect(e.target.value)}
+                handleTagSelect={(e) => setTagSelect(e.target.value)}
+                handleSortRadio={handleSortRadio}
+            />
 
-                                <Col xs={12} md={6} lg={7}>
-                                    <label htmlFor="nome">{`${fieldSelect === 'title' ? 'Título ' : fieldSelect === 'code' ? 'Código' : '...'} do exercício`} </label>
-                                    <div className="input-group">
-                                        <input
-                                            id="nome"
-                                            type="text"
-                                            className="form-control"
-                                            placeholder={`Perquise pelo ${fieldSelect === 'title' ? 'Título' : fieldSelect === 'code' ? 'Código' : '...'} do exercício`}
-                                            aria-label="Recipient's username"
-                                            aria-describedby="button-addon2"
-                                            value={titleOrCodeInput}
-                                            onChange={(e) => setTitleOrCodeInput(e.target.value)}
-                                        />
-                                        <div className="selectgroup" >
-                                            <select style={{ cursor: "pointer" }} defaultValue={fieldSelect} onChange={(e) => setFieldSelect(e.target.value)} className="selectize-input items has-options full has-items form-control">
-                                                <option value={'title'}>Título</option>
-                                                <option value={'code'}>Código</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </Col>
-
-                                <Col xs={12} md={6} lg={3}>
-                                    <label htmlFor="ordem">Ordenar por:</label>
-                                    <div className="selectgroup" style={{ display: 'flex', width: '100%' }}>
-                                        <select id={"ordem"} defaultValue={sortBySelect} className="form-control" onChange={(e) => setSortBySelect(e.target.value)} style={{ cursor: "pointer" }}>
-                                            <option value={''}>Aleatório</option>
-                                            {/* <option value={'createdAt'}>Data de criação</option> */}
-                                            <option value={'title'}>Ordem alfabética</option>
-                                            <option value={'difficulty'}>Dificuldade</option>
-                                            {/*<option value={'isCorrect'}>Resolvidas por mim</option>
-                                <option value={'accessCount'}>N° de acessos</option>
-                                <option value={'submissionsCount'}>N° de Submissões</option>
-                                <option value={'submissionsCorrectsCount'}>N° de Submissões corretas</option>*/}
-                                        </select>
-                                        <label className="selectgroup-item">
-                                            <input type="radio"
-                                                value="DESC"
-                                                checked={descRadio}
-                                                className="selectgroup-input"
-                                                onChange={handleSortRadio}
-                                            />
-                                            <span className="selectgroup-button selectgroup-button-icon">
-                                                <i className="fa fa-sort-amount-desc" />
-                                            </span>
-                                        </label>
-                                        <label className="selectgroup-item">
-                                            <input type="radio"
-                                                value="ASC"
-                                                checked={ascRadio}
-                                                onChange={handleSortRadio}
-                                                className="selectgroup-input"
-                                            />
-                                            <span className="selectgroup-button selectgroup-button-icon">
-                                                <i className="fa fa-sort-amount-asc" />
-                                            </span>
-                                        </label>
-                                    </div>
-                                </Col>
-
-                                <Col xs={6} lg={2}>
-                                    <label htmlFor="pag">N° de itens por página:</label>
-                                    <select id="pag" defaultValue={docsPerPage} className="form-control" onChange={(e) => setDocsPerPage(e.target.value)}>
-                                        <option value={15}>15</option>
-                                        <option value={25}>25</option>
-                                        <option value={40}>40</option>
-                                        <option value={60}>60</option>
-                                    </select>
-                                </Col>
-
-                                <Col xs={6} lg={3}>
-                                    <label>Tag: </label>
-                                    <select
-                                        onChange={(e) => setTagSelect(e.target.value)}
-                                        className="form-control"
-                                        defaultValue={tagSelect}
-                                    >
-                                        {tagsSelect.map(tag => (
-                                            <option
-                                                key={tag.id}
-                                                value={tag.id}
-                                            >
-                                                {tag.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {/* <Select
-                            style={{boxShadow: "white"}}
-                            defaultValue={tagSelecionada}
-                            placeholder="informe as tags"
-                            options={tags || []}
-                            isMulti
-                            isLoading={loadingTags}
-                            isClearable={false}
-                            onChange={handleTagsChangeTags}
-                        /> */}
-                                </Col>
-
-                                <Col xs={4}>
-                                    <label htmlFor="app">&nbsp;</label>
-                                    <button type='submit' className={`form-control btn btn-primary ${isLoadingQuestions && 'btn-loading'}`}>
-                                        Aplicar filtro <i className="fe fe-search" />
-                                    </button>
-                                </Col>
-                            </Row>
-                        </form>
-                    </CardBody>
-                    : null
-                }
-            </Card>
             <Row mb={15}>
                 <Col xs={12}>
                     <Load className={`${!(isLoadingQuestions || isLoadingTags)?'d-none':''}`}/>
