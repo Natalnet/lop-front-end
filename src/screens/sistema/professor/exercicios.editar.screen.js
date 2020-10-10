@@ -198,12 +198,12 @@ export default class Editor extends Component {
   isTestEmpty(results) {
     let isTestEmpty = false;
     const testsChecked = results.map((test) => {
-      if (/*!test.inputs || */!test.output) isTestEmpty = true;
+      //if (/*!test.inputs || */!test.output) isTestEmpty = true;
       return {
         inputs: test.inputs.replace(/\s+$/, ""),
         output: test.output.replace(/\s+$/, "").replace(/\n+$/, ""),
         //msgInputs: !test.inputs ? "Este campo é obrigatório" : "",
-        msgOutput: !test.output ? "Este campo é obrigatório" : "",
+        //msgOutput: !test.output ? "Este campo é obrigatório" : "",
       };
     });
     this.setState({ tests: testsChecked });
@@ -285,6 +285,13 @@ export default class Editor extends Component {
       //katexDescription,
     } = this.state;
     if (this.isTestEmpty(tests)) return null;
+    if(!description){
+      Swal.fire({
+        type: "error",
+        title: "ops... Adicione uma descrição para a questão!",
+      });
+      return;
+    }
     const results = this.rTrimAll(tests);
     Swal.fire({
       title: "Atualizando questão",
@@ -575,7 +582,7 @@ export default class Editor extends Component {
                             wrap="off"
                             placeholder="EX1: 34.89; EX2: Eh maior"
                             value={tests[i].output}
-                            required
+                            
                           ></textarea>
                           <div className="invalid-feedback">
                             {!tests[i].output && tests[i].msgOutput

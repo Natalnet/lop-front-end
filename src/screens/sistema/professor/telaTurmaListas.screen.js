@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import moment from "moment";
+import SwalModal from "components/ui/modal/swalModal.component";
+import { CSVLink } from "react-csv";
 
 import { Pagination } from "components/ui/navs";
 
@@ -41,6 +43,8 @@ export default class Pagina extends Component {
       contentInputSeach: "",
       fieldFilter: "title",
       questions: [],
+      showModalCSV: false,
+      csvData: []
     };
   }
 
@@ -191,7 +195,7 @@ export default class Pagina extends Component {
     const idList = list.id;
     const query = `?idClass=${idClass}`;
     const { dateLimit, timeLimit } = this.state;
- 
+
     if (dateLimit) {
       const request = {
         submissionDeadline: moment(`${dateLimit} ${timeLimit}:59`).utc(),
@@ -218,6 +222,50 @@ export default class Pagina extends Component {
         });
       }
     }
+  }
+
+  async generateCsv() {
+    const { id } = this.props.match.params;
+    Swal.showLoading();
+    try {
+      const response = await api.get(`/dataScience/class/${id}/list`);
+      this.setState({ showModalCSV: true })
+      //console.log('csv: ',response.data);
+      // console.log('formated csv',this.formatCsv(response.data));
+      this.setState({
+        csvData: this.formatCsv(response.data),
+      })
+    }
+    catch (err) {
+      console.log(err);
+    }
+    Swal.hideLoading();
+  }
+
+  formatCsv(rows) {
+    let tableHeader = rows[0].lists.map(row => {
+      const dateBegin = row.classHasListQuestion.createdAt;
+      const dateEnd = row.classHasListQuestion.submissionDeadline;
+      return `${row.title} (${dateBegin ? moment(dateBegin).format("DD/MM/YYYY") : ''}${dateEnd ? ` - ${moment(dateEnd).format("DD/MM/YYYY")}` : ''})`;
+    })
+    tableHeader = [
+      'Nome',
+      'Matrícula',
+      ...tableHeader
+    ]
+    //console.log('tableHeader: ', tableHeader)
+    const tableBody = rows.map(row => {
+      let colsLists = row.lists.map(colList =>
+        Math.round((colList.questionsCompletedSumissionsCount / colList.questionsCount) * 100)
+      )
+      return [
+        row.name,
+        row.enrollment,
+        ...colsLists
+      ];
+    })
+    const table = [tableHeader, ...tableBody];
+    return table;
   }
   changeDate(e) {
     this.setState({ dateLimit: e.target.value });
@@ -295,6 +343,8 @@ export default class Pagina extends Component {
       numPageAtual,
       listas,
       timeLimit,
+      showModalCSV,
+      csvData
     } = this.state;
     const {
       contentInputSeach,
@@ -309,24 +359,30 @@ export default class Pagina extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h5 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />
-                {turma && turma.name} - {turma && turma.year}.
-                {turma && turma.semester}
-                <i className="fa fa-angle-left ml-2 mr-2" /> Listas
-              </h5>
-            )}
+                <h5 style={{ margin: "0px" }}>
+                  <i className="fa fa-users mr-2" aria-hidden="true" />
+                  {turma && turma.name} - {turma && turma.year}.
+                  {turma && turma.semester}
+                  <i className="fa fa-angle-left ml-2 mr-2" /> Listas
+                </h5>
+              )}
           </Col>
         </Row>
 
         <Row mb={15}>
           <Col xs={12}>
             <button
-              className={`btn btn-primary ${loandingListas && "btn-loading"}`}
+              className={`btn btn-primary mr-5 ${loandingListas && "btn-loading"}`}
               onClick={() => this.handleShowModalListas()}
             >
               Adicionar novas listas <i className="fa fa-plus-circle" />
             </button>
+            <button
+              className={'btn btn-primary'}
+              onClick={() => this.generateCsv()}
+            >
+              Gerar CSV 
+              </button>
           </Col>
         </Row>
         {loandingListas ? (
@@ -334,13 +390,13 @@ export default class Pagina extends Component {
             <div className="loader" style={{ margin: "0px auto" }}></div>
           </Row>
         ) : (
-          <TurmaListasScrren
-            {...this.state}
-            {...this.props}
-            listas={listas}
-            removerLista={this.removerLista.bind(this)}
-          />
-        )}
+            <TurmaListasScrren
+              {...this.state}
+              {...this.props}
+              listas={listas}
+              removerLista={this.removerLista.bind(this)}
+            />
+          )}
         <Modal
           show={showModalListas}
           onHide={this.handleCloseshowModalListas.bind(this)}
@@ -356,13 +412,12 @@ export default class Pagina extends Component {
               <Row mb={15}>
                 <Col xs={12}>
                   <InputGroup
-                    placeholder={`Perquise pelo ${
-                      fieldFilter === "title"
+                    placeholder={`Perquise pelo ${fieldFilter === "title"
                         ? "Nome"
                         : fieldFilter === "code"
-                        ? "Código"
-                        : "..."
-                    }`}
+                          ? "Código"
+                          : "..."
+                      }`}
                     value={contentInputSeach}
                     handleContentInputSeach={this.handleContentInputSeach.bind(
                       this
@@ -384,66 +439,66 @@ export default class Pagina extends Component {
                 {loandingTodasListas ? (
                   <div className="loader" style={{ margin: "0px auto" }} />
                 ) : (
-                  todasListas.map((lista, index) => (
-                    <Fragment key={lista.id}>
-                      <Col xs={12}>
-                        <Card>
-                          <CardHead>
-                            <CardTitle>
-                              {`${lista.title} - ${lista.code}`}
-                            </CardTitle>
-                            <CardOptions>
-                              <div
-                                className="btn-group  float-right"
-                                role="group"
-                                aria-label="Exemplo básico"
-                              >
-                                <button
-                                  className="btn-primary btn"
-                                  onClick={() => this.inserirLista(lista)}
+                    todasListas.map((lista, index) => (
+                      <Fragment key={lista.id}>
+                        <Col xs={12}>
+                          <Card>
+                            <CardHead>
+                              <CardTitle>
+                                {`${lista.title} - ${lista.code}`}
+                              </CardTitle>
+                              <CardOptions>
+                                <div
+                                  className="btn-group  float-right"
+                                  role="group"
+                                  aria-label="Exemplo básico"
                                 >
-                                  Adicionar
+                                  <button
+                                    className="btn-primary btn"
+                                    onClick={() => this.inserirLista(lista)}
+                                  >
+                                    Adicionar
                                 </button>
-                                <button
-                                  className="btn btn-primary"
-                                  data-toggle="collapse"
-                                  data-target={"#collapse" + lista.id}
-                                  style={{ position: "relative" }}
-                                >
-                                  <i className="fe fe-chevron-down" />
-                                </button>
-                              </div>
-                            </CardOptions>
-                          </CardHead>
-                          <div className="collapse" id={"collapse" + lista.id}>
-                            <CardBody>
-                              <Row>
-                                <b>Questões: </b>
-                              </Row>
-                              <Row>
-                                {lista.questions.map((questao, index) => (
-                                  <Fragment key={questao.id}>
-                                    <Col xs={12}>
-                                      <p>{index + 1 + " - " + questao.title}</p>
-                                    </Col>
-                                  </Fragment>
-                                ))}
-                              </Row>
-                            </CardBody>
-                          </div>
-                        </Card>
-                      </Col>
-                    </Fragment>
-                  ))
-                )}
+                                  <button
+                                    className="btn btn-primary"
+                                    data-toggle="collapse"
+                                    data-target={"#collapse" + lista.id}
+                                    style={{ position: "relative" }}
+                                  >
+                                    <i className="fe fe-chevron-down" />
+                                  </button>
+                                </div>
+                              </CardOptions>
+                            </CardHead>
+                            <div className="collapse" id={"collapse" + lista.id}>
+                              <CardBody>
+                                <Row>
+                                  <b>Questões: </b>
+                                </Row>
+                                <Row>
+                                  {lista.questions.map((questao, index) => (
+                                    <Fragment key={questao.id}>
+                                      <Col xs={12}>
+                                        <p>{index + 1 + " - " + questao.title}</p>
+                                      </Col>
+                                    </Fragment>
+                                  ))}
+                                </Row>
+                              </CardBody>
+                            </div>
+                          </Card>
+                        </Col>
+                      </Fragment>
+                    ))
+                  )}
               </Row>
               <Row>
                 <Col xs={12} textCenter>
-                  <Pagination 
-                    count={totalPages} 
-                    page={Number(numPageAtual)} 
-                    onChange={this.handlePage.bind(this)} 
-                    color="primary" 
+                  <Pagination
+                    count={totalPages}
+                    page={Number(numPageAtual)}
+                    onChange={this.handlePage.bind(this)}
+                    color="primary"
                     size="large"
                     disabled={loandingTodasListas}
                   />
@@ -499,6 +554,23 @@ export default class Pagina extends Component {
             </button>
           </Modal.Footer>
         </Modal>
+        <SwalModal
+          show={showModalCSV}
+          handleModal={() =>  this.setState({showModalCSV:false})}
+        >
+          <Row>
+            <Col xs={12} textCenter>
+              {csvData && <CSVLink
+                data={csvData}
+                filename={`${turma && turma.name}-${moment().local().format("YYYY-MM-DD-HH-mm")}.csv`}
+                className={'btn btn-primary btn-lg'}
+                onClick={()=>this.setState({showModalCSV: false})}
+              >
+                Baixar CSV <i className=" fa fa-download ml-5" />
+              </CSVLink>}
+            </Col>
+          </Row>
+        </SwalModal>
       </TemplateSistema>
     );
   }
