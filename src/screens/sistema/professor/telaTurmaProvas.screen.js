@@ -9,9 +9,10 @@ import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
-
+import { CSVLink } from "react-csv";
+import SwalModal from "components/ui/modal/swalModal.component";
 import { Pagination } from "components/ui/navs";
-
+import moment from "moment";
 import InputGroup from "components/ui/inputGroup/inputGroupo.component";
 import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
@@ -41,6 +42,8 @@ export default class Provas extends Component {
       contentInputSeach: "",
       fieldFilter: "title",
       questions: [],
+      showModalCSV: false,
+      csvData: []
     };
   }
 
@@ -99,7 +102,7 @@ export default class Provas extends Component {
     if (!password) return null;
 
     //todos casos de teste
-    const { value:showAllTestCases } = await Swal.fire({
+    const { value: showAllTestCases } = await Swal.fire({
       title: `
         Quando o aluno estiver resolvendo, deseja que apareça todos os casos de teste?`,
       //text: "You won't be able to revert this!",
@@ -113,7 +116,7 @@ export default class Provas extends Component {
       allowEnterKey: false,
     });
     //console.log('showAllTestCases', showAllTestCases)
-  
+
     const request = {
       idClass: id,
       idTest: test.id,
@@ -145,6 +148,47 @@ export default class Provas extends Component {
       });
     }
   }
+
+  async generateCsv() {
+    const { id } = this.props.match.params;
+    Swal.showLoading();
+    try {
+      const response = await api.get(`/dataScience/class/${id}/test`);
+      this.setState({ showModalCSV: true })
+      //console.log('csv: ',response.data);
+      // console.log('formated csv',this.formatCsv(response.data));
+      this.setState({
+        csvData: this.formatCsv(response.data),
+      })
+    }
+    catch (err) {
+      console.log(err);
+    }
+    Swal.hideLoading();
+  }
+
+  formatCsv(rows) {
+    let tableHeader = rows[0].tests.map(row => row.title)
+    tableHeader = [
+      'Nome',
+      'Matrícula',
+      ...tableHeader
+    ]
+    //console.log('tableHeader: ', tableHeader)
+    const tableBody = rows.map(row => {
+      let colsTests = row.tests.map(colTest =>
+        Math.round((colTest.questionsCompletedSumissionsCount / colTest.questionsCount) * 100)
+      )
+      return [
+        row.name,
+        row.enrollment,
+        ...colsTests
+      ];
+    })
+    const table = [tableHeader, ...tableBody];
+    return table;
+  }
+
   async removerProva(prova) {
     const idTest = prova.id;
     const idClass = this.props.match.params.id;
@@ -284,6 +328,8 @@ export default class Provas extends Component {
       totalPages,
       numPageAtual,
       provas,
+      showModalCSV,
+      csvData
     } = this.state;
     const {
       contentInputSeach,
@@ -300,24 +346,30 @@ export default class Provas extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h5 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />
-                {turma && turma.name} - {turma && turma.year}.
-                {turma && turma.semester}
-                <i className="fa fa-angle-left ml-2 mr-2" /> Provas
-              </h5>
-            )}
+                <h5 style={{ margin: "0px" }}>
+                  <i className="fa fa-users mr-2" aria-hidden="true" />
+                  {turma && turma.name} - {turma && turma.year}.
+                  {turma && turma.semester}
+                  <i className="fa fa-angle-left ml-2 mr-2" /> Provas
+                </h5>
+              )}
           </Col>
         </Row>
 
         <Row mb={15}>
-          <Col xs={3}>
+          <Col xs={12}>
             <button
-              className={`btn btn-primary ${loandingProvas && "btn-loading"}`}
+              className={`btn btn-primary mr-5 ${loandingProvas && "btn-loading"}`}
               onClick={() => this.handleshowModalProvas()}
             >
               Adicionar novas provas <i className="fa fa-plus-circle" />
             </button>
+            <button
+              className={'btn btn-primary'}
+              onClick={() => this.generateCsv()}
+            >
+              Gerar CSV
+              </button>
           </Col>
         </Row>
         {loandingProvas ? (
@@ -325,13 +377,13 @@ export default class Provas extends Component {
             <div className="loader" style={{ margin: "0px auto" }}></div>
           </Row>
         ) : (
-          <TurmaProvasScreen
-            {...this.state}
-            {...this.props}
-            provas={provas}
-            removerProva={this.removerProva.bind(this)}
-          />
-        )}
+            <TurmaProvasScreen
+              {...this.state}
+              {...this.props}
+              provas={provas}
+              removerProva={this.removerProva.bind(this)}
+            />
+          )}
         <Modal
           show={showModalProvas}
           onHide={this.handleCloseshowModalProvas.bind(this)}
@@ -347,13 +399,12 @@ export default class Provas extends Component {
               <Row mb={15}>
                 <Col xs={12}>
                   <InputGroup
-                    placeholder={`Perquise pelo ${
-                      fieldFilter === "title"
+                    placeholder={`Perquise pelo ${fieldFilter === "title"
                         ? "Nome"
                         : fieldFilter === "code"
-                        ? "Código"
-                        : "..."
-                    }`}
+                          ? "Código"
+                          : "..."
+                      }`}
                     value={contentInputSeach}
                     handleContentInputSeach={this.handleContentInputSeach.bind(
                       this
@@ -375,66 +426,66 @@ export default class Provas extends Component {
                 {loandingTodasProvas ? (
                   <div className="loader" style={{ margin: "0px auto" }} />
                 ) : (
-                  todasprovas.map((prova, index) => (
-                    <Fragment key={prova.id}>
-                      <Col xs={12}>
-                        <Card>
-                          <CardHead>
-                            <CardTitle>
-                              {`${prova.title} - ${prova.code}`}
-                            </CardTitle>
-                            <CardOptions>
-                              <div
-                                className="btn-group  float-right"
-                                role="group"
-                                aria-label="Exemplo básico"
-                              >
-                                <button
-                                  className="btn-primary btn"
-                                  onClick={() => this.inserirProva(prova)}
+                    todasprovas.map((prova, index) => (
+                      <Fragment key={prova.id}>
+                        <Col xs={12}>
+                          <Card>
+                            <CardHead>
+                              <CardTitle>
+                                {`${prova.title} - ${prova.code}`}
+                              </CardTitle>
+                              <CardOptions>
+                                <div
+                                  className="btn-group  float-right"
+                                  role="group"
+                                  aria-label="Exemplo básico"
                                 >
-                                  Adicionar
+                                  <button
+                                    className="btn-primary btn"
+                                    onClick={() => this.inserirProva(prova)}
+                                  >
+                                    Adicionar
                                 </button>
-                                <button
-                                  className="btn btn-primary"
-                                  data-toggle="collapse"
-                                  data-target={"#collapse" + prova.id}
-                                  style={{ position: "relative" }}
-                                >
-                                  <i className="fe fe-chevron-down" />
-                                </button>
-                              </div>
-                            </CardOptions>
-                          </CardHead>
-                          <div className="collapse" id={"collapse" + prova.id}>
-                            <CardBody>
-                              <Row>
-                                <b>Exercícios: </b>
-                              </Row>
-                              <Row>
-                                {prova.questions.map((questao) => (
-                                  <Fragment key={questao.id}>
-                                    <Col xs={12}>
-                                      <p>{index + 1 + " - " + questao.title}</p>
-                                    </Col>
-                                  </Fragment>
-                                ))}
-                              </Row>
-                            </CardBody>
-                          </div>
-                        </Card>
-                      </Col>
-                    </Fragment>
-                  ))
-                )}
+                                  <button
+                                    className="btn btn-primary"
+                                    data-toggle="collapse"
+                                    data-target={"#collapse" + prova.id}
+                                    style={{ position: "relative" }}
+                                  >
+                                    <i className="fe fe-chevron-down" />
+                                  </button>
+                                </div>
+                              </CardOptions>
+                            </CardHead>
+                            <div className="collapse" id={"collapse" + prova.id}>
+                              <CardBody>
+                                <Row>
+                                  <b>Exercícios: </b>
+                                </Row>
+                                <Row>
+                                  {prova.questions.map((questao) => (
+                                    <Fragment key={questao.id}>
+                                      <Col xs={12}>
+                                        <p>{index + 1 + " - " + questao.title}</p>
+                                      </Col>
+                                    </Fragment>
+                                  ))}
+                                </Row>
+                              </CardBody>
+                            </div>
+                          </Card>
+                        </Col>
+                      </Fragment>
+                    ))
+                  )}
               </Row>
               <Row mb={15}>
                 <Col xs={12} textCenter>
-                  <Pagination 
-                    count={totalPages} 
-                    page={Number(numPageAtual)} 
-                    onChange={this.handlePage.bind(this)} 
-                    color="primary" 
+                  <Pagination
+                    count={totalPages}
+                    page={Number(numPageAtual)}
+                    onChange={this.handlePage.bind(this)}
+                    color="primary"
                     size="large"
                     disabled={loandingTodasProvas}
                   />
@@ -486,20 +537,20 @@ export default class Provas extends Component {
                       <CardBody>
                         <b>Descrição: </b>
                         {/* <p>{questao.description}</p> */}
-                        <SunEditor 
-                                lang="pt_br"
-                                height="auto"
-                                disable={true}
-                                showToolbar={false}
-                                // onChange={this.handleDescriptionChange.bind(this)}
-                                setContents={questao.description}
-                                setDefaultStyle="font-size: 15px; text-align: justify"
-                                setOptions={{
-                                    toolbarContainer : '#toolbar_container',
-                                    resizingBar : false,
-                                    katex: katex,
-                                }}
-                            />
+                        <SunEditor
+                          lang="pt_br"
+                          height="auto"
+                          disable={true}
+                          showToolbar={false}
+                          // onChange={this.handleDescriptionChange.bind(this)}
+                          setContents={questao.description}
+                          setDefaultStyle="font-size: 15px; text-align: justify"
+                          setOptions={{
+                            toolbarContainer: '#toolbar_container',
+                            resizingBar: false,
+                            katex: katex,
+                          }}
+                        />
                         <br />
                         <BlockMath>{questao.katexDescription || ""}</BlockMath>
                         <br />
@@ -519,6 +570,23 @@ export default class Provas extends Component {
             </button>
           </Modal.Footer>
         </Modal>
+        <SwalModal
+          show={showModalCSV}
+          handleModal={() => this.setState({ showModalCSV: false })}
+        >
+          <Row>
+            <Col xs={12} textCenter>
+              {csvData && <CSVLink
+                data={csvData}
+                filename={`${turma && turma.name}-${moment().local().format("YYYY-MM-DD-HH-mm")}.csv`}
+                className={'btn btn-primary btn-lg'}
+                onClick={() => this.setState({ showModalCSV: false })}
+              >
+                Baixar CSV <i className=" fa fa-download ml-5" />
+              </CSVLink>}
+            </Col>
+          </Row>
+        </SwalModal>
       </TemplateSistema>
     );
   }
