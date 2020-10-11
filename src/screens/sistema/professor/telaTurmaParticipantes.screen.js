@@ -179,16 +179,6 @@ export default class Pagina extends Component {
             )}
           </Col>
         </Row>
-        <Row  mb={15}>
-          <Col xs={12}>
-              <button
-                className={'btn btn-primary'}
-                onClick={()=>this.generateCsv()}
-              >
-                Gerar CSV
-              </button>
-          </Col> 
-        </Row>
         <ParticioantesScreenfrom
           {...this.props}
           {...this.state}
