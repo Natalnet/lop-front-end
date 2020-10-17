@@ -34,7 +34,8 @@ export default class telaTurmaExercicioSubmissoes extends Component {
     }
     async componentDidMount(){
         await this.getInfoTurma();
-        await this.getUserSubmissionsByList();
+        await this.getList()
+        await this.getUsersWithLastSubmissionByQuestionByListByClass();
         const { turma, lista } = this.state;
         document.title = `${turma && turma.name} - ${lista && lista.title}`;
     }
@@ -63,33 +64,48 @@ export default class telaTurmaExercicioSubmissoes extends Component {
           this.setState({ loadingInfoTurma: false });
           console.log(err);
         }
-      }
-    async getUserSubmissionsByList(idExercicio =this.props.match.params.idExercicio ){
+    }
+
+    async getList(idExercicio = this.props.match.params.idExercicio ){
         this.setState({loadUserSubmissionsByList: true})
         const {id, idLista} = this.props.match.params;
+        const query = `idClass=${id}`
         try{
-            const response = await api.get(`/listQuestion/${idLista}/class/${id}/question/${idExercicio}`)
-            //console.log('question: ',response.data)
+            const response = await api.get(`/listQuestion/${idLista}?${query}`);
+            //console.log('response: ',response.data)
             this.setState({
-                users: response.data.users,
-                lista:  response.data.list,
-                question: response.data.list.questions.find(q=>q.id===idExercicio),
+                lista:  response.data,
+                question: response.data.questions.find(q=>q.id===idExercicio),
                 loadUserSubmissionsByList:false,
-                loadingPage: false
             })
-            
         }
         catch(err){
             console.log(err)
         }
     }
+    async getUsersWithLastSubmissionByQuestionByListByClass(idExercicio =this.props.match.params.idExercicio ){
+        this.setState({loadUserSubmissionsByList: true})
+        //console.log('id/question: ',idExercicio)
+        const {id, idLista} = this.props.match.params;
+        try{
+            const response = await api.get(`user/list/${idLista}/class/${id}/question/${idExercicio}`)
+            //console.log('response: ',response.data)
+            this.setState({
+                users: response.data,
+                loadUserSubmissionsByList:false,
+                loadingPage: false
+            })
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
+
     async handleQuestion(url,idQuestion){
-        this.props.history.push(url);
-        this.getUserSubmissionsByList(idQuestion);
+        window.location.replace(url)
     }
     
     render(){
-        
         const { users , turma, lista, loadingInfoTurma, question, loadingPage, loadUserSubmissionsByList} = this.state;
         return(
             <TemplateSistema {...this.props} active={"listas"} submenu={"telaTurmas"}>

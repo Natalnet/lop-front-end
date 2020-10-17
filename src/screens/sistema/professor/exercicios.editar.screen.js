@@ -285,6 +285,13 @@ export default class Editor extends Component {
       //katexDescription,
     } = this.state;
     if (this.isTestEmpty(tests)) return null;
+    if(!tagsSelecionadas.length){
+      Swal.fire({
+        type: "error",
+        title: "Adicione pelo menos uma tag ao exercício!",
+      });
+      return;
+    }
     if(!description){
       Swal.fire({
         type: "error",

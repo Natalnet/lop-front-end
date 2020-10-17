@@ -76,14 +76,17 @@ export default class AlunosProvas extends Component {
       hitPercentage: 0,
       question_id: "",
       user: null,
+      users: []
     };
   }
   async componentDidMount() {
-    document.title = "Questoes Feitas do aluno";
     await this.getInfoTurma();
     this.setState({ language: this.state.turma.languages[0] });
+    await this.getUsersByClasse();
     await this.getStudentQuestions();
-    this.setCurrentQuestion(this.props.match.params.idQuestion);
+    await this.setCurrentQuestion(this.props.match.params.idQuestion);
+    document.title = this.state.title;
+
     this.initialSubmission();
   }
 
@@ -116,6 +119,22 @@ export default class AlunosProvas extends Component {
     } catch (err) {
       this.setState({ loadingInfoTurma: false });
       console.log(err);
+    }
+  }
+
+  async getUsersByClasse() {
+    this.setState({ loadingUsers: true })
+    const { id, idAluno } = this.props.match.params;
+    try {
+      const response = await api.get(`/user/class/${id}`)
+      //console.log('users: ',response.data);
+      this.setState({
+        users: response.data,
+        user: response.data.find(user => user.id === idAluno),
+      })
+    }
+    catch (err) {
+      console.log(err)
     }
   }
 
@@ -174,10 +193,10 @@ export default class AlunosProvas extends Component {
         ).toFixed(2),
       });
     }
-    else{
+    else {
       this.setState({
         comments: "",
-        compilation_error:false,
+        compilation_error: false,
         runtime_error: false,
         presentation_error: false,
         wrong_answer: false,
@@ -209,13 +228,13 @@ export default class AlunosProvas extends Component {
           currentQuestion.lastSubmission.char_change_number,
       });
     }
-    else{
+    else {
       this.setState({
         answer: "",
         language: this.state.turma.languages[0],
         hitPercentage: 0,
         timeConsuming: currentQuestion.lastSubmission.timeConsuming,
-        char_change_number:0,
+        char_change_number: 0,
       });
     }
 
@@ -225,7 +244,7 @@ export default class AlunosProvas extends Component {
         corrected: true,
       });
     }
-    else{
+    else {
       this.setState({
         corrected: false,
       });
@@ -422,7 +441,7 @@ export default class AlunosProvas extends Component {
       //console.log('questoes: ', response.data.questions);
       this.setState({
         questoes: [...response.data.questions],
-        user: response.data.user,
+        //user: response.data.user,
         loadingQuestoes: false,
       });
     } catch (err) {
@@ -431,6 +450,8 @@ export default class AlunosProvas extends Component {
     }
     this.state.totalPages = this.state.questoes.length;
   }
+
+
 
   //retorna a quantidade de paginas a patir da quantidade de questoes
   totalPages() {
@@ -449,6 +470,8 @@ export default class AlunosProvas extends Component {
 
   //função usada para executar o codigo(apenas executa)
   async submeter(e) {
+
+
     e.preventDefault();
     const { answer, language, results } = this.state;
     if (!answer) return null;
@@ -489,7 +512,7 @@ export default class AlunosProvas extends Component {
     // this.props.history.push(
     //   `/professor/turma/${id}/prova/${idProva}/aluno/${idAluno}/page/${i}`
     // );
-    this.setState({loadingInfoTurma: true})
+    this.setState({ loadingInfoTurma: true })
     window.location.replace(
       `/professor/turma/${id}/prova/${idProva}/aluno/${idAluno}/page/${i}`
     );
@@ -498,13 +521,46 @@ export default class AlunosProvas extends Component {
     // this.initialSubmission();
   }
 
+  getCurretIndexUser() {
+    const { users } = this.state;
+    const { idAluno } = this.props.match.params;
+    const currentUser = users.findIndex(user => user.id === idAluno)
+    return currentUser;
+  }
+  getPrevUser() {
+    const { users } = this.state;
+    const index = this.getCurretIndexUser();
+    const prevUser = users.find((user, i) => i === index - 1)
+    //console.log('index: ',index,'prevuser: ',prevUser)
+    return prevUser !== -1 ? prevUser : null;
+  }
+  getNextUser() {
+    const { users } = this.state;
+    const index = this.getCurretIndexUser();
+    const nextUser = users.find((user, i) => i === index + 1)
+    return nextUser !== -1 ? nextUser : null;
+  }
+
+  handleRedirect(idUser) {
+    const { id, idQuestion, idProva } = this.props.match.params;
+    // `/professor/turma/${id}/prova/${idProva}/aluno/${idAluno}/page/${i}`
+    //this.props.match.params.idQuestion
+    window.document.location.replace(`/professor/turma/${id}/prova/${idProva}/aluno/${idUser}/page/${idQuestion}`)
+    // this.props.history.push(`/professor/turma/${id}/participantes/${idUser}/listas`);
+    // this.getUserLists(idUser);
+    // this.getUserTests(idUser)
+  }
+
+
   render() {
     //window.addEventListener("popstate",this.redirecionarr.bind(this));
     const {
       loadingInfoTurma,
+      users,
       // totalPages,
       // numPageAtual,
       // idAluno,
+      loadingQuestoes,
       idTurma,
       idProva,
       user,
@@ -529,6 +585,62 @@ export default class AlunosProvas extends Component {
               )}
           </Col>
         </Row>
+        {
+          !loadingQuestoes &&
+          <>
+            <Row mb={15}>
+              <Col xs={5}>
+                <label htmlFor="selectAluno">Participantes: </label>
+                <select
+                  id="selectAluno"
+                  className="form-control"
+                  defaultValue={this.props.match.params.idAluno}
+                  onChange={(e) => this.handleRedirect(e.target.value)}
+                >
+                  {users.map(user =>
+                    <option
+                      key={user.id}
+                      value={user.id}
+                    >
+                      {user.name} - {user.email}
+                    </option>
+                  )}
+                </select>
+              </Col>
+            </Row>
+            <Row mb={15}>
+              <Col md={12} >
+                <div
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <span>
+                    <button
+                      onClick={() => this.handleRedirect(this.getPrevUser() && this.getPrevUser().id)}
+                      className={`btn btn-outline-primary ${!this.getPrevUser() ? 'd-none' : ''}`}
+                    >
+                      <i className="fa fa-chevron-left mr-2" />
+                      {this.getPrevUser() && this.getPrevUser().name} - {this.getPrevUser() && this.getPrevUser().email}
+                    </button>
+                  </span>
+
+                  <span>
+                    <button
+                      onClick={() => this.handleRedirect(this.getNextUser() && this.getNextUser().id)}
+                      className={`btn btn-outline-primary ${!this.getNextUser() ? 'd-none' : ''}`}
+                    >
+                      {this.getNextUser() && this.getNextUser().name} - {this.getNextUser() && this.getNextUser().email}
+                      <i className="fa fa-chevron-right ml-2" />
+                    </button>
+                  </span>
+                </div>
+              </Col>
+            </Row>
+          </>
+        }
         {this.ShowQuestion()}
         {/* {loadingInfoTurma?
           <div className="loader" style={{ margin: "0px auto" }}></div>
@@ -552,12 +664,12 @@ export default class AlunosProvas extends Component {
         <Row>
           <Col xs={12}>
             {
-              questoes.map((question,index) =>
+              questoes.map((question, index) =>
                 <button
                   key={question.id}
-                  onClick={()=>this.redirecionar(index+1)}
+                  onClick={() => this.redirecionar(index + 1)}
                   //onClick={()=>this.handleQuestion(`/professor/turma/${this.props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes`,question.id)}
-                  className={`btn ${String(index+1) === this.props.match.params.idQuestion ? 'btn-primary disabled' : 'btn-outline-primary'} mr-5 mb-5`}
+                  className={`btn ${String(index + 1) === this.props.match.params.idQuestion ? 'btn-primary disabled' : 'btn-outline-primary'} mr-5 mb-5`}
                 >
                   {question.title}
                 </button>

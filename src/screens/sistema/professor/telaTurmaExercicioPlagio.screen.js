@@ -75,20 +75,22 @@ export default props => {
     // },[])
 
     useEffect(() => {
-        getUserSubmissionsByList(props.match.params.idExercicio);
+        getList();
     }, [])
 
     const question = useMemo(() =>
         lista && lista.questions.find(q => q.id === props.match.params.idExercicio)
         , [lista]);
 
-    const getUserSubmissionsByList = useCallback(async (idExercicio) => {
+    const getList = useCallback(async () => {
         setLoadUserSubmissionsByList(true);
         const { id, idLista } = props.match.params;
+
+        const query = `idClass=${id}`
         try {
-            const response = await api.get(`/listQuestion/${idLista}/class/${id}/question/${idExercicio}`);
+            const response = await api.get(`/listQuestion/${idLista}?${query}`);
             //console.log('reponse:', response.data);
-            setLista(response.data.list);
+            setLista(response.data);
             setLoadingPage(false);
         }
         catch (err) {
@@ -126,9 +128,9 @@ export default props => {
 
     }, [lista, question, mossLanguage])
 
-    const handleQuestion = useCallback((url, idQuestion) => {
+    const handleQuestion = useCallback((url) => {
         history.push(url);
-        getUserSubmissionsByList(idQuestion);
+        getList();
     }, [])
 
     const handleLanguage = useCallback(e => {
@@ -253,7 +255,7 @@ export default props => {
                                 lista && lista.questions.map(question =>
                                     <button
                                         key={question.id}
-                                        onClick={() => handleQuestion(`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes/plagio`, question.id)}
+                                        onClick={() => handleQuestion(`/professor/turma/${props.match.params.id}/lista/${lista.id}/exercicio/${question.id}/submissoes/plagio`)}
                                         className={`btn ${question.id === props.match.params.idExercicio ? 'btn-primary disabled' : 'btn-outline-primary'} mr-5 mb-5`}
                                     >
                                         {question.title}
