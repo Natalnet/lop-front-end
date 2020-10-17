@@ -59,12 +59,14 @@ export default class Listas extends Component {
   }
   async getUsersByClasse(){
     this.setState({loadingUsers:true})
-    const id = this.props.match.params.id;
+    const {id, idUser }= this.props.match.params;
     try{
       const response = await api.get(`/user/class/${id}`)
       //console.log('users: ',response.data);
       this.setState({
         users: response.data,
+        usuario: response.data.find(user=>user.id===idUser),
+
         loadingUsers: false
       })
     }
@@ -72,6 +74,7 @@ export default class Listas extends Component {
       console.log(err)
     }
   }
+
   async getUserLists(idUser) {
     try {
       const { id } = this.props.match.params;
@@ -80,8 +83,8 @@ export default class Listas extends Component {
       this.setState({ loandingListas: true });
       const response = await api.get(`/listQuestion${query}`);
       this.setState({
-        listas: [...response.data.lists],
-        usuario: response.data.user,
+        listas: [...response.data],
+        //usuario: response.data.user,
         loandingListas: false,
       });
     } catch (err) {
@@ -98,8 +101,7 @@ export default class Listas extends Component {
       this.setState({ loandingProvas: true });
       const response = await api.get(`/test${query}`);
       this.setState({
-        provas: [...response.data.tests],
-        usuario: response.data.user,
+        provas: [...response.data],
         loandingProvas: false,
       });
     } catch (err) {
@@ -129,9 +131,10 @@ export default class Listas extends Component {
   }
   handleRedirect(idUser){
     const { id  } = this.props.match.params;
-    this.props.history.push(`/professor/turma/${id}/participantes/${idUser}/listas`);
-    this.getUserLists(idUser);
-    this.getUserTests(idUser)
+    window.document.location.replace(`/professor/turma/${id}/participantes/${idUser}/listas`)
+    // this.props.history.push(`/professor/turma/${id}/participantes/${idUser}/listas`);
+    // this.getUserLists(idUser);
+    // this.getUserTests(idUser)
   }
 
 
@@ -202,7 +205,6 @@ export default class Listas extends Component {
                 <option
                   key={user.id} 
                   value={user.id}
-                  onChange={(e)=>this.handleRedirect(e.target.value)}
                 >
                   {user.name} - {user.email}
                 </option>
@@ -282,7 +284,8 @@ export default class Listas extends Component {
               </span>
             </div>
           </Col>
-        </Row>       
+        </Row>
+               
       </TemplateSistema>
     );
   }

@@ -222,16 +222,22 @@ export default props => {
                                             (profile === "PROFESSOR") ? (
                                                 <>
                                                     <Link to={`/professor/exercicio/${question.id}`} >
-                                                        <button className="btn btn-success mr-2">
+                                                        <button className="btn btn-success mr-2" title="Acessar Exercício">
                                                             Acessar <i className="fa fa-wpexplorer" />
                                                         </button>
                                                     </Link>
-                                                    <button className="btn btn-primary mr-2" onClick={() => handleShowModal(question)}>
+                                                    <button className="btn btn-primary mr-2" title="Ver informações" onClick={() => handleShowModal(question)}>
                                                         <i className="fa fa-info" />
                                                     </button>
+                                                   
                                                     <Link to={`/professor/exercicios/${question.id}/editar`}>
-                                                        <button className={`btn btn-info ${(email !== question.author.email) ? "d-none" : ""}`}>
+                                                        <button className={`btn btn-info mr-2 ${(email !== question.author.email) ? "d-none" : ""}` } title="Editar Exercício">
                                                             <i className="fe fe-edit" />
+                                                        </button>
+                                                    </Link>
+                                                    <Link to={`/professor/criarExercicio?idQuestion=${question.id}`} >
+                                                        <button className="btn btn-warning mr-2" title="Clonar Exercício">
+                                                            <i className="fa fa-copy" />
                                                         </button>
                                                     </Link>
                                                 </>

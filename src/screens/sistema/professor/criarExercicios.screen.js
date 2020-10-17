@@ -38,6 +38,7 @@ export default class Editor extends Component {
       status: "PÚBLICA",
       difficulty: "1",
       solution: "",
+      loadingExercicio: false,
       loadingReponse: false,
       savingQuestion: false,
       title: "",
@@ -60,7 +61,9 @@ export default class Editor extends Component {
   }
   componentDidMount() {
     this.getTags();
+    this.getExercicio();
     document.title = "Criar Exercício - professor";
+
   }
   async getTags() {
     try {
@@ -79,6 +82,50 @@ export default class Editor extends Component {
       console.log(err);
       this.setState({ loadingTags: false });
     }
+  }
+  async getExercicio() {
+    const location = this.props.location.search;
+    console.log('search: ',location)
+    console.log(location.includes('?idQuestion='))
+    if(!location.includes('?idQuestion=')){
+      return;
+    }
+    const id = location.replace('?idQuestion=','')
+    try {
+      this.setState({ loadingExercicio: true });
+      const response = await api.get(`/question/${id}`);
+      //console.log(response.data);
+      this.setState({
+        title: response.data.title,
+        description: response.data.description,
+        //katexDescription: response.data.katexDescription || "",
+        tests: this.appInputFormat(response.data.results),
+        status: response.data.status,
+        difficulty: response.data.difficulty,
+        solution: response.data.solution,
+        loadingExercicio: false,
+        tagsSelecionadas: response.data.tags.map((tag) => {
+          return {
+            value: tag.id,
+            label: tag.name,
+          };
+        }),
+      });
+    } catch (err) {
+      console.log(Object.getOwnPropertyDescriptors(err));
+    }
+    this.setState({ loadingExercicio: false });
+
+  }
+  appInputFormat(tests) {
+    return tests.map((test) => {
+      return {
+        inputs: test.inputs.split("\n").join("\\n"),
+        output: test.output,
+        msgInputs: "",
+        msgOutput: "",
+      };
+    });
   }
   handleNumTest(action) {
     let { tests } = this.state;
@@ -241,7 +288,13 @@ export default class Editor extends Component {
       difficulty,
       //katexDescription,
     } = this.state;
-    if (this.isTestEmpty(tests)) return null;
+    if(!tagsSelecionadas.length){
+      Swal.fire({
+        type: "error",
+        title: "Adicione pelo menos uma tag ao exercício!",
+      });
+      return;
+    }
     if(!description){
       Swal.fire({
         type: "error",
@@ -249,6 +302,7 @@ export default class Editor extends Component {
       });
       return;
     }
+    if (this.isTestEmpty(tests)) return null;
     const results = this.rTrimAll(tests);
     Swal.fire({
       title: "Salvando questão",
@@ -260,6 +314,7 @@ export default class Editor extends Component {
     const request = {
       title,
       description,
+      
       tags: tagsSelecionadas.map((tag) => tag.value),
       //katexDescription,
       status,
@@ -311,6 +366,9 @@ export default class Editor extends Component {
       percentualAcerto,
       status,
       difficulty,
+      loadingExercicio,
+      tagsSelecionadas,
+      description,
       //katexDescription,
       response,
       savingQuestion,
@@ -341,7 +399,7 @@ export default class Editor extends Component {
           </Col>
         </Row>
         <Card>
-          <CardBody>
+          <CardBody loading={loadingExercicio || loadingTags}>
             <form onSubmit={(e) => {e.preventDefault(); this.saveQuestion(e);}}>
               <div className="form-row">
                 <div className="form-group col-md-12">
@@ -362,6 +420,7 @@ export default class Editor extends Component {
                     lang="pt_br"
                     minHeight="250"
                     height="auto"
+                    setContents={description}
                     onChange={this.handleDescriptionChange.bind(this)}
                     onImageUploadBefore={this.handleImageUploadBefore.bind(this)}
                     onVideoUploadBefore={this.handleVideoUploadBefore.bind(this)}
@@ -422,6 +481,7 @@ export default class Editor extends Component {
                   <label>Tags </label>
                   <Select
                     style={{ boxShadow: "white" }}
+                    defaultValue={tagsSelecionadas}
                     options={tags || []}
                     isMulti
                     isLoading={loadingTags}
