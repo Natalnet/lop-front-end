@@ -150,13 +150,12 @@ export default class HomeListasScreen extends Component {
           </Col>
           <Col xs={9}>
             <InputGroup
-              placeholder={`Perquise pelo ${
-                fieldFilter === "title"
-                  ? "Nome"
-                  : fieldFilter === "code"
+              placeholder={`Perquise pelo ${fieldFilter === "title"
+                ? "Nome"
+                : fieldFilter === "code"
                   ? "Código"
                   : "..."
-              }`}
+                }`}
               value={contentInputSeach}
               handleContentInputSeach={this.handleContentInputSeach.bind(this)}
               filterSeash={this.filterSeash.bind(this)}
@@ -202,56 +201,62 @@ export default class HomeListasScreen extends Component {
                     </td>
                   </tr>
                 ) : (
-                  listas.map((lista, index) => {
-                    return (
-                      <Fragment key={index}>
-                        <tr>
-                          <td>{lista.title}</td>
-                          <td>{lista.code}</td>
-                          <td>{lista.author && lista.author.email}</td>
-                          <td>{moment(lista.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                          <td className="d-inline-flex ">
-                            <button
-                              className="btn btn-primary float-right mr-2"
-                              onClick={() =>
-                                this.handleShowModalInfo(lista.questions)
-                              }
-                            >
-                              <i className="fa fa-info" />
-                            </button>
+                    listas.map((lista, index) => {
+                      return (
+                        <Fragment key={index}>
+                          <tr>
+                            <td>{lista.title}</td>
+                            <td>{lista.code}</td>
+                            <td>{lista.author && lista.author.email}</td>
+                            <td>{moment(lista.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                            <td className="d-inline-flex ">
+                              <button
+                                title="Ver informações da lista"
+                                className="btn btn-primary float-right mr-2"
+                                onClick={() =>
+                                  this.handleShowModalInfo(lista.questions)
+                                }
+                              >
+                                <i className="fa fa-info" />
+                              </button>
 
-                            {
-                              <Link to={`/professor/listas/${lista.id}/editar`}>
-                                <button
-                                  className={`btn btn-info ${
-                                    lista.author &&
-                                    sessionStorage.getItem("user.email") ===
+                              {
+                                <Link to={`/professor/listas/${lista.id}/editar`}>
+                                  <button
+                                    title="Editar Lista"
+                                    className={`btn btn-info mr-2 ${lista.author &&
+                                      sessionStorage.getItem("user.email") ===
                                       lista.author.email
                                       ? "inline-block"
                                       : "d-none"
-                                  }`}
-                                >
-                                  <i className="fe fe-edit" />
+                                      }`}
+                                  >
+                                    <i className="fe fe-edit" />
+                                  </button>
+                                </Link>
+                              }
+                              <Link to={`/professor/criarlista?idList=${lista.id}`} >
+                                <button className="btn btn-warning " title="Clonar Lista">
+                                  <i className="fa fa-copy" />
                                 </button>
                               </Link>
-                            }
-                          </td>
-                        </tr>
-                      </Fragment>
-                    );
-                  })
-                )}
+                            </td>
+                          </tr>
+                        </Fragment>
+                      );
+                    })
+                  )}
               </tbody>
             </table>
           </Col>
         </Row>
         <Row>
           <Col xs={12} textCenter>
-            <Pagination 
-              count={totalPages} 
-              page={Number(numPageAtual)} 
-              onChange={this.handlePage} 
-              color="primary" 
+            <Pagination
+              count={totalPages}
+              page={Number(numPageAtual)}
+              onChange={this.handlePage}
+              color="primary"
               size="large"
               disabled={loadingListas}
             />
@@ -295,19 +300,19 @@ export default class HomeListasScreen extends Component {
                           </Row>
                           <Row>
                             {/* <p>{questao.description}</p> */}
-                            <SunEditor 
-                                lang="pt_br"
-                                height="auto"
-                                disable={true}
-                                showToolbar={false}
-                                // onChange={this.handleDescriptionChange.bind(this)}
-                                setContents={questao.description}
-                                setDefaultStyle="font-size: 15px; text-align: justify"
-                                setOptions={{
-                                    toolbarContainer : '#toolbar_container',
-                                    resizingBar : false,
-                                    katex: katex,
-                                }}
+                            <SunEditor
+                              lang="pt_br"
+                              height="auto"
+                              disable={true}
+                              showToolbar={false}
+                              // onChange={this.handleDescriptionChange.bind(this)}
+                              setContents={questao.description}
+                              setDefaultStyle="font-size: 15px; text-align: justify"
+                              setOptions={{
+                                toolbarContainer: '#toolbar_container',
+                                resizingBar: false,
+                                katex: katex,
+                              }}
                             />
 
                           </Row>

@@ -145,13 +145,12 @@ export default class HomeProvasScreen extends Component {
           </Col>
           <Col xs={9}>
             <InputGroup
-              placeholder={`Perquise pelo ${
-                fieldFilter === "title"
+              placeholder={`Perquise pelo ${fieldFilter === "title"
                   ? "Nome"
                   : fieldFilter === "code"
-                  ? "Código"
-                  : "..."
-              }`}
+                    ? "Código"
+                    : "..."
+                }`}
               value={contentInputSeach}
               handleContentInputSeach={this.handleContentInputSeach.bind(this)}
               filterSeash={this.filterSeash.bind(this)}
@@ -195,56 +194,63 @@ export default class HomeProvasScreen extends Component {
                     </td>
                   </tr>
                 ) : (
-                  provas.map((prova) => {
-                    return (
-                      <Fragment key={prova.id}>
-                        <tr>
-                          <td>{prova.title}</td>
-                          <td>{prova.code}</td>
-                          {/* <td>{prova.password}</td> */}
-                          <td>{prova.author && prova.author.email}</td>
-                          <td>{moment(prova.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                          <td className="d-inline-flex">
-                            <button
-                              className="btn btn-primary float-right mr-2"
-                              onClick={() =>
-                                this.handleShowModalInfo(prova.questions)
+                    provas.map((prova) => {
+                      return (
+                        <Fragment key={prova.id}>
+                          <tr>
+                            <td>{prova.title}</td>
+                            <td>{prova.code}</td>
+                            {/* <td>{prova.password}</td> */}
+                            <td>{prova.author && prova.author.email}</td>
+                            <td>{moment(prova.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                            <td className="d-inline-flex">
+                              <button
+                                title="Ver informações de prova"
+
+                                className="btn btn-primary float-right mr-2"
+                                onClick={() =>
+                                  this.handleShowModalInfo(prova.questions)
+                                }
+                              >
+                                <i className="fa fa-info" />
+                              </button>
+                              {
+                                <Link to={`/professor/provas/${prova.id}/editar`}>
+                                  <button
+                                    title="Editar prova"
+                                    className={`btn btn-info mr-2 ${prova.author &&
+                                        sessionStorage.getItem("user.email") ===
+                                        prova.author.email
+                                        ? "inline-block"
+                                        : "d-none"
+                                      }`}
+                                  >
+                                    <i className="fe fe-edit" />
+                                  </button>
+                                </Link>
                               }
-                            >
-                              <i className="fa fa-info" />
-                            </button>
-                            {
-                              <Link to={`/professor/provas/${prova.id}/editar`}>
-                                <button
-                                  className={`btn btn-info ${
-                                    prova.author &&
-                                    sessionStorage.getItem("user.email") ===
-                                      prova.author.email
-                                      ? "inline-block"
-                                      : "d-none"
-                                  }`}
-                                >
-                                  <i className="fe fe-edit" />
+                              <Link to={`/professor/criarProva?idTest=${prova.id}`} >
+                                <button className="btn btn-warning " title="Clonar prova">
+                                  <i className="fa fa-copy" />
                                 </button>
                               </Link>
-                            }
-                          </td>
-                        </tr>
-                      </Fragment>
-                    );
-                  })
-                )}
+                            </td>
+                          </tr>
+                        </Fragment>
+                      );
+                    })
+                  )}
               </tbody>
             </table>
           </div>
         </Row>
         <Row>
           <Col xs={12} textCenter>
-            <Pagination 
-              count={totalPages} 
-              page={Number(numPageAtual)} 
-              onChange={this.handlePage} 
-              color="primary" 
+            <Pagination
+              count={totalPages}
+              page={Number(numPageAtual)}
+              onChange={this.handlePage}
+              color="primary"
               size="large"
               disabled={loadingProvas}
             />
@@ -288,19 +294,19 @@ export default class HomeProvasScreen extends Component {
                           </Row>
                           <Row>
                             {/* <p>{questao.description}</p> */}
-                            <SunEditor 
-                                lang="pt_br"
-                                height="auto"
-                                disable={true}
-                                showToolbar={false}
-                                // onChange={this.handleDescriptionChange.bind(this)}
-                                setContents={questao.description}
-                                setDefaultStyle="font-size: 15px; text-align: justify"
-                                setOptions={{
-                                    toolbarContainer : '#toolbar_container',
-                                    resizingBar : false,
-                                    katex: katex,
-                                }}
+                            <SunEditor
+                              lang="pt_br"
+                              height="auto"
+                              disable={true}
+                              showToolbar={false}
+                              // onChange={this.handleDescriptionChange.bind(this)}
+                              setContents={questao.description}
+                              setDefaultStyle="font-size: 15px; text-align: justify"
+                              setOptions={{
+                                toolbarContainer: '#toolbar_container',
+                                resizingBar: false,
+                                katex: katex,
+                              }}
                             />
                           </Row>
                           <Row>

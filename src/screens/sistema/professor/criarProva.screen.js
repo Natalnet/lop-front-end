@@ -9,7 +9,7 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import moment from "moment";
-
+import {Load} from 'components/ui/load';
 import { Pagination } from "components/ui/navs";
 
 import SwalModal from "components/ui/modal/swalModal.component";
@@ -48,12 +48,39 @@ export default class criarProvaScreen extends Component {
       totalPages: 0,
       showModalInfo: false,
       question: "",
+      loadingTest: false,
+
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     document.title = "Criar Prova - professor";
     this.getExercicios();
+    const { search } = this.props.location;
+    await this.getQuestionsByTest();
+    //console.log( this.props)
+    if(search.includes('?idTest=')){
+      const id = search.replace('?idTest=','')
+      this.getQuestionsByTest(id);
+      console.log('id: ',id)
+    }
+  }
+
+  async getQuestionsByTest(id) {
+    let query = `idTest=${id}`;
+    this.setState({loadingTest: true})
+    try {
+      const response = await api.get(`/question?${query}`);
+      this.setState({
+        title: response.data.test.title,
+        selecionados: response.data.questions,
+        //password: response.data.test.password,
+        //showAllTestCases: response.data.test.showAllTestCases,
+        loadingTest: false
+      });
+    } catch (err) {
+      this.setState({loadingTest: false})
+    }
   }
 
   async getExercicios() {
@@ -207,6 +234,7 @@ export default class criarProvaScreen extends Component {
       selecionados,
       question,
       showModalInfo,
+      loadingTest,
     } = this.state;
 
     return (
@@ -222,6 +250,9 @@ export default class criarProvaScreen extends Component {
         </Row>
         <Card>
           <CardBody>
+          {loadingTest?
+              <Load/>
+            :
             <form onSubmit={(e) => this.criarProva(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
               <div className="form-row">
                 <div className="form-group col-12">
@@ -425,6 +456,7 @@ export default class criarProvaScreen extends Component {
                 </Col>
               </Row>
             </form>
+          }
           </CardBody>
 
           <SwalModal
