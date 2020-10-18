@@ -3,9 +3,11 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import TemplateSistema from "components/templates/sistema.template";
 import moment from "moment";
+import api from "../../../services/api";
+import { Load } from 'components/ui/load';
 import useQuestion from '../../../hooks/useQuestion';
 import usePagination from '../../../hooks/usePagination';
 import useList from '../../../hooks/useList';
@@ -36,6 +38,7 @@ export default props => {
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [showModalInfo, setShowModalInfo] = useState(false);
   const [modalQuestion, setModalQuestion] = useState({});
+  const [isLoadingQuestionsByList,setIsLoadingQuestionsByList]= useState(false)
 
 
   const [titleOrCodeInput, setTitleOrCodeInput] = useState('');
@@ -56,6 +59,7 @@ export default props => {
   const tagsSelect = useMemo(() => [{ id: '', name: 'Todas' }, ...tags], [tags])
 
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     getTags();
@@ -63,6 +67,11 @@ export default props => {
 
   useEffect(() => {
     document.title = "Criar lista - professor";
+    const { search } = location;
+    if(search.includes('?idList=')){
+      const id = search.replace('?idList=','')
+      getQuestionsByList(id);
+    }
   }, [])
 
   useEffect(() => {
@@ -78,6 +87,19 @@ export default props => {
       setTotalPages(paginedQuestions.totalPages)
     }
   }, [paginedQuestions])
+
+  const getQuestionsByList = useCallback( async (id) =>{
+    let query = `idList=${id}`;
+    setIsLoadingQuestionsByList(true);
+    try {
+      const response = await api.get(`/question?${query}`);
+      setTitle(response.data.list.title);
+      setSelectedQuestions(response.data.questions)
+    } catch (err) {
+      console.log(err);
+    }
+    setIsLoadingQuestionsByList(false);
+  },[])
 
   const createList = useCallback(async e => {
     e.preventDefault();
@@ -99,12 +121,6 @@ export default props => {
   }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
   const saveQuerys = useCallback(() => {
-    // setFilteredTitleOrCodeInput(() => titleOrCodeInput);
-    // setFilteredFieldSelect(() => fieldSelect);
-    // setFilteredSortBySelect(() => sortBySelect);
-    // setFilteredDocsPerPage(() => docsPerPage);
-    // setFilteredSortRadio(() => sortRadio);
-    // setFilteredTagSelect(() => tagSelect);
 
   }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
@@ -133,23 +149,6 @@ export default props => {
     getPaginedQuestions(page, getQuerys());
   }, [page, saveQuerys, getQuerys]);
 
-  // const handlePage = useCallback( (e, numPage) => {
-  //   console.log('handlePage: ',numPage)
-  //   e.preventDefault();
-  //   setPage(numPage);
-  //   getPaginedQuestions()
-  // },[titleOrCodeInput, fieldSelect, page])
-
-  // render() {
-  //   const {
-  //     isLoadingQuestions,
-  //     titleOrCodeInput,
-  //     page,
-  //     totalPages,
-  //     selectedQuestions,
-  //     question,
-  //     showModalInfo,
-  //   } = this.state;
 
   return (
     <TemplateSistema active="listas">
@@ -165,6 +164,10 @@ export default props => {
       </Row>
       <Card>
         <CardBody>
+        {
+            isLoadingQuestionsByList?
+            <Load/>
+          :
           <form onSubmit={(e) => createList(e)} onKeyDown={e => { if (e.key === 'Enter') e.preventDefault(); }}>
             <div className="form-row">
               <div className="form-group col-12">
@@ -352,6 +355,7 @@ export default props => {
               </Col>
             </Row>
           </form>
+        }
         </CardBody>
 
         <SwalModal
