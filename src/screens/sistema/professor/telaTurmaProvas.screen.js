@@ -155,7 +155,7 @@ export default class Provas extends Component {
     try {
       const response = await api.get(`/dataScience/class/${id}/test`);
       this.setState({ showModalCSV: true })
-      //console.log('csv: ',response.data);
+      console.log('csv: ',response.data);
       // console.log('formated csv',this.formatCsv(response.data));
       this.setState({
         csvData: this.formatCsv(response.data),
@@ -177,7 +177,7 @@ export default class Provas extends Component {
     //console.log('tableHeader: ', tableHeader)
     const tableBody = rows.map(row => {
       let colsTests = row.tests.map(colTest =>
-        Math.round((colTest.questionsCompletedSumissionsCount / colTest.questionsCount) * 100)
+        colTest.scoreSystem
       )
       return [
         row.name,
