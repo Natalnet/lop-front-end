@@ -17,7 +17,8 @@ import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
 import { CSVLink } from "react-csv";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-
+import * as B from "components/ui/blockly";
+import { isXml } from '../../../util/auxiliaryFunctions.util';
 const lista = {
   backgroundColor: "white",
 };
@@ -32,7 +33,7 @@ export default class HomesubmissoesScreen extends Component {
       myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
       turma: "",
       showModal: false,
-      showModalCSV:false,
+      showModalCSV: false,
       loadingSubmissoes: false,
       fieldFilter: "name",
       numPageAtual: 1,
@@ -110,29 +111,29 @@ export default class HomesubmissoesScreen extends Component {
     }
   }
 
-  async generateCsv(){
+  async generateCsv() {
     const { id } = this.props.match.params;
     Swal.showLoading();
-    try{
+    try {
       const response = await api.get(`/dataScience/class/${id}/submission`);
-      console.log('csv',response.data);
+      console.log('csv', response.data);
       // console.log('formated csv',this.formatCsv(response.data));
       this.setState({
         csvData: this.formatCsv(response.data),
         showModalCSV: true
       })
     }
-    catch(err){
+    catch (err) {
       console.log(err);
     }
     Swal.hideLoading();
   }
 
-  formatCsv(rows){
-    if(!rows.length){
+  formatCsv(rows) {
+    if (!rows.length) {
       return [];
     }
-    let tableHeader  = [
+    let tableHeader = [
       "Nome",
       "Email",
       "Matrícula",
@@ -146,7 +147,7 @@ export default class HomesubmissoesScreen extends Component {
       "idProva",
     ]
     //console.log('tableHeader: ', tableHeader)
-    const tableBody = rows.map(row=>{
+    const tableBody = rows.map(row => {
       return [
         row.user.name,
         row.user.email,
@@ -162,7 +163,7 @@ export default class HomesubmissoesScreen extends Component {
       ]
     })
     //console.log('result: ',typeresult)
-    const table = [tableHeader,...tableBody];
+    const table = [tableHeader, ...tableBody];
     //console.log('table: ',table);
     return table;
   }
@@ -258,13 +259,13 @@ export default class HomesubmissoesScreen extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h5 style={{ margin: "0px" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />
-                {turma && turma.name} - {turma && turma.year}.
-                {turma && turma.semester}
-                <i className="fa fa-angle-left ml-2 mr-2" /> Submissões
-              </h5>
-            )}
+                <h5 style={{ margin: "0px" }}>
+                  <i className="fa fa-users mr-2" aria-hidden="true" />
+                  {turma && turma.name} - {turma && turma.year}.
+                  {turma && turma.semester}
+                  <i className="fa fa-angle-left ml-2 mr-2" /> Submissões
+                </h5>
+              )}
           </Col>
         </Row>
         {/* <Row  mb={15}>
@@ -281,13 +282,12 @@ export default class HomesubmissoesScreen extends Component {
         <Row mb={15}>
           <Col xs={12} mb={3}>
             <InputGroup
-              placeholder={`Perquise pelo ${
-                fieldFilter === "name"
+              placeholder={`Perquise pelo ${fieldFilter === "name"
                   ? "nome do aluno"
                   : fieldFilter === "title"
-                  ? "nome da questão"
-                  : "..."
-              }`}
+                    ? "nome da questão"
+                    : "..."
+                }`}
               value={contentInputSeach}
               handleContentInputSeach={this.handleContentInputSeach.bind(this)}
               filterSeash={this.filterSeash.bind(this)}
@@ -346,59 +346,57 @@ export default class HomesubmissoesScreen extends Component {
                     </td>
                   </tr>
                 ) : (
-                  submissoes.map((submission, index) => (
-                    <tr key={submission.id}>
-                      <td className="text-center">
-                        <div
-                          className="avatar d-block"
+                    submissoes.map((submission, index) => (
+                      <tr key={submission.id}>
+                        <td className="text-center">
+                          <div
+                            className="avatar d-block"
+                            style={{
+                              backgroundImage: `url(${submission.user.urlImage || profileImg})`,
+                            }}
+                          />
+                        </td>
+                        <td>{submission.user.name}</td>
+                        <td>{submission.question.title}</td>
+                        <td
                           style={{
-                            backgroundImage: `url(${
-                              submission.user.urlImage || profileImg})`,
+                            color: `${parseFloat(submission.hitPercentage) === 100
+                                ? "#5eba00"
+                                : "#f00"
+                              }`,
                           }}
-                        />
-                      </td>
-                      <td>{submission.user.name}</td>
-                      <td>{submission.question.title}</td>
-                      <td
-                        style={{
-                          color: `${
-                            parseFloat(submission.hitPercentage) === 100
-                              ? "#5eba00"
-                              : "#f00"
-                          }`,
-                        }}
-                      >
-                        <b>{parseFloat(submission.hitPercentage)}%</b>
-                      </td>
-                      <td>
-                        {parseInt(submission.timeConsuming / 1000 / 60)}min
+                        >
+                          <b>{parseFloat(submission.hitPercentage)}%</b>
+                        </td>
+                        <td>
+                          {parseInt(submission.timeConsuming / 1000 / 60)}min
                         {parseInt((submission.timeConsuming / 1000) % 60)}seg
                       </td>
-                      <td>{submission.ip}</td>
-                      <td>{submission.environment}</td>
-                      <td>{moment(submission.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                      <td>
-                        <button
-                          className="btn btn-primary mr-2"
-                          onClick={() => this.handleShowModalInfo(submission)}
-                        >
-                          <i className="fa fa-info" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                        <td>{submission.ip}</td>
+                        <td>{submission.environment}</td>
+                        <td>{moment(submission.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                        <td>
+                          <button
+                            className="btn btn-primary mr-2"
+                            onClick={() => this.handleShowModalInfo(submission)}
+                          >
+                            <i className="fa fa-info" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
               </tbody>
             </table>
           </Col>
         </Row>
         <Row>
           <Col xs={12} textCenter>
-            <Pagination 
-              count={totalPages} 
-              page={Number(numPageAtual)} 
-              onChange={this.handlePage.bind(this)} 
-              color="primary" 
+            <Pagination
+              count={totalPages}
+              page={Number(numPageAtual)}
+              onChange={this.handlePage.bind(this)}
+              color="primary"
               size="large"
               disabled={loadingSubmissoes}
             />
@@ -410,47 +408,97 @@ export default class HomesubmissoesScreen extends Component {
           handleModal={this.handleCloseshowModalInfo.bind(this)}
           width={"80%"}
         >
-        <>
-        <Row mb={15}>
-            <Col xs={12}>
-              <SunEditor 
-                lang="pt_br"
-                height="auto"
-                disable={true}
-                showToolbar={false}
-                // onChange={this.handleDescriptionChange.bind(this)}
-                setContents={submissao && submissao.question.description}
-                setDefaultStyle="font-size: 15px; text-align: justify"
-                setOptions={{
-                    toolbarContainer : '#toolbar_container',
-                    resizingBar : false,
+          <>
+            <Row mb={15}>
+              <Col xs={12}>
+                <SunEditor
+                  lang="pt_br"
+                  height="auto"
+                  disable={true}
+                  showToolbar={false}
+                  // onChange={this.handleDescriptionChange.bind(this)}
+                  setContents={submissao && submissao.question.description}
+                  setDefaultStyle="font-size: 15px; text-align: justify"
+                  setOptions={{
+                    toolbarContainer: '#toolbar_container',
+                    resizingBar: false,
                     katex: katex,
-                }}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <div className="col-12 offset-md-2 col-md-8 text-center">
-              <AceEditorWrapper
-                mode={submissao.language}
-                readOnly={true}
-                width={"100%"}
-                focus={false}
-                theme="monokai"
-                showPrintMargin={false}
-                value={submissao.answer || ""}
-                fontSize={16}
-                name="ACE_EDITOR_RES"
-                editorProps={{ $blockScrolling: true }}
-              />
-            </div>
-          </Row>
+                  }}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <div className="col-12 offset-md-2 col-md-8 text-center">
+                {
+                  submissao && submissao.language === 'blockly' ?
+                    <B.BlocklyComponent
+                      ref={this.simpleWorkspace}
+                      readOnly={true}
+                      trashcan={true}
+                      media={'media/'}
+                      move={{
+                        scrollbars: true,
+                        drag: true,
+                        wheel: true
+                      }}
+                      initialXml={isXml(submissao && submissao.answer) ? submissao && submissao.answer : ''}>
+                      <B.Category name="Text" colour="20">
+                        <B.Block type="text" />
+                        <B.Block type="text_print" />
+                        <B.Block type="text_prompt" />
+                      </B.Category>
+                      <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
+                      <B.Category name="Logic" colour="210">
+                        <B.Block type="controls_if" />
+                        <B.Block type="controls_ifelse" />
+                        <B.Block type="logic_compare" />
+                        <B.Block type="logic_operation" />
+                        <B.Block type="logic_boolean" />
+                        <B.Block type="logic_null" />
+                        <B.Block type="logic_ternary" />
+                      </B.Category>
+                      <B.Category name="Loops" colour="120">
+                        <B.Block type="controls_for" />
+                        <B.Block type="controls_whileUntil" />
+                        <B.Block type="controls_repeat_ext">
+                          <B.Value name="TIMES">
+                            <B.Shadow type="math_number">
+                              <B.Field name="NUM">10</B.Field>
+                            </B.Shadow>
+                          </B.Value>
+                        </B.Block>
+                      </B.Category>
+                      <B.Category name="Math" colour="230">
+                        <B.Block type="math_number" />
+                        <B.Block type="math_arithmetic" />
+                        <B.Block type="math_single" />
+                        <B.Block type="math_round" />
+                      </B.Category>
+                      <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                    </B.BlocklyComponent>
+                    :
+                    <AceEditorWrapper
+                      mode={submissao && submissao.language}
+                      theme="monokai"
+                      focus={false}
+                      value={submissao ? submissao.answer : ""}
+                      fontSize={14}
+                      width="100%"
+                      showPrintMargin={false}
+                      name="ACE_EDITOR"
+                      showGutter={true}
+                      highlightActiveLine={true}
+                      readOnly={true}
+                    />
+                }
+              </div>
+            </Row>
           </>
         </SwalModal>
 
         <SwalModal
           show={showModalCSV}
-          handleModal={() =>  this.setState({showModalCSV:false})}
+          handleModal={() => this.setState({ showModalCSV: false })}
         >
           <Row>
             <Col xs={12} textCenter>
@@ -458,7 +506,7 @@ export default class HomesubmissoesScreen extends Component {
                 data={csvData}
                 filename={`${turma && turma.name}-${moment().local().format("YYYY-MM-DD-HH-mm")}.csv`}
                 className={'btn btn-primary btn-lg'}
-                onClick={()=>this.setState({showModalCSV: false})}
+                onClick={() => this.setState({ showModalCSV: false })}
               >
                 Baixar CSV <i className=" fa fa-download ml-5" />
               </CSVLink>}

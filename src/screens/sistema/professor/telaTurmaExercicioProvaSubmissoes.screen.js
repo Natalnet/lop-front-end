@@ -18,21 +18,22 @@ import moment from "moment";
 import { BlockMath } from "react-katex";
 //import HTMLFormat from "components/ui/htmlFormat";
 import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-
+import * as B from "components/ui/blockly";
+import { isXml } from '../../../util/auxiliaryFunctions.util';
 export default class telaTurmaExercicioSubmissoes extends Component {
     constructor(props) {
-      super(props);
-      this.state = {
-        users: [],
-        loadingInfoTurma: true,
-        turma: "",
-        test: null,
-        question: null,
-        loadingPage: true,
-        loadUserSubmissionsByTest: false
-      };
+        super(props);
+        this.state = {
+            users: [],
+            loadingInfoTurma: true,
+            turma: "",
+            test: null,
+            question: null,
+            loadingPage: true,
+            loadUserSubmissionsByTest: false
+        };
     }
-    async componentDidMount(){
+    async componentDidMount() {
         await this.getInfoTurma();
         await this.getUserSubmissionsByList();
         const { turma, test } = this.state;
@@ -43,249 +44,298 @@ export default class telaTurmaExercicioSubmissoes extends Component {
         const id = this.props.match.params.id;
         const { myClasses } = this.state;
         if (myClasses && typeof myClasses === "object") {
-          const index = myClasses.map((c) => c.id).indexOf(id);
-          if (index !== -1) {
-            this.setState({
-              turma: myClasses[index],
-            });
-          }
-          this.setState({ loadingInfoTurma: false });
-          return null;
+            const index = myClasses.map((c) => c.id).indexOf(id);
+            if (index !== -1) {
+                this.setState({
+                    turma: myClasses[index],
+                });
+            }
+            this.setState({ loadingInfoTurma: false });
+            return null;
         }
         try {
-          const response = await api.get(`/class/${id}`);
-          this.setState({
-            turma: response.data,
-            loadingInfoTurma: false,
-            
-          });
+            const response = await api.get(`/class/${id}`);
+            this.setState({
+                turma: response.data,
+                loadingInfoTurma: false,
+
+            });
         } catch (err) {
-          this.setState({ loadingInfoTurma: false });
-          console.log(err);
+            this.setState({ loadingInfoTurma: false });
+            console.log(err);
         }
-      }
-    async getUserSubmissionsByList(idExercicio =this.props.match.params.idExercicio ){
-        this.setState({loadUserSubmissionsByTest: true})
-        const {id, idTest} = this.props.match.params;
-        try{
+    }
+    async getUserSubmissionsByList(idExercicio = this.props.match.params.idExercicio) {
+        this.setState({ loadUserSubmissionsByTest: true })
+        const { id, idTest } = this.props.match.params;
+        try {
             const response = await api.get(`/test/${idTest}/class/${id}/question/${idExercicio}`)
-            console.log('response: ',response.data)
+            console.log('response: ', response.data)
             this.setState({
                 users: response.data.users,
-                test:  response.data.test,
-                question: response.data.test.questions.find(q=>q.id===idExercicio),
-                loadUserSubmissionsByTest:false,
+                test: response.data.test,
+                question: response.data.test.questions.find(q => q.id === idExercicio),
+                loadUserSubmissionsByTest: false,
                 loadingPage: false
             })
-            
+
         }
-        catch(err){
+        catch (err) {
             console.log(err)
         }
     }
-    async handleQuestion(url,idQuestion){
+    async handleQuestion(url, idQuestion) {
         this.props.history.push(url);
         this.getUserSubmissionsByList(idQuestion);
     }
-    
-    render(){
-        
-        const { users , turma, test, loadingInfoTurma, question, loadingPage, loadUserSubmissionsByTest} = this.state;
-        return(
+
+    render() {
+
+        const { users, turma, test, loadingInfoTurma, question, loadingPage, loadUserSubmissionsByTest  } = this.state;
+        return (
             <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
                 <Row mb={15}>
                     <Col xs={12}>
                         {loadingInfoTurma ? (
-                            <Load/>
+                            <Load />
                         ) : (
-                        <h5 style={{ margin: "0px", display: "inline" }}>
-                            <i className="fa fa-users mr-2" aria-hidden="true" />
-                            {turma && turma.name} - {turma && turma.year}.
-                            {turma && turma.semester}
-                            <i className="fa fa-angle-left ml-2 mr-2" />
-                            <Link
-                                
-                                to={`/professor/turma/${this.props.match.params.id}/provas`}
-                                >
-                                Listas
+                                <h5 style={{ margin: "0px", display: "inline" }}>
+                                    <i className="fa fa-users mr-2" aria-hidden="true" />
+                                    {turma && turma.name} - {turma && turma.year}.
+                                    {turma && turma.semester}
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                    <Link
+
+                                        to={`/professor/turma/${this.props.match.params.id}/provas`}
+                                    >
+                                        Listas
                             </Link>
-                            <i className="fa fa-angle-left ml-2 mr-2" />
-                            {test ? (
-                                <>
-                            <Link
-                                to={`/professor/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`}
-                            >
-        
-                                {test.title}
-                            </Link>
-                            <i className="fa fa-angle-left ml-2 mr-2" /> 
-                            <span> {question && question.title}</span>
-                            </>
-                            ) : (
-                            <div
-                                style={{
-                                    width: "140px",
-                                    backgroundColor: "#e5e5e5",
-                                    height: "12px",
-                                    display: "inline-block",
-                                }}
-                            />
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                    {test ? (
+                                        <>
+                                            <Link
+                                                to={`/professor/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`}
+                                            >
+
+                                                {test.title}
+                                            </Link>
+                                            <i className="fa fa-angle-left ml-2 mr-2" />
+                                            <span> {question && question.title}</span>
+                                        </>
+                                    ) : (
+                                            <div
+                                                style={{
+                                                    width: "140px",
+                                                    backgroundColor: "#e5e5e5",
+                                                    height: "12px",
+                                                    display: "inline-block",
+                                                }}
+                                            />
+                                        )}
+                                </h5>
                             )}
-                        </h5>
-                        )}
                     </Col>
                 </Row>
-                {loadingPage?
-                    <Load/>
-                :
-                <>
-                <Row>
-                    <Col xs={12}>
-                    {
-                        test && test.questions.map(question=>
-                            <button 
-                                key={question.id}
-                                onClick={()=>this.handleQuestion(`/professor/turma/${this.props.match.params.id}/prova/${test.id}/exercicio/${question.id}/submissoes`,question.id)}
-                                className={`btn ${question.id===this.props.match.params.idExercicio?'btn-primary disabled':'btn-outline-primary'} mr-5 mb-5`}
-                            >
-                                {question.title}
-                            </button>
-                        )
-                    }
-                    </Col>
-                </Row>
-                {
-                loadUserSubmissionsByTest?
-                    <Load/>
-                :
-                <>
-                <Row mb={20}>
-                    <Col xs={12}>
-                        <Card className="card-status-primary">
-                            <CardHead>
-                                <CardTitle>
-                                <b><i className="fa fa-code mr-2"/> {question.title}</b>
-                                </CardTitle>
-                            </CardHead>
-                            <CardBody className="overflow-auto">
-                                <Row>
-                                    <Col xs={12}>
-                                        {/* <HTMLFormat>
+                {loadingPage ?
+                    <Load />
+                    :
+                    <>
+                        <Row>
+                            <Col xs={12}>
+                                {
+                                    test && test.questions.map(question =>
+                                        <button
+                                            key={question.id}
+                                            onClick={() => this.handleQuestion(`/professor/turma/${this.props.match.params.id}/prova/${test.id}/exercicio/${question.id}/submissoes`, question.id)}
+                                            className={`btn ${question.id === this.props.match.params.idExercicio ? 'btn-primary disabled' : 'btn-outline-primary'} mr-5 mb-5`}
+                                        >
+                                            {question.title}
+                                        </button>
+                                    )
+                                }
+                            </Col>
+                        </Row>
+                        {
+                            loadUserSubmissionsByTest ?
+                                <Load />
+                                :
+                                <>
+                                    <Row mb={20}>
+                                        <Col xs={12}>
+                                            <Card className="card-status-primary">
+                                                <CardHead>
+                                                    <CardTitle>
+                                                        <b><i className="fa fa-code mr-2" /> {question.title}</b>
+                                                    </CardTitle>
+                                                </CardHead>
+                                                <CardBody className="overflow-auto">
+                                                    <Row>
+                                                        <Col xs={12}>
+                                                            {/* <HTMLFormat>
                                             {question.description}
                                         </HTMLFormat> */}
-                                        <SunEditor 
-                                            lang="pt_br"
-                                            height="auto"
-                                            disable={true}
-                                            showToolbar={false}
-                                            // onChange={this.handleDescriptionChange.bind(this)}
-                                            setContents={question.description}
-                                            setDefaultStyle="font-size: 15px; text-align: justify"
-                                            setOptions={{
-                                                toolbarContainer : '#toolbar_container',
-                                                resizingBar : false,
-                                                katex: katex,
-                                            }}
-                                        />
-                                        {question.katexDescription ? (
-                                            <BlockMath>{question.katexDescription}</BlockMath>
-                                        ) : (
-                                            ""
-                                        )}
-                                    </Col>
-                                </Row>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-                <Row>
-                {
-                    users.map((user, j) => 
-                        <Fragment key={j}>
-                            <Col xs={12} md={6}>
-                                <Card>
-                                    <CardHead>
-                                        <CardTitle>
-                                            <b>{user.name} - {user.enrollment}</b>
-                                        </CardTitle>
-                                    </CardHead>
-                                    <CardBody>
-                                        <Row>
-                                            <Col xs={6}>
-                                                <b>Score:
-                                                <span
-                                                    style={{
-                                                        color: `${
-                                                            parseFloat(user.lastSubmission.hitPercentage) === 100
-                                                            ? "#5eba00"
-                                                            : "#f00"
-                                                        }`,
-                                                    }}
-                                                > {user.lastSubmission.hitPercentage}% 
-                                                </span>
-                                                </b> 
-                                            </Col>
-                                            <Col xs={6}>
-                                                <b>N° de variação de caracteres:</b> {user.lastSubmission.char_change_number}
-                                            </Col>
-                                            
-                                            <Col xs={6}>
-                                                <b>Tempo gasto:</b> {parseInt(user.lastSubmission.timeConsuming / 1000 / 60)} min {parseInt((user.lastSubmission.timeConsuming / 1000) % 60)} seg
-                                            </Col>
-                                            <Col xs={6}>
-                                                <b>Ambiente:</b> {user.lastSubmission.environment}
-                                            </Col>
-                                            <Col xs={6}>
-                                                <b>Data:</b> {moment(user.lastSubmission.createdAt).local().format('DD/MM/YYYY - HH:mm')}
-                                            </Col>
-                                            <Col xs={6}>
-                                                <b>Linguagem: </b> {user.lastSubmission.language}
-                                            </Col>
-                                            <Col xs={12}>
-                                                <b>Ip: </b> {user.lastSubmission.ip}
-                                            </Col>
-                                        </Row>
-                                    </CardBody>
-                                    <CardFooter>
-                                    <AceEditorWrapper
-                                        mode={user.lastSubmission.language}
-                                        readOnly={true}
-                                        width={"100%"}
-                                        focus={false}
-                                        theme="monokai"
-                                        showPrintMargin={false}
-                                        value={user.lastSubmission.answer || ""}
-                                        fontSize={14}
-                                        name="ACE_EDITOR_RES"
-                                        editorProps={{ $blockScrolling: true }}
-                                    />
-                                    </CardFooter>
-                                </Card>
-                            </Col>
-                        </Fragment>
-                    )}
-                    </Row>
-                        
-                    <Row>
-                        <Col xs={12}>
-                        {
-                            test && users && users.length > 2 && test.questions.map(question=>
-                                <button 
-                                    key={question.id}
-                                    onClick={()=>this.handleQuestion(`/professor/turma/${this.props.match.params.id}/prova/${test.id}/exercicio/${question.id}/submissoes`,question.id)}
-                                    className={`btn ${question.id===this.props.match.params.idExercicio?'btn-primary disabled':'btn-outline-primary'} mr-5 mb-5`}
-                                >
-                                    {question.title}
-                                </button> 
-                            )
+                                                            <SunEditor
+                                                                lang="pt_br"
+                                                                height="auto"
+                                                                disable={true}
+                                                                showToolbar={false}
+                                                                // onChange={this.handleDescriptionChange.bind(this)}
+                                                                setContents={question.description}
+                                                                setDefaultStyle="font-size: 15px; text-align: justify"
+                                                                setOptions={{
+                                                                    toolbarContainer: '#toolbar_container',
+                                                                    resizingBar: false,
+                                                                    katex: katex,
+                                                                }}
+                                                            />
+                                                            {question.katexDescription ? (
+                                                                <BlockMath>{question.katexDescription}</BlockMath>
+                                                            ) : (
+                                                                    ""
+                                                                )}
+                                                        </Col>
+                                                    </Row>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        {
+                                            users.map((user, j) =>
+                                                <Fragment key={j}>
+                                                    <Col xs={12} md={6}>
+                                                        <Card>
+                                                            <CardHead>
+                                                                <CardTitle>
+                                                                    <b>{user.name} - {user.enrollment}</b>
+                                                                </CardTitle>
+                                                            </CardHead>
+                                                            <CardBody>
+                                                                <Row>
+                                                                    <Col xs={6}>
+                                                                        <b>Score:
+                                                                    <span
+                                                                        style={{
+                                                                            color: `${parseFloat(user.lastSubmission.hitPercentage) === 100
+                                                                                    ? "#5eba00"
+                                                                                    : "#f00"
+                                                                                }`,
+                                                                        }}
+                                                                    > {user.lastSubmission.hitPercentage}%
+                                                                    </span>
+                                                                        </b>
+                                                                    </Col>
+                                                                    <Col xs={6}>
+                                                                        <b>N° de variação de caracteres:</b> {user.lastSubmission.char_change_number}
+                                                                    </Col>
+
+                                                                    <Col xs={6}>
+                                                                        <b>Tempo gasto:</b> {parseInt(user.lastSubmission.timeConsuming / 1000 / 60)} min {parseInt((user.lastSubmission.timeConsuming / 1000) % 60)} seg
+                                                                    </Col>
+                                                                    <Col xs={6}>
+                                                                        <b>Ambiente:</b> {user.lastSubmission.environment}
+                                                                    </Col>
+                                                                    <Col xs={6}>
+                                                                        <b>Data:</b> {moment(user.lastSubmission.createdAt).local().format('DD/MM/YYYY - HH:mm')}
+                                                                    </Col>
+                                                                    <Col xs={6}>
+                                                                        <b>Linguagem: </b> {user.lastSubmission.language}
+                                                                    </Col>
+                                                                    <Col xs={12}>
+                                                                        <b>Ip: </b> {user.lastSubmission.ip}
+                                                                    </Col>
+                                                                </Row>
+                                                            </CardBody>
+                                                            <CardFooter>
+                                                                {
+                                                                    user.lastSubmission.language === 'blockly' ?
+                                                                        <B.BlocklyComponent
+                                                                            //ref={this.simpleWorkspace}
+                                                                            readOnly={true}
+                                                                            trashcan={true}
+                                                                            media={'media/'}
+                                                                            move={{
+                                                                                scrollbars: true,
+                                                                                drag: true,
+                                                                                wheel: true
+                                                                            }}
+                                                                            initialXml={isXml(user.lastSubmission.answer) ? user.lastSubmission.answer : ''}>
+                                                                            <B.Category name="Text" colour="20">
+                                                                                <B.Block type="text" />
+                                                                                <B.Block type="text_print" />
+                                                                                <B.Block type="text_prompt" />
+                                                                            </B.Category>
+                                                                            <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
+                                                                            <B.Category name="Logic" colour="210">
+                                                                                <B.Block type="controls_if" />
+                                                                                <B.Block type="controls_ifelse" />
+                                                                                <B.Block type="logic_compare" />
+                                                                                <B.Block type="logic_operation" />
+                                                                                <B.Block type="logic_boolean" />
+                                                                                <B.Block type="logic_null" />
+                                                                                <B.Block type="logic_ternary" />
+                                                                            </B.Category>
+                                                                            <B.Category name="Loops" colour="120">
+                                                                                <B.Block type="controls_for" />
+                                                                                <B.Block type="controls_whileUntil" />
+                                                                                <B.Block type="controls_repeat_ext">
+                                                                                    <B.Value name="TIMES">
+                                                                                        <B.Shadow type="math_number">
+                                                                                            <B.Field name="NUM">10</B.Field>
+                                                                                        </B.Shadow>
+                                                                                    </B.Value>
+                                                                                </B.Block>
+                                                                            </B.Category>
+                                                                            <B.Category name="Math" colour="230">
+                                                                                <B.Block type="math_number" />
+                                                                                <B.Block type="math_arithmetic" />
+                                                                                <B.Block type="math_single" />
+                                                                                <B.Block type="math_round" />
+                                                                            </B.Category>
+                                                                            <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                                                                        </B.BlocklyComponent>
+                                                                        :
+                                                                        <AceEditorWrapper
+                                                                            mode={user.lastSubmission.language}
+                                                                            theme="monokai"
+                                                                            focus={false}
+                                                                            value={user.lastSubmission.answer || ""}
+                                                                            fontSize={14}                                                                       
+                                                                            readOnly={true}
+                                                                            width="100%"
+                                                                            showPrintMargin={false}
+                                                                            name="ACE_EDITOR"
+                                                                            showGutter={true}
+                                                                            highlightActiveLine={true}
+                                                                        />
+                                                                }
+                                                            </CardFooter>
+                                                        </Card>
+                                                    </Col>
+                                                </Fragment>
+                                            )}
+                                    </Row>
+
+                                    <Row>
+                                        <Col xs={12}>
+                                            {
+                                                test && users && users.length > 2 && test.questions.map(question =>
+                                                    <button
+                                                        key={question.id}
+                                                        onClick={() => this.handleQuestion(`/professor/turma/${this.props.match.params.id}/prova/${test.id}/exercicio/${question.id}/submissoes`, question.id)}
+                                                        className={`btn ${question.id === this.props.match.params.idExercicio ? 'btn-primary disabled' : 'btn-outline-primary'} mr-5 mb-5`}
+                                                    >
+                                                        {question.title}
+                                                    </button>
+                                                )
+                                            }
+                                        </Col>
+                                    </Row>
+                                </>
                         }
-                        </Col>
-                    </Row>
-                </>
+                    </>
                 }
-                </>
-                }
-        </TemplateSistema>
+            </TemplateSistema>
         )
     }
 }

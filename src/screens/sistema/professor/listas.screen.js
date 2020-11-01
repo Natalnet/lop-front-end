@@ -176,7 +176,7 @@ export default class HomeListasScreen extends Component {
                 <tr>
                   <th>Nome</th>
                   <th>Código</th>
-                  <th>Autor</th>
+                  <th>Autor(a)</th>
                   <th>Criado em</th>
                   <th className="text-center"></th>
                 </tr>

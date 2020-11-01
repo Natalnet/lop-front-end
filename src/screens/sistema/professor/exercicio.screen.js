@@ -1,10 +1,6 @@
 import React, { Component } from "react";
-//import PropTypes from "prop-types";
-import { findLocalIp } from "../../../util/auxiliaryFunctions.util";
 import api from "../../../services/api";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-import apiCompiler from "../../../services/apiCompiler";
 import TemplateSistema from "../../../components/templates/sistema.template";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -16,69 +12,33 @@ export default class Editor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editor: "",
-      editorRes: "",
-      descriptionErro: "",
       language: SupportedLanguages.list[0],
-      theme: "monokai",
       response: [],
       katexDescription: "",
-      status: "PÚBLICA",
       difficulty: null,
       solution: "",
       results: [],
-      tempo_inicial: null,
-      loadingReponse: false,
-      loadingEditor: false,
       title: "",
       description: "",
-      inputs: "",
-      outputs: "",
       percentualAcerto: "",
-      author: null,
       loadingExercicio: true,
       userDifficulty: "",
       loadDifficulty: false,
-      salvandoRascunho: false,
       char_change_number: 0,
-      oldTimeConsuming: 0
+      oldTimeConsuming: 0,
+      submissionsCount: 0,
+      submissionsCorrectsCount: 0,
+      accessCount: 0,
+      author: null,
     };
   }
 
   async componentDidMount() {
-    this.setState({ tempo_inicial: new Date() });
     await this.getExercicio();
-    this.salvaAcesso();
-
     document.title = `${this.state.title}`;
-    //salva rascunho a cada 1 minuto
-    this.time = setInterval(
-      function () {
-        this.salvaRascunho(false);
-      }.bind(this),
-      60000
-    );
-  }
-  componentWillUnmount() {
-    clearInterval(this.time);
-  }
-
-  async salvaAcesso() {
-    const ip = await findLocalIp(false);
-    const idQuestion = this.props.match.params.id;
-    const request = {
-      ip: ip[0],
-      environment: "desktop",
-      idQuestion,
-    };
-    try {
-      await api.post(`/access/store`, request);
-    } catch (err) {
-      console.log(err);
-    }
   }
   async getExercicio() {
-    const idQuestion = this.props.match.params.id;
+    const idQuestion = this.props.match.params.idQuestion;
     let query = `?exclude=id code status createdAt updatedAt author_id solution`;
     query += `&draft=yes`;
     query += `&difficulty=yes`;
@@ -100,8 +60,11 @@ export default class Editor extends Component {
         oldTimeConsuming: response.data.lastSubmission
         ? response.data.lastSubmission.timeConsuming
         : 0,
-        author: response.data.author,
         loadingExercicio: false,
+        submissionsCount: response.data.submissionsCount,
+        submissionsCorrectsCount: response.data.submissionsCorrectsCount,
+        accessCount: response.data.accessCount,
+        author: response.data.author,
       });
     } catch (err) {
       console.log(err);
@@ -109,107 +72,10 @@ export default class Editor extends Component {
     }
   }
 
-  async salvaRascunho(showMsg = true) {
-    const idQuestion = this.props.match.params.id;
-    const { solution, char_change_number } = this.state;
-    const request = {
-      answer: solution,
-      char_change_number,
-      idQuestion,
-    };
-    try {
-      this.setState({ salvandoRascunho: true });
-
-      await api.post(`/draft/store`, request);
-      this.setState({ salvandoRascunho: false });
-      if (showMsg) {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-        });
-        Toast.fire({
-          icon: "success",
-          title: "Rascunho salvo com sucesso!",
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      this.setState({ salvandoRascunho: false });
-    }
-  }
-
-  async submeter(e) {
-    e.preventDefault();
-    const { solution, language, results, char_change_number ,tempo_inicial, oldTimeConsuming} = this.state;
-    const timeConsuming = (new Date() - tempo_inicial) + oldTimeConsuming;
-    const request = {
-      codigo: solution,
-      linguagem: language,
-      results: results,
-    };
-    this.setState({ loadingReponse: true });
-    try {
-      this.salvaRascunho(false);
-      const response = await apiCompiler.post("/apiCompiler", request);
-      await this.saveSubmission(
-        request,
-        response.data.percentualAcerto,
-        timeConsuming,
-        char_change_number
-      );
-      this.setState({
-        loadingReponse: false,
-        response: response.data.results,
-        percentualAcerto: response.data.percentualAcerto,
-        descriptionErro: response.data.descriptionErro,
-      });
-    } catch (err) {
-      console.log(Object.getOwnPropertyDescriptors(err));
-      this.setState({ loadingReponse: false });
-      Swal.fire({
-        type: "error",
-        title: "ops... Algum erro aconteceu na operação :(",
-      });
-      console.log(err);
-    }
-  }
-
-  async saveSubmission(
-    { codigo, linguagem },
-    hitPercentage,
-    timeConsuming,
-    char_change_number
-  ) {
-    const idQuestion = this.props.match.params.id;
-    try {
-      const ip = await findLocalIp(false);
-      const request = {
-        answer: codigo,
-        language: linguagem,
-        hitPercentage: hitPercentage,
-        timeConsuming: timeConsuming,
-        ip: ip[0],
-        environment: "desktop",
-        char_change_number,
-        idQuestion,
-      };
-      await api.post(`/submission/store`, request);
-      this.setState({ tempo_inicial: new Date() });
-    } catch (err) {
-      this.setState({ tempo_inicial: new Date() });
-      console.log(err);
-      throw err;
-    }
-  }
-
   async changeLanguage(e) {
     await this.setState({ language: e.target.value });
   }
-  async changeTheme(e) {
-    await this.setState({ theme: e.target.value });
-  }
+
   handleSolution(newValue) {
     this.setState({
       solution: newValue,
@@ -219,7 +85,7 @@ export default class Editor extends Component {
 
   async handleDifficulty(e) {
     const userDifficulty = e.target ? e.target.value : "";
-    const idQuestion = this.props.match.params.id;
+    const idQuestion = this.props.match.params.idQuestion;
     const request = {
       userDifficulty: userDifficulty,
       idQuestion,
@@ -263,7 +129,7 @@ export default class Editor extends Component {
           <Col xs={12}>
             {author && sessionStorage.getItem("user.email") === author.email ? (
               <Link
-                to={`/professor/exercicios/${this.props.match.params.id}/editar`}
+                to={`/professor/exercicios/${this.props.match.params.idQuestion}/editar`}
               >
                 Editar Exercício
               </Link>
@@ -277,14 +143,12 @@ export default class Editor extends Component {
           <ExercicioScreen
             {...this.state}
             {...this.props}
+            idQuestion = {this.props.match.params.idQuestion}
             showAllTestCases={true}
             cardExemplos={this.cardEnunciadoRef}
             changeLanguage={this.changeLanguage.bind(this)}
-            changeTheme={this.changeTheme.bind(this)}
             handleSolution={this.handleSolution.bind(this)}
             handleDifficulty={this.handleDifficulty.bind(this)}
-            submeter={this.submeter.bind(this)}
-            salvaRascunho={this.salvaRascunho.bind(this)}
           />
         )}
       </TemplateSistema>

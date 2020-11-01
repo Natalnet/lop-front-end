@@ -47,3 +47,16 @@ export default class AceEditorWrapper extends Component {
         );
     }
 }
+
+export const themesAceEditor = [
+    'monokai', 
+    'github', 
+    'tomorrow', 
+    'kuroir', 
+    'twilight', 
+    'xcode', 
+    'textmate', 
+    'solarized_dark', 
+    'solarized_light', 
+    'terminal'
+]

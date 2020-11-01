@@ -4,18 +4,33 @@ import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 import api from "../../../services/api";
 //import NavPagination from "components/ui/navs/navPaginationTestCorrection";
-import CorrecaoQuestao from "components/screens/correcaoQuestoesProvas.componente.screen";
+//import CorrecaoQuestao from "components/screens/correcaoQuestoesProvas.componente.screen";
 //import CorrecaoQuestao from "components/screens/teste";
 import Swal from "sweetalert2";
 import apiCompiler from "../../../services/apiCompiler";
 import { Link } from "react-router-dom";
 
-import SupportedLanguages from "config/SupportedLanguages"
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
+import { BlockMath } from "react-katex";
 
+import HTMLFormat from "components/ui/htmlFormat";
+import Card from "components/ui/card/card.component";
+import CardHead from "components/ui/card/cardHead.component";
+import CardTitle from "components/ui/card/cardTitle.component";
+import CardBody from "components/ui/card/cardBody.component";
+import CardOptions from "components/ui/card/cardOptions.component";
+import SupportedLanguages from "config/SupportedLanguages";
+import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
+import * as B from "components/ui/blockly";
+import { getBlocklyCode, isXml } from '../../../util/auxiliaryFunctions.util';
 
 export default class AlunosProvas extends Component {
   constructor(props) {
     super(props);
+    this.simpleWorkspace = React.createRef();
     this.state = {
       myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
 
@@ -23,7 +38,7 @@ export default class AlunosProvas extends Component {
       idTurma: this.props.match.params.id,
       idProva: this.props.match.params.idProva,
       idAluno: this.props.match.params.idAluno,
-
+      languages: SupportedLanguages.list,
       loadingQuestion: false,
       redirect: false,
       loadingQuestoes: false,
@@ -78,10 +93,25 @@ export default class AlunosProvas extends Component {
       user: null,
       users: []
     };
+    this.themes = [
+      "monokai",
+      "github",
+      "tomorrow",
+      "kuroir",
+      "twilight",
+      "xcode",
+      "textmate",
+      "solarized_dark",
+      "solarized_light",
+      "terminal",
+    ];
   }
   async componentDidMount() {
     await this.getInfoTurma();
-    this.setState({ language: this.state.turma.languages[0] });
+    this.setState({
+      languages: this.state.turma.languages || SupportedLanguages.list,
+      language: this.state.turma.languages[0],
+    });
     await this.getUsersByClasse();
     await this.getStudentQuestions();
     await this.setCurrentQuestion(this.props.match.params.idQuestion);
@@ -100,6 +130,7 @@ export default class AlunosProvas extends Component {
     if (myClasses && typeof myClasses === "object") {
       const index = myClasses.map((c) => c.id).indexOf(id);
       if (index !== -1) {
+
         this.setState({
           turma: myClasses[index],
         });
@@ -110,7 +141,6 @@ export default class AlunosProvas extends Component {
     }
     try {
       const response = await api.get(`/class/${id}`);
-      //console.log('found turma: ',response.data)
 
       this.setState({
         turma: response.data,
@@ -141,12 +171,13 @@ export default class AlunosProvas extends Component {
   //função que submete o codigo ao carregar a pagina
   async initialSubmission() {
     const { answer, language, results } = this.state;
+    console.log('language: ', language)
     //this.setState({results: []})
     //console.log('answer: ',!!answer)
     if (!answer) return null;
     const request = {
-      codigo: answer,
-      linguagem: language,
+      codigo: language === "blockly" ? getBlocklyCode(this.simpleWorkspace.current.workspace) : answer,
+      linguagem: language === "blockly" ? 'python' : language,
       results: results,
     };
 
@@ -219,7 +250,7 @@ export default class AlunosProvas extends Component {
     if (currentQuestion.lastSubmission) {
       this.setState({
         answer: currentQuestion.lastSubmission.answer,
-        language: currentQuestion.lastSubmission.language,
+        //language: currentQuestion.lastSubmission.language,
         hitPercentage: (
           currentQuestion.lastSubmission.hitPercentage / 10
         ).toFixed(2),
@@ -231,7 +262,7 @@ export default class AlunosProvas extends Component {
     else {
       this.setState({
         answer: "",
-        language: this.state.turma.languages[0],
+        //language: this.state.turma.languages[0],
         hitPercentage: 0,
         timeConsuming: currentQuestion.lastSubmission.timeConsuming,
         char_change_number: 0,
@@ -250,30 +281,6 @@ export default class AlunosProvas extends Component {
       });
     }
     this.setState({ loadingQuestion: false });
-  }
-
-  //Mostra a questao em tela
-  ShowQuestion() {
-    //console.log('turma: ',this.state.turma)
-    return (
-      <CorrecaoQuestao
-        {...this.state}
-        showAllTestCases={true}
-        changeLanguage={this.changeLanguage.bind(this)}
-        changeTheme={this.changeTheme.bind(this)}
-        submeter={this.submeter.bind(this)}
-        questao={this.state.questoes[this.state.numPageAtual]}
-        SaveData={this.SaveData.bind(this)}
-        checkBox1={this.checkBox1.bind(this)}
-        checkBox2={this.checkBox2.bind(this)}
-        checkBox3={this.checkBox3.bind(this)}
-        checkBox4={this.checkBox4.bind(this)}
-        checkBox5={this.checkBox5.bind(this)}
-        commentQuestion={this.commentQuestion.bind(this)}
-        funcTeacherNote={this.funcTeacherNote.bind(this)}
-        alteredCode={this.alteredCode.bind(this)}
-      />
-    );
   }
 
   checkBox1() {
@@ -476,8 +483,8 @@ export default class AlunosProvas extends Component {
     const { answer, language, results } = this.state;
     if (!answer) return null;
     const request = {
-      codigo: answer,
-      linguagem: language,
+      codigo: language === "blockly" ? getBlocklyCode(this.simpleWorkspace.current.workspace) : answer,
+      linguagem: language === "blockly" ? 'python' : language,
       results: results,
     };
 
@@ -557,15 +564,43 @@ export default class AlunosProvas extends Component {
     const {
       loadingInfoTurma,
       users,
-      // totalPages,
-      // numPageAtual,
-      // idAluno,
+      title,
+      description,
+      results,
+      katexDescription,
+      solution,
+      answer,
+      corrected,
       loadingQuestoes,
       idTurma,
       idProva,
       user,
-      questoes
+      questoes,
+      loadingReponse,
+      language,
+      theme,
+      descriptionErro,
+      // checkBox1,
+      // checkBox2,
+      // checkBox3,
+      // checkBox4,
+      // checkBox5,
+      // commentQuestion,
+      // funcTeacherNote,
+      // alteredCode,
+      hitPercentage,
+      teacherNote,
+      char_change_number,
+      timeConsuming,
+      compilation_error,
+      comments,
+      runtime_error,
+      presentation_error,
+      wrong_answer,
+      invalid_algorithm,
+      languages
     } = this.state;
+
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <Row mb={15}>
@@ -641,26 +676,608 @@ export default class AlunosProvas extends Component {
             </Row>
           </>
         }
-        {this.ShowQuestion()}
-        {/* {loadingInfoTurma?
-          <div className="loader" style={{ margin: "0px auto" }}></div>
-          :
-          this.ShowQuestion()
+        {/* <CorrecaoQuestao
+          {...this.state}
+          showAllTestCases={true}
+          changeLanguage={this.changeLanguage.bind(this)}
+          changeTheme={this.changeTheme.bind(this)}
+          submeter={this.submeter.bind(this)}
+          questao={this.state.questoes[this.state.numPageAtual]}
+          SaveData={this.SaveData.bind(this)}
+          checkBox1={this.checkBox1.bind(this)}
+          checkBox2={this.checkBox2.bind(this)}
+          checkBox3={this.checkBox3.bind(this)}
+          checkBox4={this.checkBox4.bind(this)}
+          checkBox5={this.checkBox5.bind(this)}
+          commentQuestion={this.commentQuestion.bind(this)}
+          funcTeacherNote={this.funcTeacherNote.bind(this)}
+          alteredCode={this.alteredCode.bind(this)}
+        /> */}
+        <Row mb={10}>
+          <Col xs={12}>
+            <Card className="card-status-primary">
+              <CardHead>
+                <CardTitle>
+                  <b>
+                    <i className="fa fa-code mr-2" /> {title}
+                  </b>
+                </CardTitle>
+              </CardHead>
+              <CardBody className="overflow-auto">
+                <Row>
+                  {loadingQuestoes || !description ? (
+                    <div className="loader" style={{ margin: "0px auto" }}></div>
+                  ) : (
+                      <Col xs={12} md={7}>
+                        {/* <HTMLFormat>{description}</HTMLFormat> */}
+                        <SunEditor
+                          lang="pt_br"
+                          height="auto"
+                          disable={true}
+                          showToolbar={false}
+                          // onChange={this.handleDescriptionChange.bind(this)}
+                          setContents={description || ""}
+                          setDefaultStyle="font-size: 15px; text-align: justify"
+                          setOptions={{
+                            toolbarContainer: '#toolbar_container',
+                            resizingBar: false,
+                            katex: katex,
+                          }}
+                        />
 
-        } */}
-        {/* <Row>
-          <Col xs={12} textCenter>
-            <NavPagination
-              totalPages={this.totalPages()}
-              pageAtual={numPageAtual}
-              idAluno={idAluno}
-              numQuestion={numPageAtual}
-              idTurma={idTurma}
-              idProva={idProva}
-              redirecionar={this.redirecionar.bind(this)}
-            />
+                        {katexDescription ? (
+                          <BlockMath>{katexDescription}</BlockMath>
+                        ) : (
+                            ""
+                          )}
+                      </Col>
+                    )}
+                  {loadingQuestoes ? (
+                    <div className="loader" style={{ margin: "0px auto" }}></div>
+                  ) : (
+                      <Col xs={12} md={5}>
+                        <table
+                          className="table table-exemplo"
+                          style={{
+                            border: "1px solid rgba(0, 40, 100, 0.12)"
+                          }}
+                        >
+                          <tbody>
+                            <tr>
+                              <td className="pt-0">
+                                <b>Exemplo de entrada</b>
+                              </td>
+                              <td className="pt-0">
+                                <b>Exemplo de saída</b>
+                              </td>
+                            </tr>
+                            {results && results
+                              .map((res, i) => (
+                                <tr key={i}>
+                                  <td>
+                                    <HTMLFormat>{res.inputs}</HTMLFormat>
+                                  </td>
+                                  <td>
+                                    <HTMLFormat>{res.output}</HTMLFormat>
+                                  </td>
+                                </tr>
+                              ))
+                              .filter((res, i) => i < 2)}
+                          </tbody>
+                        </table>
+                      </Col>
+                    )}
+                </Row>
+              </CardBody>
+            </Card>
           </Col>
-        </Row> */}
+        </Row>
+        <Row mb={10}>
+          <Col xs={4} md={2}>
+            <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
+            <select className="form-control" onChange={(e) => this.changeLanguage(e)}>
+
+
+
+              {languages.map((lang) => {
+                const languageIdx = SupportedLanguages.list.indexOf(lang);
+                return (
+                  <option key={lang} value={lang}>
+                    {SupportedLanguages.niceNames[languageIdx]}
+                  </option>
+                );
+              })}
+            </select>
+          </Col>
+          <Col xs={4} md={2}>
+            <label htmlFor="selectDifficulty">&nbsp; Tema: </label>
+            <select
+              defaultValue="monokai"
+              className="form-control"
+              onChange={(e) => this.changeTheme(e)}
+            >
+              {this.themes.map((thene) => (
+                <option key={thene} value={thene}>
+                  {thene}
+                </option>
+              ))}
+            </select>
+          </Col>
+          <Col xs={4} md={2}>
+            <label htmlFor="selectDifficul">&nbsp;</label>
+            <button
+              style={{ width: "100%" }}
+              className={`btn btn-primary ${loadingReponse && "btn-loading"}`}
+              onClick={(e) => this.submeter(e)}
+            >
+              <i className="fa fa-play" /> <i className="fa fa-gears" />{" "}
+            &nbsp;&nbsp; Submeter
+          </button>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} md={6}>
+            <Card>
+              {loadingQuestoes ? (
+                <div className="loader" style={{ margin: "0px auto" }}></div>
+              ) : (
+                  language === 'blockly' ?
+                    <B.BlocklyComponent
+                      ref={this.simpleWorkspace}
+                      readOnly={false}
+                      trashcan={true}
+                      media={'media/'}
+                      move={{
+                        scrollbars: true,
+                        drag: true,
+                        wheel: true
+                      }}
+                      initialXml={isXml(answer) ? answer : ''}>
+                      <B.Category name="Text" colour="20">
+                        <B.Block type="text" />
+                        <B.Block type="text_print" />
+                        <B.Block type="text_prompt" />
+                      </B.Category>
+                      <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
+                      <B.Category name="Logic" colour="210">
+                        <B.Block type="controls_if" />
+                        <B.Block type="controls_ifelse" />
+                        <B.Block type="logic_compare" />
+                        <B.Block type="logic_operation" />
+                        <B.Block type="logic_boolean" />
+                        <B.Block type="logic_null" />
+                        <B.Block type="logic_ternary" />
+                      </B.Category>
+                      <B.Category name="Loops" colour="120">
+                        <B.Block type="controls_for" />
+                        <B.Block type="controls_whileUntil" />
+                        <B.Block type="controls_repeat_ext">
+                          <B.Value name="TIMES">
+                            <B.Shadow type="math_number">
+                              <B.Field name="NUM">10</B.Field>
+                            </B.Shadow>
+                          </B.Value>
+                        </B.Block>
+                      </B.Category>
+                      <B.Category name="Math" colour="230">
+                        <B.Block type="math_number" />
+                        <B.Block type="math_arithmetic" />
+                        <B.Block type="math_single" />
+                        <B.Block type="math_round" />
+                      </B.Category>
+                      <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                    </B.BlocklyComponent>
+                    :
+                    <AceEditorWrapper
+                      mode={language}
+                      theme={theme}
+                      focus={false}
+                      onChange={(e) => this.alteredCode(e)}
+                      value={answer || ""}
+                      fontSize={14}
+                      width="100%"
+                      showPrintMargin={false}
+                      name="ACE_EDITOR"
+                      showGutter={true}
+                      highlightActiveLine={true}
+                    />
+                )}
+            </Card>
+          </Col>
+          <Col xs={12} md={6}>
+            <Card>
+              {loadingQuestoes ? (
+                <div className="loader" style={{ margin: "0px auto" }}></div>
+              ) : (
+                  language === 'blockly' ?
+                    <B.BlocklyComponent
+                      ref={this.simpleWorkspace}
+                      readOnly={true}
+                      trashcan={true}
+                      media={'media/'}
+                      move={{
+                        scrollbars: true,
+                        drag: true,
+                        wheel: true
+                      }}
+                      initialXml={isXml(answer) ? answer : ''}>
+                      <B.Category name="Text" colour="20">
+                        <B.Block type="text" />
+                        <B.Block type="text_print" />
+                        <B.Block type="text_prompt" />
+                      </B.Category>
+                      <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
+                      <B.Category name="Logic" colour="210">
+                        <B.Block type="controls_if" />
+                        <B.Block type="controls_ifelse" />
+                        <B.Block type="logic_compare" />
+                        <B.Block type="logic_operation" />
+                        <B.Block type="logic_boolean" />
+                        <B.Block type="logic_null" />
+                        <B.Block type="logic_ternary" />
+                      </B.Category>
+                      <B.Category name="Loops" colour="120">
+                        <B.Block type="controls_for" />
+                        <B.Block type="controls_whileUntil" />
+                        <B.Block type="controls_repeat_ext">
+                          <B.Value name="TIMES">
+                            <B.Shadow type="math_number">
+                              <B.Field name="NUM">10</B.Field>
+                            </B.Shadow>
+                          </B.Value>
+                        </B.Block>
+                      </B.Category>
+                      <B.Category name="Math" colour="230">
+                        <B.Block type="math_number" />
+                        <B.Block type="math_arithmetic" />
+                        <B.Block type="math_single" />
+                        <B.Block type="math_round" />
+                      </B.Category>
+                      <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                    </B.BlocklyComponent>
+                    :
+                    <AceEditorWrapper
+                      mode={language}
+                      theme={theme}
+                      focus={false}
+                      value={solution}
+                      fontSize={14}
+                      width="100%"
+                      showPrintMargin={false}
+                      name="ACE_EDITOR"
+                      showGutter={true}
+                      highlightActiveLine={true}
+                      readOnly={true}
+                    />
+                )}
+            </Card>
+          </Col>
+
+          <Col xs={12} md={6}>
+            <Card className="card-results">
+              <CardHead>
+                {loadingQuestoes ? (
+                  <div className="loader" style={{ margin: "0px auto" }}></div>
+                ) : (
+                    <CardTitle>Resultados</CardTitle>
+                  )}
+              </CardHead>
+              {loadingReponse ? (
+                <div className="loader" style={{ margin: "100px auto" }}></div>
+              ) : descriptionErro ? (
+                <Card>
+                  {loadingQuestoes ? (
+                    <div className="loader" style={{ margin: "0px auto" }}></div>
+                  ) : (
+                      <CardBody className=" p-0 ">
+                        <div className="alert alert-icon alert-danger" role="alert">
+                          <HTMLFormat>{descriptionErro}</HTMLFormat>
+                        </div>
+                      </CardBody>
+                    )}
+                </Card>
+              ) : (
+                    <>
+                      {results && results.map((teste, i) => (
+                        <Card
+                          key={i}
+                          className={`card-status-${teste.isMatch ? "success" : "danger"
+                            }`}
+                        >
+                          <CardHead>
+                            <CardTitle>
+                              {`${i + 1}° Teste `}
+                              {teste.isMatch ? (
+                                <i
+                                  className="fa fa-smile-o"
+                                  style={{ color: "green" }}
+                                />
+                              ) : (
+                                  <i
+                                    className="fa fa-frown-o"
+                                    style={{ color: "red" }}
+                                  />
+                                )}
+                            </CardTitle>
+                            <CardOptions>
+                              <i
+                                title="Ver descrição"
+                                style={{
+                                  color: "blue",
+                                  cursor: "pointer",
+                                  fontSize: "25px",
+                                }}
+                                className={`fe fe-chevron-down`}
+                                data-toggle="collapse"
+                                data-target={"#collapse" + i}
+                                aria-expanded={false}
+                              />
+                            </CardOptions>
+                          </CardHead>
+                          <div className="collapse" id={"collapse" + i}>
+                            <CardBody className="p-0 overflow-auto">
+                              {teste.descriptionErro ? (
+                                <HTMLFormat>{`${teste.descriptionErro}`}</HTMLFormat>
+                              ) : (
+                                  <table
+                                    className="table"
+                                    wrap="off"
+
+                                  >
+                                    <tbody>
+                                      <tr>
+                                        <td>
+                                          <b>Entrada(s) para teste</b>
+                                        </td>
+                                        <td>
+                                          <b>Saída do seu programa</b>
+                                        </td>
+                                        <td>
+                                          <b>Saída esperada</b>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td>
+                                          <HTMLFormat>{teste.inputs}</HTMLFormat>
+                                        </td>
+                                        <td>
+                                          <HTMLFormat>{teste.saidaResposta}</HTMLFormat>
+                                        </td>
+                                        <td>
+                                          <HTMLFormat>{teste.output}</HTMLFormat>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                )}
+                            </CardBody>
+                          </div>
+                        </Card>
+                      ))}
+                    </>
+                  )}
+            </Card>
+          </Col>
+          <Col xs={12} md={6}>
+            <Card className="card-results">
+              <CardHead>
+                {loadingQuestoes ? (
+                  <div className="loader" style={{ margin: "0px auto" }}></div>
+                ) : (
+                    <CardTitle>
+                      Feed Back
+                      {corrected ? (
+                        <>
+                          <label
+                            style={{
+                              color: "green",
+                              fontSize: "16px",
+                              marginLeft: "15px",
+                            }}
+                            htmlFor="selectDifficulty"
+                          >
+                            (Nota editada)
+                      </label>
+                        </>
+                      ) : (
+                          <>
+                            <label
+                              style={{
+                                color: "#c88d04",
+                                fontSize: "16px",
+                                marginLeft: "15px",
+                              }}
+                              htmlFor="selectDifficulty"
+                            >
+                              (Nota não editada)
+                      </label>
+
+                          </>
+                        )}
+                    </CardTitle>
+                  )}
+              </CardHead>
+              <CardBody className=" p-0 ">
+                {loadingQuestoes ? (
+                  <div className="loader" style={{ margin: "0px auto" }}></div>
+                ) : (
+                    <form
+                      className="form-group"
+                      style={{ marginRight: "5px", marginLeft: "5px" }}
+                    >
+                      <Row>
+                        <Col xs={10} md={4}>
+                          <label htmlFor="selectDifficulty">Nota do Sistema:</label>
+                          <input
+                            readOnly
+                            style={{ textAlign: "center" }}
+                            className={"form-control"}
+                            type={"text"}
+                            maxLength={"5"}
+                            value={parseFloat(hitPercentage).toFixed(2)}
+                          ></input>
+                        </Col>
+
+                        <Col xs={10} md={4}>
+                          <label htmlFor="selectDifficulty">
+                            Nota do professor:
+                      </label>
+                          <input
+                            style={{ textAlign: "center" }}
+                            className={`form-control ${parseFloat(teacherNote) > 10 ||
+                              parseFloat(teacherNote) < 0 ||
+                              isNaN(parseFloat(teacherNote))
+                              ? "is-invalid"
+                              : "is-valid"
+                              }`}
+                            onChange={(e) => this.funcTeacherNote(e)}
+                            type={"text"}
+                            maxLength={"5"}
+                            value={teacherNote || ""}
+                          ></input>
+                        </Col>
+
+                        <Col xs={10} md={4}>
+                          <label htmlFor="rascunho">&nbsp;</label>
+                          <button
+                            style={{ width: "100%" }}
+                            className={"btn btn-azure"}
+                            onClick={(e) => this.SaveData(e)}
+                          >
+                            <i className="fa fa-floppy-o" />
+                        &nbsp;&nbsp; Salvar Dados
+                      </button>
+                        </Col>
+                      </Row>
+
+                      <Row style={{ marginTop: "10px" }}>
+                        <Col xs={10} md={6}>
+                          <label htmlFor="selectDifficulty">
+                            Tempo gasto na questão:
+                          </label>
+                          <input
+                            readOnly
+                            style={{ paddingRight: "14px" }}
+                            className={"form-control"}
+                            type={"text"}
+                            maxLength={"5"}
+                            value={`
+                          ${parseInt(
+                              timeConsuming / 1000 / 60
+                            )} min ${parseInt(
+                              (timeConsuming / 1000) % 60
+                            )} seg`}
+                          ></input>
+                        </Col>
+
+                        {!!char_change_number && <Col xs={10} md={6}>
+                          <label htmlFor="selectDifficulty">
+                            Nº de variação de caracteres:
+                      </label>
+                          <input
+                            readOnly
+                            style={{ textAlign: "center" }}
+                            className={"form-control"}
+                            type={"text"}
+                            maxLength={"5"}
+                            value={parseFloat(char_change_number)}
+                          ></input>
+                        </Col>}
+                      </Row>
+
+                      <label
+                        className="form-label"
+                        style={{ marginLeft: "10px", marginTop: "5px" }}
+                      >
+                        Comentário da questão:
+                  </label>
+                      <textarea
+                        className="form-control"
+                        name="example-textarea-input"
+                        rows="6"
+                        placeholder="Digite.."
+                        onChange={(e) => this.commentQuestion(e)}
+                        value={comments}
+                      ></textarea>
+
+                      <div
+                        className="custom-controls-stacked"
+                        style={{ marginTop: "20px" }}
+                      >
+                        <Row>
+                          <Col xs={12} md={6}>
+                            <label className="custom-control custom-checkbox">
+                              <input
+                                type="checkbox"
+                                className="custom-control-input"
+                                name="compilation_error"
+                                checked={compilation_error}
+                                onChange={() => this.checkBox1()}
+                              />
+                              <span className="custom-control-label">
+                                Erro em tempo de compilação
+                          </span>
+                            </label>
+                            <label className="custom-control custom-checkbox">
+                              <input
+                                type="checkbox"
+                                className="custom-control-input"
+                                name="runtime_error"
+                                checked={runtime_error}
+                                onChange={() => this.checkBox2()}
+                              />
+                              <span className="custom-control-label">
+                                Erro em tempo de execução
+                          </span>
+                            </label>
+                            <label className="custom-control custom-checkbox">
+                              <input
+                                type="checkbox"
+                                className="custom-control-input"
+                                name="presentation_error"
+                                checked={presentation_error}
+                                onChange={() => this.checkBox3()}
+                              />
+                              <span className="custom-control-label">
+                                Erro de apresentação
+                          </span>
+                            </label>
+                          </Col>
+                          <Col xs={12} md={6}>
+                            <label className="custom-control custom-checkbox">
+                              <input
+                                type="checkbox"
+                                className="custom-control-input"
+                                name="wrong_answer"
+                                checked={wrong_answer}
+                                onChange={() => this.checkBox4()}
+                              />
+                              <span className="custom-control-label">
+                                Resposta errada
+                          </span>
+                            </label>
+                            <label className="custom-control custom-checkbox">
+                              <input
+                                type="checkbox"
+                                className="custom-control-input"
+                                name="invalid_algorithm"
+                                checked={invalid_algorithm}
+                                onChange={() => this.checkBox5()}
+                              />
+                              <span className="custom-control-label">
+                                Algoritimo inválido
+                          </span>
+                            </label>
+                          </Col>
+                        </Row>
+                      </div>
+                    </form>
+                  )}
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+
         <Row>
           <Col xs={12}>
             {

@@ -48,7 +48,11 @@ export default class Editor extends Component {
       loadDifficulty: false,
       salvandoRascunho: false,
       char_change_number: 0,
-      oldTimeConsuming:0
+      oldTimeConsuming:0,
+      submissionsCount: 0,
+      submissionsCorrectsCount: 0,
+      accessCount: 0,
+      author: null,
     };
   }
 
@@ -57,7 +61,7 @@ export default class Editor extends Component {
     await this.getProva();
     await this.getExercicio();
     this.setState({ tempo_inicial: new Date() });
-    this.getProvasRealTime();
+    //this.getProvasRealTime();
     this.salvaAcesso();
 
     this.setState({ language: this.state.turma.languages[0] });
@@ -178,6 +182,10 @@ export default class Editor extends Component {
         ? response.data.lastSubmission.timeConsuming
         : 0,
         loadingExercicio: false,
+        submissionsCount: response.data.submissionsCount,
+        submissionsCorrectsCount: response.data.submissionsCorrectsCount,
+        accessCount: response.data.accessCount,
+        author: response.data.author
       });
     } catch (err) {
       this.setState({ loadingExercicio: false });
@@ -381,6 +389,9 @@ export default class Editor extends Component {
           <ExercicioScreen
             {...this.state}
             {...this.props}
+            idQuestion={ this.props.match.params.idExercicio}
+            idClass= {this.props.match.params.id}
+            idTest={ this.props.match.params.idTest}
             languages={turma && turma.languages}
             showAllTestCases={prova && prova.classHasTest.showAllTestCases}
             changeLanguage={this.changeLanguage.bind(this)}

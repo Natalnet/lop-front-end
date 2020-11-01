@@ -1,3 +1,5 @@
+import * as B from "components/ui/blockly";
+
 export const formatDate = date => {
     let createdAt = new Date(date);
     let ano = createdAt.getFullYear();
@@ -14,15 +16,15 @@ export const formatDate = date => {
     return `${dia}/${mes}/${ano} - ${hora}:${minuto}`;
 };
 
-export const generateHash = (value) =>{
-	return value
-	.toString()
-	.split('')
-	.reduce((a,b)=>{
-		a= ((a<<5)-a) + b.charCodeAt(0);
-		return a&a
-	},0)
-	.toString()
+export const generateHash = (value) => {
+    return value
+        .toString()
+        .split('')
+        .reduce((a, b) => {
+            a = ((a << 5) - a) + b.charCodeAt(0);
+            return a & a
+        }, 0)
+        .toString()
 }
 
 export const range = num => {
@@ -31,12 +33,12 @@ export const range = num => {
     return arr;
 };
 
-export const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) => {
-    window.RTCPeerConnection = window.RTCPeerConnection 
-                            || window.mozRTCPeerConnection 
-                            || window.webkitRTCPeerConnection;
+export const findLocalIp = (logInfo = true) => new Promise((resolve, reject) => {
+    window.RTCPeerConnection = window.RTCPeerConnection
+        || window.mozRTCPeerConnection
+        || window.webkitRTCPeerConnection;
 
-    if ( typeof window.RTCPeerConnection == 'undefined' )
+    if (typeof window.RTCPeerConnection == 'undefined')
         return reject('WebRTC not supported by browser');
 
     let pc = new RTCPeerConnection();
@@ -44,25 +46,25 @@ export const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) =>
 
     pc.createDataChannel("");
     pc.createOffer()
-     .then(offer => pc.setLocalDescription(offer))
-     .catch(err => reject(err));
+        .then(offer => pc.setLocalDescription(offer))
+        .catch(err => reject(err));
     pc.onicecandidate = event => {
-        if ( !event || !event.candidate ) {
+        if (!event || !event.candidate) {
             // All ICE candidates have been sent.
-            if ( ips.length === 0 )
+            if (ips.length === 0)
                 return reject('WebRTC disabled or restricted by browser');
 
             return resolve(ips);
         }
 
         let parts = event.candidate.candidate.split(' ');
-        let [base,componentId,protocol,priority,ip,port,,type,...attr] = parts;
+        let [base, componentId, protocol, priority, ip, port, , type, ...attr] = parts;
         let component = ['rtp', 'rtpc'];
 
-        if ( ! ips.some(e => e === ip) )
+        if (!ips.some(e => e === ip))
             ips.push(ip);
 
-        if ( ! logInfo )
+        if (!logInfo)
             return;
 
         console.log(" candidate: " + base.split(':')[1]);
@@ -73,17 +75,17 @@ export const findLocalIp = (logInfo = true) => new Promise( (resolve, reject) =>
         console.log("      port: " + port);
         console.log("      type: " + type);
 
-        if ( attr.length ) {
+        if (attr.length) {
             console.log("attributes: ");
-            for(let i = 0; i < attr.length; i += 2)
-                console.log("> " + attr[i] + ": " + attr[i+1]);
+            for (let i = 0; i < attr.length; i += 2)
+                console.log("> " + attr[i] + ": " + attr[i + 1]);
         }
 
         console.log();
     };
 });
 
-export function getStateFormQuestionsFromStorage(field){
+export function getStateFormQuestionsFromStorage(field) {
     switch (field) {
         case 'pageQuestions':
             return sessionStorage.getItem('pageQuestions') || 1;
@@ -91,13 +93,13 @@ export function getStateFormQuestionsFromStorage(field){
             return sessionStorage.getItem('titleOrCodeInputQuestions') || '';
 
         case 'radioAscQuestions':
-            if(sessionStorage.getItem('radioAscQuestions')){
+            if (sessionStorage.getItem('radioAscQuestions')) {
                 return JSON.parse(sessionStorage.getItem('radioAscQuestions'))
             }
             return false;
 
         case 'radioDescQuestions':
-            if(sessionStorage.getItem('radioDescQuestions')){
+            if (sessionStorage.getItem('radioDescQuestions')) {
                 return JSON.parse(sessionStorage.getItem('radioDescQuestions'))
             }
             return true;
@@ -116,8 +118,25 @@ export function getStateFormQuestionsFromStorage(field){
 
         case 'docsPerPageQuestions':
             return sessionStorage.getItem('docsPerPageQuestions') || 15;
-    
+
         default:
-           return null;
+            return null;
     }
+}
+
+export const getBlocklyCode = (workspace) => {
+    const code = B.BlocklyLanguage.workspaceToCode(workspace);
+    //console.log(code);
+    return code;
+}
+
+export const getBlocklyXML = (workspace) => {
+    const xml = B.Blockly.Xml.workspaceToDom(workspace);
+    const serializer = new XMLSerializer();
+    return serializer.serializeToString(xml);  // converte xml para string  
+}
+
+export const isXml= (text) =>{
+    const XMlDoc = new DOMParser().parseFromString(text,"text/xml");
+    return !XMlDoc.getElementsByTagName('parsererror').length
 }

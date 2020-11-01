@@ -319,7 +319,7 @@ export default props => {
                     <CardFooter>
                         <Row>
                             <Col xs={12} mb={15}>
-                                <b>Autor:</b> {selectedQuestionToShowInModal && selectedQuestionToShowInModal.author.email}
+                                <b>Autor(a):</b> {selectedQuestionToShowInModal && selectedQuestionToShowInModal.author.email}
                             </Col>
                             <Col xs={12} mb={15}>
                                 <b>Tags: </b> {selectedQuestionToShowInModal && selectedQuestionToShowInModal.tags.join(", ")}

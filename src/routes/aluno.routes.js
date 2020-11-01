@@ -75,7 +75,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/exercicio/:id",
+    path: "/aluno/exercicio/:idQuestion",
     component: Exercicio,
     private: true,
     perfil: "ALUNO"

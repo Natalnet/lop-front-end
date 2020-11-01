@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 //import PropTypes from "prop-types";
 import api from "../../../services/api";
-import { findLocalIp } from "../../../util/auxiliaryFunctions.util";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-import apiCompiler from "../../../services/apiCompiler";
 import TemplateSistema from "../../../components/templates/sistema.template";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
@@ -18,69 +15,40 @@ export default class Editor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editor: "",
-      editorRes: "",
-      descriptionErro: "",
       language: SupportedLanguages.list[0],
-      theme: "monokai",
       response: [],
       katexDescription: "",
-      status: "PÚBLICA",
       difficulty: "Médio",
       solution: "",
       results: [],
-      tempo_inicial: null,
-      loadingReponse: false,
-      loadingEditor: false,
       title: "",
       description: "",
       prova: "",
-      inputs: "",
-      outputs: "",
-      percentualAcerto: "",
       myClasses: JSON.parse(sessionStorage.getItem("myClasses")) || "",
       turma: "",
       loadingInfoTurma: true,
       loadingExercicio: true,
       userDifficulty: "",
       loadDifficulty: false,
-      salvandoRascunho: false,
       char_change_number: 0,
+      oldTimeConsuming: 0,
+      submissionsCount: 0,
+      submissionsCorrectsCount: 0,
+      accessCount: 0,
+      author: null
     };
   }
 
   async componentDidMount() {
-    this.setState({ tempo_inicial: new Date() });
     await this.getInfoTurma();
     this.getProva();
     await this.getExercicio();
-    this.salvaAcesso();
     this.setState({ language: this.state.turma.languages[0] });
 
     document.title = `${this.state.title}`;
     //salva rascunho a cada 1 minuto
-    setInterval(
-      function () {
-        this.salvaRascunho(false);
-      }.bind(this),
-      60000
-    );
   }
 
-  async salvaAcesso() {
-    const ip = await findLocalIp(false);
-    const idQuestion = this.props.match.params.idExercicio;
-    const request = {
-      ip: ip[0],
-      environment: "desktop",
-      idQuestion,
-    };
-    try {
-      await api.post(`/access/store`, request);
-    } catch (err) {
-      console.log(err);
-    }
-  }
   async getInfoTurma() {
     const id = this.props.match.params.id;
     const { myClasses } = this.state;
@@ -141,113 +109,22 @@ export default class Editor extends Component {
         char_change_number: response.data.questionDraft
           ? response.data.questionDraft.char_change_number
           : 0,
+        oldTimeConsuming: response.data.lastSubmission
+          ? response.data.lastSubmission.timeConsuming
+          : 0,
         loadingExercicio: false,
+        submissionsCount: response.data.submissionsCount,
+        submissionsCorrectsCount: response.data.submissionsCorrectsCount,
+        accessCount: response.data.accessCount,
+        author: response.data.author
       });
     } catch (err) {
       this.setState({ loadingExercicio: false });
     }
   }
-  async salvaRascunho(showMsg = true) {
-    const { id, idTest, idExercicio } = this.props.match.params;
-    const { solution, char_change_number } = this.state;
-    const request = {
-      answer: solution,
-      char_change_number,
-      idQuestion: idExercicio,
-      idTest: idTest,
-      idClass: id,
-    };
-    try {
-      this.setState({ salvandoRascunho: true });
-      await api.post(`/draft/store`, request);
-      this.setState({ salvandoRascunho: false });
-      if (showMsg) {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-        });
-        Toast.fire({
-          icon: "success",
-          title: "Rascunho salvo com sucesso!",
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      this.setState({ salvandoRascunho: false });
-    }
-  }
-  async submeter(e) {
-    e.preventDefault();
-    const timeConsuming = new Date() - this.state.tempo_inicial;
-    const { solution, language, results, char_change_number } = this.state;
-    const request = {
-      codigo: solution,
-      linguagem: language,
-      results: results,
-    };
-    this.setState({ loadingReponse: true });
-    try {
-      this.salvaRascunho();
-      const response = await apiCompiler.post("/apiCompiler", request);
-      await this.saveSubmission(
-        request,
-        response.data.percentualAcerto,
-        timeConsuming,
-        char_change_number
-      );
-      this.setState({
-        loadingReponse: false,
-        response: response.data.results,
-        percentualAcerto: response.data.percentualAcerto,
-        descriptionErro: response.data.descriptionErro,
-      });
-    } catch (err) {
-      Object.getOwnPropertyDescriptors(err);
-      this.setState({ loadingReponse: false });
-      Swal.fire({
-        type: "error",
-        title: "ops... Algum erro aconteceu na operação :(",
-      });
-    }
-  }
-  async saveSubmission(
-    { codigo, linguagem },
-    hitPercentage,
-    timeConsuming,
-    char_change_number
-  ) {
-    const { id, idTest, idExercicio } = this.props.match.params;
-
-    try {
-      const ip = await findLocalIp(false);
-      const request = {
-        answer: codigo,
-        language: linguagem,
-        hitPercentage: hitPercentage,
-        timeConsuming: timeConsuming,
-        ip: ip[0],
-        environment: "desktop",
-        char_change_number,
-        idQuestion: idExercicio,
-        idClass: id,
-        idTest: idTest,
-      };
-      await api.post(`/submission/store`, request);
-
-      this.setState({ tempo_inicial: new Date() });
-    } catch (err) {
-      this.setState({ tempo_inicial: new Date() });
-      console.log(err);
-    }
-  }
 
   async changeLanguage(e) {
     await this.setState({ language: e.target.value });
-  }
-  async changeTheme(e) {
-    await this.setState({ theme: e.target.value });
   }
   handleSolution(newValue) {
     this.setState({
@@ -291,23 +168,35 @@ export default class Editor extends Component {
             {loadingInfoTurma ? (
               <div className="loader" style={{ margin: "0px auto" }}></div>
             ) : (
-              <h5 style={{ margin: "0px", display: "inline" }}>
-                <i className="fa fa-users mr-2" aria-hidden="true" />
-                {turma && turma.name} - {turma && turma.year}.
-                {turma && turma.semester}
-                <i className="fa fa-angle-left ml-2 mr-2" />
-                <Link
-                  to={`/professor/turma/${this.props.match.params.id}/provas`}
-                >
-                  Provas
+                <h5 style={{ margin: "0px", display: "inline" }}>
+                  <i className="fa fa-users mr-2" aria-hidden="true" />
+                  {turma && turma.name} - {turma && turma.year}.
+                  {turma && turma.semester}
+                  <i className="fa fa-angle-left ml-2 mr-2" />
+                  <Link
+                    to={`/professor/turma/${this.props.match.params.id}/provas`}
+                  >
+                    Provas
                 </Link>
-                <i className="fa fa-angle-left ml-2 mr-2" />
-                <Link
-                  to={`/professor/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`}
-                >
-                  {prova ? (
-                    prova.title
-                  ) : (
+                  <i className="fa fa-angle-left ml-2 mr-2" />
+                  <Link
+                    to={`/professor/turma/${this.props.match.params.id}/prova/${this.props.match.params.idTest}`}
+                  >
+                    {prova ? (
+                      prova.title
+                    ) : (
+                        <div
+                          style={{
+                            width: "140px",
+                            backgroundColor: "#e5e5e5",
+                            height: "12px",
+                            display: "inline-block",
+                          }}
+                        />
+                      )}
+                  </Link>
+                  <i className="fa fa-angle-left ml-2 mr-2" />
+                  {title || (
                     <div
                       style={{
                         width: "140px",
@@ -317,38 +206,26 @@ export default class Editor extends Component {
                       }}
                     />
                   )}
-                </Link>
-                <i className="fa fa-angle-left ml-2 mr-2" />
-                {title || (
-                  <div
-                    style={{
-                      width: "140px",
-                      backgroundColor: "#e5e5e5",
-                      height: "12px",
-                      display: "inline-block",
-                    }}
-                  />
-                )}
-              </h5>
-            )}
+                </h5>
+              )}
           </Col>
         </Row>
         {loadingExercicio ? (
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
-          <ExercicioScreen
-            {...this.state}
-            {...this.props}
-            languages={turma && turma.languages}
-            showAllTestCases={true}
-            changeLanguage={this.changeLanguage.bind(this)}
-            changeTheme={this.changeTheme.bind(this)}
-            handleSolution={this.handleSolution.bind(this)}
-            handleDifficulty={this.handleDifficulty.bind(this)}
-            submeter={this.submeter.bind(this)}
-            salvaRascunho={this.salvaRascunho.bind(this)}
-          />
-        )}
+            <ExercicioScreen
+              {...this.state}
+              {...this.props}
+              idQuestion={this.props.match.params.idExercicio}
+              idClass={this.props.match.params.id}
+              idTest={this.props.match.params.idTest}
+              languages={turma && turma.languages}
+              showAllTestCases={true}
+              changeLanguage={this.changeLanguage.bind(this)}
+              handleSolution={this.handleSolution.bind(this)}
+              handleDifficulty={this.handleDifficulty.bind(this)}
+            />
+          )}
       </TemplateSistema>
     );
   }
