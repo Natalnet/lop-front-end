@@ -108,13 +108,10 @@ export function getStateFormQuestionsFromStorage(field) {
             return sessionStorage.getItem('sortRadioQuestions') || 'DESC';
 
         case 'sortBySelectQuestions':
-            return sessionStorage.getItem('sortBySelectQuestions') || '';
+            return sessionStorage.getItem('sortBySelectQuestions') || 'createdAt';
 
         case 'tagSelectQuestion':
             return sessionStorage.getItem('tagSelectQuestion') || '';
-
-        case 'fieldSelectQuestions':
-            return sessionStorage.getItem('fieldSelectQuestions') || 'title';
 
         case 'docsPerPageQuestions':
             return sessionStorage.getItem('docsPerPageQuestions') || 15;

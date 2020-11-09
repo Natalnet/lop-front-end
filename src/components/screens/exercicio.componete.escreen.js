@@ -240,8 +240,8 @@ export default (props) => {
                                 </Col>
 
                                 <Col xs={12}>
-                                    <div className="d-flex justify-content-between">
-                                        <ul className="d-flex align-items-center mb-0 mt-0 p-0">
+                                    <div className="d-flex flex-column">
+                                        <ul className="d-flex align-items-center mt-0 p-0">
                                             <li
                                                 className="d-flex mr-4 align-items-center"
                                                 title={`N° DE ACESSOS`}
@@ -266,7 +266,7 @@ export default (props) => {
                                             </li>
                                         </ul>
                                         {author && <p
-                                            className="font-italic"
+                                            className="font-italic mb-0"
                                         >
                                             <b>Autor(a):</b> {author.email}
                                         </p>}

@@ -23,13 +23,14 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
 export default props => {
 
   const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
-  const { page, totalPages, docsPerPage, handlePage, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination();
+  const { page, totalPages, docsPerPage, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination();
   const {updateList: updateCurrentList} = useList();
   const { tags, isLoadingTags, getTags } = useTag();
 
@@ -41,15 +42,13 @@ export default props => {
   const [isLoadingQuestionsByList,setIsLoadingQuestionsByList]= useState(false)
 
   const [titleOrCodeInput, setTitleOrCodeInput] = useState('');
-  const [fieldSelect, setFieldSelect] = useState('title');
-  const [sortBySelect, setSortBySelect] = useState('');
+  const [sortBySelect, setSortBySelect] = useState('createdAt');
   const [sortRadio, setSortRadio] = useState('DESC');
   const [ascRadio, setAscRadio] = useState(false);
   const [descRadio, setDescRadio] = useState(true);
   const [tagSelect, setTagSelect] = useState('');
 
   // const [filteredTitleOrCodeInput, setFilteredTitleOrCodeInput] = useState('');
-  // const [filteredFieldSelect, setFilteredFieldSelect] = useState('title');
   // const [filteredSortBySelect, setFilteredSortBySelect] = useState('');
   // const [filteredDocsPerPage, setFilteredDocsPerPage] = useState(15);
   // const [filteredSortRadio, setFilteredSortRadio] = useState('DESC');
@@ -59,23 +58,29 @@ export default props => {
 
   const history = useHistory();
 
-  // async componentDidMount() {
-  //   document.title = "Editar lista - professor";
-  //   await this.getQuestionsByList();
-  //   this.getExercicios();
-  // }
-  useEffect(() => {
-    getTags();
-  }, [])
+
+  const getQuerys = useCallback(() => {
+    let query = `titleOrCode=${titleOrCodeInput.trim()}`;
+    query += `&docsPerPage=${docsPerPage}`;
+    query += `&sortBy=${sortBySelect}`;
+    query += `&sort=${sortRadio}`;
+    query += `&tag=${tagSelect || ''}`;
+    query += `&status=PÚBLICA PRIVADA`;
+    return query;
+  }, [titleOrCodeInput, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
   useEffect(() => {
     document.title = "Editar lista - professor";
+    getTags();
+    getPaginedQuestions(page, getQuerys());
     getQuestionsByList()
   }, [])
 
-  useEffect(() => {
-    getPaginedQuestions(page, getQuerys());
-  }, [page])
+  const handlePage = useCallback((e, numPage) => {
+    e.preventDefault();
+    setPage(numPage);
+    getPaginedQuestions(numPage, getQuerys());
+  }, [getQuerys]);
 
   useEffect(() => {
     //console.log('question: ', paginedQuestions);
@@ -111,26 +116,15 @@ export default props => {
     }
   },[title, selectedQuestions])
 
-  const getQuerys = useCallback(() => {
-    let query = `include=${titleOrCodeInput.trim()}`;
-    query += `&field=${fieldSelect}`;
-    query += `&docsPerPage=${docsPerPage}`;
-    query += `&sortBy=${sortBySelect}`;
-    query += `&sort=${sortRadio}`;
-    query += `&tag=${tagSelect || ''}`;
-    query += `&status=PÚBLICA PRIVADA`;
-    return query;
-  }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
   const saveQuerys = useCallback(() => {
     // setFilteredTitleOrCodeInput(() => titleOrCodeInput);
-    // setFilteredFieldSelect(() => fieldSelect);
     // setFilteredSortBySelect(() => sortBySelect);
     // setFilteredDocsPerPage(() => docsPerPage);
     // setFilteredSortRadio(() => sortRadio);
     // setFilteredTagSelect(() => tagSelect);
 
-  }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage]);
+  }, [titleOrCodeInput, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
   const addQuestion = useCallback(selectedQuestion => {
     setSelectedQuestions(oldSelectedQuestions => [...oldSelectedQuestions, selectedQuestion])
@@ -197,7 +191,6 @@ export default props => {
                     ascRadio={ascRadio}
                     descRadio={descRadio}
                     docsPerPage={docsPerPage}
-                    fieldSelect={fieldSelect}
                     tagSelect={tagSelect}
                     tagsSelect={tagsSelect}
                     sortBySelect={sortBySelect}
@@ -206,7 +199,6 @@ export default props => {
                     handleSortBySelect={(e) => setSortBySelect(e.target.value)}
                     handleTitleOrCodeInput={(e) => setTitleOrCodeInput(e.target.value)}
                     handleDocsPerPage={(e) => setDocsPerPage(e.target.value)}
-                    handleFieldSelect={(e) => setFieldSelect(e.target.value)}
                     handleTagSelect={(e) => setTagSelect(e.target.value)}
                     handleSortRadio={handleSortRadio}
                   />
@@ -365,7 +357,7 @@ export default props => {
           }
         </CardBody>
 
-        <SwalModal
+        {modalQuestion && <SwalModal
           show={showModalInfo}
           title="Exercício"
           handleModal={() => setShowModalInfo(false)}
@@ -410,8 +402,15 @@ export default props => {
                 </Col>
               </Row>
             </CardBody>
+            <CardFooter>
+              <Row>
+                <Col xs={12} mb={15}>
+                  <b>Tags: </b> {modalQuestion.tags && modalQuestion.tags.join(", ")}
+                </Col>
+              </Row>                        
+            </CardFooter>
           </Card>
-        </SwalModal>
+        </SwalModal>}
       </Card>
     </TemplateSistema>
   );

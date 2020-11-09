@@ -40,13 +40,12 @@ export default props => {
     const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
     const { tags, isLoadingTags, getTags } = useTag();
     //pagination hook
-    const { page, docsPerPage, totalPages, handlePage, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination(
+    const { page, docsPerPage, totalPages, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination(
         getStateFormQuestionsFromStorage("pageQuestions"),
         getStateFormQuestionsFromStorage("docsPerPageQuestions")
     );
 
     const [titleOrCodeInput, setTitleOrCodeInput] = useState(getStateFormQuestionsFromStorage("titleOrCodeInputQuestions"));
-    const [fieldSelect, setFieldSelect] = useState(getStateFormQuestionsFromStorage("fieldSelectQuestions"));
     const [sortBySelect, setSortBySelect] = useState(getStateFormQuestionsFromStorage("sortBySelectQuestions"));
     const [sortRadio, setSortRadio] = useState(getStateFormQuestionsFromStorage("sortRadioQuestions"));
     const [ascRadio, setAscRadio] = useState(getStateFormQuestionsFromStorage("radioAscQuestions"));
@@ -54,7 +53,6 @@ export default props => {
     const [tagSelect, setTagSelect] = useState(getStateFormQuestionsFromStorage("tagSelectQuestion"));
 
     const [filteredTitleOrCodeInput, setFilteredTitleOrCodeInput] = useState(getStateFormQuestionsFromStorage("titleOrCodeInputQuestions"));
-    const [filteredFieldSelect, setFilteredFieldSelect] = useState(getStateFormQuestionsFromStorage("fieldSelectQuestions"));
     const [filteredSortBySelect, setFilteredSortBySelect] = useState(getStateFormQuestionsFromStorage("sortBySelectQuestions"));
     const [filteredDocsPerPage, setFilteredDocsPerPage] = useState(getStateFormQuestionsFromStorage("docsPerPageQuestions"));
     const [filteredSortRadio, setFilteredSortRadio] = useState(getStateFormQuestionsFromStorage("sortRadioQuestions"));
@@ -63,13 +61,14 @@ export default props => {
     const [selectedQuestionToShowInModal, setSelectedQuestionToShowInModal] = useState(null);
     useEffect(() => {
         getTags();
+        getPaginedQuestions(page, getFilteredQuerys());
+        sessionStorage.setItem("pageQuestions", page);
     }, [])
 
     const tagsSelect = useMemo(() => [{ id: '', name: 'Todas' }, ...tags], [tags])
 
     const getFilteredQuerys = useCallback(() => {
-        let query = `include=${filteredTitleOrCodeInput.trim()}`;
-        query += `&field=${filteredFieldSelect}`;
+        let query = `titleOrCode=${filteredTitleOrCodeInput.trim()}`;
         query += `&docsPerPage=${filteredDocsPerPage}`;
         query += `&sortBy=${filteredSortBySelect}`;
         query += `&sort=${filteredSortRadio}`;
@@ -77,11 +76,10 @@ export default props => {
         if(profile === "PROFESSOR")
             query += `&status=PÚBLICA PRIVADA`;
         return query;
-    }, [filteredTitleOrCodeInput, filteredFieldSelect, filteredSortBySelect, filteredSortRadio, filteredTagSelect, filteredDocsPerPage, profile]);
+    }, [filteredTitleOrCodeInput, filteredSortBySelect, filteredSortRadio, filteredTagSelect, filteredDocsPerPage, profile]);
 
     const getQuerys = useCallback(() => {
-        let query = `include=${titleOrCodeInput.trim()}`;
-        query += `&field=${fieldSelect}`;
+        let query = `titleOrCode=${titleOrCodeInput.trim()}`;
         query += `&docsPerPage=${docsPerPage}`;
         query += `&sortBy=${sortBySelect}`;
         query += `&sort=${sortRadio}`;
@@ -89,17 +87,15 @@ export default props => {
         if(profile === "PROFESSOR")
             query += `&status=PÚBLICA PRIVADA`;
         return query;
-    }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage, profile]);
+    }, [titleOrCodeInput, sortBySelect, sortRadio, tagSelect, docsPerPage, profile]);
 
     const saveQuerysInStorage = useCallback(() => {
         setFilteredTitleOrCodeInput(() => titleOrCodeInput);
-        setFilteredFieldSelect(() => fieldSelect);
         setFilteredSortBySelect(() => sortBySelect);
         setFilteredDocsPerPage(() => docsPerPage);
         setFilteredSortRadio(() => sortRadio);
         setFilteredTagSelect(() => tagSelect);
         sessionStorage.setItem("titleOrCodeInputQuestions", titleOrCodeInput);
-        sessionStorage.setItem("fieldSelectQuestions", fieldSelect);
         sessionStorage.setItem("sortBySelectQuestions", sortBySelect);
         sessionStorage.setItem("sortRadioQuestions", sortRadio);
         sessionStorage.setItem("tagSelectQuestion", tagSelect);
@@ -112,12 +108,7 @@ export default props => {
             sortRadio === "DESC" ? true : false
         );
         sessionStorage.setItem("docsPerPageQuestions", docsPerPage);
-    }, [titleOrCodeInput, fieldSelect, sortBySelect, sortRadio, tagSelect, docsPerPage]);
-
-    useEffect(() => {
-        getPaginedQuestions(page, getFilteredQuerys());
-        sessionStorage.setItem("pageQuestions", page);
-    }, [page])
+    }, [titleOrCodeInput, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
     const handleSortRadio = useCallback(e => {
         setAscRadio(e.target.value === "ASC" ? true : false);
@@ -127,8 +118,14 @@ export default props => {
 
     const handlleFilter = useCallback(() => {
         getPaginedQuestions(page, getQuerys());
-        saveQuerysInStorage()
+        saveQuerysInStorage();
     }, [page, saveQuerysInStorage, getQuerys]);
+
+    const handlePage = useCallback((e,numPage)=>{
+        e.preventDefault();
+        setPage(numPage);
+        getPaginedQuestions(numPage, getQuerys());
+    },[getQuerys]);
 
     useEffect(() => {
         //console.log('question: ', paginedQuestions);
@@ -152,7 +149,6 @@ export default props => {
                 ascRadio={ascRadio}
                 descRadio={descRadio}
                 docsPerPage={docsPerPage}
-                fieldSelect={fieldSelect}
                 tagSelect={tagSelect}
                 tagsSelect={tagsSelect}
                 sortBySelect={sortBySelect}
@@ -161,7 +157,6 @@ export default props => {
                 handleSortBySelect={(e) => setSortBySelect(e.target.value)}
                 handleTitleOrCodeInput={(e) => setTitleOrCodeInput(e.target.value)}
                 handleDocsPerPage={(e) => setDocsPerPage(e.target.value)}
-                handleFieldSelect={(e) => setFieldSelect(e.target.value)}
                 handleTagSelect={(e) => setTagSelect(e.target.value)}
                 handleSortRadio={handleSortRadio}
             />

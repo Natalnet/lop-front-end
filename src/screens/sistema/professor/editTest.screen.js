@@ -20,6 +20,7 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
@@ -453,7 +454,7 @@ export default class CriarProvaScreen extends Component {
             }
          </CardBody>
 
-          <SwalModal
+          {question &&<SwalModal
             show={showModalInfo}
             title="Exercício"
             handleModal={this.handleCloseshowModalInfo.bind(this)}
@@ -499,8 +500,15 @@ export default class CriarProvaScreen extends Component {
                   </Col>
                 </Row>
               </CardBody>
+              <CardFooter>
+                <Row>
+                  <Col xs={12} mb={15}>
+                    <b>Tags: </b> {question.tags && question.tags.join(", ")}
+                  </Col>
+                </Row>
+              </CardFooter>
             </Card>
-          </SwalModal>
+          </SwalModal>}
         </Card>
       </TemplateSistema>
     );
