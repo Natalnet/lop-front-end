@@ -9,7 +9,7 @@ import TemplateSistema from "components/templates/sistema.template";
 import api from "../../../services/api";
 import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
 import moment from "moment";
-import {Load} from 'components/ui/load';
+import { Load } from 'components/ui/load';
 import { Pagination } from "components/ui/navs";
 
 import SwalModal from "components/ui/modal/swalModal.component";
@@ -20,6 +20,7 @@ import Card from "components/ui/card/card.component";
 import CardHead from "components/ui/card/cardHead.component";
 import CardTitle from "components/ui/card/cardTitle.component";
 import CardBody from "components/ui/card/cardBody.component";
+import CardFooter from "components/ui/card/cardFooter.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 //import HTMLFormat from "components/ui/htmlFormat";
@@ -59,16 +60,16 @@ export default class criarProvaScreen extends Component {
     const { search } = this.props.location;
     await this.getQuestionsByTest();
     //console.log( this.props)
-    if(search.includes('?idTest=')){
-      const id = search.replace('?idTest=','')
+    if (search.includes('?idTest=')) {
+      const id = search.replace('?idTest=', '')
       this.getQuestionsByTest(id);
-      console.log('id: ',id)
+      console.log('id: ', id)
     }
   }
 
   async getQuestionsByTest(id) {
     let query = `idTest=${id}`;
-    this.setState({loadingTest: true})
+    this.setState({ loadingTest: true })
     try {
       const response = await api.get(`/question?${query}`);
       this.setState({
@@ -79,7 +80,7 @@ export default class criarProvaScreen extends Component {
         loadingTest: false
       });
     } catch (err) {
-      this.setState({loadingTest: false})
+      this.setState({ loadingTest: false })
     }
   }
 
@@ -250,24 +251,24 @@ export default class criarProvaScreen extends Component {
         </Row>
         <Card>
           <CardBody>
-          {loadingTest?
-              <Load/>
-            :
-            <form onSubmit={(e) => this.criarProva(e)} onKeyDown={e => {if (e.key === 'Enter') e.preventDefault();}}>
-              <div className="form-row">
-                <div className="form-group col-12">
-                  <label htmlFor="inputTitulo">Título</label>
-                  <input
-                    id="inputTitulo"
-                    type="text"
-                    required
-                    value={this.state.title}
-                    onChange={(e) => this.handleTitleChange(e)}
-                    className="form-control"
-                    placeholder="Título da prova:"
-                  />
-                </div>
-                {/* <div className="form-group col-12 col-md-4">
+            {loadingTest ?
+              <Load />
+              :
+              <form onSubmit={(e) => this.criarProva(e)} onKeyDown={e => { if (e.key === 'Enter') e.preventDefault(); }}>
+                <div className="form-row">
+                  <div className="form-group col-12">
+                    <label htmlFor="inputTitulo">Título</label>
+                    <input
+                      id="inputTitulo"
+                      type="text"
+                      required
+                      value={this.state.title}
+                      onChange={(e) => this.handleTitleChange(e)}
+                      className="form-control"
+                      placeholder="Título da prova:"
+                    />
+                  </div>
+                  {/* <div className="form-group col-12 col-md-4">
                   <label htmlFor="inputSenha">Senha:</label>
                   <input
                     id="inputSenha"
@@ -279,7 +280,7 @@ export default class criarProvaScreen extends Component {
                     placeholder="Senha para abrir a prova"
                   />
                 </div> */}
-                {/* <div className="form-group col-12 col-md-4">
+                  {/* <div className="form-group col-12 col-md-4">
                   <label htmlFor="select">Casos de teste</label>
                   <select
                     id="select"
@@ -291,175 +292,175 @@ export default class criarProvaScreen extends Component {
                     <option value={true}>Mostrar todos</option>
                   </select>
                 </div> */}
-              </div>
-              <div className="form-row">
-                <div className="form-group col-12">
-                  <InputGroupo
-                    placeholder={`Perquise...`}
-                    value={contentInputSeach}
-                    handleContentInputSeach={this.handleContentInputSeach.bind(
-                      this
-                    )}
-                    filterSeash={this.filterSeash.bind(this)}
-                    handleSelect={this.handleSelectfildFilter.bind(this)}
-                    options={[
-                      { value: "title", content: "Nome" },
-                      { value: "code", content: "Código" },
-                    ]}
-                    clearContentInputSeach={this.clearContentInputSeach.bind(
-                      this
-                    )}
-                  />
                 </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group col-12">
-                  <table
-                    className="table table-hover"
-                    style={{ borderTopRightRadius: "10%", marginBottom: "0px" }}
-                  >
-                    <thead>
-                      <tr>
-                        <th>Nome</th>
-                        <th>Código</th>
-                        <th>Submissões gerais (corretas/total)</th>
-                        <th>Criado por</th>
-                        <th>Criado em</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {loadingExercicios ? (
-                        <tr>
-                          <td>
-                            <div className="loader" />
-                          </td>
-                          <td>
-                            <div className="loader" />
-                          </td>
-                          <td>
-                            <div className="loader" />
-                          </td>
-                          <td>
-                            <div className="loader" />
-                          </td>
-                          <td>
-                            <div className="loader" />
-                          </td>
-                        </tr>
-                      ) : (
-                        this.state.exercicios.map((questao) => {
-                          return (
-                            <tr key={questao.id}>
-                              <td>{questao.title}</td>
-                              <td>{questao.code}</td>
-                              <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
-                              <td>{questao.author.email}</td>
-                              <td>{moment(questao.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                              <td className="d-inline-flex">
-                                <button
-                                  type="button"
-                                  className="btn btn-primary mr-2"
-                                  onClick={() =>
-                                    this.handleShowModalInfo(questao)
-                                  }
-                                >
-                                  <i className="fa fa-info" />
-                                </button>
-                                {selecionados
-                                  .map((s) => s.id)
-                                  .includes(questao.id) ? (
-                                  <button
-                                    type="button"
-                                    className="float-right btn  btn-indigo disabled"
-                                  >
-                                    Selecionada
-                                  </button>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    className="float-right btn  btn-primary"
-                                    onClick={(e) => this.selecionar(questao)}
-                                  >
-                                    Adicionar <i className="fe fe-file-plus" />
-                                  </button>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })
+                <div className="form-row">
+                  <div className="form-group col-12">
+                    <InputGroupo
+                      placeholder={`Perquise...`}
+                      value={contentInputSeach}
+                      handleContentInputSeach={this.handleContentInputSeach.bind(
+                        this
                       )}
-                    </tbody>
-                  </table>
+                      filterSeash={this.filterSeash.bind(this)}
+                      handleSelect={this.handleSelectfildFilter.bind(this)}
+                      options={[
+                        { value: "title", content: "Nome" },
+                        { value: "code", content: "Código" },
+                      ]}
+                      clearContentInputSeach={this.clearContentInputSeach.bind(
+                        this
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
-              <Row>
-                <Col xs={12} textCenter>
-                  <Pagination 
-                    count={totalPages} 
-                    page={Number(numPageAtual)} 
-                    onChange={this.handlePage.bind(this)} 
-                    color="primary" 
-                    size="large"
-                    disabled={loadingExercicios}
-                  />
-                </Col>
-              </Row>
-              <hr />
-              <Row>
-                <Col xs={12} textCenter>
-                  <label>Selecionadas</label>
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Nome</th>
-                        <th>Código</th>
-                        <th>Submissões gerais (corretas/total)</th>
-                        <th>Criado por</th>
-                        <th>Criado em</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selecionados.map((questao, index) => (
-                        <tr key={index}>
-                          <td>{questao.title}</td>
-                          <td>{questao.code}</td>
-                          <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
-                          <td>{questao.author.email}</td>
-                          <td>{moment(questao.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="btn btn-primary"
-                              style={botao2}
-                              onClick={() => this.excluir(questao)}
-                            >
-                              <i className="fe fe-file-minus" />
-                            </button>
-                          </td>
+                <div className="form-row">
+                  <div className="form-group col-12">
+                    <table
+                      className="table table-hover"
+                      style={{ borderTopRightRadius: "10%", marginBottom: "0px" }}
+                    >
+                      <thead>
+                        <tr>
+                          <th>Nome</th>
+                          <th>Código</th>
+                          <th>Submissões gerais (corretas/total)</th>
+                          <th>Criado por</th>
+                          <th>Criado em</th>
+                          <th></th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs={12} textCenter>
-                  <button
-                    type="submit"
-                    className="btn btn-primary float-right col-3"
-                    style={{ width: "100%" }}
-                  >
-                    Criar Prova
+                      </thead>
+                      <tbody>
+                        {loadingExercicios ? (
+                          <tr>
+                            <td>
+                              <div className="loader" />
+                            </td>
+                            <td>
+                              <div className="loader" />
+                            </td>
+                            <td>
+                              <div className="loader" />
+                            </td>
+                            <td>
+                              <div className="loader" />
+                            </td>
+                            <td>
+                              <div className="loader" />
+                            </td>
+                          </tr>
+                        ) : (
+                            this.state.exercicios.map((questao) => {
+                              return (
+                                <tr key={questao.id}>
+                                  <td>{questao.title}</td>
+                                  <td>{questao.code}</td>
+                                  <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
+                                  <td>{questao.author.email}</td>
+                                  <td>{moment(questao.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                                  <td className="d-inline-flex">
+                                    <button
+                                      type="button"
+                                      className="btn btn-primary mr-2"
+                                      onClick={() =>
+                                        this.handleShowModalInfo(questao)
+                                      }
+                                    >
+                                      <i className="fa fa-info" />
+                                    </button>
+                                    {selecionados
+                                      .map((s) => s.id)
+                                      .includes(questao.id) ? (
+                                        <button
+                                          type="button"
+                                          className="float-right btn  btn-indigo disabled"
+                                        >
+                                          Selecionada
+                                        </button>
+                                      ) : (
+                                        <button
+                                          type="button"
+                                          className="float-right btn  btn-primary"
+                                          onClick={(e) => this.selecionar(questao)}
+                                        >
+                                          Adicionar <i className="fe fe-file-plus" />
+                                        </button>
+                                      )}
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <Row>
+                  <Col xs={12} textCenter>
+                    <Pagination
+                      count={totalPages}
+                      page={Number(numPageAtual)}
+                      onChange={this.handlePage.bind(this)}
+                      color="primary"
+                      size="large"
+                      disabled={loadingExercicios}
+                    />
+                  </Col>
+                </Row>
+                <hr />
+                <Row>
+                  <Col xs={12} textCenter>
+                    <label>Selecionadas</label>
+                    <table className="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Nome</th>
+                          <th>Código</th>
+                          <th>Submissões gerais (corretas/total)</th>
+                          <th>Criado por</th>
+                          <th>Criado em</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selecionados.map((questao, index) => (
+                          <tr key={index}>
+                            <td>{questao.title}</td>
+                            <td>{questao.code}</td>
+                            <td>{`(${questao.submissionsCorrectsCount}/${questao.submissionsCount})`}</td>
+                            <td>{questao.author.email}</td>
+                            <td>{moment(questao.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="btn btn-primary"
+                                style={botao2}
+                                onClick={() => this.excluir(questao)}
+                              >
+                                <i className="fe fe-file-minus" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={12} textCenter>
+                    <button
+                      type="submit"
+                      className="btn btn-primary float-right col-3"
+                      style={{ width: "100%" }}
+                    >
+                      Criar Prova
                   </button>
-                </Col>
-              </Row>
-            </form>
-          }
+                  </Col>
+                </Row>
+              </form>
+            }
           </CardBody>
 
-          <SwalModal
+          {question && <SwalModal
             show={showModalInfo}
             title="Exercício"
             handleModal={this.handleCloseshowModalInfo.bind(this)}
@@ -476,8 +477,8 @@ export default class criarProvaScreen extends Component {
                 <Row>
                   <span style={{ overflow: "auto" }}>
                     {/* <HTMLFormat>{question && question.description}</HTMLFormat> */}
-                    {question && 
-                      <SunEditor 
+                    {question &&
+                      <SunEditor
                         lang="pt_br"
                         height="auto"
                         disable={true}
@@ -486,9 +487,9 @@ export default class criarProvaScreen extends Component {
                         setContents={question.description}
                         setDefaultStyle="font-size: 15px; text-align: justify"
                         setOptions={{
-                            toolbarContainer : '#toolbar_container',
-                            resizingBar : false,
-                            katex: katex,
+                          toolbarContainer: '#toolbar_container',
+                          resizingBar: false,
+                          katex: katex,
                         }}
                       />
                     }
@@ -505,8 +506,15 @@ export default class criarProvaScreen extends Component {
                   </Col>
                 </Row>
               </CardBody>
+              <CardFooter>
+                <Row>
+                  <Col xs={12} mb={15}>
+                    <b>Tags: </b> {question.tags && question.tags.join(", ")}
+                  </Col>
+                </Row>
+              </CardFooter>
             </Card>
-          </SwalModal>
+          </SwalModal>}
         </Card>
       </TemplateSistema>
     );
