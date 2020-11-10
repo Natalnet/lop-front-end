@@ -18,7 +18,8 @@ import moment from "moment";
 import { BlockMath } from "react-katex";
 //import HTMLFormat from "components/ui/htmlFormat";
 import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-
+import * as B from "components/ui/blockly";
+import { isXml } from '../../../util/auxiliaryFunctions.util';
 export default class telaTurmaExercicioSubmissoes extends Component {
     constructor(props) {
       super(props);
@@ -263,18 +264,68 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                                         </Row>
                                     </CardBody>
                                     <CardFooter>
-                                    <AceEditorWrapper
-                                        mode={user.lastSubmission.language}
-                                        readOnly={true}
-                                        width={"100%"}
-                                        focus={false}
-                                        theme="monokai"
-                                        showPrintMargin={false}
-                                        value={user.lastSubmission.answer || ""}
-                                        fontSize={14}
-                                        name="ACE_EDITOR_RES"
-                                        editorProps={{ $blockScrolling: true }}
-                                    />
+                                    {
+                                                                    user.lastSubmission.language === 'blockly' ?
+                                                                        <B.BlocklyComponent
+                                                                            //ref={this.simpleWorkspace}
+                                                                            readOnly={true}
+                                                                            trashcan={true}
+                                                                            media={'media/'}
+                                                                            move={{
+                                                                                scrollbars: true,
+                                                                                drag: true,
+                                                                                wheel: true
+                                                                            }}
+                                                                            initialXml={isXml(user.lastSubmission.answer) ? user.lastSubmission.answer : ''}>
+                                                                            <B.Category name="Text" colour="20">
+                                                                                <B.Block type="text" />
+                                                                                <B.Block type="text_print" />
+                                                                                <B.Block type="text_prompt" />
+                                                                            </B.Category>
+                                                                            <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
+                                                                            <B.Category name="Logic" colour="210">
+                                                                                <B.Block type="controls_if" />
+                                                                                <B.Block type="controls_ifelse" />
+                                                                                <B.Block type="logic_compare" />
+                                                                                <B.Block type="logic_operation" />
+                                                                                <B.Block type="logic_boolean" />
+                                                                                <B.Block type="logic_null" />
+                                                                                <B.Block type="logic_ternary" />
+                                                                            </B.Category>
+                                                                            <B.Category name="Loops" colour="120">
+                                                                                <B.Block type="controls_for" />
+                                                                                <B.Block type="controls_whileUntil" />
+                                                                                <B.Block type="controls_repeat_ext">
+                                                                                    <B.Value name="TIMES">
+                                                                                        <B.Shadow type="math_number">
+                                                                                            <B.Field name="NUM">10</B.Field>
+                                                                                        </B.Shadow>
+                                                                                    </B.Value>
+                                                                                </B.Block>
+                                                                            </B.Category>
+                                                                            <B.Category name="Math" colour="230">
+                                                                                <B.Block type="math_number" />
+                                                                                <B.Block type="math_arithmetic" />
+                                                                                <B.Block type="math_single" />
+                                                                                <B.Block type="math_round" />
+                                                                            </B.Category>
+                                                                            <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                                                                        </B.BlocklyComponent>
+                                                                        :
+                                                                        <AceEditorWrapper
+                                                                            mode={user.lastSubmission.language}
+                                                                            theme="monokai"
+                                                                            focus={false}
+                                                                            value={user.lastSubmission.answer || ""}
+                                                                            fontSize={14}                                                                       
+                                                                            readOnly={true}
+                                                                            width="100%"
+                                                                            showPrintMargin={false}
+                                                                            name="ACE_EDITOR"
+                                                                            showGutter={true}
+                                                                            highlightActiveLine={true}
+                                                                        />
+                                                                }
                                     </CardFooter>
                                 </Card>
                             </Col>

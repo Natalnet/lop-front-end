@@ -7,11 +7,11 @@ import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
 
 export default ({
-    titleOrCodeInput, tagSelect, fieldSelect,  sortBySelect, descRadio, tagsSelect, loading, ascRadio, docsPerPage,
-    handlleFilter, handleTitleOrCodeInput, handleFieldSelect, handleTagSelect, handleSortRadio, handleDocsPerPage,handleSortBySelect
+    titleOrCodeInput, tagSelect,  sortBySelect, descRadio, tagsSelect, loading, ascRadio, docsPerPage,
+    handlleFilter, handleTitleOrCodeInput, handleTagSelect, handleSortRadio, handleDocsPerPage,handleSortBySelect
 }) => {
 
-    const [showFilter, setShowFilter] = useState(false);
+    const [showFilter, setShowFilter] = useState(true);
 
     return (
         <Card>
@@ -32,33 +32,32 @@ export default ({
                     {/* <form onSubmit={handlleFilter} onKeyDown={e => { if (e.key === 'Enter') e.preventDefault(); }}> */}
                         <Row mb={10}>
                             <Col xs={12} md={6} lg={7}>
-                                <label htmlFor="nome">{`${fieldSelect === 'title' ? 'Título ' : fieldSelect === 'code' ? 'Código' : '...'} do exercício`} </label>
+                                <label htmlFor="nome">Título/Código do exercício </label>
                                 <div className="input-group">
                                     <input
                                         id="nome"
                                         type="text"
                                         className="form-control"
-                                        placeholder={`Perquise pelo ${fieldSelect === 'title' ? 'Título' : fieldSelect === 'code' ? 'Código' : '...'} do exercício`}
+                                        placeholder={'Perquise pelo Título/Código do exercício'}
                                         aria-label="Recipient's username"
                                         aria-describedby="button-addon2"
                                         value={titleOrCodeInput}
                                         onChange={handleTitleOrCodeInput}
                                     />
-                                    <div className="selectgroup" >
+                                    {/* <div className="selectgroup" >
                                         <select style={{ cursor: "pointer" }} defaultValue={fieldSelect} onChange={handleFieldSelect} className="selectize-input items has-options full has-items form-control">
                                             <option value={'title'}>Título</option>
                                             <option value={'code'}>Código</option>
                                         </select>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </Col>
 
                             <Col xs={12} md={6} lg={3}>
                                 <label htmlFor="ordem">Ordenar por:</label>
                                 <div className="selectgroup" style={{ display: 'flex', width: '100%' }}>
-                                    <select id={"ordem"} defaultValue={sortBySelect} className="form-control" onChange={handleSortBySelect} style={{ cursor: "pointer" }}>
-                                        <option value={''}>Aleatório</option>
-                                        {/* <option value={'createdAt'}>Data de criação</option> */}
+                                    <select id="ordem" defaultValue={sortBySelect} className="form-control" onChange={handleSortBySelect} style={{ cursor: "pointer" }}>
+                                        <option value={'createdAt'}>Data de criação</option>
                                         <option value={'title'}>Ordem alfabética</option>
                                         <option value={'difficulty'}>Dificuldade</option>
                                         {/*<option value={'isCorrect'}>Resolvidas por mim</option>

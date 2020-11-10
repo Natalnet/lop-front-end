@@ -17,13 +17,12 @@ import TableResults2 from "../../../components/ui/tables/tableResults2.component
 import TableIO from "../../../components/ui/tables/tableIO.component";
 import Select from "react-select";
 import "katex/dist/katex.min.css";
-//import { BlockMath } from "react-katex";
 import FormSelect2 from "../../../components/ui/forms/formSelect2.component";
 import Row from "components/ui/grid/row.component";
 import Col from "components/ui/grid/col.component";
-
+import * as B from "components/ui/blockly";
+import { getBlocklyCode, getBlocklyXML, isXml} from '../../../util/auxiliaryFunctions.util'
 import SupportedLanguages from "config/SupportedLanguages";
-
 export default class Editor extends Component {
   constructor(props) {
     super(props);
@@ -60,10 +59,10 @@ export default class Editor extends Component {
     };
   }
   componentDidMount() {
+    this.simpleWorkspace = React.createRef();
     this.getTags();
     this.getExercicio();
     document.title = "Criar Exercício - professor";
-
   }
   async getTags() {
     try {
@@ -85,16 +84,14 @@ export default class Editor extends Component {
   }
   async getExercicio() {
     const location = this.props.location.search;
-    console.log('search: ',location)
-    console.log(location.includes('?idQuestion='))
-    if(!location.includes('?idQuestion=')){
+    if (!location.includes('?idQuestion=')) {
       return;
     }
-    const id = location.replace('?idQuestion=','')
+    const id = location.replace('?idQuestion=', '')
     try {
       this.setState({ loadingExercicio: true });
       const response = await api.get(`/question/${id}`);
-      //console.log(response.data);
+      console.log('question: ',response.data);
       this.setState({
         title: response.data.title,
         description: response.data.description,
@@ -111,6 +108,7 @@ export default class Editor extends Component {
           };
         }),
       });
+
     } catch (err) {
       console.log(Object.getOwnPropertyDescriptors(err));
     }
@@ -165,14 +163,14 @@ export default class Editor extends Component {
       description: content,
     });
   }
-  handleImageUploadBefore(){
+  handleImageUploadBefore() {
     Swal.fire({
       type: "error",
       title: "Não é permitido o upload de imagens, carregue-as a partir de um link 😃",
     });
     return false;
   }
-  handleVideoUploadBefore(){
+  handleVideoUploadBefore() {
     Swal.fire({
       type: "error",
       title: "Não é permitido o upload de vídeos, carregue-os a partir de um link 😃",
@@ -230,14 +228,15 @@ export default class Editor extends Component {
     this.setState({ tests: testsChecked });
     return isTestEmpty;
   }
+
   async executar(e) {
     e.preventDefault();
     let { tests, solution, language } = this.state;
     if (this.isTestEmpty(tests)) return null;
     const results = this.rTrimAll(tests);
     const request = {
-      codigo: solution,
-      linguagem: language,
+      codigo: language === "blockly" ? getBlocklyCode(this.simpleWorkspace.current.workspace) : solution,
+      linguagem: language === "blockly" ? 'python' : language,
       results,
     };
     try {
@@ -260,6 +259,7 @@ export default class Editor extends Component {
       });
     }
   }
+
   rTrimAll(tests) {
     const results = tests.map((test) => {
       return {
@@ -286,16 +286,17 @@ export default class Editor extends Component {
       solution,
       status,
       difficulty,
+      language
       //katexDescription,
     } = this.state;
-    if(!tagsSelecionadas.length){
+    if (!tagsSelecionadas.length) {
       Swal.fire({
         type: "error",
         title: "Adicione pelo menos uma tag ao exercício!",
       });
       return;
     }
-    if(!description){
+    if (!description) {
       Swal.fire({
         type: "error",
         title: "ops... Adicione uma descrição para a questão!",
@@ -314,12 +315,12 @@ export default class Editor extends Component {
     const request = {
       title,
       description,
-      
+
       tags: tagsSelecionadas.map((tag) => tag.value),
       //katexDescription,
       status,
       difficulty,
-      solution,
+      solution: language === "blockly" ? getBlocklyXML(this.simpleWorkspace.current.workspace) : solution,
       results,
     };
     try {
@@ -400,7 +401,7 @@ export default class Editor extends Component {
         </Row>
         <Card>
           <CardBody loading={loadingExercicio || loadingTags}>
-            <form onSubmit={(e) => {e.preventDefault(); this.saveQuestion(e);}}>
+            <form onSubmit={(e) => { e.preventDefault(); this.saveQuestion(e); }}>
               <div className="form-row">
                 <div className="form-group col-md-12">
                   <label>Título: </label>
@@ -416,7 +417,7 @@ export default class Editor extends Component {
                 </div>
                 <div className="form-group col-md-12">
                   <label>Enunciado:</label>
-                  <SunEditor 
+                  <SunEditor
                     lang="pt_br"
                     minHeight="250"
                     height="auto"
@@ -426,16 +427,16 @@ export default class Editor extends Component {
                     onVideoUploadBefore={this.handleVideoUploadBefore.bind(this)}
                     setDefaultStyle="font-size: 15px; text-align: justify"
                     setOptions={{
-                      toolbarContainer : '#toolbar_container',
+                      toolbarContainer: '#toolbar_container',
                       //resizingBar : false,
                       //charCounter : true,
                       //maxCharCount : 720,
                       katex: katex,
-                      buttonList : [
+                      buttonList: [
                         ['undo', 'redo', 'font', 'fontSize', 'formatBlock'],
-                        ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript', 'removeFormat','textStyle','paragraphStyle'],
-                        ['fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table','codeView','math'],
-                        ['link', 'image', 'video','audio', 'fullScreen', 'showBlocks', 'codeView', 'preview', 'print', 'save']
+                        ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript', 'removeFormat', 'textStyle', 'paragraphStyle'],
+                        ['fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table', 'codeView', 'math'],
+                        ['link', 'image', 'video', 'audio', 'fullScreen', 'showBlocks', 'codeView', 'preview', 'print', 'save']
                       ],
                     }}
                   />
@@ -489,37 +490,6 @@ export default class Editor extends Component {
                     onChange={this.handleTagsChangeTags.bind(this)}
                   />
                 </div>
-                {/* <div className="form-group col-md-6">
-                  <label>
-                    Katex: &nbsp;
-                    <a
-                      href="https://katex.org/docs/supported.html#operators"
-                      className="badge badge-info"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      <i className="fa fa-info-circle" /> &nbsp; Ver
-                      documentação
-                    </a>
-                  </label>
-                  <textarea
-                    onChange={(e) => this.handlekatexDescription(e)}
-                    style={{ height: "150px" }}
-                    className="form-control"
-                    value={katexDescription}
-                  ></textarea>
-                </div>
-                <div className="col-md-6">
-                  <label>Saída Katex:</label>
-                  <div
-                    className="alert alert-info"
-                    role="alert"
-                    style={{ height: "150px" }}
-                  >
-                    <BlockMath>{katexDescription}</BlockMath>
-                  </div>
-                </div> */}
-                {/*teste*/}
                 <div className="form-group col-md-12">
                   <label className="mr-2">Entradas para testes: </label>
                   <button
@@ -555,14 +525,13 @@ export default class Editor extends Component {
                           <input
                             type="text"
                             onChange={(e) => this.handleInputsChange(e, i)}
-                            className={`form-control ${
-                              !tests[i].inputs && tests[i].msgInputs
-                                ? "is-invalid"
-                                : ""
-                            }`}
+                            className={`form-control ${!tests[i].inputs && tests[i].msgInputs
+                              ? "is-invalid"
+                              : ""
+                              }`}
                             placeholder="Ex: 12\n16.4\nOlá mundo!\n"
                             value={tests[i].inputs}
-                            // required
+                          // required
                           />
                           <div className="invalid-feedback">
                             {!tests[i].inputs && tests[i].msgInputs
@@ -579,15 +548,14 @@ export default class Editor extends Component {
                               height: "90px",
                               width: "100%",
                             }}
-                            className={`form-control ${
-                              !tests[i].output && tests[i].msgOutput
-                                ? "is-invalid"
-                                : ""
-                            }`}
+                            className={`form-control ${!tests[i].output && tests[i].msgOutput
+                              ? "is-invalid"
+                              : ""
+                              }`}
                             wrap="off"
                             placeholder="EX1: 34.89; EX2: Eh maior"
                             value={tests[i].output}
-                            //required
+                          //required
                           ></textarea>
                           <div className="invalid-feedback">
                             {!tests[i].output && tests[i].msgOutput
@@ -614,59 +582,111 @@ export default class Editor extends Component {
                 />
               </div>
               <div className="row">
-                <div className="col-12 col-md-7">
-                  <AceEditorWrapper
-                    mode={language}
-                    theme={theme}
-                    focus={false}
-                    onChange={this.handleSolution.bind(this)}
-                    value={solution}
-                    fontSize={14}
-                    width="100%"
-                    name="ACE_EDITOR"
-                    showPrintMargin={false}
-                    showGutter={true}
-                    highlightActiveLine={true}
-                    setOptions={{
-                      enableSnippets: true,
-                      showLineNumbers: true,
-                      tabSize: 2,
-                    }}
-                  />
+                <div className="col-12">
+                  {language === 'blockly' ?
+                    <B.BlocklyComponent
+                      ref={this.simpleWorkspace}
+                      readOnly={false}
+                      trashcan={true}
+                      media={'media/'}
+                      move={{
+                        scrollbars: true,
+                        drag: true,
+                        wheel: true
+                      }}
+                      initialXml={isXml(solution)? solution:''}>
+                      <B.Category name="Text" colour="20">
+                        {/* <B.Block type="variables_get" />
+                          <B.Block type="variables_set" /> */}
+                        <B.Block type="text" />
+                        <B.Block type="text_print" />
+                        <B.Block type="text_prompt" />
+                        {/* <B.Block type="string_length" /> */}
+                      </B.Category>
+                      <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
+                      <B.Category name="Logic" colour="210">
+                        <B.Block type="controls_if" />
+                        <B.Block type="controls_ifelse" />
+                        <B.Block type="logic_compare" />
+                        <B.Block type="logic_operation" />
+                        <B.Block type="logic_boolean" />
+                        <B.Block type="logic_null" />
+                        <B.Block type="logic_ternary" />
+                      </B.Category>
+                      <B.Category name="Loops" colour="120">
+                        <B.Block type="controls_for" />
+                        <B.Block type="controls_whileUntil" />
+                        <B.Block type="controls_repeat_ext">
+                          <B.Value name="TIMES">
+                            <B.Shadow type="math_number">
+                              <B.Field name="NUM">10</B.Field>
+                            </B.Shadow>
+                          </B.Value>
+                        </B.Block>
+                      </B.Category>
+                      <B.Category name="Math" colour="230">
+                        <B.Block type="math_number" />
+                        <B.Block type="math_arithmetic" />
+                        <B.Block type="math_single" />
+                        <B.Block type="math_round" />
+                      </B.Category>
+                      <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                    </B.BlocklyComponent>
+                    :
+                    <AceEditorWrapper
+                      mode={language}
+                      theme={theme}
+                      focus={false}
+                      onChange={this.handleSolution.bind(this)}
+                      value={solution}
+                      fontSize={14}
+                      width="100%"
+                      name="ACE_EDITOR"
+                      showPrintMargin={false}
+                      showGutter={true}
+                      highlightActiveLine={true}
+                      setOptions={{
+                        enableSnippets: true,
+                        showLineNumbers: true,
+                        tabSize: 2,
+                      }}
+
+                    />
+                  }
                 </div>
 
-                <div className="col-12 col-md-5">
+                <div className="col-12">
                   {loadingReponse ? (
                     <div
                       className="loader"
                       style={{ margin: "0px auto" }}
                     ></div>
                   ) : (
-                    <Card style={{ minHeight: "500px" }}>
-                      <CardHead>
-                        <CardTitle>Resultados</CardTitle>
-                      </CardHead>
-                      <TableResults2
-                        response={response}
-                        showAllTestCases={true}
-                        descriptionErro={descriptionErro}
-                        percentualAcerto={percentualAcerto}
-                      />
-                    </Card>
-                  )}
+                      <Card style={{ minHeight: "500px" }}>
+                        <CardHead>
+                          <CardTitle>Resultados</CardTitle>
+                        </CardHead>
+                        <TableResults2
+                          response={response}
+                          showAllTestCases={true}
+                          descriptionErro={descriptionErro}
+                          percentualAcerto={percentualAcerto}
+                        />
+                      </Card>
+                    )}
                 </div>
               </div>
               <button
                 type="submit"
-                className={`btn btn-primary btn-lg btn-block mt-5 ${
-                  savingQuestion && "btn-loading"
-                }`}
+                className={`btn btn-primary btn-lg btn-block mt-5 ${savingQuestion && "btn-loading"
+                  }`}
               >
                 <i className="fa fa-save"></i> Salvar
               </button>
             </form>
           </CardBody>
         </Card>
+
       </TemplateSistema>
     );
   }

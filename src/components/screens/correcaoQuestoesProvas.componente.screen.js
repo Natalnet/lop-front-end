@@ -140,7 +140,7 @@ export default (props) => {
       <Row mb={10}>
         <Col xs={4} md={2}>
           <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
-          <select className="form-control" onChange={(e) => changeLanguage(e)}>
+          <select className="form-control" onChange={(e) => this.changeLanguage(e)}>
             {languages.map((lang) => {
               const languageIdx = SupportedLanguages.list.indexOf(lang);
               return (

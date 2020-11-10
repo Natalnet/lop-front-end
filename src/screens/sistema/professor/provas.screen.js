@@ -172,7 +172,7 @@ export default class HomeProvasScreen extends Component {
                   <th>Nome</th>
                   <th>Código</th>
                   {/* <th>Senha</th> */}
-                  <th>Autor</th>
+                  <th>Autor(a)</th>
                   <th>Criado em</th>
                   <th className="text-center"></th>
                 </tr>

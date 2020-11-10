@@ -1,8 +1,7 @@
 import axios from "axios";
 
-//const baseUrlBackend =process.env.REACT_APP_BASE_URL_BACKEND || "https://lop-backend.herokuapp.com";
-//const baseUrlBackend = process.env.REACT_APP_BASE_URL_BACKEND || "http://localhost:3001";
-const baseUrlBackend = process.env.REACT_APP_BASE_URL_BACKEND || "https://api.lop.natalnet.br:3001";
+const baseUrlBackend = process.env.REACT_APP_BASE_URL_BACKEND || "http://localhost:3001";
+//const baseUrlBackend = process.env.REACT_APP_BASE_URL_BACKEND || "https://api.lop.natalnet.br:3001";
 
 const api = axios.create({
   baseURL: baseUrlBackend,

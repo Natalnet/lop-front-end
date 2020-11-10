@@ -2,6 +2,7 @@ import js_icon from "assets/icons/icons-javascript.svg";
 import cpp_icon from "assets/icons/icons-cpp.svg";
 import c_icon from "assets/icons/icons-c.svg";
 import python_icon from "assets/icons/icons-python.svg";
+import blockly_icon from "assets/icons/icons-blockly-pink-24.png";
 
 /*object representation,
  backend_name : { backendName: "backend_name", niceName: "frontend_name", mossName: "moss_name", icon: "path" }
@@ -12,6 +13,7 @@ const LanguageObject = {
     cpp : {backendName:"cpp" , niceName:"C++", mossName: 'cc',  icon : cpp_icon},
     c : {backendName:"c", niceName:"C", mossName: 'c',  icon : c_icon},
     python : {backendName:"python", niceName:"Python", mossName: 'python', icon : python_icon},
+    blockly : {backendName:"blockly", niceName:"Blockly", mossName: 'python', icon : blockly_icon},
 };
 
 /*
@@ -37,5 +39,4 @@ Object.values(LanguageObject).map( l => SupportedLanguages.mossNames.push(l.moss
 //adding the language object in the DefaultLanguages object
 Object.keys(LanguageObject).map( k => SupportedLanguages[k]=LanguageObject[k] );
 
-//console.log(SupportedLanguages);
 export default SupportedLanguages;

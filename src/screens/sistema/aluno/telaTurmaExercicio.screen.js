@@ -46,7 +46,11 @@ export default class Editor extends Component {
       loadDifficulty: false,
       salvandoRascunho: false,
       char_change_number: 0,
-      oldTimeConsuming:0
+      oldTimeConsuming:0,
+      submissionsCount: 0,
+      submissionsCorrectsCount: 0,
+      accessCount: 0,
+      author: null,
     };
   }
 
@@ -152,6 +156,10 @@ export default class Editor extends Component {
         ? response.data.lastSubmission.timeConsuming
         : 0,
         loadingExercicio: false,
+        submissionsCount: response.data.submissionsCount,
+        submissionsCorrectsCount: response.data.submissionsCorrectsCount,
+        accessCount: response.data.accessCount,
+        author: response.data.author
       });
     } catch (err) {
       this.setState({ loadingExercicio: false });
@@ -341,8 +349,13 @@ export default class Editor extends Component {
           <div className="loader" style={{ margin: "0px auto" }}></div>
         ) : (
           <ExercicioScreen
+          // const { id, idLista, idExercicio } = this.props.match.params;
+
             {...this.state}
             {...this.props}
+            idQuestion={ this.props.match.params.idExercicio}
+            idClass= {this.props.match.params.id}
+            idList= { this.props.match.params.idLista}
             showAllTestCases={true}
             languages={turma && turma.languages}
             changeLanguage={this.changeLanguage.bind(this)}

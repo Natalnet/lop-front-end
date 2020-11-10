@@ -13,7 +13,6 @@ const UseQuestion = () => {
         //console.log(`/question/page/${page}?${querys}`);
         try{
             const response = await api.get(`/question/page/${page}?${querys}`);
-            //console.log('question: ', response.data);
             setPaginedQuestions(response.data);
         }
         catch(err){
