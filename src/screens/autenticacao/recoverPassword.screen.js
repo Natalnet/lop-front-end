@@ -6,11 +6,11 @@
 
 import React, { Component } from "react";
 
-import TemplateAutenticacao from "components/templates/autenticacao.template";
+import TemplateAutenticacao from "../../components/templates/autenticacao.template";
 import api from "../../services/api";
 
 import { Link } from "react-router-dom";
-import LogoLOP from "components/ui/logoLOP.component";
+import LogoLOP from "../../components/ui/logoLOP.component";
 
 export default class recoverScreen extends Component {
   constructor(props) {

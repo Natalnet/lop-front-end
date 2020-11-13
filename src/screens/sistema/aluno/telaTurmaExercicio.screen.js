@@ -6,11 +6,10 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import apiCompiler from "../../../services/apiCompiler";
 import TemplateSistema from "../../../components/templates/sistema.template";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import ExercicioScreen from "components/screens/exercicio.componete.escreen";
-
-import SupportedLanguages from "config/SupportedLanguages"
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import ExercicioScreen from "../../../components/screens/exercicio.componete.escreen";
+import SupportedLanguages from "../../../config/SupportedLanguages"
 
 export default class Editor extends Component {
   // @todo: Use typescript to handle propTypes via monaco.d.ts

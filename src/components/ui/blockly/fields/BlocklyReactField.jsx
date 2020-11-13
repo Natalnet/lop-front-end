@@ -27,7 +27,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import * as Blockly from 'blockly/core';
-
+import locale from 'blockly/msg/pt-br';
+Blockly.setLocale(locale);
 
 class BlocklyReactField extends Blockly.Field {
 

@@ -1,10 +1,10 @@
-import LoginScreen from "screens/autenticacao/login.screen";
-import SignScreen from "screens/autenticacao/registro.screen";
-import ConfirmRegisterScreen from "screens/autenticacao/confirmRegister.screen";
-import RecoverScreen from "screens/autenticacao/recoverPassword.screen";
-import ResetScreen from "screens/autenticacao/resetPassword.screen";
+import LoginScreen from "../screens/autenticacao/login.screen";
+import SignScreen from "../screens/autenticacao/registro.screen";
+import ConfirmRegisterScreen from "../screens/autenticacao/confirmRegister.screen";
+import RecoverScreen from "../screens/autenticacao/recoverPassword.screen";
+import ResetScreen from "../screens/autenticacao/resetPassword.screen";
 
-import exportRoutes from "util/routes/exportRoutes.util";
+import exportRoutes from "../util/routes/exportRoutes.util";
 
 const routes = [
   {

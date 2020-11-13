@@ -1,23 +1,23 @@
 import React, { Component } from "react";
 import socket from "socket.io-client";
-import TemplateSistema from "components/templates/sistema.template";
-import InputGroup from "components/ui/inputGroup/inputGroupo.component";
+import TemplateSistema from "../../../components/templates/sistema.template";
+import InputGroup from "../../../components/ui/inputGroup/inputGroupo.component";
 import profileImg from "../../../assets/perfil.png";
 import Swal from "sweetalert2";
-import { Pagination } from "components/ui/navs";
+import { Pagination } from "../../../components/ui/navs";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import api, { baseUrlBackend } from "../../../services/api";
 import moment from "moment";
-import SwalModal from "components/ui/modal/swalModal.component";
+import SwalModal from "../../../components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
-import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
+import AceEditorWrapper from "../../../components/templates/aceEditorWrapper.template";
 import { CSVLink } from "react-csv";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import * as B from "components/ui/blockly";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import * as B from "../../../components/ui/blockly";
 import { isXml } from '../../../util/auxiliaryFunctions.util';
 const lista = {
   backgroundColor: "white",

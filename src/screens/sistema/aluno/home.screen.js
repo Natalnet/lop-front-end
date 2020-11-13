@@ -3,19 +3,19 @@ import api from "../../../services/api";
 import { range } from "../../../util/auxiliaryFunctions.util";
 import { Link } from "react-router-dom";
 
-import TemplateSistema from "components/templates/sistema.template";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import CardLoader from "components/ui/card/cardLoader.component";
+import TemplateSistema from "../../../components/templates/sistema.template";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardOptions from "../../../components/ui/card/cardOptions.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardFooter from "../../../components/ui/card/cardFooter.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import CardLoader from "../../../components/ui/card/cardLoader.component";
 import profileImg from "../../../assets/perfil.png";
 
-import SupportedLanguages from "config/SupportedLanguages";
+import SupportedLanguages from "../../../config/SupportedLanguages";
 
 export default class HomeAlunoScreen extends Component {
   constructor(props) {

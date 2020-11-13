@@ -1,8 +1,8 @@
-import js_icon from "assets/icons/icons-javascript.svg";
-import cpp_icon from "assets/icons/icons-cpp.svg";
-import c_icon from "assets/icons/icons-c.svg";
-import python_icon from "assets/icons/icons-python.svg";
-import blockly_icon from "assets/icons/icons-blockly-pink-24.png";
+import js_icon from "../assets/icons/icons-javascript.svg";
+import cpp_icon from "../assets/icons/icons-cpp.svg";
+import c_icon from "../assets/icons/icons-c.svg";
+import python_icon from "../assets/icons/icons-python.svg";
+import blockly_icon from "../assets/icons/icons-blockly-pink-24.png";
 
 /*object representation,
  backend_name : { backendName: "backend_name", niceName: "frontend_name", mossName: "moss_name", icon: "path" }

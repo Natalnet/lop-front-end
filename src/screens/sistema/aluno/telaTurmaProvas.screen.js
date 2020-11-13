@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api, { baseUrlBackend } from "../../../services/api";
 import Swal from "sweetalert2";
 import { generateHash } from "../../../util/auxiliaryFunctions.util";
 import "katex/dist/katex.min.css";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 import socket from "socket.io-client";
-import TurmaProvasScreen from "components/screens/turmaProvas.componente.screen";
+import TurmaProvasScreen from "../../../components/screens/turmaProvas.componente.screen";
 
 export default class Provas extends Component {
   constructor(props) {

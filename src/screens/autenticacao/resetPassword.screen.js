@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import TemplateAutenticacao from "components/templates/autenticacao.template";
+import TemplateAutenticacao from "../../components/templates/autenticacao.template";
 import Swal from "sweetalert2";
 import api from "../../services/api";
-import LogoLOP from "components/ui/logoLOP.component";
+import LogoLOP from "../../components/ui/logoLOP.component";
 
 export default class resetScreen extends Component {
 

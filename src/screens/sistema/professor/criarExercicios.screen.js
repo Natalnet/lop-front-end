@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
 import apiCompiler from "../../../services/apiCompiler";
 import SunEditor from 'suneditor-react';
@@ -8,21 +8,21 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import Swal from "sweetalert2";
-import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
+import AceEditorWrapper from "../../../components/templates/aceEditorWrapper.template";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
 import TableResults2 from "../../../components/ui/tables/tableResults2.component";
 import TableIO from "../../../components/ui/tables/tableIO.component";
 import Select from "react-select";
 import "katex/dist/katex.min.css";
 import FormSelect2 from "../../../components/ui/forms/formSelect2.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import * as B from "components/ui/blockly";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import * as B from "../../../components/ui/blockly";
 import { getBlocklyCode, getBlocklyXML, isXml} from '../../../util/auxiliaryFunctions.util'
-import SupportedLanguages from "config/SupportedLanguages";
+import SupportedLanguages from "../../../config/SupportedLanguages";
 export default class Editor extends Component {
   constructor(props) {
     super(props);

@@ -1,15 +1,15 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Link, useHistory } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import { Load } from "components/ui/load";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import { Load } from "../../../components/ui/load";
 import moment from "moment";
 //import io from "socket.io-client";
 import Swal from "sweetalert2";
 
-import SupportedLanguages from "config/SupportedLanguages"
+import SupportedLanguages from "../../../config/SupportedLanguages"
 
 export default props => {
     const [loadingInfoTurma, setLoadingInfoTurma] = useState(false);

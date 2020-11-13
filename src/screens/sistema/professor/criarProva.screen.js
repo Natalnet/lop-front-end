@@ -5,25 +5,25 @@ import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
-import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
+import InputGroupo from "../../../components/ui/inputGroup/inputGroupo.component";
 import moment from "moment";
-import { Load } from 'components/ui/load';
-import { Pagination } from "components/ui/navs";
+import { Load } from '../../../components/ui/load';
+import { Pagination } from "../../../components/ui/navs";
 
-import SwalModal from "components/ui/modal/swalModal.component";
+import SwalModal from "../../../components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
-import TableIO from "components/ui/tables/tableIO.component";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-//import HTMLFormat from "components/ui/htmlFormat";
+import TableIO from "../../../components/ui/tables/tableIO.component";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardFooter from "../../../components/ui/card/cardFooter.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+//import HTMLFormat from "../../../components/ui/htmlFormat";
 
 const botao2 = {
   float: "right",

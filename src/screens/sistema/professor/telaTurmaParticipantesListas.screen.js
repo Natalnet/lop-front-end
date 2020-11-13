@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import TurmaProvasScreen from "components/screens/turmaProvas.componente.screen";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import TurmaProvasScreen from "../../../components/screens/turmaProvas.componente.screen";
 import TurmaListasScrren from "../.././../components/screens/turmaListas.componente.screen";
 
 export default class Listas extends Component {

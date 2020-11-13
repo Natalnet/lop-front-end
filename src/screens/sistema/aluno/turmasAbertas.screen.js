@@ -2,21 +2,21 @@ import React, { Component, Fragment } from "react";
 import api, { baseUrlBackend } from "../../../services/api";
 import Swal from "sweetalert2";
 
-import TemplateSistema from "components/templates/sistema.template";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
+import TemplateSistema from "../../../components/templates/sistema.template";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardOptions from "../../../components/ui/card/cardOptions.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardFooter from "../../../components/ui/card/cardFooter.component";
 
-import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import InputGroupo from "../../../components/ui/inputGroup/inputGroupo.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 import socket from "socket.io-client";
 import profileImg from "../../../assets/perfil.png";
 
-import SupportedLanguages from "config/SupportedLanguages"
+import SupportedLanguages from "../../../config/SupportedLanguages"
 
 export default class HomeAlunoScreen extends Component {
   constructor(props) {

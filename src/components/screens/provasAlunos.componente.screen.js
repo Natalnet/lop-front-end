@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { Pagination } from "components/ui/navs";
+import { Pagination } from "../ui/navs";
 
-import Table from "components/ui/tables/tableType1.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import profileImg from "assets/perfil.png";
+import Table from "../ui/tables/tableType1.component";
+import Row from "../ui/grid/row.component";
+import Col from "../ui/grid/col.component";
+import profileImg from "../../assets/perfil.png";
 
 export default (props) => {
   const {

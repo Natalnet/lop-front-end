@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import Card from "../card/card.component";
+import CardHead from "../card/cardHead.component";
+import CardTitle from "../card/cardTitle.component";
+import CardBody from "../card/cardBody.component";
+import Row from "../grid/row.component";
+import Col from "../grid/col.component";
 
 export default ({
     titleOrCodeInput, tagSelect,  sortBySelect, descRadio, tagsSelect, loading, ascRadio, docsPerPage,
     handlleFilter, handleTitleOrCodeInput, handleTagSelect, handleSortRadio, handleDocsPerPage,handleSortBySelect
 }) => {
 
-    const [showFilter, setShowFilter] = useState(true);
+    const [showFilter, setShowFilter] = useState(false);
 
     return (
         <Card>

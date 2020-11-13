@@ -4,21 +4,21 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import { Load } from "components/ui/load";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardFooter from "../../../components/ui/card/cardFooter.component";
+import { Load } from "../../../components/ui/load";
 import moment from "moment";
 import { BlockMath } from "react-katex";
-//import HTMLFormat from "components/ui/htmlFormat";
-import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-import * as B from "components/ui/blockly";
+//import HTMLFormat from "../../../components/ui/htmlFormat";
+import AceEditorWrapper from "../../../components/templates/aceEditorWrapper.template";
+import * as B from "../../../components/ui/blockly";
 import { isXml } from '../../../util/auxiliaryFunctions.util';
 export default class telaTurmaExercicioSubmissoes extends Component {
     constructor(props) {
