@@ -1,10 +1,10 @@
 import React,{Fragment} from "react"
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import ProgressBar from "components/ui/ProgressBar/progressBar.component";
+import Card from "../ui/card/card.component";
+import CardHead from "../ui/card/cardHead.component";
+import CardOptions from "../ui/card/cardOptions.component";
+import Row from "../ui/grid/row.component";
+import Col from "../ui/grid/col.component";
+import ProgressBar from "../ui/ProgressBar/progressBar.component";
 import { Link } from "react-router-dom";
 
 export default (props) => {

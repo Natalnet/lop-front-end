@@ -1,21 +1,21 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import { Pagination } from "components/ui/navs";
+import { Pagination } from "../../../components/ui/navs";
 import profileImg from "../../../assets/perfil.png";
 
 import api from "../../../services/api";
 import moment from "moment";
-import SwalModal from "components/ui/modal/swalModal.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import SwalModal from "../../../components/ui/modal/swalModal.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 import "katex/dist/katex.min.css";
-import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-import * as B from "components/ui/blockly";
+import AceEditorWrapper from "../../../components/templates/aceEditorWrapper.template";
+import * as B from "../../../components/ui/blockly";
 import { isXml } from '../../../util/auxiliaryFunctions.util';
 const table = {
   backgroundColor: "white",

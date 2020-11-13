@@ -9,15 +9,15 @@ import React, { Component,createRef } from "react";
 
 import api from "../../services/api"
 
-import ErrorBoundary from "screens/erros/errorBoundary.screen";
+import ErrorBoundary from"../../screens/erros/errorBoundary.screen";
 
-import HeadPefilMenu from "components/menus/comum/headPerfil.menu";
+import HeadPefilMenu from "../menus/comum/headPerfil.menu";
 
-import MenuAluno from "components/menus/dashboard/aluno/menuAluno.menu";
+import MenuAluno from "../menus/dashboard/aluno/menuAluno.menu";
 
-import MenuAdministrador from "components/menus/dashboard/administrador/menuAdministrador.menu";
+import MenuAdministrador from "../menus/dashboard/administrador/menuAdministrador.menu";
 
-import MenuProfessor from "components/menus/dashboard/professor/menuProfessor.menu";
+import MenuProfessor from "../menus/dashboard/professor/menuProfessor.menu";
 
 //import { perfis } from "config/enums/perfis.enum";
 

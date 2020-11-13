@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import api from "../../../services/api";
-import AdministracaoTemplate from "components/templates/administracao.template";
+import AdministracaoTemplate from "../../../components/templates/administracao.template";
 
-import { Pagination } from "components/ui/navs";
+import { Pagination } from "../../../components/ui/navs";
 
-import InputGroup from "components/ui/inputGroup/inputGroupo.component";
+import InputGroup from "../../../components/ui/inputGroup/inputGroupo.component";
 import Swal from "sweetalert2";
 import profileImg from "../../../assets/perfil.png";
 

@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import TemplateSistema from "components/templates/sistema.template";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import TemplateSistema from "../../../components/templates/sistema.template";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 import api from "../../../services/api";
-//import NavPagination from "components/ui/navs/navPaginationTestCorrection";
-//import CorrecaoQuestao from "components/screens/correcaoQuestoesProvas.componente.screen";
-//import CorrecaoQuestao from "components/screens/teste";
+//import NavPagination from "../../../components/ui/navs/navPaginationTestCorrection";
+//import CorrecaoQuestao from "../../../components/screens/correcaoQuestoesProvas.componente.screen";
+//import CorrecaoQuestao from "../../../components/screens/teste";
 import Swal from "sweetalert2";
 import apiCompiler from "../../../services/apiCompiler";
 import { Link } from "react-router-dom";
@@ -16,15 +16,15 @@ import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
 
-import HTMLFormat from "components/ui/htmlFormat";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import SupportedLanguages from "config/SupportedLanguages";
-import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-import * as B from "components/ui/blockly";
+import HTMLFormat from "../../../components/ui/htmlFormat";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardOptions from "../../../components/ui/card/cardOptions.component";
+import SupportedLanguages from "../../../config/SupportedLanguages";
+import AceEditorWrapper from "../../../components/templates/aceEditorWrapper.template";
+import * as B from "../../../components/ui/blockly";
 import { getBlocklyCode, isXml } from '../../../util/auxiliaryFunctions.util';
 
 export default class AlunosProvas extends Component {

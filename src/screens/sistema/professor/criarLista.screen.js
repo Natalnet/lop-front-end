@@ -4,29 +4,29 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { Link, useHistory, useLocation } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import moment from "moment";
 import api from "../../../services/api";
-import { Load } from 'components/ui/load';
+import { Load } from '../../../components/ui/load';
 import useQuestion from '../../../hooks/useQuestion';
 import usePagination from '../../../hooks/usePagination';
 import useList from '../../../hooks/useList';
 import useTag from '../../../hooks/useTag';
-import { Pagination } from "components/ui/navs";
-import FormFilterQuestion from 'components/ui/forms/formFilterQuestions';
-import SwalModal from "components/ui/modal/swalModal.component";
+import { Pagination } from "../../../components/ui/navs";
+import FormFilterQuestion from '../../../components/ui/forms/formFilterQuestions';
+import SwalModal from "../../../components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
-import TableIO from "components/ui/tables/tableIO.component";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import TableIO from "../../../components/ui/tables/tableIO.component";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardFooter from "../../../components/ui/card/cardFooter.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 
-//import HTMLFormat from "components/ui/htmlFormat";
+//import HTMLFormat from "../../../components/ui/htmlFormat";
 
 export default props => {
 

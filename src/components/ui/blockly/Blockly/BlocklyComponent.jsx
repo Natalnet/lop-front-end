@@ -25,9 +25,9 @@ import React from 'react';
 import './BlocklyComponent.css';
 
 import Blockly from 'blockly/core';
+//import locale from 'src/../node_modules/blockly/msg/pt-br';
 import locale from 'blockly/msg/pt-br';
 import 'blockly/blocks';
-
 Blockly.setLocale(locale);
 
 class BlocklyComponent extends React.Component {

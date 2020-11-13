@@ -1,23 +1,23 @@
 import React, { Component, Fragment } from "react";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import moment from "moment";
-import SwalModal from "components/ui/modal/swalModal.component";
+import SwalModal from "../../../components/ui/modal/swalModal.component";
 import { CSVLink } from "react-csv";
 
-import { Pagination } from "components/ui/navs";
+import { Pagination } from "../../../components/ui/navs";
 
-import InputGroup from "components/ui/inputGroup/inputGroupo.component";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import InputGroup from "../../../components/ui/inputGroup/inputGroupo.component";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardOptions from "../../../components/ui/card/cardOptions.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 import TurmaListasScrren from "../.././../components/screens/turmaListas.componente.screen";
 
 export default class Pagina extends Component {

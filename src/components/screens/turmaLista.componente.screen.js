@@ -4,16 +4,16 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import ProgressBar from "components/ui/ProgressBar/progressBar.component";
-//import HTMLFormat from "components/ui/htmlFormat"
+import Card from "../ui/card/card.component";
+import CardHead from "../ui/card/cardHead.component";
+import CardOptions from "../ui/card/cardOptions.component";
+import CardTitle from "../ui/card/cardTitle.component";
+import CardBody from "../ui/card/cardBody.component";
+import CardFooter from "../ui/card/cardFooter.component";
+import Row from "../ui/grid/row.component";
+import Col from "../ui/grid/col.component";
+import ProgressBar from "../ui/ProgressBar/progressBar.component";
+//import HTMLFormat from "../ui/htmlFormat"
 export default props =>{
     const {lista,participant} = props
     const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase()

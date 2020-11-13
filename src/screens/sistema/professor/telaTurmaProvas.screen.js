@@ -3,25 +3,25 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import { CSVLink } from "react-csv";
-import SwalModal from "components/ui/modal/swalModal.component";
-import { Pagination } from "components/ui/navs";
+import SwalModal from "../../../components/ui/modal/swalModal.component";
+import { Pagination } from "../../../components/ui/navs";
 import moment from "moment";
-import InputGroup from "components/ui/inputGroup/inputGroupo.component";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import TurmaProvasScreen from "components/screens/turmaProvas.componente.screen";
+import InputGroup from "../../../components/ui/inputGroup/inputGroupo.component";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardOptions from "../../../components/ui/card/cardOptions.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import TurmaProvasScreen from "../../../components/screens/turmaProvas.componente.screen";
 
 export default class Provas extends Component {
   constructor(props) {

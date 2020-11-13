@@ -2,10 +2,10 @@ import React, { Component } from "react";
 
 import api from "../../services/api"
 
-import ErrorBoundary from "screens/erros/errorBoundary.screen";
+import ErrorBoundary from"../../screens/erros/errorBoundary.screen";
 
-import HeadPefilMenu from "components/menus/comum/headPerfil.menu";
-import MenuAdministrador from "components/menus/dashboard/administrador/menuAdministrador.menu";
+import HeadPefilMenu from "../../components/menus/comum/headPerfil.menu";
+import MenuAdministrador from "../../components/menus/dashboard/administrador/menuAdministrador.menu";
 
 export default class TemplateSistema extends Component {
   constructor(props) {

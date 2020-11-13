@@ -1,25 +1,25 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
+import TemplateSistema from "../../../components/templates/sistema.template";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardOptions from "../../../components/ui/card/cardOptions.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardFooter from "../../../components/ui/card/cardFooter.component";
 import { range } from "../../../util/auxiliaryFunctions.util";
 import Swal from "sweetalert2";
-import InputGroupo from "components/ui/inputGroup/inputGroupo.component";
+import InputGroupo from "../../../components/ui/inputGroup/inputGroupo.component";
 
-import { Pagination } from "components/ui/navs";
+import { Pagination } from "../../../components/ui/navs";
 
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 import api, { baseUrlBackend } from "../../../services/api";
 import socket from "socket.io-client";
 import Switch from "../../../components/ui/switch/switch.component";
 
-import SupportedLanguages from "config/SupportedLanguages"
+import SupportedLanguages from "../../../config/SupportedLanguages"
 //import Shimmer from "react-shimmer-effect";
 
 /*const botaoV = {

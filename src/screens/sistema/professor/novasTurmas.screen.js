@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
 import Select from "react-select";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import TemplateSistema from "components/templates/sistema.template";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import TemplateSistema from "../../../components/templates/sistema.template";
 
-import SupportedLanguages from "config/SupportedLanguages"
+import SupportedLanguages from "../../../config/SupportedLanguages"
 
 const botao = {
   marginTop: "10px",

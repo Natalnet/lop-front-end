@@ -5,17 +5,17 @@ import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
 
-import HTMLFormat from "components/ui/htmlFormat";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import HTMLFormat from "../ui/htmlFormat";
+import Card from "../ui/card/card.component";
+import CardHead from "../ui/card/cardHead.component";
+import CardTitle from "../ui/card/cardTitle.component";
+import CardBody from "../ui/card/cardBody.component";
+import CardOptions from "../ui/card/cardOptions.component";
+import Row from "../ui/grid/row.component";
+import Col from "../ui/grid/col.component";
 
-import SupportedLanguages from "config/SupportedLanguages";
-import AceEditorWrapper from "components/templates/aceEditorWrapper.template"
+import SupportedLanguages from "../../config/SupportedLanguages";
+import AceEditorWrapper from "../templates/aceEditorWrapper.template"
 
 
 export default (props) => {

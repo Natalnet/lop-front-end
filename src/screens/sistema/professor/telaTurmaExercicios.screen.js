@@ -1,12 +1,12 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import TurmaListaScrren from "components/screens/turmaLista.componente.screen";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import TurmaListaScrren from "../../../components/screens/turmaLista.componente.screen";
 import moment from "moment";
 
 export default class Exercicios extends Component {
