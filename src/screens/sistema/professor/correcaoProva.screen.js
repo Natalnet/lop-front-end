@@ -833,13 +833,13 @@ export default class AlunosProvas extends Component {
                         wheel: true
                       }}
                       initialXml={isXml(answer) ? answer : ''}>
-                      <B.Category name="Text" colour="20">
+                      <B.Category name="Texto" colour="20">
                         <B.Block type="text" />
                         <B.Block type="text_print" />
                         <B.Block type="text_prompt" />
                       </B.Category>
-                      <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
-                      <B.Category name="Logic" colour="210">
+                      <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
+                      <B.Category name="Lógica" colour="210">
                         <B.Block type="controls_if" />
                         <B.Block type="controls_ifelse" />
                         <B.Block type="logic_compare" />
@@ -848,7 +848,7 @@ export default class AlunosProvas extends Component {
                         <B.Block type="logic_null" />
                         <B.Block type="logic_ternary" />
                       </B.Category>
-                      <B.Category name="Loops" colour="120">
+                      <B.Category name="Laços" colour="120">
                         <B.Block type="controls_for" />
                         <B.Block type="controls_whileUntil" />
                         <B.Block type="controls_repeat_ext">
@@ -859,13 +859,13 @@ export default class AlunosProvas extends Component {
                           </B.Value>
                         </B.Block>
                       </B.Category>
-                      <B.Category name="Math" colour="230">
+                      <B.Category name="Matemática" colour="230">
                         <B.Block type="math_number" />
                         <B.Block type="math_arithmetic" />
                         <B.Block type="math_single" />
                         <B.Block type="math_round" />
                       </B.Category>
-                      <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                      <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
                     </B.BlocklyComponent>
                     :
                     <AceEditorWrapper
@@ -901,13 +901,13 @@ export default class AlunosProvas extends Component {
                         wheel: true
                       }}
                       initialXml={isXml(answer) ? answer : ''}>
-                      <B.Category name="Text" colour="20">
+                      <B.Category name="Texto" colour="20">
                         <B.Block type="text" />
                         <B.Block type="text_print" />
                         <B.Block type="text_prompt" />
                       </B.Category>
-                      <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
-                      <B.Category name="Logic" colour="210">
+                      <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
+                      <B.Category name="Lógica" colour="210">
                         <B.Block type="controls_if" />
                         <B.Block type="controls_ifelse" />
                         <B.Block type="logic_compare" />
@@ -916,7 +916,7 @@ export default class AlunosProvas extends Component {
                         <B.Block type="logic_null" />
                         <B.Block type="logic_ternary" />
                       </B.Category>
-                      <B.Category name="Loops" colour="120">
+                      <B.Category name="Laços" colour="120">
                         <B.Block type="controls_for" />
                         <B.Block type="controls_whileUntil" />
                         <B.Block type="controls_repeat_ext">
@@ -927,13 +927,13 @@ export default class AlunosProvas extends Component {
                           </B.Value>
                         </B.Block>
                       </B.Category>
-                      <B.Category name="Math" colour="230">
+                      <B.Category name="Matemática" colour="230">
                         <B.Block type="math_number" />
                         <B.Block type="math_arithmetic" />
                         <B.Block type="math_single" />
                         <B.Block type="math_round" />
                       </B.Category>
-                      <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                      <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
                     </B.BlocklyComponent>
                     :
                     <AceEditorWrapper
