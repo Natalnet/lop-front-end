@@ -7,21 +7,21 @@ import { BlockMath } from "react-katex";
 import Swal from "sweetalert2";
 import api, { baseUrlBackend } from "../../services/api";
 import apiCompiler from "../../services/apiCompiler";
-import AceEditorWrapper, { themesAceEditor } from "components/templates/aceEditorWrapper.template"
-import HTMLFormat from "components/ui/htmlFormat";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardOptions from "components/ui/card/cardOptions.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import * as B from "components/ui/blockly";
+import AceEditorWrapper, { themesAceEditor } from "../templates/aceEditorWrapper.template"
+import HTMLFormat from "../ui/htmlFormat";
+import Card from "../ui/card/card.component";
+import CardHead from "../ui/card/cardHead.component";
+import CardTitle from "../ui/card/cardTitle.component";
+import CardBody from "../ui/card/cardBody.component";
+import CardOptions from "../ui/card/cardOptions.component";
+import Row from "../ui/grid/row.component";
+import Col from "../ui/grid/col.component";
+import * as B from "../ui/blockly";
 import { getBlocklyCode, getBlocklyXML, findLocalIp, isXml } from '../../util/auxiliaryFunctions.util'
-import SupportedLanguages from "config/SupportedLanguages";
+import SupportedLanguages from "../../config/SupportedLanguages";
 import socket from "socket.io-client";
 import useAccess from '../../hooks/useAccess';
-import { IoMdEye } from 'react-icons/io'
+import { IoMdEye } from 'react-icons/io';
 export default (props) => {
     const { title, description, results, char_change_number, oldTimeConsuming, katexDescription, author, submissionsCount, submissionsCorrectsCount, accessCount } = props;
     const { language, solution, userDifficulty, loadDifficulty, idQuestion, idClass, idList, idTest } = props;
@@ -348,19 +348,20 @@ export default (props) => {
                                 readOnly={false}
                                 trashcan={true}
                                 media={'media/'}
+                                
                                 move={{
                                     scrollbars: true,
                                     drag: true,
                                     wheel: true
                                 }}
                                 initialXml={isXml(solution) ? solution : ''}>
-                                <B.Category name="Text" colour="20">
+                                <B.Category name="Texto" colour="20">
                                     <B.Block type="text" />
                                     <B.Block type="text_print" />
                                     <B.Block type="text_prompt" />
                                 </B.Category>
-                                <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
-                                <B.Category name="Logic" colour="210">
+                                <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
+                                <B.Category name="Lógica" colour="210">
                                     <B.Block type="controls_if" />
                                     <B.Block type="controls_ifelse" />
                                     <B.Block type="logic_compare" />
@@ -369,7 +370,7 @@ export default (props) => {
                                     <B.Block type="logic_null" />
                                     <B.Block type="logic_ternary" />
                                 </B.Category>
-                                <B.Category name="Loops" colour="120">
+                                <B.Category name="Laços" colour="120">
                                     <B.Block type="controls_for" />
                                     <B.Block type="controls_whileUntil" />
                                     <B.Block type="controls_repeat_ext">
@@ -380,13 +381,13 @@ export default (props) => {
                                         </B.Value>
                                     </B.Block>
                                 </B.Category>
-                                <B.Category name="Math" colour="230">
+                                <B.Category name="Matemática" colour="230">
                                     <B.Block type="math_number" />
                                     <B.Block type="math_arithmetic" />
                                     <B.Block type="math_single" />
                                     <B.Block type="math_round" />
                                 </B.Category>
-                                <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                                <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
                             </B.BlocklyComponent>
                             :
                             <AceEditorWrapper

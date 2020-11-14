@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import TemplateSistema from "components/templates/sistema.template";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import TemplateSistema from "../../../components/templates/sistema.template";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 import api from "../../../services/api";
-import ProvasAlunosScreen from "components/screens/provasAlunos.componente.screen";
+import ProvasAlunosScreen from "../../../components/screens/provasAlunos.componente.screen";
 
 export default class AlunosProvas extends Component {
   constructor(props) {

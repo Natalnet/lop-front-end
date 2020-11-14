@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
 import apiCompiler from "../../../services/apiCompiler";
 import SunEditor from 'suneditor-react';
@@ -8,21 +8,21 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import Swal from "sweetalert2";
-import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
+import AceEditorWrapper from "../../../components/templates/aceEditorWrapper.template";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
 import TableResults2 from "../../../components/ui/tables/tableResults2.component";
 import TableIO from "../../../components/ui/tables/tableIO.component";
 import Select from "react-select";
 import "katex/dist/katex.min.css";
 import FormSelect2 from "../../../components/ui/forms/formSelect2.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import * as B from "components/ui/blockly";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import * as B from "../../../components/ui/blockly";
 import { getBlocklyCode, getBlocklyXML, isXml} from '../../../util/auxiliaryFunctions.util'
-import SupportedLanguages from "config/SupportedLanguages";
+import SupportedLanguages from "../../../config/SupportedLanguages";
 export default class Editor extends Component {
   constructor(props) {
     super(props);
@@ -595,7 +595,7 @@ export default class Editor extends Component {
                         wheel: true
                       }}
                       initialXml={isXml(solution)? solution:''}>
-                      <B.Category name="Text" colour="20">
+                      <B.Category name="Texto" colour="20">
                         {/* <B.Block type="variables_get" />
                           <B.Block type="variables_set" /> */}
                         <B.Block type="text" />
@@ -603,8 +603,8 @@ export default class Editor extends Component {
                         <B.Block type="text_prompt" />
                         {/* <B.Block type="string_length" /> */}
                       </B.Category>
-                      <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
-                      <B.Category name="Logic" colour="210">
+                      <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
+                      <B.Category name="Lógica" colour="210">
                         <B.Block type="controls_if" />
                         <B.Block type="controls_ifelse" />
                         <B.Block type="logic_compare" />
@@ -613,7 +613,7 @@ export default class Editor extends Component {
                         <B.Block type="logic_null" />
                         <B.Block type="logic_ternary" />
                       </B.Category>
-                      <B.Category name="Loops" colour="120">
+                      <B.Category name="Laços" colour="120">
                         <B.Block type="controls_for" />
                         <B.Block type="controls_whileUntil" />
                         <B.Block type="controls_repeat_ext">
@@ -624,13 +624,13 @@ export default class Editor extends Component {
                           </B.Value>
                         </B.Block>
                       </B.Category>
-                      <B.Category name="Math" colour="230">
+                      <B.Category name="Matemática" colour="230">
                         <B.Block type="math_number" />
                         <B.Block type="math_arithmetic" />
                         <B.Block type="math_single" />
                         <B.Block type="math_round" />
                       </B.Category>
-                      <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                      <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
                     </B.BlocklyComponent>
                     :
                     <AceEditorWrapper

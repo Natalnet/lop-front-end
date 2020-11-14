@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useMemo, useState } from "react";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
-import FormFilterQuestion from 'components/ui/forms/formFilterQuestions';
+import FormFilterQuestion from '../../../components/ui/forms/formFilterQuestions';
 import 'katex/dist/katex.min.css'
 import { Link, useHistory } from "react-router-dom";
 //import Swal from "sweetalert2";
@@ -10,22 +10,22 @@ import useQuestion from '../../../hooks/useQuestion';
 import usePagination from '../../../hooks/usePagination';
 import useList from '../../../hooks/useList';
 import useTag from '../../../hooks/useTag';
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
 import moment from "moment";
-import { Load } from 'components/ui/load';
-import { Pagination } from "components/ui/navs";
-import SwalModal from "components/ui/modal/swalModal.component";
+import { Load } from '../../../components/ui/load';
+import { Pagination } from "../../../components/ui/navs";
+import SwalModal from "../../../components/ui/modal/swalModal.component";
 import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
-import TableIO from "components/ui/tables/tableIO.component";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import TableIO from "../../../components/ui/tables/tableIO.component";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardFooter from "../../../components/ui/card/cardFooter.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 
 export default props => {
 

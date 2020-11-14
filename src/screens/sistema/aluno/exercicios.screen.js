@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import TemplateSistema from "components/templates/sistema.template";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import ExerciciosPaginadosScreen from "components/screens/exerciciosPaginados.componenete.screen";
+import TemplateSistema from "../../../components/templates/sistema.template";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import ExerciciosPaginadosScreen from "../../../components/screens/exerciciosPaginados.componenete.screen";
 
 const QuestionsScreen = props => {
 

@@ -4,21 +4,21 @@ import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import Card from "components/ui/card/card.component";
-import CardHead from "components/ui/card/cardHead.component";
-import CardTitle from "components/ui/card/cardTitle.component";
-import CardBody from "components/ui/card/cardBody.component";
-import CardFooter from "components/ui/card/cardFooter.component";
-import { Load } from "components/ui/load";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import Card from "../../../components/ui/card/card.component";
+import CardHead from "../../../components/ui/card/cardHead.component";
+import CardTitle from "../../../components/ui/card/cardTitle.component";
+import CardBody from "../../../components/ui/card/cardBody.component";
+import CardFooter from "../../../components/ui/card/cardFooter.component";
+import { Load } from "../../../components/ui/load";
 import moment from "moment";
 import { BlockMath } from "react-katex";
-//import HTMLFormat from "components/ui/htmlFormat";
-import AceEditorWrapper from "components/templates/aceEditorWrapper.template";
-import * as B from "components/ui/blockly";
+//import HTMLFormat from "../../../components/ui/htmlFormat";
+import AceEditorWrapper from "../../../components/templates/aceEditorWrapper.template";
+import * as B from "../../../components/ui/blockly";
 import { isXml } from '../../../util/auxiliaryFunctions.util';
 export default class telaTurmaExercicioSubmissoes extends Component {
     constructor(props) {
@@ -260,13 +260,13 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                                                                                 wheel: true
                                                                             }}
                                                                             initialXml={isXml(user.lastSubmission.answer) ? user.lastSubmission.answer : ''}>
-                                                                            <B.Category name="Text" colour="20">
+                                                                            <B.Category name="Texto" colour="20">
                                                                                 <B.Block type="text" />
                                                                                 <B.Block type="text_print" />
                                                                                 <B.Block type="text_prompt" />
                                                                             </B.Category>
-                                                                            <B.Category name="Variables" colour="330" custom="VARIABLE"></B.Category>
-                                                                            <B.Category name="Logic" colour="210">
+                                                                            <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
+                                                                            <B.Category name="Lógica" colour="210">
                                                                                 <B.Block type="controls_if" />
                                                                                 <B.Block type="controls_ifelse" />
                                                                                 <B.Block type="logic_compare" />
@@ -275,7 +275,7 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                                                                                 <B.Block type="logic_null" />
                                                                                 <B.Block type="logic_ternary" />
                                                                             </B.Category>
-                                                                            <B.Category name="Loops" colour="120">
+                                                                            <B.Category name="Laços" colour="120">
                                                                                 <B.Block type="controls_for" />
                                                                                 <B.Block type="controls_whileUntil" />
                                                                                 <B.Block type="controls_repeat_ext">
@@ -286,13 +286,13 @@ export default class telaTurmaExercicioSubmissoes extends Component {
                                                                                     </B.Value>
                                                                                 </B.Block>
                                                                             </B.Category>
-                                                                            <B.Category name="Math" colour="230">
+                                                                            <B.Category name="Matemática" colour="230">
                                                                                 <B.Block type="math_number" />
                                                                                 <B.Block type="math_arithmetic" />
                                                                                 <B.Block type="math_single" />
                                                                                 <B.Block type="math_round" />
                                                                             </B.Category>
-                                                                            <B.Category name="Functions" colour="290" custom="PROCEDURE"></B.Category>
+                                                                            <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
                                                                         </B.BlocklyComponent>
                                                                         :
                                                                         <AceEditorWrapper

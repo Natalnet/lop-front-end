@@ -1,4 +1,4 @@
-import * as B from "components/ui/blockly";
+import * as B from "../components/ui/blockly";
 
 export const formatDate = date => {
     let createdAt = new Date(date);

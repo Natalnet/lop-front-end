@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import Swal from "sweetalert2";
 import socket from "socket.io-client";
 import api, { baseUrlBackend } from "../../../services/api";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
 import profileImg from "../../../assets/perfil.png";
 
 const lista = {

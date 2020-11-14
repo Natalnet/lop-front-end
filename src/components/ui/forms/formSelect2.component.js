@@ -1,6 +1,6 @@
 import React,{Fragment} from 'react'
 
-import SupportedLanguages from "config/SupportedLanguages"
+import SupportedLanguages from "../../../config/SupportedLanguages"
 
 
 export default (props) =>{

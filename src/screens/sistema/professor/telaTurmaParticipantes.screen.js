@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
 import Swal from "sweetalert2";
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component";
-import ParticioantesScreenfrom from "components/screens/participantes.componentes.screen";
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component";
+import ParticioantesScreenfrom from "../../../components/screens/participantes.componentes.screen";
 export default class Pagina extends Component {
   constructor(props) {
     super(props);

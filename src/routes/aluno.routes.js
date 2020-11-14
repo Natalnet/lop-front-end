@@ -1,5 +1,5 @@
-import exportRoutes from "util/routes/exportRoutes.util";
-import HomeAlunoScreen from "screens/sistema/aluno/home.screen";
+import exportRoutes from "../util/routes/exportRoutes.util";
+import HomeAlunoScreen from "../screens/sistema/aluno/home.screen";
 
 import HomeListaExercicios from "../screens/sistema/aluno/exercicio.screen";
 
@@ -11,7 +11,7 @@ import TurmaExercicio from "../screens/sistema/aluno/telaTurmaExercicio.screen";
 import TurmaExercicios from "../screens/sistema/aluno/telaTurmaExercicios.screen";
 
 import DashBoardAluno from "../screens/sistema/aluno/telaTurmaDashBoard.screen";
-import TurmasAbertasAlunoScreen from "screens/sistema/aluno/turmasAbertas.screen";
+import TurmasAbertasAlunoScreen from "../screens/sistema/aluno/turmasAbertas.screen";
 
 import TelaProvas from "../screens/sistema/aluno/telaTurmaProvas.screen";
 import QuestoesProva from "../screens/sistema/aluno/telaTurmasAcessarProva.screen";

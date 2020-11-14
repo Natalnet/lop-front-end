@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 
 import axios from "axios";
 
-import ErrorBoundary from "screens/erros/errorBoundary.screen";
+import ErrorBoundary from"../../screens/erros/errorBoundary.screen";
 
 export default class TemplateAutenticacao extends Component {
   constructor(props) {

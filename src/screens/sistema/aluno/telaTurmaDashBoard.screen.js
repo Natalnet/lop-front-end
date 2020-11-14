@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import TemplateSistema from "components/templates/sistema.template";
+import TemplateSistema from "../../../components/templates/sistema.template";
 import api from '../../../services/api'
-import Row from "components/ui/grid/row.component";
-import Col from "components/ui/grid/col.component"; 
+import Row from "../../../components/ui/grid/row.component";
+import Col from "../../../components/ui/grid/col.component"; 
 
 export default class Pagina extends Component {
 
