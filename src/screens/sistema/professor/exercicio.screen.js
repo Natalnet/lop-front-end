@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import TemplateSistema from "../../../components/templates/sistema.template";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
-import ExercicioScreen from "../../../components/screens/exercicio.componete.escreen";
+import ExercicioScreen from "../../../components/screens/exercicio.componente.escreen";
 
 import SupportedLanguages from "../../../config/SupportedLanguages"
 

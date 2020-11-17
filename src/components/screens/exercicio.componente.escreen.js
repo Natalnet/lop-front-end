@@ -40,7 +40,7 @@ export default (props) => {
     const [isSavingDraft, setIsSavingDraft] = useState(false);
     const [statusTest, setStatusTest] = useState('ABERTA');
     const [themeAceEditor, setThemeAceEditor] = useState(themesAceEditor[0]);
-
+    
     const simpleWorkspace = useRef(null);
 
     const testCases = useMemo(() =>
@@ -48,13 +48,25 @@ export default (props) => {
         , [response])
 
 
+    const latestSolution = useRef(solution);
+    const latestChar_change_number = useRef(char_change_number);
+    const latestLanguage= useRef(language);
+
+    useEffect(() => {
+        latestSolution.current = solution;
+        latestChar_change_number.current = char_change_number;
+        latestLanguage.current = language;
+    },[ solution, char_change_number, language]);
+
     useEffect(() => {
         saveAccess(idQuestion);
         setStartTime(new Date());
-        const timeout = setInterval(() => {
+
+        const idInterval = setInterval(() => {
             saveDraft(false);
         }, 60000);
-        return () => clearInterval(timeout)
+        return () => clearInterval(idInterval);
+
     }, [])
 
     useEffect(() => {
@@ -145,8 +157,8 @@ export default (props) => {
 
     const saveDraft = useCallback(async (showMsg = true) => {
         const request = {
-            answer: language === "blockly" ? getBlocklyXML(simpleWorkspace.current.workspace) : solution,
-            char_change_number,
+            answer: (latestLanguage.current) === "blockly" ? getBlocklyXML(simpleWorkspace.current.workspace) : latestSolution.current,
+            char_change_number: latestChar_change_number.current,
             idQuestion,
             idClass,
             idList,
@@ -172,7 +184,7 @@ export default (props) => {
         }
         setIsSavingDraft(false)
 
-    }, [solution, char_change_number, language])
+    }, [])
 
     return (
         <>
