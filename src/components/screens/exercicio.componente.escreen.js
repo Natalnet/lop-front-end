@@ -69,7 +69,6 @@ export default (props) => {
 
     }, [])
 
-
     useEffect(() => {
         let io;
         if (idTest) {
