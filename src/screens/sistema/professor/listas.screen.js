@@ -9,7 +9,6 @@ import { Pagination } from "../../../components/ui/navs";
 
 import InputGroup from "../../../components/ui/inputGroup/inputGroupo.component";
 import { Modal } from "react-bootstrap";
-import "katex/dist/katex.min.css";
 import { BlockMath } from "react-katex";
 import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
