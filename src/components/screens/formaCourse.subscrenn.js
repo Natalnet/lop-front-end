@@ -12,7 +12,10 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { IoIosAddCircleOutline, IoIosSettings } from 'react-icons/io';
+import IconButton from '@material-ui/core/IconButton';
+
+import { IoIosAddCircleOutline, IoIosSettings, IoIosAlarm ,IoMdMore} from 'react-icons/io';
+import { MdModeEdit } from 'react-icons/md';
 import Swal from "sweetalert2";
 import CardHead from "../../components/ui/card/cardHead.component";
 import CardTitle from "../../components/ui/card/cardTitle.component";
@@ -25,21 +28,42 @@ const FormCourseSunscreen = () => {
     const [titleCourse, setTitleCourse] = useState('');
     const [descriptionCourse, setDescriptionCourseCourse] = useState('');
     const [lessons, setLessons] = useState([]);
-    const [newLesson, setNewLesson] = useState(null);
     const [currentIndexLesson, setCurrentIndexLesson] = useState(null);
+    const [currentIndexLessonConfig, setCurrentIndexLessonConfig] = useState(null);
 
-    const handleOpenNewLessonModal = useCallback(() => {
-        setNewLesson({
+    const createLesson = useCallback(() => {
+        const newLesson = {
+            title: '',
             description: '',
-            title: ''
-        })
-        setOpenLessonModal(true);
-    }, [])
+            startDate: null,
+            isVisible: false
+        }
+        const index = lessons.length;
+        setLessons((oldLessons => [...oldLessons, newLesson]));
+        handleEditLesson(index);
+    }, [lessons]);
+
+    const handleEditLesson = useCallback((index) => {
+        setCurrentIndexLesson(index);
+    }, []);
+
+    useEffect(() => {
+        console.log('currentIndexLesson: ', currentIndexLesson)
+        if (currentIndexLesson !== null) {
+            console.log('open modal')
+            setOpenLessonModal(true);
+        }
+        else {
+            console.log('close modal')
+            setOpenLessonModal(false);
+        }
+    }, [currentIndexLesson])
+
 
     const handleCloseModal = useCallback(async () => {
         setOpenLessonModal(false);
         const { value } = await Swal.fire({
-            title: `Tem certeza que não quer salvar a aula atual?`,
+            title: `Tem certeza que quer descartar a aula atual?`,
             //text: "You won't be able to revert this!",
             type: "warning",
             showCancelButton: true,
@@ -48,74 +72,62 @@ const FormCourseSunscreen = () => {
             confirmButtonText: "Sim, tenho!",
             cancelButtonText: "Não, volta à criação/edição da aula!",
         });
-        setOpenLessonModal(true);
-        if (!value) {
-            return null
-        }
-        if (newLesson) {
-            setNewLesson(null);
-        }
-        else {
+        if (value) {
+            //Sim, tenho!
             setCurrentIndexLesson(null);
+            const tempLessons = [...lessons];
+            tempLessons.pop();
+            console.log('tempLessons:', tempLessons)
+            setLessons(tempLessons);
+            return null;
         }
-    }, [newLesson]);
+        setOpenLessonModal(true);
+    }, [lessons]);
 
     const handleSaveLesson = useCallback(async () => {
-        if (newLesson) {
-            console.log('new lesson: ',newLesson);
-            setLessons((oldLessons => [...oldLessons, newLesson]));
-            setNewLesson(null);
-        }
-        else {
-            setCurrentIndexLesson(null);
-        }
-    }, [newLesson]);
+        setCurrentIndexLesson(null);
+    }, []);
 
     const handleDescriptionLesson = useCallback((content) => {
-        if (newLesson) {
-            const tempNewLeson = { ...newLesson };
-            tempNewLeson.description = content;
-            setNewLesson(tempNewLeson);
-        }
-        else {
-            const tempLessons = [...lessons];
-            tempLessons[currentIndexLesson].description = content;
-            setLessons(tempLessons);
-        }
+        const tempLessons = [...lessons];
+        tempLessons[currentIndexLesson].description = content;
+        setLessons(tempLessons);
+    }, [lessons]);
 
-    }, [newLesson, currentIndexLesson, lessons]);
-
-    useEffect(()=>{
+    useEffect(() => {
         console.log(lessons)
     }, [lessons])
 
     const handleTitleLesson = useCallback((e) => {
-        if (newLesson) {
-            const tempNewLeson = { ...newLesson };
-            tempNewLeson.title = e.target.value;
-            console.log(tempNewLeson.title)
-            setNewLesson(tempNewLeson);
-        }
-        else {
-            const tempLessons = [...lessons];
-            tempLessons[currentIndexLesson].title = e.target.value;
-            setLessons(tempLessons);
-        }
-    }, [newLesson, currentIndexLesson, lessons]);
+        const tempLessons = [...lessons];
+        tempLessons[currentIndexLesson].title = e.target.value;
+        setLessons(tempLessons);
+    }, [lessons, currentIndexLesson]);
 
 
-    const handleImageUploadBefore = useCallback(() => {
-        Swal.fire({
+    const handleImageUploadBefore = useCallback(async () => {
+        setOpenLessonModal(false);
+        await Swal.fire({
             type: "error",
             title: "Não é permitido o upload de imagens, carregue-as a partir de um link 😃",
-        }, []);
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+        }, [])
+        setOpenLessonModal(true);
         return false;
     }, [])
-    const handleVideoUploadBefore = useCallback(() => {
-        Swal.fire({
+
+    const handleVideoUploadBefore = useCallback(async () => {
+        setOpenLessonModal(false);
+        await Swal.fire({
             type: "error",
             title: "Não é permitido o upload de vídeos, carregue-os a partir de um link 😃",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
         });
+        setOpenLessonModal(true);
         return false;
     }, [])
 
@@ -163,48 +175,56 @@ const FormCourseSunscreen = () => {
                                             onChange={(e) => setDescriptionCourseCourse(e.target.value)}
                                         ></textarea>
                                     </div>
-                                        {
-                                            lessons.map((lesson, i) => (
-                                                <Fragment key={i}>
-                                                    <div className="form-group col-12 col-lg-6 mb-15">                                                        
-                                                        <Card>
-                                                            <CardHead
-                                                                style={{
-                                                                    backgroundColor: "rgba(190,190,190,0.2)",
-                                                                    maxHeight: "56px",
-                                                                }}
-                                                            >
-                                                                <CardTitle>
-                                                                    {lesson.title}
-                                                                </CardTitle>
-                                                                <CardOptions>
-                                                                    <button
-                                                                        className='btn btn-primary d-flex align-items-center'
-                                                                        type='button'
-                                                                    >
-                                                                        <IoIosSettings size={25}/>
-                                                                    </button>
-                                                                </CardOptions>
-                                                            </CardHead>
-                                                            <CardBody className="card-class overflow-auto">
-                                                                <p>
-                                                                    {/* <b>Descrição do curso:</b> &nbsp; {lesson.description} */}
-                                                                </p>
-                                                            </CardBody>
-                                                            <CardFooter>
+                                    {
+                                        lessons.map((lesson, i) => (
+                                            <Fragment key={i}>
+                                                {lesson.title && <div className="form-group col-12 col-lg-6 mb-15">
+                                                    <Card>
+                                                        <CardHead
+                                                            style={{
+                                                                backgroundColor: "rgba(190,190,190,0.2)",
+                                                                maxHeight: "56px",
+                                                            }}
+                                                        >
+                                                            <CardTitle>
+                                                                {lesson.title}
+                                                            </CardTitle>
+                                                            <CardOptions>
+                                                            <IconButton aria-label="edit leson" component="span">
+                                                                <IoMdMore size={25} />
+                                                            </IconButton>
+                                                                {/* <button
+                                                                    className='btn btn-primary d-flex align-items-center'
+                                                                    type='button'
+                                                                    title='configurações'
+                                                                >
+                                                                    <IoIosSettings size={25} />
+                                                                </button> */}
+                                                            </CardOptions>
+                                                        </CardHead>
+                                                        <CardBody>
 
-                                                            </CardFooter>
-                                                        </Card>
-                                                    </div>
-                                                </Fragment>
-                                            ))
-                                        }
+                                                        </CardBody>
+                                                        <CardFooter>
+                                                            {/* <button
+                                                                className='btn btn-primary d-flex align-items-center'
+                                                                type='button'
+                                                                title='configurações'
+                                                            >
+                                                                <IoIosSettings size={25} />
+                                                            </button> */}
+                                                        </CardFooter>
+                                                    </Card>
+                                                </div>}
+                                            </Fragment>
+                                        ))
+                                    }
 
                                     <div className="form-group col-12">
                                         <button
                                             className='btn btn-success m-auto d-flex'
                                             type='button'
-                                            onClick={() => handleOpenNewLessonModal()}
+                                            onClick={() => createLesson()}
                                         >
                                             Adicionar aula <IoIosAddCircleOutline size={25} className='ml-1' />
                                         </button>
@@ -217,7 +237,7 @@ const FormCourseSunscreen = () => {
             </Row>
 
             {
-                (newLesson || currentIndexLesson) && <Dialog
+                (currentIndexLesson !== null) && <Dialog
                     fullWidth={true}
                     maxWidth='md'
                     open={openLessonModal}
@@ -227,8 +247,8 @@ const FormCourseSunscreen = () => {
                     aria-labelledby="contained-modal-title-vcenter"
                 >
                     <DialogTitle id="contained-modal-title-vcenter">
-                        Custom Modal Styling
-                </DialogTitle>
+                        {`${currentIndexLesson + 1} - ${lessons[currentIndexLesson].title}`}
+                    </DialogTitle>
                     <DialogContent>
                         <div className="form-group col-md-12">
                             <label>Título da aula: </label>
@@ -237,7 +257,7 @@ const FormCourseSunscreen = () => {
                                 onChange={handleTitleLesson}
                                 className={`form-control`}
                                 placeholder="Título da aula"
-                                value={newLesson ? newLesson.title : lessons[currentIndexLesson].title}
+                                value={lessons[currentIndexLesson].title}
                                 required
                             />
                         </div>
@@ -250,7 +270,7 @@ const FormCourseSunscreen = () => {
                                 // disable={true}
                                 // showToolbar={false}
                                 onChange={handleDescriptionLesson}
-                                setContents={newLesson ? newLesson.description : lessons[currentIndexLesson].description}
+                                setContents={lessons[currentIndexLesson].description}
                                 onImageUploadBefore={handleImageUploadBefore}
                                 onVideoUploadBefore={handleVideoUploadBefore}
                                 setDefaultStyle="font-size: 15px; text-align: justify"
@@ -274,11 +294,43 @@ const FormCourseSunscreen = () => {
                         <button
                             className="btn btn-primary"
                             onClick={() => handleSaveLesson()}
+                            disabled={!lessons[currentIndexLesson].title}
                         >
                             Salvar aula
                     </button>
                         <button
                             className="btn btn-danger"
+                            onClick={() => handleCloseModal()}
+                        >
+                            Fechar
+                    </button>
+                    </DialogActions>
+                </Dialog>
+            }
+            {
+                (currentIndexLessonConfig !== null) && <Dialog
+                    fullWidth={true}
+                    maxWidth='sm'
+                    open={openLessonModal}
+                    disableBackdropClick={true}
+                    disableEscapeKeyDown={true}
+                    onClose={() => null}
+                    aria-labelledby="contained-modal-title-vcenter"
+                >
+                    <DialogTitle id="contained-modal-title-vcenter">
+                        {`${currentIndexLessonConfig + 1} - ${lessons[currentIndexLessonConfig].title}`}
+                    </DialogTitle>
+                    <DialogContent>
+                        <div className="form-group col-md-12">
+
+                        </div>
+                        <div className="form-group col-md-12">
+
+                        </div>
+                    </DialogContent>
+                    <DialogActions>
+                        <button
+                            className="btn btn-primary"
                             onClick={() => handleCloseModal()}
                         >
                             Fechar
