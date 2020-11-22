@@ -3,7 +3,7 @@ import cpp_icon from "../assets/icons/icons-cpp.svg";
 import c_icon from "../assets/icons/icons-c.svg";
 import python_icon from "../assets/icons/icons-python.svg";
 import blockly_icon from "../assets/icons/icons-blockly-pink-24.png";
-
+import java_icon from "../assets/icons/icons-java.svg";
 /*object representation,
  backend_name : { backendName: "backend_name", niceName: "frontend_name", mossName: "moss_name", icon: "path" }
  ADD NEW LANGUAGES HERE!!!
@@ -14,6 +14,7 @@ const LanguageObject = {
     c : {backendName:"c", niceName:"C", mossName: 'c',  icon : c_icon},
     python : {backendName:"python", niceName:"Python", mossName: 'python', icon : python_icon},
     blockly : {backendName:"blockly", niceName:"Blockly", mossName: 'python', icon : blockly_icon},
+    java : {backendName:"java", niceName:"Java", mossName: 'java', icon : java_icon}
 };
 
 /*
