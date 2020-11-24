@@ -19,6 +19,7 @@ export const CardTitle = styled.h3.attrs(()=>({
     className: 'card-title'
 }))`
     overflow: hidden;
+    padding-right: 10px;
 `
 
 export const CardHead = styled.div.attrs(()=>({

@@ -35,7 +35,8 @@ import QuestoesProva from "../screens/sistema/professor/telaTurmasAcessarProva.s
 import ProvasAlunos from "../screens/sistema/professor/provasAlunos";
 import CorrecaoProvas from "../screens/sistema/professor/correcaoProva.screen";
 import Courses from '../screens/sistema/professor/courses.screen'
-import createCourse from '../screens/sistema/professor/createCourse.screen'
+import createLesson from '../screens/sistema/professor/createLesson.screen'
+import Lessons from '../screens/sistema/professor/lessons.screen'
 const routes = [
   {
     path: "/professor/novasturmas",
@@ -258,8 +259,14 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/criarCurso",
-    component: createCourse,
+    path: "/professor/curso/:IdCourse/criarAulas",
+    component: createLesson,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/curso/:IdCourse/aulas",
+    component: Lessons,
     private: true,
     perfil: "PROFESSOR",
   },

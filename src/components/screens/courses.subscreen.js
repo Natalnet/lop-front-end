@@ -1,16 +1,19 @@
 import React, { useMemo, useCallback, useState, useEffect } from 'react';
-import Row from "../ui/grid/row.component";
-import Col from "../ui/grid/col.component";
 import { Link } from "react-router-dom";
+import { Pagination } from "../ui/navs";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import useCourse from '../../hooks/useCourse';
+import usePagination from '../../hooks/usePagination';
 import Swal from "sweetalert2";
 import { Load } from '../ui/load';
-import { Card, CardBody, CardFooter, CardHead, CardTitle, CardOptions } from '../ui/card/index'
-import { IoIosAddCircleOutline, IoIosSettings, IoIosAlarm, IoMdMore } from 'react-icons/io';
+import { Card, CardBody, CardFooter, CardHead, CardTitle, CardOptions } from '../ui/card';
+import { Row, Col } from '../ui/grid';
+// import Row from "../ui/grid/row.component";
+// import Col from "../ui/grid/col.component";
+import { GiSecretBook } from 'react-icons/gi';
 import { MdModeEdit } from 'react-icons/md';
 import IconButton from '@material-ui/core/IconButton';
 
@@ -19,6 +22,7 @@ const CoursesSubScreenComponent = (props) => {
     const email = useMemo(() => sessionStorage.getItem("user.email"), [props]);
 
     const { paginedCourses, isLoadingCourses, createCourse, updateCourse, getCourses } = useCourse();
+    const { page, docsPerPage, totalPages, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination(1, 10);
 
     const [openCreateCourseModal, setOpenCreateCourseModal] = useState(false);
     const [currentIdCourse, setCurrentIdCourse] = useState(null);
@@ -28,8 +32,18 @@ const CoursesSubScreenComponent = (props) => {
     const [isCreateCourse, setIsCreateCourse] = useState(false);
 
     useEffect(() => {
-        getCourses();
+        getCourses(page, { docsPerPage });
     }, [])
+
+    useEffect(() => {
+        //console.log('question: ', paginedQuestions);
+        if (paginedCourses) {
+            setPage(paginedCourses.currentPage);
+            setTotalDocs(paginedCourses.total);
+            setDocsPerPage(paginedCourses.perPage);
+            setTotalPages(paginedCourses.totalPages)
+        }
+    }, [paginedCourses])
 
     const handleCreateNewCourse = useCallback(async ({ currentTitleCourse: title, currentDescriptionCourse: description }) => {
         setIsCreateCourse(false);
@@ -40,10 +54,9 @@ const CoursesSubScreenComponent = (props) => {
             description
         });
         if (courseCreated) {
-            getCourses();
+            getCourses(page, { docsPerPage });
         }
-
-    }, [currentTitleCourse, currentDescriptionCourse]);
+    }, [currentTitleCourse, currentDescriptionCourse, page, docsPerPage]);
 
     const handleEditCourse = useCallback(async (id, { currentTitleCourse: title, currentDescriptionCourse: description }) => {
         setIsEditCourse(false);
@@ -55,10 +68,10 @@ const CoursesSubScreenComponent = (props) => {
             description
         })
         if (editedCourse) {
-            getCourses();
+            getCourses(page, { docsPerPage });
 
         }
-    }, [currentTitleCourse, currentDescriptionCourse, currentIdCourse])
+    }, [currentTitleCourse, currentDescriptionCourse, currentIdCourse, page, docsPerPage])
 
     useEffect(() => {
         if ((isEditCourse && currentIdCourse) || isCreateCourse) {
@@ -72,7 +85,7 @@ const CoursesSubScreenComponent = (props) => {
     const handleCloseModal = useCallback(async () => {
         setOpenCreateCourseModal(false);
         const { value } = await Swal.fire({
-            title: `Tem certeza que não quer criar o curso?`,
+            title: `Tem certeza que não quer salvar o curso?`,
             //text: "You won't be able to revert this!",
             type: "warning",
             showCancelButton: true,
@@ -92,15 +105,25 @@ const CoursesSubScreenComponent = (props) => {
         setOpenCreateCourseModal(true);
     }, []);
 
+    const handlePage = useCallback((e, numPage) => {
+        e.preventDefault();
+        setPage(numPage);
+        getCourses(numPage, { docsPerPage });
+    }, [docsPerPage]);
+
+    const isAuthor = useCallback((author) => {
+        return email === author.email && profile === 'PROFESSOR'
+    }, [email, profile])
+
     return (
         <>
-            <Row mb={15}>
-                <Col xs={12}>
+            <Row className='mb-4'>
+                <Col className='col'>
                     <h5 className='m-0'>Cursos</h5>
                 </Col>
             </Row>
-            <Row mb={15}>
-                <Col xs={3}>
+            <Row className='mb-4'>
+                <Col className='col-3'>
                     {/* <Link to="/professor/criarCurso"> */}
                     <button
                         className="btn btn-primary w-100" type="button"
@@ -110,7 +133,7 @@ const CoursesSubScreenComponent = (props) => {
                     </button>
                     {/* </Link> */}
                 </Col>
-                <Col xs={9}>
+                <Col className='col-9'>
                     <div className="input-group">
                         <input
                             type="text"
@@ -144,8 +167,8 @@ const CoursesSubScreenComponent = (props) => {
             <Row>
                 <Load className={`${!(isLoadingCourses) ? 'd-none' : ''}`} />
                 {
-                    !paginedCourses ? [] : paginedCourses.docs.map((course, i) => (
-                        <Col xs={12} md={6}>
+                    !paginedCourses ? [] : paginedCourses.docs.map((course) => (
+                        <Col  className='col-md-6' key={course.id}>
                             <Card>
                                 <CardHead
                                     style={{
@@ -153,63 +176,103 @@ const CoursesSubScreenComponent = (props) => {
                                         maxHeight: "56px",
                                     }}
                                 >
-                                    <CardTitle>
-
-                                        {course.title}
+                                    <CardTitle
+                                        title={course.title}
+                                    >
+                                        <p
+                                            className="m-0"
+                                            style={{
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                            }}
+                                        >
+                                            {isAuthor(course.author) &&
+                                                <IconButton
+                                                    aria-label="edit leson"
+                                                    component="span"
+                                                    onClick={() => {
+                                                        setCurrentTitleCourse(course.title);
+                                                        setCurrentDescriptionCourse(course.description);
+                                                        setCurrentIdCourse(course.id);
+                                                        setIsEditCourse(true)
+                                                    }}
+                                                >
+                                                    <MdModeEdit size={25} />
+                                                </IconButton>
+                                            }
+                                            {course.title}
+                                        </p>
                                     </CardTitle>
                                     <CardOptions>
-                                        {email === course.author.email &&
-                                            <IconButton
-                                                aria-label="edit leson"
-                                                component="span"
-                                                onClick={() => {
-                                                    setCurrentTitleCourse(course.title);
-                                                    setCurrentDescriptionCourse(course.description);
-                                                    setCurrentIdCourse(course.id);
-                                                    setIsEditCourse(true)
-                                                }}
-                                            >
-                                                <MdModeEdit size={25} />
-                                            </IconButton>
-                                        }
+                                        <p
+                                            className='m-0'
+                                            style={{
+                                                fontSize: "11px",
+                                                fontWeight: "bold",
+                                            }}
+                                        >
+                                            Código: {course.code}
+                                        </p>
                                     </CardOptions>
                                 </CardHead>
-                                <CardBody
-
-                                >
-                                    <p
-                                        className='m-0'
-                                        style={{
-                                            fontSize: "11px",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        Código: {course.code}
-                                    </p>
+                                <CardBody>
                                     <p><strong>Descrição:</strong> {course.description}</p>
-
                                 </CardBody>
                                 <CardFooter
-                                    className='d-flex align-items-center'
+                                    className='d-flex align-items-center justify-content-between'
                                 >
-
-                                    <button
-                                        className="btn btn-primary m-2"
+                                    <div
+                                        className='d-flex align-items-center h-100'
                                     >
-                                        <i className="fe fe-corner-down-right" /> Entrar
-                                    </button>
-                                    {email === course.author.email &&
-                                        <button
-                                            className="btn btn-primary d-flex align-items-center"
-                                        >
-                                            <MdModeEdit className='mr-1'/> Gerenciar aulas
-                                    </button>
-                                    }
+                                        <ul className="d-flex align-items-center m-0 p-0">
+                                            <li
+                                                className="d-flex mr-4 align-items-center"
+                                                title={`${course.lessonsCount} curso(s)`}
+                                            >
+                                                {/* <i className="fa fa-users mr-1" /> */}
+                                                <GiSecretBook className="mr-1" />
+                                                {course.lessonsCount}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div
+                                        className='d-flex align-items-center h-100'
+                                    >
+                                        <Link to={`/professor/curso/${course.id}/aulas`}>
+                                            <button
+                                                className="btn btn-primary m-2"
+                                            >
+                                                <i className="fe fe-corner-down-right" /> Entrar
+                                            </button>
+                                        </Link>
+                                        {/* {isAuthor(course.author) &&
+                                            <Link to={`/professor/curso/${course.id}/criarAulas`}>
+                                                <button
+                                                    className="btn btn-primary d-flex align-items-center"
+                                                >
+                                                    <MdModeEdit className='mr-1' /> Gerenciar aulas
+                                                </button>
+                                            </Link>
+                                        } */}
+                                    </div>
                                 </CardFooter>
                             </Card>
                         </Col>
                     ))
                 }
+            </Row>
+            <Row>
+                <Col className='col-12 text-center'>
+                    <Pagination
+                        count={totalPages}
+                        page={Number(page)}
+                        onChange={handlePage}
+                        color="primary"
+                        size="large"
+                        disabled={isLoadingCourses}
+                    />
+                </Col>
             </Row>
 
             <Dialog
@@ -249,11 +312,12 @@ const CoursesSubScreenComponent = (props) => {
                                     onChange={(e) => setCurrentDescriptionCourse(e.target.value)}
                                 ></textarea>
                             </div>
-                            <div className="form-group col-12 mb-15">
-                                <div className="alert alert-info" role="alert">
-                                    As aulas poderão ser criadas e adicionadas após a criação do curso.
+                            {isCreateCourse &&
+                                <div className="form-group col-12 mb-15">
+                                    <div className="alert alert-info" role="alert">
+                                        As aulas poderão ser criadas e adicionadas após a criação do curso.
                                 </div>
-                            </div>
+                                </div>}
                         </div>
                     </form>
                 </DialogContent>
