@@ -8,7 +8,6 @@
 // Referência para icones: https://preview.tabler.io/icons.html
 
 import React, { Component } from "react";
-//import { GiTeacher } from 'node_modules/react-icons/gi'
 import { GiTeacher} from 'react-icons/gi'
 import { Link } from "react-router-dom";
 import SubMenuTurmas from './subMenuTurma.menu'

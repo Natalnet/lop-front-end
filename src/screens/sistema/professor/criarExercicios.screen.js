@@ -419,7 +419,8 @@ export default class Editor extends Component {
                   <label>Enunciado:</label>
                   <SunEditor
                     lang="pt_br"
-                    minHeight="250"
+                    height = 'auto'
+                    minHeight="250px"
                     height="auto"
                     setContents={description}
                     onChange={this.handleDescriptionChange.bind(this)}

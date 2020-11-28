@@ -2,20 +2,60 @@ import React, { useCallback, useState, useEffect } from 'react';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
-import Col from "../ui/grid/col.component";
-import Row from "../ui/grid/row.component";
-import {Load} from '../ui/load'
+import { Col, Row } from '../ui/grid';
+import { Load } from '../ui/load'
 import 'katex/dist/katex.min.css'
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 import useCourse from '../../hooks/useCourse'
-const FormCourseSunscreen = (props) => {
+import useLesson from '../../hooks/useLesson'
+
+const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
     const { course, isLoadingCourse, getCourse } = useCourse();
+    const { lesson, isLoadingLesson, createLesson, updateLesson, getLesson } = useLesson();
+
+    const [titleLesson, setTitleLesson] = useState('')
+    const [descriptionLesson, setDescriptionLesson] = useState('')
+
+    const history = useHistory();
 
     useEffect(() => {
-        const { IdCourse } = props.match.params;
+        const { IdCourse, idLesson } = props.match.params;
         getCourse(IdCourse)
+        if (isEditLesson) {
+            getLesson(idLesson)
+        }
     }, [])
+
+    useEffect(() => {
+        if (lesson) {
+            setTitleLesson(lesson.title);
+            setDescriptionLesson(lesson.description);
+        }
+    }, [lesson])
+
+    const handleCreateLesson = useCallback(async () => {
+        const { IdCourse } = props.match.params;
+        const isCreated = await createLesson({
+            title: titleLesson,
+            description: descriptionLesson,
+            course_id: IdCourse
+        })
+        if (isCreated) {
+            history.push(`/professor/curso/${IdCourse}/aulas`)
+        }
+    }, [props, titleLesson, descriptionLesson])
+
+    const handleEditLesson = useCallback(async () => {
+        const { IdCourse, idLesson } = props.match.params;
+        const isEdited = await updateLesson(idLesson, {
+            title: titleLesson,
+            description: descriptionLesson,
+        })
+        if (isEdited) {
+            history.push(`/professor/curso/${IdCourse}/aulas`)
+        }
+    }, [props, titleLesson, descriptionLesson])
 
     const handleImageUploadBefore = useCallback(async () => {
         await Swal.fire({
@@ -39,48 +79,51 @@ const FormCourseSunscreen = (props) => {
         return false;
     }, [])
 
-    if (isLoadingCourse || !course) {
+    if (isLoadingCourse || !course || isLoadingLesson) {
         return <Load />
     }
 
     return (
         <>
 
-                <Row mb={15}>
-                    <Col xs={12}>
-                        <h5 className='m-0'>
-                            <Link to="/professor/cursos">Cursos</Link>
-                            <i className="fa fa-angle-left ml-2 mr-2" />
-                            <Link to={`/professor/curso/${props.match.params.IdCourse}/aulas`}>{course.title}</Link>
-                            <i className="fa fa-angle-left ml-2 mr-2" />
+            <Row className='mb-4'>
+                <Col className='col-12'>
+                    <h5 className='m-0'>
+                        <Link to="/professor/cursos">Cursos</Link>
+                        <i className="fa fa-angle-left ml-2 mr-2" />
+                        <Link to={`/professor/curso/${props.match.params.IdCourse}/aulas`}>{course.title}</Link>
+                        <i className="fa fa-angle-left ml-2 mr-2" />
                             Criar Aula
                         </h5>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col xs={12}>
-                        <span className="alert-danger">{''}</span>
-                    </Col>
-                </Row>
-                <Row>
-                <div className="form-group col-md-12">
+                </Col>
+            </Row>
+            <Row className='mb-4'>
+                <Col className='col-12'>
+                    <span className="alert-danger">{''}</span>
+                </Col>
+            </Row>
+            <Row className='mb-4'>
+                <Col className="col-12">
                     <label>Título da aula: </label>
                     <input
                         type="text"
-                        onChange={()=>null}
+                        onChange={e => setTitleLesson(e.target.value)}
                         className={`form-control`}
                         placeholder="Título da aula"
-                        value={''}
+                        value={titleLesson}
                         required
                     />
-                </div>
-                <div className="form-group col-md-12">
+                </Col>
+            </Row>
+            <Row className='mb-4'>
+                <Col className="col-12">
                     <label>Conteúdo: </label>
                     <SunEditor
                         lang="pt_br"
-                        minHeight="400"
-                        onChange={()=>null}
-                        setContents={''}
+                        height = 'auto'
+                        minHeight="800px"
+                        onChange={content => setDescriptionLesson(content)}
+                        setContents={descriptionLesson}
                         onImageUploadBefore={handleImageUploadBefore}
                         onVideoUploadBefore={handleVideoUploadBefore}
                         setDefaultStyle="font-size: 15px; text-align: justify"
@@ -98,10 +141,22 @@ const FormCourseSunscreen = (props) => {
                             ],
                         }}
                     />
-                </div>
-                </Row>
+                </Col>
+            </Row>
+            <Row className='mb-4'>
+                <Col className='col-12'>
+                    <button
+                        type="button"
+                        onClick={isEditLesson ? handleEditLesson : handleCreateLesson}
+                        disabled={!(titleLesson && descriptionLesson)}
+                        className={`btn btn-primary btn-lg btn-block ${'' && "btn-loading"}`}
+                    >
+                        Salvar
+                    </button>
+                </Col>
+            </Row>
         </>
     )
 }
 
-export default FormCourseSunscreen;
+export default FormCourseSubscreen;

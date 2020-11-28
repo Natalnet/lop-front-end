@@ -11,15 +11,14 @@ import Swal from "sweetalert2";
 import { Load } from '../ui/load';
 import { Card, CardBody, CardFooter, CardHead, CardTitle, CardOptions } from '../ui/card';
 import { Row, Col } from '../ui/grid';
-// import Row from "../ui/grid/row.component";
-// import Col from "../ui/grid/col.component";
 import { GiSecretBook } from 'react-icons/gi';
 import { MdModeEdit } from 'react-icons/md';
 import IconButton from '@material-ui/core/IconButton';
+import profileImg from "../../assets/perfil.png";
 
 const CoursesSubScreenComponent = (props) => {
-    const profile = useMemo(() => sessionStorage.getItem("user.profile"), [props]);
-    const email = useMemo(() => sessionStorage.getItem("user.email"), [props]);
+    const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
+    const email = useMemo(() => sessionStorage.getItem("user.email").toLowerCase(), []);
 
     const { paginedCourses, isLoadingCourses, createCourse, updateCourse, getCourses } = useCourse();
     const { page, docsPerPage, totalPages, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination(1, 10);
@@ -43,7 +42,7 @@ const CoursesSubScreenComponent = (props) => {
             setDocsPerPage(paginedCourses.perPage);
             setTotalPages(paginedCourses.totalPages)
         }
-    }, [paginedCourses])
+    }, [paginedCourses, setPage, setTotalDocs, setDocsPerPage, setTotalPages])
 
     const handleCreateNewCourse = useCallback(async ({ currentTitleCourse: title, currentDescriptionCourse: description }) => {
         setIsCreateCourse(false);
@@ -56,7 +55,7 @@ const CoursesSubScreenComponent = (props) => {
         if (courseCreated) {
             getCourses(page, { docsPerPage });
         }
-    }, [currentTitleCourse, currentDescriptionCourse, page, docsPerPage]);
+    }, [page, docsPerPage, getCourses, createCourse]);
 
     const handleEditCourse = useCallback(async (id, { currentTitleCourse: title, currentDescriptionCourse: description }) => {
         setIsEditCourse(false);
@@ -71,7 +70,7 @@ const CoursesSubScreenComponent = (props) => {
             getCourses(page, { docsPerPage });
 
         }
-    }, [currentTitleCourse, currentDescriptionCourse, currentIdCourse, page, docsPerPage])
+    }, [page, docsPerPage, getCourses, updateCourse])
 
     useEffect(() => {
         if ((isEditCourse && currentIdCourse) || isCreateCourse) {
@@ -109,11 +108,17 @@ const CoursesSubScreenComponent = (props) => {
         e.preventDefault();
         setPage(numPage);
         getCourses(numPage, { docsPerPage });
-    }, [docsPerPage]);
+    }, [docsPerPage, setPage, getCourses]);
+
+    const isTeacher = useCallback(() => {
+        return profile === 'professor'
+    }, [profile])
 
     const isAuthor = useCallback((author) => {
-        return email === author.email && profile === 'PROFESSOR'
-    }, [email, profile])
+        return email === author.email && isTeacher()
+    }, [email, isTeacher])
+
+
 
     return (
         <>
@@ -123,16 +128,18 @@ const CoursesSubScreenComponent = (props) => {
                 </Col>
             </Row>
             <Row className='mb-4'>
-                <Col className='col-3'>
-                    {/* <Link to="/professor/criarCurso"> */}
-                    <button
-                        className="btn btn-primary w-100" type="button"
-                        onClick={() => setIsCreateCourse(true)}
-                    >
-                        Criar Curso <i className="fe fe-file-plus" />
-                    </button>
-                    {/* </Link> */}
-                </Col>
+                {isTeacher() &&
+                    <Col className='col-3'>
+
+                        <button
+                            className="btn btn-primary w-100" type="button"
+                            onClick={() => setIsCreateCourse(true)}
+                        >
+                            Criar Curso <i className="fe fe-file-plus" />
+                        </button>
+
+                    </Col>
+                }
                 <Col className='col-9'>
                     <div className="input-group">
                         <input
@@ -168,7 +175,7 @@ const CoursesSubScreenComponent = (props) => {
                 <Load className={`${!(isLoadingCourses) ? 'd-none' : ''}`} />
                 {
                     !paginedCourses ? [] : paginedCourses.docs.map((course) => (
-                        <Col  className='col-md-6' key={course.id}>
+                        <Col className={`col-md-6 ${isLoadingCourses ? 'd-none' : ''}`} key={course.id}>
                             <Card>
                                 <CardHead
                                     style={{
@@ -220,41 +227,66 @@ const CoursesSubScreenComponent = (props) => {
                                     <p><strong>Descrição:</strong> {course.description}</p>
                                 </CardBody>
                                 <CardFooter
-                                    className='d-flex align-items-center justify-content-between'
+                                    className='d-flex align-items-center'
                                 >
-                                    <div
-                                        className='d-flex align-items-center h-100'
-                                    >
-                                        <ul className="d-flex align-items-center m-0 p-0">
-                                            <li
-                                                className="d-flex mr-4 align-items-center"
-                                                title={`${course.lessonsCount} curso(s)`}
+                                    <div className="d-flex flex-column h-100 w-100">
+                                        <div
+                                            className='d-flex align-items-center  justify-content-between h-100'
+                                        >
+                                            <div
+                                                className='d-flex align-items-center h-100'
                                             >
-                                                {/* <i className="fa fa-users mr-1" /> */}
-                                                <GiSecretBook className="mr-1" />
-                                                {course.lessonsCount}
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div
-                                        className='d-flex align-items-center h-100'
-                                    >
-                                        <Link to={`/professor/curso/${course.id}/aulas`}>
-                                            <button
-                                                className="btn btn-primary m-2"
-                                            >
-                                                <i className="fe fe-corner-down-right" /> Entrar
-                                            </button>
-                                        </Link>
-                                        {/* {isAuthor(course.author) &&
-                                            <Link to={`/professor/curso/${course.id}/criarAulas`}>
-                                                <button
-                                                    className="btn btn-primary d-flex align-items-center"
+                                                <div
+                                                    className="avatar d-block"
+                                                    style={{
+                                                        float: "left",
+                                                        margin: "5px 5px 5px 0px",
+                                                        backgroundImage: `url(${course.author.urlImage || profileImg
+                                                            })`,
+                                                    }}
+                                                />
+                                                <div
+                                                    className='m-1 mr-2'
+                                                    style={{
+
+                                                        alignItems: "center",
+                                                        textAlign: "left",
+                                                        float: "left",
+                                                        fontSize: "10px",
+                                                    }}
                                                 >
-                                                    <MdModeEdit className='mr-1' /> Gerenciar aulas
-                                                </button>
-                                            </Link>
-                                        } */}
+                                                    {course.author.name}
+                                                    <div className="row" />
+                                                    {course.author.email}
+                                                </div>
+                                                <ul className="d-flex align-items-center m-0 p-0">
+                                                    <li
+                                                        className="d-flex mr-4 ml-4 align-items-center"
+                                                        title={`${course.lessonsCount} curso(s)`}
+                                                    >
+                                                        {/* <i className="fa fa-users mr-1" /> */}
+                                                        <GiSecretBook className="mr-1 " />
+                                                        {course.lessonsCount}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div
+                                                className='d-flex align-items-center h-100'
+                                            >
+                                                <Link to={`/${profile}/curso/${course.id}/aulas`}>
+                                                    <button
+                                                        className="btn btn-primary m-2"
+                                                    >
+                                                        <i className="fe fe-corner-down-right" /> Entrar
+                                                    </button>
+                                                </Link>
+                                            </div>
+                                        </div>
+                                        {/* {course.author && course.author.email && <p
+                                            className="font-italic mb-0"
+                                        >
+                                            <b>Autor(a):</b> {course.author.email}
+                                        </p>} */}
                                     </div>
                                 </CardFooter>
                             </Card>

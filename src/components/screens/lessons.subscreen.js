@@ -1,48 +1,34 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import { Pagination } from "../ui/navs";
 import useCourse from '../../hooks/useCourse';
-import usePagination from '../../hooks/usePagination';
-import Swal from "sweetalert2";
+import useLesson from '../../hooks/useLesson';
 import { Load } from '../ui/load';
 import { Card, CardBody, CardFooter, CardHead, CardTitle, CardOptions } from '../ui/card';
 import { Row, Col } from '../ui/grid';
-// import Row from "../ui/grid/row.component";
-// import Col from "../ui/grid/col.component";
-import { GiSecretBook } from 'react-icons/gi';
 import { MdModeEdit } from 'react-icons/md';
+import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
 import IconButton from '@material-ui/core/IconButton';
+import Switch from '@material-ui/core/Switch';
 
 const LessonsSubScreenComponent = (props) => {
-    const profile = useMemo(() => sessionStorage.getItem("user.profile"), [props]);
-    const email = useMemo(() => sessionStorage.getItem("user.email"), [props]);
+    const profile = useMemo(() => sessionStorage.getItem("user.profile").toLocaleLowerCase(), []);
+    const email = useMemo(() => sessionStorage.getItem("user.email").toLocaleLowerCase(), []);
 
     const { course, isLoadingCourse, getCourse } = useCourse();
-    //const { page, docsPerPage, totalPages, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination(1, 10);
+    const { isLoadingLessons, lessons, getLessonsByCourse, updateVisibilidadeLesson } = useLesson();
 
     useEffect(() => {
         const { IdCourse } = props.match.params;
         getCourse(IdCourse)
+        getLessonsByCourse(IdCourse)
     }, [])
 
-    // useEffect(() => {
-    //     if (paginedLessons) {
-    //         setPage(paginedLessons.currentPage);
-    //         setTotalDocs(paginedLessons.total);
-    //         setDocsPerPage(paginedLessons.perPage);
-    //         setTotalPages(paginedLessons.totalPages)
-    //     }
-    // }, [paginedLessons])
-
-
-    // const handlePage = useCallback((e, numPage) => {
-    //     e.preventDefault();
-    //     setPage(numPage);
-    //     getLessons(numPage, { docsPerPage });
-    // }, [docsPerPage]);
+    const handleChangeVisibilityLesson = useCallback(async (e, idLesson) => {
+        updateVisibilidadeLesson(e.target.checked, idLesson)
+    }, [lessons ,updateVisibilidadeLesson])
 
     const isAuthor = useCallback(() => {
-        return course && (email === course.author.email && profile === 'PROFESSOR')
+        return course && (email === course.author.email && profile === 'professor')
     }, [course, profile.email])
 
     if (isLoadingCourse || !course) {
@@ -53,7 +39,7 @@ const LessonsSubScreenComponent = (props) => {
             <Row className='mb-4'>
                 <Col className='col-12'>
                     <h5 className='m-0'>
-                        <Link to="/professor/cursos">Cursos</Link>
+                        <Link to={`/${profile}/cursos`}>Cursos</Link>
                         <i className="fa fa-angle-left ml-2 mr-2" />
                         {course.title}
                     </h5>
@@ -108,113 +94,119 @@ const LessonsSubScreenComponent = (props) => {
                             </CardOptions>
                         </CardHead>
                         <CardBody className='h-auto'>
-                            {course.description}
+                            <div className="d-flex flex-column">
+                                <p
+                                    className="m-0  mb-4"
+                                    style={{
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                    }}
+                                >
+                                    {course.title}
+                                </p>
+                                {course.author && course.author.email && <p
+                                    className="font-italic mb-0"
+                                >
+                                    <b>Autor(a):</b> {course.author.email}
+                                </p>}
+                            </div>
                         </CardBody>
-                        <CardFooter
-                            className='d-flex align-items-center justify-content-between'
-                        >
+                            <CardFooter
 
-                            <Row>
-                                <Col className='col-12'>
-                                    <p>Listar os cursos aqui</p>
-                                </Col>
-                            </Row>
-                            {/* <Row>
-                                <Col className='col-12 text-center'>
-                                    <Pagination
-                                        count={totalPages}
-                                        page={Number(page)}
-                                        onChange={handlePage}
-                                        color="primary"
-                                        size="large"
-                                        disabled={isLoadingLessons}
-                                    />
-                                </Col>
-                            </Row> */}
-                        </CardFooter>
+                            >
+
+                                <Row>
+                                    <Col className='col-12'>
+                                        <Row>
+                                            <Load className={`${!(isLoadingLessons) ? 'd-none' : ''}`} />
+                                            {
+                                                lessons.map((lesson) => (
+                                                    <Col className={`col-md-6 ${isLoadingLessons ? 'd-none' : ''}`} key={lesson.id}>
+                                                        <Card>
+                                                            <CardHead
+                                                                style={{
+                                                                    backgroundColor: "rgba(190,190,190,0.2)",
+                                                                    maxHeight: "56px",
+                                                                }}
+                                                            >
+                                                                <CardTitle>
+                                                                    <p
+                                                                        className="m-0"
+                                                                        style={{
+                                                                            whiteSpace: 'nowrap',
+                                                                            overflow: 'hidden',
+                                                                            textOverflow: 'ellipsis',
+                                                                        }}
+                                                                    >
+                                                                        {lesson.title}
+                                                                    </p>
+                                                                </CardTitle>
+                                                                <CardOptions>
+                                                                    {isAuthor() &&
+                                                                        <Link to={`/professor/curso/${props.match.params.IdCourse}/editarAulas/${lesson.id}`}>
+                                                                            <IconButton
+                                                                                aria-label="edit leson"
+                                                                                component="span"
+
+                                                                            >
+                                                                                <MdModeEdit size={25} />
+                                                                            </IconButton>
+                                                                        </Link>
+                                                                    }
+                                                                </CardOptions>
+                                                            </CardHead>
+                                                            {/* <CardBody>
+                                                            <p><strong>Descrição:</strong> {lesson.description}</p>
+                                                        </CardBody> */}
+                                                            <CardFooter
+                                                                className='d-flex align-items-center justify-content-between'
+                                                            >
+                                                                <div
+                                                                    className='d-flex align-items-center h-100'
+                                                                >
+                                                                    {isAuthor() &&
+                                                                        <>
+                                                                            <Switch
+                                                                                checked={lesson.isVisible}
+                                                                                value={lesson.isVisible}
+                                                                                onChange={(e) => handleChangeVisibilityLesson(e, lesson.id)}
+                                                                                color="primary"
+                                                                                name="check"
+                                                                                inputProps={{ 'aria-label': 'primary checkbox' }}
+                                                                            />
+                                                                            {lesson.isVisible ?
+                                                                                <AiFillEye size={25} color='#467fcf' />
+                                                                                :
+                                                                                <AiFillEyeInvisible size={25} />
+                                                                            }
+                                                                        </>
+                                                                    }
+                                                                </div>
+                                                                <div
+                                                                    className='d-flex align-items-center h-100'
+                                                                >
+                                                                    <Link to={`/${profile}/curso/${props.match.params.IdCourse}/aulas/${lesson.id}`}>
+                                                                        <button
+                                                                            className="btn btn-primary"
+                                                                        >
+                                                                            <i className="fe fe-corner-down-right" /> Entrar
+                                                                    </button>
+                                                                    </Link>
+                                                                </div>
+                                                            </CardFooter>
+                                                        </Card>
+                                                    </Col>
+                                                ))
+                                            }
+                                        </Row>
+                                    </Col>
+                                </Row>
+                            </CardFooter>
                     </Card>
                 </Col>
             </Row>
 
-            {/* <Row>
-                <Load className={`${!(isLoadingLessons) ? 'd-none' : ''}`} />
-                {
-                    !paginedLessons ? [] : paginedLessons.docs.map((lesson) => (
-                        <Col  className='col-md-6' key={lesson.id}>
-                            <Card>
-                                <CardHead
-                                    style={{
-                                        backgroundColor: "rgba(190,190,190,0.2)",
-                                        maxHeight: "56px",
-                                    }}
-                                >
-                                    <CardTitle
-                                        title={lesson.title}
-                                    >
-                                        <p
-                                            className="m-0"
-                                            style={{
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                            }}
-                                        >
-                                            {isAuthor(lesson.author) &&
-                                                <IconButton
-                                                    aria-label="edit leson"
-                                                    component="span"
-                                                    onClick={() => {
-                                                        setCurrentTitleCourse(lesson.title);
-                                                        setCurrentDescriptionCourse(lesson.description);
-                                                        setCurrentIdCourse(lesson.id);
-                                                        setIsEditCourse(true)
-                                                    }}
-                                                >
-                                                    <MdModeEdit size={25} />
-                                                </IconButton>
-                                            }
-                                            {lesson.title}
-                                        </p>
-                                    </CardTitle>
-                                    <CardOptions>
-                                        <p
-                                            className='m-0'
-                                            style={{
-                                                fontSize: "11px",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            Código: {lesson.code}
-                                        </p>
-                                    </CardOptions>
-                                </CardHead>
-                                <CardBody>
-                                    <p><strong>Descrição:</strong> {lesson.description}</p>
-                                </CardBody>
-                                <CardFooter
-                                    className='d-flex align-items-center justify-content-between'
-                                >
-                                    <div
-                                        className='d-flex align-items-center h-100'
-                                    >
-                                    </div>
-                                    <div
-                                        className='d-flex align-items-center h-100'
-                                    >
-                                        <Link to={`/professor/curso/${lesson.id}/lessons`}>
-                                            <button
-                                                className="btn btn-primary m-2"
-                                            >
-                                                <i className="fe fe-corner-down-right" /> Entrar
-                                            </button>
-                                        </Link>
-                                    </div>
-                                </CardFooter>
-                            </Card>
-                        </Col>
-                    ))
-                }
-            </Row> */}
         </>
     )
 }

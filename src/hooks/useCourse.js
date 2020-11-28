@@ -14,7 +14,6 @@ const useCourse = () => {
             setIsLoadingCourse(true);
             const response = await api.get(`/course/${id}`)
             setCourse(response.data)
-            console.log(response.data)
         }
         catch(err){
             Swal.fire({
@@ -24,13 +23,13 @@ const useCourse = () => {
         }
         setIsLoadingCourse(false);
     },[])
+
     const getCourses = useCallback(async (page = 1, queryParams) => {
         setIsLoadingCourses(true);
         try {
             const response = await api.get(`/course/page/${page}`, {
                 params: queryParams
             })
-            //console.log(response.data);
             setPaginedCourse(response.data);
         }
         catch (err) {
@@ -70,7 +69,8 @@ const useCourse = () => {
             });
             return false;
         }
-    })
+    },[])
+
 
     const updateCourse = useCallback(async (id, { title, description }) => {
         const request = {
@@ -100,7 +100,7 @@ const useCourse = () => {
             });
             return false;
         }
-    })
+    },[])
 
     return { paginedCourses, course, isLoadingCourses, isLoadingCourse, createCourse, getCourse, updateCourse, getCourses };
 }

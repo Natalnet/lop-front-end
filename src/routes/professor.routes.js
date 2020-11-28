@@ -36,7 +36,9 @@ import ProvasAlunos from "../screens/sistema/professor/provasAlunos";
 import CorrecaoProvas from "../screens/sistema/professor/correcaoProva.screen";
 import Courses from '../screens/sistema/professor/courses.screen'
 import createLesson from '../screens/sistema/professor/createLesson.screen'
+import editLesson from '../screens/sistema/professor/editLesson.screen'
 import Lessons from '../screens/sistema/professor/lessons.screen'
+import Lesson from '../screens/sistema/professor/lesson.screen'
 const routes = [
   {
     path: "/professor/novasturmas",
@@ -265,8 +267,20 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
+    path: "/professor/curso/:IdCourse/editarAulas/:idLesson",
+    component: editLesson,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
     path: "/professor/curso/:IdCourse/aulas",
     component: Lessons,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/curso/:IdCourse/aulas/:idLesson",
+    component: Lesson,
     private: true,
     perfil: "PROFESSOR",
   },
