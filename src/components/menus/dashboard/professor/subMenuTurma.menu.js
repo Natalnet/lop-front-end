@@ -1,8 +1,11 @@
-import React  from 'react'
+import React, { useMemo }  from 'react'
 import { Link } from "react-router-dom";
+import { GiTeacher} from 'react-icons/gi'
 
 export default props =>{
-    const id = props.match.params.id
+    const id = useMemo(()=>{
+        return props.match.params.id || props.match.params.idClass
+    },[props])
     const active = props.active
     return(
         <div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
@@ -44,6 +47,12 @@ export default props =>{
                         <Link to={`/professor/turma/${id}/submissoes`} className={`nav-link ${active==='submissoes'?'active':''}`}>
                             <i className="fa fa-code" />
                             Submissões
+                        </Link>
+                        </li>
+                        <li className="nav-item">
+                        <Link to={`/professor/turma/${id}/cursos`} className={`nav-link ${active==='cursos'?'active':''}`}>
+                            <GiTeacher className='mr-1'/>
+                            Cursos
                         </Link>
                         </li>
                         <li className="nav-item">

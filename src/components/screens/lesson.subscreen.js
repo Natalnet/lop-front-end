@@ -1,4 +1,4 @@
-import React,{ useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
@@ -8,19 +8,25 @@ import 'katex/dist/katex.min.css'
 import { Link } from "react-router-dom";
 import useCourse from '../../hooks/useCourse'
 import useLesson from '../../hooks/useLesson'
+import useClass from '../../hooks/useClass';
 
 const LessonSubscreen = (props) => {
 
+  const { classRoon, isLoadingClass, getClass } = useClass();
   const { course, isLoadingCourse, getCourse } = useCourse();
   const { lesson, isLoadingLesson, getLesson } = useLesson();
 
+  const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
+
   useEffect(() => {
-    const { IdCourse, idLesson } = props.match.params;
+    const { IdCourse, idLesson, idClass } = props.match.params;
     getCourse(IdCourse);
     getLesson(idLesson);
+    idClass && getClass(idClass);
+
   }, []);
 
-  if (isLoadingCourse || !course || isLoadingLesson || !lesson) {
+  if (isLoadingCourse || !course || isLoadingLesson || !lesson || isLoadingClass) {
     return <Load />
   }
 
@@ -29,13 +35,30 @@ const LessonSubscreen = (props) => {
       <Row className='mb-4'>
         <Col className='col-12'>
           <h5 className='m-0'>
-            <Link to="/professor/cursos">Cursos</Link>
-            <i className="fa fa-angle-left ml-2 mr-2" />
+            {
+              classRoon ?
+                <>
+                  {classRoon.name}
+                  <i className="fa fa-angle-left ml-2 mr-2" />
+                  <Link to={`/${profile}/turma/${classRoon.id}/cursos`}>Cursos</Link>
+                  <i className="fa fa-angle-left ml-2 mr-2" />
+                  <Link to={`/${profile}/turma/${classRoon.id}/cursos/${props.match.params.IdCourse}/aulas`}>{course.title}</Link>
+                  <i className="fa fa-angle-left ml-2 mr-2" />
+                  {lesson.title}
 
-            <Link to={`/professor/curso/${props.match.params.IdCourse}/aulas`}>{course.title}</Link>
-            <i className="fa fa-angle-left ml-2 mr-2" />
+                </>
+                :
+                <>
+                  <Link to={`/${profile}/cursos`}>Cursos</Link>
+                  <i className="fa fa-angle-left ml-2 mr-2" />
 
-            {lesson.title}
+                  <Link to={`/${profile}/curso/${props.match.params.IdCourse}/aulas`}>{course.title}</Link>
+                  <i className="fa fa-angle-left ml-2 mr-2" />
+
+                  {lesson.title}
+                </>
+            }
+
           </h5>
         </Col>
       </Row>

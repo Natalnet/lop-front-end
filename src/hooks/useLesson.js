@@ -116,7 +116,7 @@ const useLesson = () => {
             Swal.hideLoading();
             Swal.fire({
                 type: "success",
-                title: "Aula editado com sucesso!",
+                title: `O curso agora${isVisible?' ':' não '}está visível`,
             });
             const index = lessons.findIndex(l => l.id === idLesson);
             const tempLessons = [...lessons];
@@ -127,7 +127,7 @@ const useLesson = () => {
         catch (err) {
             Swal.fire({
                 type: "error",
-                title: "ops... Aula não pôde ser editado",
+                title: "ops... Visibilidade do curso não pôde ser editada",
             });
             return false;
         }
