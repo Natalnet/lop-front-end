@@ -39,9 +39,9 @@ import createLesson from '../screens/sistema/professor/createLesson.screen'
 import editLesson from '../screens/sistema/professor/editLesson.screen'
 import Lessons from '../screens/sistema/professor/lessons.screen'
 import Lesson from '../screens/sistema/professor/lesson.screen'
-import ClassCourse from '../screens/sistema/professor/classCourses.screen'
+import ClassCourses from '../screens/sistema/professor/classCourses.screen'
 import ClassLessons from '../screens/sistema/professor/classLessons.screen'
-import ClassLesson from '../screens/sistema/professor/classLesson.screen'
+import ClassLesson from '../screens/sistema/aluno/classLesson.screen'
 const routes = [
   {
     path: "/professor/novasturmas",
@@ -265,7 +265,7 @@ const routes = [
   },
   {
     path: "/professor/turma/:idClass/cursos",
-    component: ClassCourse,
+    component: ClassCourses,
     private: true,
     perfil: "PROFESSOR",
   },

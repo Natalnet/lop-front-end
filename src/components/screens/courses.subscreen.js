@@ -410,7 +410,7 @@ const CoursesSubScreenComponent = props => {
 
                                                 </Link>
                                                 {
-                                                    props.match.params.idClass && (
+                                                    props.match.params.idClass && isTeacher() && (
                                                         <button className="btn btn-danger" onClick={() => handleRemoveCourse(course)}>
                                                             <i className="fa fa-trash " />
                                                         </button>
