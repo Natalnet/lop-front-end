@@ -15,6 +15,9 @@ import RealizarQuestao from "../screens/sistema/aluno/telaTurmasAcessarQuestaoPr
 import Courses from '../screens/sistema/aluno/courses.screen'
 import Lessons from '../screens/sistema/aluno/lessons.screen'
 import Lesson from '../screens/sistema/aluno/lesson.screen'
+import ClassCourses from '../screens/sistema/aluno/classCourses.screen'
+import ClassLessons from '../screens/sistema/professor/classLessons.screen'
+import ClassLesson from '../screens/sistema/aluno/classLesson.screen'
 
 const routes = [
   {
@@ -111,6 +114,24 @@ const routes = [
   {
     path: "/aluno/curso/:IdCourse/aulas/:idLesson",
     component: Lesson,
+    private: true,
+    perfil: "ALUNO",
+  },
+  {
+    path: "/aluno/turma/:idClass/cursos",
+    component: ClassCourses,
+    private: true,
+    perfil: "ALUNO",
+  },
+  {
+    path: "/aluno/turma/:idClass/cursos/:IdCourse/aulas",
+    component: ClassLessons,
+    private: true,
+    perfil: "ALUNO",
+  },
+  {
+    path: "/aluno/turma/:idClass/curso/:IdCourse/aulas/:idLesson",
+    component: ClassLesson,
     private: true,
     perfil: "ALUNO",
   },

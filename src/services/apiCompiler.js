@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-console.log('process.env.REACT_APP_BASE_URL_COMPILER: ', process.env.REACT_APP_BASE_URL_COMPILER)
 const base_url = process.env.REACT_APP_BASE_URL_COMPILER || "http://localhost:3003"
 const apiCompiler = axios.create({
 	baseURL: base_url
