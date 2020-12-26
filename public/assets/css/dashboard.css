@@ -78,6 +78,17 @@ body {
 [tabindex="-1"]:focus {
   outline: 0 !important;
 }
+.sun-editor-wrap .sun-editor{
+  border:0;
+}
+.sun-editor{
+  z-index: 0;
+  border:0;
+}
+
+.sun-editor .sun-editor-editable{
+  padding: 0;
+}
 
 hr {
   box-sizing: content-box;

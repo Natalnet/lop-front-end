@@ -346,7 +346,10 @@ const CoursesSubScreenComponent = props => {
                                         </p>
                                     </CardOptions>
                                 </CardHead>
-                                <CardBody>
+                                <CardBody
+                                    className='overflow-auto'
+                                    style={{ height: '110px' }}
+                                >
                                     <p><strong>Descrição:</strong> {course.description}</p>
                                 </CardBody>
                                 <CardFooter

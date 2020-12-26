@@ -41,7 +41,8 @@ import Lessons from '../screens/sistema/professor/lessons.screen'
 import Lesson from '../screens/sistema/professor/lesson.screen'
 import ClassCourses from '../screens/sistema/professor/classCourses.screen'
 import ClassLessons from '../screens/sistema/professor/classLessons.screen'
-import ClassLesson from '../screens/sistema/aluno/classLesson.screen'
+import ClassLesson from '../screens/sistema/professor/classLesson.screen'
+import CreateObjectiveQuestion from '../screens/sistema/professor/createObjectiveQuestion.screen'
 const routes = [
   {
     path: "/professor/novasturmas",
@@ -302,6 +303,12 @@ const routes = [
   {
     path: "/professor/curso/:IdCourse/aulas/:idLesson",
     component: Lesson,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/criarExercicioObjetvo",
+    component: CreateObjectiveQuestion,
     private: true,
     perfil: "PROFESSOR",
   },

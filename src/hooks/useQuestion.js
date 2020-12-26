@@ -7,12 +7,14 @@ const UseQuestion = () => {
     const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
     const [errorQuestion, setErrorQuestion] = useState(null);
 
-    const getPaginedQuestions = useCallback(async (page = 1, querys)=>{
+    const getPaginedQuestions = useCallback(async (page = 1, querysParams)=>{
         setIsLoadingQuestions(true);
         setErrorQuestion(null);
         //console.log(`/question/page/${page}?${querys}`);
         try{
-            const response = await api.get(`/question/page/${page}?${querys}`);
+            const response = await api.get(`/question/page/${page}`,{
+                params: querysParams
+            });
             setPaginedQuestions(response.data);
         }
         catch(err){
