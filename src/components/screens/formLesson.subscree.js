@@ -57,24 +57,18 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
         }
     }, [props, titleLesson, descriptionLesson])
 
-    const handleImageUploadBefore = useCallback(async () => {
-        await Swal.fire({
+    const handleImageUploadBefore = useCallback(() => {
+        Swal.fire({
             type: "error",
             title: "Não é permitido o upload de imagens, carregue-as a partir de um link 😃",
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-        }, [])
+        });
         return false;
     }, [])
 
-    const handleVideoUploadBefore = useCallback(async () => {
-        await Swal.fire({
+    const handleVideoUploadBefore = useCallback(() => {
+        Swal.fire({
             type: "error",
             title: "Não é permitido o upload de vídeos, carregue-os a partir de um link 😃",
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            allowEnterKey: false,
         });
         return false;
     }, [])
@@ -120,7 +114,7 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
                     <label>Conteúdo: </label>
                     <SunEditor
                         lang="pt_br"
-                        height = 'auto'
+                        height='auto'
                         minHeight="800px"
                         onChange={content => setDescriptionLesson(content)}
                         setContents={descriptionLesson}
