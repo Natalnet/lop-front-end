@@ -388,7 +388,7 @@ const CoursesSubScreenComponent = props => {
                                                 <ul className="d-flex align-items-center m-0 p-0">
                                                     <li
                                                         className="d-flex mr-4 ml-4 align-items-center"
-                                                        title={`${course.lessonsCount} curso(s)`}
+                                                        title={`${course.lessonsCount} aula(s)`}
                                                     >
                                                         {/* <i className="fa fa-users mr-1" /> */}
                                                         <GiSecretBook className="mr-1 " />
@@ -657,7 +657,7 @@ const CoursesSubScreenComponent = props => {
                                                             <ul className="d-flex align-items-center m-0 p-0">
                                                                 <li
                                                                     className="d-flex mr-4 ml-4 align-items-center"
-                                                                    title={`${course.lessonsCount} curso(s)`}
+                                                                    title={`${course.lessonsCount} aula(s)`}
                                                                 >
                                                                     {/* <i className="fa fa-users mr-1" /> */}
                                                                     <GiSecretBook className="mr-1 " />

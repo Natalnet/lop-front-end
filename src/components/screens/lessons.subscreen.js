@@ -183,7 +183,6 @@ const LessonsSubScreenComponent = (props) => {
                                                                         <IconButton
                                                                             aria-label="edit leson"
                                                                             component="span"
-
                                                                         >
                                                                             <MdModeEdit size={25} />
                                                                         </IconButton>

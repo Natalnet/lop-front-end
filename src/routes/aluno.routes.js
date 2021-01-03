@@ -57,7 +57,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/turma/:id/lista/:idLista",
+    path: "/aluno/turma/:idClass/lista/:idList",
     component: TurmaExercicios,
     private: true,
     perfil: "ALUNO"

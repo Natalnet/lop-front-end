@@ -13,9 +13,15 @@ import useObjectiveQuestion from '../../hooks/useObjectveQuestion';
 import useTag from '../../hooks/useTag';
 import Select from "react-select";
 
-const FormObjectiveQuestionSubscreen = () => {
+const FormObjectiveQuestionSubscreen = props => {
   const history = useHistory();
-  const { createObjectveQuestion } = useObjectiveQuestion();
+  const { 
+    infoObjectiveQuestion, 
+    isLoadingInfoObjectiveQuestion,
+    createObjectveQuestion, 
+    getInfoObjectiveQuestion,
+    updateObjectveQuestion
+  } = useObjectiveQuestion();
   const { isLoadingTags, tags, getTags } = useTag();
 
   const [title, setTitle] = useState('');
@@ -34,8 +40,26 @@ const FormObjectiveQuestionSubscreen = () => {
   })), [tags]);
 
   useEffect(() => {
+    const { idObjectiveQuestion } = props.match.params;
     getTags();
+    if (idObjectiveQuestion) {
+      getInfoObjectiveQuestion(idObjectiveQuestion);
+    }
   }, [])
+
+  useEffect(() => {
+    if (infoObjectiveQuestion) {
+      setTitle(infoObjectiveQuestion.title);
+      setDescription(infoObjectiveQuestion.description);
+      setDifficulty(infoObjectiveQuestion.difficulty);
+      setStatus(infoObjectiveQuestion.status);
+      setAlternatives(infoObjectiveQuestion.alternatives);
+      setSelectedTags(infoObjectiveQuestion.tags.map(tag => ({
+        value: tag.id,
+        label: tag.name
+      })));
+    }
+  }, [infoObjectiveQuestion])
 
   const handleImageUploadBefore = useCallback(() => {
     Swal.fire({
@@ -64,6 +88,22 @@ const FormObjectiveQuestionSubscreen = () => {
       tags: selectedTags.map((tag) => tag.value)
     });
     isCreated && history.push('/professor/exercicios', {
+      tab: 1
+    })
+  }, [title, description, difficulty, alternatives, status, selectedTags]);
+
+  const handleUpdateSubmitQuestion = useCallback(async e => {
+    e.preventDefault();
+    const { idObjectiveQuestion } = props.match.params;
+    const isUpdated = await updateObjectveQuestion(idObjectiveQuestion, {
+      title,
+      description,
+      difficulty,
+      alternatives,
+      status,
+      tags: selectedTags.map((tag) => tag.value)
+    });
+    isUpdated && history.push('/professor/exercicios', {
       tab: 1
     })
   }, [title, description, difficulty, alternatives, status, selectedTags]);
@@ -111,6 +151,11 @@ const FormObjectiveQuestionSubscreen = () => {
   if (isLoadingTags) {
     return <Load />
   }
+  if(props.match.params.idObjectiveQuestion){
+    if(!infoObjectiveQuestion || isLoadingInfoObjectiveQuestion){
+      return <Load />
+    }
+  }
 
   return (
     <>
@@ -121,11 +166,25 @@ const FormObjectiveQuestionSubscreen = () => {
               <h5 className='m-0'>
                 <Link to="/professor/exercicios">Exercícios</Link>
                 <i className="fa fa-angle-left ml-2 mr-2" />
-            Criar exercício de múltipla escolha
+                {
+                  props.match.params.idObjectiveQuestion?
+                    <>
+                      {infoObjectiveQuestion.title}
+                    </>
+                  :
+                    'Criar exercício de múltipla escolha'
+                }
+            
           </h5>
             </Col>
           </Row>
-          <form onSubmit={(e) => { e.preventDefault(); handlesaveSubmitQuestion(e); }}>
+          <form onSubmit={(e) => { 
+            e.preventDefault(); 
+            props.match.params.idObjectiveQuestion?
+              handleUpdateSubmitQuestion(e)
+            :
+              handlesaveSubmitQuestion(e)
+            }}>
             <Row className='mb-4'>
               <Col className="col-12">
                 <label>Título: </label>
@@ -248,8 +307,8 @@ const FormObjectiveQuestionSubscreen = () => {
                             className='h-100 w-100 d-flex justify-content-center align-items-center'
                           >
                             <span className='h-100 align-items-top mr-2'>
-                              {`${String.fromCharCode(65+i)})`}
-                            </span> 
+                              {`${String.fromCharCode(65 + i)})`}
+                            </span>
                             <SunEditor
                               lang="pt_br"
                               height='auto'

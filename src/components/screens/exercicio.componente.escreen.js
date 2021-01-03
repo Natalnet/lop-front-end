@@ -42,6 +42,7 @@ export default (props) => {
     const [themeAceEditor, setThemeAceEditor] = useState(themesAceEditor[0]);
     
     const simpleWorkspace = useRef(null);
+    const editorRef = useRef(null);
 
     const testCases = useMemo(() =>
         props.showAllTestCases ? response : response.filter((t, i) => i === 0)
@@ -199,6 +200,7 @@ export default (props) => {
                         <CardBody className="overflow-auto">
                             <Row>
                                 <Col xs={12} md={7}>
+                                <div className='w-100' ref={(el) => editorRef.current = el}>
                                     <SunEditor
                                         lang="pt_br"
                                         height="auto"
@@ -207,12 +209,16 @@ export default (props) => {
                                         // onChange={this.handleDescriptionChange.bind(this)}
                                         setContents={description}
                                         setDefaultStyle="font-size: 15px; text-align: justify"
+                                        onLoad={() => {
+                                            editorRef.current.classList.add('sun-editor-wrap')
+                                        }}
                                         setOptions={{
                                             toolbarContainer: '#toolbar_container',
                                             resizingBar: false,
                                             katex: katex,
                                         }}
                                     />
+                                </div>
                                     {katexDescription ? (
                                         <BlockMath>{katexDescription}</BlockMath>
                                     ) : (
