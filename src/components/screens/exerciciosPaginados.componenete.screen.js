@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
-import katex from 'katex'
-import 'katex/dist/katex.min.css'
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 import { Link } from "react-router-dom";
 import { Pagination } from "../ui/navs";
 import Tabs from '@material-ui/core/Tabs';
@@ -11,13 +11,12 @@ import TabPanel from '../ui/tabs/TabPanel'
 import Paper from '@material-ui/core/Paper';
 import { getStateFormQuestionsFromStorage } from "../../util/auxiliaryFunctions.util";
 import moment from "moment";
-import SwalModal from "../ui/modal/swalModal.component";
 import FormFilterQuestion from '../ui/forms/formFilterQuestions'
 import "katex/dist/katex.min.css";
 import { Load } from '../ui/load';
 import { BlockMath } from "react-katex";
 import TableIO from "../ui/tables/tableIO.component";
-import { Card, CardBody, CardFooter, CardHead, CardTitle, CardOptions } from '../ui/card';
+//import { Card, CardBody, CardFooter, CardHead, CardTitle, CardOptions } from '../ui/card';
 import { Row, Col } from '../ui/grid';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -25,17 +24,19 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import useQuestion from '../../hooks/useQuestion';
 import useObjectveQuestion from '../../hooks/useObjectveQuestion';
+import useDiscursiveQuestion from '../../hooks/useDiscursiveQuestion';
 import usePagination from '../../hooks/usePagination';
 import useTag from '../../hooks/useTag';
-import { FaCheck } from 'react-icons/fa'
+import { FaCheck } from 'react-icons/fa';
+//import { BiCodeAlt } from 'react-icons/bi';
 
-export default props => {
+const QuestionsSubscreen = props => {
 
-    const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), [props])
-    const email = useMemo(() => sessionStorage.getItem("user.email").toLowerCase(), [props])
+    const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
+    const email = useMemo(() => sessionStorage.getItem("user.email").toLowerCase(), []);
     const arrDifficulty = useMemo(() =>
         [null, "Muito fácil", "Fácil", "Médio", "Difícil", "Muito Difícil"]
-        , [props])
+        , []);
 
     const [showModal, setShowModal] = useState(false);
 
@@ -43,13 +44,40 @@ export default props => {
     const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
 
     //objetiveQuestion hook
-    const { isLoadingObjectiveQuestions, isLoadingInfoObjectiveQuestion, paginedObjectiveQuestions, infoObjectiveQuestion, getInfoObjectiveQuestion, getPaginedObjectiveQuestions, setInfoObjectiveQuestion } = useObjectveQuestion();
+    const {
+        isLoadingObjectiveQuestions,
+        isLoadingInfoObjectiveQuestion,
+        paginedObjectiveQuestions,
+        infoObjectiveQuestion,
+        getInfoObjectiveQuestion,
+        getPaginedObjectiveQuestions,
+        setInfoObjectiveQuestion
+    } = useObjectveQuestion();
+
+    //discursiveQuestion hook
+    const {
+        isLoadingDiscursiveQuestions,
+        isLoadingInfoDiscursiveQuestion,
+        paginedDiscursiveQuestions,
+        infoDiscursiveQuestion,
+        getInfoDiscursiveQuestion,
+        getPaginedDiscursiveQuestions,
+        setInfoDiscursiveQuestion
+    } = useDiscursiveQuestion();
 
     //tag hook
     const { tags, isLoadingTags, getTags } = useTag();
 
     //pagination hook
-    const { page, docsPerPage, totalPages, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination(
+    const {
+        page,
+        docsPerPage,
+        totalPages,
+        setDocsPerPage,
+        setPage,
+        setTotalPages,
+        setTotalDocs
+    } = usePagination(
         getStateFormQuestionsFromStorage("pageQuestions"),
         getStateFormQuestionsFromStorage("docsPerPageQuestions")
     );
@@ -58,7 +86,7 @@ export default props => {
     //pagination hook
     const {
         page: pageObjectiveQuestion,
-        docsPerPage: docsPerPageObjectiveQuestion,
+        //docsPerPage: docsPerPageObjectiveQuestion,
         totalPages: totalPagesObjectiveQuestion,
         setDocsPerPage: setDocsPerPageObjectiveQuestion,
         setPage: setPageObjectiveQuestion,
@@ -66,9 +94,19 @@ export default props => {
         setTotalDocs: setTotalDocsObjectiveQuestion
     } = usePagination(1, 15);
 
+    //pagination hook
+    const {
+        page: pageDiscursiveQuestion,
+        //docsPerPage: docsPerPageDiscursiveQuestion,
+        totalPages: totalPagesDiscursiveQuestion,
+        setDocsPerPage: setDocsPerPageDiscursiveQuestion,
+        setPage: setPageDiscursiveQuestion,
+        setTotalPages: setTotalPageDiscursiveQuestion,
+        setTotalDocs: setTotalDocsDiscursiveQuestion
+    } = usePagination(1, 15);
+
     const [tabIndex, setTabIndex] = useState(() => {
         const state = props.location.state;
-        console.log(props.location.state);
         if (state && state.tab) {
             return state.tab;
         }
@@ -76,6 +114,7 @@ export default props => {
     });
 
     const [openObjectiveQuestionModal, setOpenObjectiveQuestionModal] = useState(false);
+    const [openDiscursiveQuestionModal, setOpenDiscursiveQuestionModal] = useState(false);
 
     const [titleOrCodeInput, setTitleOrCodeInput] = useState(getStateFormQuestionsFromStorage("titleOrCodeInputQuestions"));
     const [sortBySelect, setSortBySelect] = useState(getStateFormQuestionsFromStorage("sortBySelectQuestions"));
@@ -102,13 +141,23 @@ export default props => {
             case 1:
                 getPaginedObjectiveQuestions(pageObjectiveQuestion, '')
                 break;
+            case 2:
+                getPaginedDiscursiveQuestions(pageDiscursiveQuestion, '')
+                break;
 
             default:
                 break;
         }
         //divRef.current.classList('sun-editor-wrap');
-    }, [])
+    }, []);
 
+    const isTeacher = useCallback(() => {
+        return profile === 'professor'
+    }, [profile])
+
+    const isAuthor = useCallback((author) => {
+        return email === author.email && isTeacher()
+    }, [email, isTeacher])
 
     const tagsSelect = useMemo(() => [{ id: '', name: 'Todas' }, ...tags], [tags])
 
@@ -170,25 +219,36 @@ export default props => {
     const handlleFilter = useCallback(() => {
         getPaginedQuestions(page, getQuerys());
         saveQuerysInStorage();
-    }, [page, saveQuerysInStorage, getQuerys]);
+    }, [page, getPaginedQuestions, saveQuerysInStorage, getQuerys]);
 
     const handlePage = useCallback((e, numPage) => {
         e.preventDefault();
         setPage(numPage);
         getPaginedQuestions(numPage, getQuerys());
         sessionStorage.setItem('pageQuestions', numPage);
-    }, [getQuerys]);
+    }, [getQuerys, getPaginedQuestions, setPage]);
 
     const handlePageObjectiveQuestions = useCallback((e, numPage) => {
         e.preventDefault();
-        setPage(numPage);
+        setPageObjectiveQuestion(numPage);
         getPaginedObjectiveQuestions(numPage, '');
-    }, [getPaginedObjectiveQuestions]);
+    }, [getPaginedObjectiveQuestions, setPageObjectiveQuestion]);
+
+    const handlePageDiscursiveQuestions = useCallback((e, numPage) => {
+        e.preventDefault();
+        setPageObjectiveQuestion(numPage);
+        getPaginedDiscursiveQuestions(numPage, '');
+    }, [getPaginedDiscursiveQuestions, setPageDiscursiveQuestion]);
 
     const handleShowObjectiveQuestionModal = useCallback((question => {
         getInfoObjectiveQuestion(question.id);
         setOpenObjectiveQuestionModal(true);
-    }), [getInfoObjectiveQuestion])
+    }), [getInfoObjectiveQuestion, setOpenObjectiveQuestionModal]);
+
+    const handleShowDiscursiveQuestionModal = useCallback((question => {
+        getInfoDiscursiveQuestion(question.id);
+        setOpenDiscursiveQuestionModal(true);
+    }), [getInfoDiscursiveQuestion, setOpenDiscursiveQuestionModal]);
 
     useEffect(() => {
         //console.log('question: ', paginedQuestions);
@@ -198,7 +258,7 @@ export default props => {
             setDocsPerPage(paginedQuestions.perPage);
             setTotalPages(paginedQuestions.totalPages);
         }
-    }, [paginedQuestions]);
+    }, [paginedQuestions, setPage, setTotalDocs, setDocsPerPage, setTotalPages]);
 
     useEffect(() => {
         //console.log('question: ', paginedQuestions);
@@ -208,7 +268,17 @@ export default props => {
             setDocsPerPageObjectiveQuestion(paginedObjectiveQuestions.perPage);
             setTotalPageObjectiveQuestion(paginedObjectiveQuestions.totalPages);
         }
-    }, [paginedObjectiveQuestions]);
+    }, [paginedObjectiveQuestions, setPageObjectiveQuestion, setTotalDocsObjectiveQuestion, setDocsPerPageObjectiveQuestion, setTotalPageObjectiveQuestion]);
+
+    useEffect(() => {
+        //console.log('question: ', paginedQuestions);
+        if (paginedDiscursiveQuestions) {
+            setPageDiscursiveQuestion(paginedDiscursiveQuestions.currentPage);
+            setTotalDocsDiscursiveQuestion(paginedDiscursiveQuestions.total);
+            setDocsPerPageDiscursiveQuestion(paginedDiscursiveQuestions.perPage);
+            setTotalPageDiscursiveQuestion(paginedDiscursiveQuestions.totalPages);
+        }
+    }, [paginedDiscursiveQuestions, setPageDiscursiveQuestion, setTotalDocsDiscursiveQuestion, setDocsPerPageDiscursiveQuestion, setTotalPageDiscursiveQuestion]);
 
     const handleShowModal = useCallback(q => {
         setSelectedQuestionToShowInModal(q);
@@ -224,29 +294,13 @@ export default props => {
             case 1:
                 getPaginedObjectiveQuestions(pageObjectiveQuestion, '');
                 break;
+            case 2:
+                getPaginedDiscursiveQuestions(pageDiscursiveQuestion, '');
+                break;
             default:
                 break;
         }
-    }, [page, pageObjectiveQuestion, getPaginedQuestions, getQuerys]);
-
-    const isTeacher = useCallback(() => {
-        return profile === 'professor'
-    }, [profile])
-
-    const isAuthor = useCallback((author) => {
-        return email === author.email && isTeacher()
-    }, [email, isTeacher])
-
-    // useEffect(() => {
-    //     switch (tabIndex) {
-    //         case 0:
-    //             getPaginedQuestions(page, getQuerys());
-    //             break;
-
-    //         default:
-    //             break;
-    //     }
-    // }, [tabIndex, page, getPaginedQuestions])
+    }, [page, pageObjectiveQuestion, getPaginedQuestions, getPaginedObjectiveQuestions, getPaginedDiscursiveQuestions, getQuerys]);
 
     if (isLoadingTags || !tags.length) {
         return <Load />;
@@ -432,6 +486,15 @@ export default props => {
                                                     <button className="btn btn-primary mr-2" title="Ver informações" onClick={() => handleShowObjectiveQuestionModal(question)}>
                                                         <i className="fa fa-info" />
                                                     </button>
+                                                    {
+                                                        isAuthor(question.author) && (
+                                                            <Link to={`/professor/editarExercicioObjetvo/${question.id}`}>
+                                                                <button className='btn btn-info mr-2' title="Editar Exercício">
+                                                                    <i className="fe fe-edit" />
+                                                                </button>
+                                                            </Link>
+                                                        )
+                                                    }
                                                 </td>
                                             </tr>
                                         ))}
@@ -454,7 +517,69 @@ export default props => {
                     </TabPanel>
 
                     <TabPanel value={tabIndex} index={2}>
-                        Questões Discursivas
+                        {isTeacher() && (
+                            <>
+                                <Row className='mb-4'>
+                                    <Col className='col-12'>
+                                        <Link to="/professor/criarExercicioDiscursivo">
+                                            <button className="btn btn-primary">Criar Exercício</button>
+                                        </Link>
+                                    </Col>
+                                </Row>
+                                <Row className='mb-4'>
+                                    <Col className='col-12'>
+                                        <Load className={`${!(isLoadingDiscursiveQuestions) ? 'd-none' : ''}`} />
+                                        <table className={`table table-hover ${isLoadingDiscursiveQuestions ? 'd-none' : ''}`}>
+                                            <thead>
+                                                <tr>
+                                                    <th>Título</th>
+                                                    <th>Código</th>
+                                                    <th>Dificuldade</th>
+                                                    <th>Criado em</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {!paginedDiscursiveQuestions ? [] : paginedDiscursiveQuestions.docs.map((question) => (
+                                                    <tr key={question.id}>
+                                                        <td>{question.title}</td>
+                                                        <td>{question.code}</td>
+                                                        <td>{arrDifficulty[parseInt(question.difficulty)]}</td>
+                                                        <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                                                        <td>
+                                                            <button className="btn btn-primary mr-2" title="Ver informações" onClick={() => handleShowDiscursiveQuestionModal(question)}>
+                                                                <i className="fa fa-info" />
+                                                            </button>
+                                                            {
+                                                                isAuthor(question.author) && (
+                                                                    <Link to={`/professor/editarExercicioDiscursivo/${question.id}`}>
+                                                                        <button className='btn btn-info mr-2' title="Editar Exercício">
+                                                                            <i className="fe fe-edit" />
+                                                                        </button>
+                                                                    </Link>
+                                                                )
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col className='col-12 text-center'>
+                                        <Pagination
+                                            count={totalPagesDiscursiveQuestion}
+                                            page={Number(pageDiscursiveQuestion)}
+                                            onChange={handlePageDiscursiveQuestions}
+                                            color="primary"
+                                            size="large"
+                                            disabled={isLoadingDiscursiveQuestions}
+                                        />
+                                    </Col>
+                                </Row>
+                            </>
+                        )}
                     </TabPanel>
                 </>
             }
@@ -464,20 +589,9 @@ export default props => {
                 onClose={() => setShowModal(false)}
                 aria-labelledby="contained-modal-title-vcenter"
             >
-                {/* <SwalModal
-                show={showModal}
-                title="Exercício"
-                handleModal={() => setShowModal(false)}
-                width={"90%"}
-            > */}
-                {/* <Card> */}
                 <DialogTitle id="contained-modal-title-vcenter">
                     {selectedQuestionToShowInModal && selectedQuestionToShowInModal.title}
                 </DialogTitle>
-                {/* <CardHead>
-                        <CardTitle>{selectedQuestionToShowInModal && selectedQuestionToShowInModal.title}</CardTitle>
-                    </CardHead> */}
-                {/* <CardBody> */}
                 <DialogContent>
                     <Row className='mb-2'>
                         <Col className='col-12'>
@@ -488,7 +602,6 @@ export default props => {
                         <Col className='col-12'>
 
                             <div className='w-100' ref={(el) => editorRef.current[0] = el}>
-                                {/* <HTMLFormat>{selectedQuestionToShowInModal && selectedQuestionToShowInModal.description}</HTMLFormat> */}
                                 {selectedQuestionToShowInModal && <SunEditor
                                     lang="pt_br"
                                     height="auto"
@@ -542,12 +655,6 @@ export default props => {
                     </Row>
                 </DialogContent>
             </Dialog>
-            {/* </CardBody> */}
-            {/* <CardFooter>
-                
-            </CardFooter> */}
-            {/* </Card> */}
-            {/* </SwalModal> */}
 
             <Dialog
                 open={openObjectiveQuestionModal}
@@ -641,6 +748,64 @@ export default props => {
                 }
             </Dialog>
 
+            <Dialog
+                open={openDiscursiveQuestionModal}
+                maxWidth={'md'}
+                onClose={() => {
+                    setOpenDiscursiveQuestionModal(false);
+                    setInfoDiscursiveQuestion(null);
+                }}
+                aria-labelledby="contained-modal-title-vcenter"
+            >
+                {(isLoadingInfoDiscursiveQuestion || !infoDiscursiveQuestion) ?
+                    <Load />
+                    :
+                    <>
+                        <DialogTitle id="contained-modal-title-vcenter">
+                            {infoDiscursiveQuestion.title}
+                        </DialogTitle>
+                        <DialogContent>
+                            <Row>
+                                <Col className='col-12 mb-4'>
+                                    <div ref={(el) => editorRef.current[0] = el} className='w-100'>
+                                        <SunEditor
+                                            lang="pt_br"
+                                            height="auto"
+                                            width='100%'
+                                            disable={true}
+                                            showToolbar={false}
+                                            setContents={infoDiscursiveQuestion.description}
+                                            setDefaultStyle="font-size: 15px; text-align: justify"
+                                            onLoad={() => {
+                                                editorRef.current[0].classList.add('sun-editor-wrap')
+                                            }}
+                                            setOptions={{
+                                                toolbarContainer: '#toolbar_container',
+                                                resizingBar: false,
+                                                katex: katex,
+                                            }}
+                                        />
+                                    </div>
+
+                                </Col>
+                            </Row>
+                        </DialogContent>
+                        <DialogActions>
+                            <button
+                                className="btn btn-outline-primary"
+                                onClick={() => {
+                                    setOpenDiscursiveQuestionModal(false);
+                                    setInfoDiscursiveQuestion(null);
+                                }}
+                            >
+                                Fechar
+                        </button>
+                        </DialogActions>
+                    </>
+                }
+            </Dialog>
+
         </>
     )
 }
+export default QuestionsSubscreen;
