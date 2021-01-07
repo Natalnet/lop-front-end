@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import TemplateSistema from "../../../components/templates/sistema.template";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
-import ExercicioScreen from "../../../components/screens/exercicio.componente.escreen";
+import ExercicioScreen from "../../../components/screens/question.subscreen";
 
 import SupportedLanguages from "../../../config/SupportedLanguages"
 
@@ -30,6 +30,8 @@ export default class Editor extends Component {
       submissionsCorrectsCount: 0,
       accessCount: 0,
       author: null,
+      type: '',
+alternatives: null
     };
   }
 
@@ -45,7 +47,7 @@ export default class Editor extends Component {
     try {
       const response = await api.get(`/question/${idQuestion}${query}`);
       this.setState({
-        results: [...response.data.results],
+        results: Array.isArray(response.data.results)?response.data.results: [],
         title: response.data.title,
         description: response.data.description,
         katexDescription: response.data.katexDescription || "",
@@ -65,6 +67,8 @@ export default class Editor extends Component {
         submissionsCorrectsCount: response.data.submissionsCorrectsCount,
         accessCount: response.data.accessCount,
         author: response.data.author,
+        type: response.data.type,
+alternatives: response.data.alternatives,
       });
     } catch (err) {
       console.log(err);

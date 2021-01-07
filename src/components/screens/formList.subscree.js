@@ -16,6 +16,7 @@ import usePagination from '../../hooks/usePagination';
 import useList from '../../hooks/useList';
 import useTag from '../../hooks/useTag';
 import useObjectveQuestion from '../../hooks/useObjectveQuestion';
+import useDiscursiveQuestion from '../../hooks/useDiscursiveQuestion';
 import { Pagination } from "../ui/navs";
 import FormFilterQuestion from '../ui/forms/formFilterQuestions';
 import "katex/dist/katex.min.css";
@@ -46,7 +47,26 @@ const FormListSubscreen = props => {
         getPaginedObjectiveQuestions,
         setInfoObjectiveQuestion
     } = useObjectveQuestion();
-    const { page, totalPages, docsPerPage, setDocsPerPage, setPage, setTotalPages, setTotalDocs } = usePagination();
+
+    const {
+        isLoadingDiscursiveQuestions,
+        isLoadingInfoDiscursiveQuestion,
+        paginedDiscursiveQuestions,
+        infoDiscursiveQuestion,
+        getInfoDiscursiveQuestion,
+        getPaginedDiscursiveQuestions,
+        setInfoDiscursiveQuestion
+    } = useDiscursiveQuestion();
+
+    const {
+        page,
+        totalPages,
+        docsPerPage,
+        setDocsPerPage,
+        setPage,
+        setTotalPages,
+        setTotalDocs
+    } = usePagination();
     //pagination hook
     const {
         page: pageObjectiveQuestion,
@@ -58,7 +78,17 @@ const FormListSubscreen = props => {
         setTotalDocs: setTotalDocsObjectiveQuestion
     } = usePagination(1, 15);
 
-    const [tabIndex, setTabIndex] = useState(0);
+    const {
+        page: pageDiscursiveQuestion,
+        //docsPerPage: docsPerPageDiscursiveQuestion,
+        totalPages: totalPagesDiscursiveQuestion,
+        setDocsPerPage: setDocsPerPageDiscursiveQuestion,
+        setPage: setPageDiscursiveQuestion,
+        setTotalPages: setTotalPageDiscursiveQuestion,
+        setTotalDocs: setTotalDocsDiscursiveQuestion
+    } = usePagination(1, 15);
+
+    const [tabIndex, setTabIndex] = useState(1);
 
     const [title, setTitle] = useState('');
     const [selectedQuestions, setSelectedQuestions] = useState([]);
@@ -73,6 +103,7 @@ const FormListSubscreen = props => {
     const [descRadio, setDescRadio] = useState(true);
     const [tagSelect, setTagSelect] = useState('');
     const [openObjectiveQuestionModal, setOpenObjectiveQuestionModal] = useState(false);
+    const [openDiscursiveQuestionModal, setOpenDiscursiveQuestionModal] = useState(false);
 
     const tagsSelect = useMemo(() => [{ id: '', name: 'Todas' }, ...tags], [tags])
 
@@ -100,6 +131,9 @@ const FormListSubscreen = props => {
                 break;
             case 1:
                 getPaginedObjectiveQuestions(pageObjectiveQuestion, '')
+                break;
+            case 2:
+                getPaginedDiscursiveQuestions(pageDiscursiveQuestion, '')
                 break;
 
             default:
@@ -133,10 +167,22 @@ const FormListSubscreen = props => {
         getPaginedObjectiveQuestions(numPage, '');
     }, [getPaginedObjectiveQuestions, setPageObjectiveQuestion]);
 
+
+    const handlePageDiscursiveQuestions = useCallback((e, numPage) => {
+        e.preventDefault();
+        setPageObjectiveQuestion(numPage);
+        getPaginedDiscursiveQuestions(numPage, '');
+    }, [getPaginedDiscursiveQuestions, setPageDiscursiveQuestion]);
+
     const handleShowObjectiveQuestionModal = useCallback((question => {
         getInfoObjectiveQuestion(question.id);
         setOpenObjectiveQuestionModal(true);
     }), [getInfoObjectiveQuestion, setOpenObjectiveQuestionModal]);
+
+    const handleShowDiscursiveQuestionModal = useCallback((question => {
+        getInfoDiscursiveQuestion(question.id);
+        setOpenDiscursiveQuestionModal(true);
+    }), [getInfoDiscursiveQuestion, setOpenDiscursiveQuestionModal]);
 
     useEffect(() => {
         //console.log('question: ', paginedQuestions);
@@ -157,6 +203,17 @@ const FormListSubscreen = props => {
             setTotalPageObjectiveQuestion(paginedObjectiveQuestions.totalPages);
         }
     }, [paginedObjectiveQuestions, setPageObjectiveQuestion, setTotalDocsObjectiveQuestion, setDocsPerPageObjectiveQuestion, setTotalPageObjectiveQuestion]);
+
+
+    useEffect(() => {
+        //console.log('question: ', paginedQuestions);
+        if (paginedDiscursiveQuestions) {
+            setPageDiscursiveQuestion(paginedDiscursiveQuestions.currentPage);
+            setTotalDocsDiscursiveQuestion(paginedDiscursiveQuestions.total);
+            setDocsPerPageDiscursiveQuestion(paginedDiscursiveQuestions.perPage);
+            setTotalPageDiscursiveQuestion(paginedDiscursiveQuestions.totalPages);
+        }
+    }, [paginedDiscursiveQuestions, setPageDiscursiveQuestion, setTotalDocsDiscursiveQuestion, setDocsPerPageDiscursiveQuestion, setTotalPageDiscursiveQuestion]);
 
     const getQuestionsByList = useCallback(async (id) => {
         let query = `idList=${id}`;
@@ -226,10 +283,13 @@ const FormListSubscreen = props => {
             case 1:
                 getPaginedObjectiveQuestions(pageObjectiveQuestion, '');
                 break;
+            case 2:
+                getPaginedDiscursiveQuestions(pageDiscursiveQuestion, '');
+                break;
             default:
                 break;
         }
-    }, [page, pageObjectiveQuestion, getPaginedQuestions, getPaginedObjectiveQuestions, getQuerys]);
+    }, [page, pageObjectiveQuestion, getPaginedQuestions, getPaginedObjectiveQuestions, getPaginedDiscursiveQuestions, getQuerys]);
 
     if (isLoadingTags || isLoadingQuestionsByList) {
         return <Load />
@@ -344,7 +404,7 @@ const FormListSubscreen = props => {
                                                 <th>Nome</th>
                                                 <th>Código</th>
                                                 <th>Submissões gerais (corretas/total)</th>
-                                                <th>Criado por</th>
+                                                <th>Autor(a)</th>
                                                 <th>Criado em</th>
                                                 <th></th>
                                             </tr>
@@ -423,6 +483,7 @@ const FormListSubscreen = props => {
                                                 <th>Título</th>
                                                 <th>Código</th>
                                                 <th>Dificuldade</th>
+                                                <th>Autor(a)</th>
                                                 <th>Criado em</th>
                                                 <th></th>
 
@@ -434,6 +495,7 @@ const FormListSubscreen = props => {
                                                     <td>{question.title}</td>
                                                     <td>{question.code}</td>
                                                     <td>{arrDifficulty[parseInt(question.difficulty)]}</td>
+                                                    <td>{question.author.email}</td>
                                                     <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                                                     <td>
                                                         <button
@@ -488,7 +550,62 @@ const FormListSubscreen = props => {
                             value={tabIndex}
                             index={2}
                         >
-                            discursivas
+                            <Row className='mb-4'>
+                                <Col className='col-12'>
+                                    <Load className={`${!(isLoadingDiscursiveQuestions) ? 'd-none' : ''}`} />
+                                    <table className={`table table-hover ${isLoadingDiscursiveQuestions ? 'd-none' : ''}`}>
+                                        <thead>
+                                            <tr>
+                                                <th>Título</th>
+                                                <th>Código</th>
+                                                <th>Dificuldade</th>
+                                                <th>Autor(a)</th>
+                                                <th>Criado em</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {!paginedDiscursiveQuestions ? [] : paginedDiscursiveQuestions.docs.map((question) => (
+                                                <tr key={question.id}>
+                                                    <td>{question.title}</td>
+                                                    <td>{question.code}</td>
+                                                    <td>{arrDifficulty[parseInt(question.difficulty)]}</td>
+                                                    <td>{question.author.email}</td>
+                                                    <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-primary mr-2"
+                                                            title="Ver informações"
+                                                            onClick={() => handleShowDiscursiveQuestionModal(question)}>
+                                                            <i className="fa fa-info" />
+                                                        </button>
+                                                        {selectedQuestions
+                                                            .map((s) => s.id)
+                                                            .includes(question.id) ? (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-indigo disabled"
+                                                                >
+                                                                    Selecionada
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-primary"
+                                                                    onClick={(e) => addQuestion(question)}
+                                                                >
+                                                                    Adicionar <i className="fe fe-file-plus" />
+                                                                </button>
+                                                            )
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </Col>
+                            </Row>
                         </TabPanel>
                         <hr />
                         <Row>
@@ -500,7 +617,7 @@ const FormListSubscreen = props => {
                                             <th>Nome</th>
                                             <th>Código</th>
                                             <th>Submissões gerais (corretas/total)</th>
-                                            <th>Criado por</th>
+                                            <th>Autor(a)</th>
                                             <th>Criado em</th>
                                             <th></th>
                                         </tr>
@@ -704,6 +821,64 @@ const FormListSubscreen = props => {
                                 onClick={() => {
                                     setOpenObjectiveQuestionModal(false);
                                     setInfoObjectiveQuestion(null);
+                                }}
+                            >
+                                Fechar
+                        </button>
+                        </DialogActions>
+                    </>
+                }
+            </Dialog>
+
+
+            <Dialog
+                open={openDiscursiveQuestionModal}
+                maxWidth={'md'}
+                onClose={() => {
+                    setOpenDiscursiveQuestionModal(false);
+                    setInfoDiscursiveQuestion(null);
+                }}
+                aria-labelledby="contained-modal-title-vcenter"
+            >
+                {(isLoadingInfoDiscursiveQuestion || !infoDiscursiveQuestion) ?
+                    <Load />
+                    :
+                    <>
+                        <DialogTitle id="contained-modal-title-vcenter">
+                            {infoDiscursiveQuestion.title}
+                        </DialogTitle>
+                        <DialogContent>
+                            <Row>
+                                <Col className='col-12 mb-4'>
+                                    <div ref={(el) => editorRef.current[0] = el} className='w-100'>
+                                        <SunEditor
+                                            lang="pt_br"
+                                            height="auto"
+                                            width='100%'
+                                            disable={true}
+                                            showToolbar={false}
+                                            setContents={infoDiscursiveQuestion.description}
+                                            setDefaultStyle="font-size: 15px; text-align: justify"
+                                            onLoad={() => {
+                                                editorRef.current[0].classList.add('sun-editor-wrap')
+                                            }}
+                                            setOptions={{
+                                                toolbarContainer: '#toolbar_container',
+                                                resizingBar: false,
+                                                katex: katex,
+                                            }}
+                                        />
+                                    </div>
+
+                                </Col>
+                            </Row>
+                        </DialogContent>
+                        <DialogActions>
+                            <button
+                                className="btn btn-outline-primary"
+                                onClick={() => {
+                                    setOpenDiscursiveQuestionModal(false);
+                                    setInfoDiscursiveQuestion(null);
                                 }}
                             >
                                 Fechar

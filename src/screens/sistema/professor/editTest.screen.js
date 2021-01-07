@@ -316,7 +316,7 @@ export default class CriarProvaScreen extends Component {
                         <th>Nome</th>
                         <th>Código</th>
                         <th>Submissões gerais (corretas/total)</th>
-                        <th>Criado por</th>
+                        <th>Autor(a)</th>
                         <th>Criado em</th>
                         <th></th>
                       </tr>
@@ -408,7 +408,7 @@ export default class CriarProvaScreen extends Component {
                         <th>Nome</th>
                         <th>Código</th>
                         <th>Submissões gerais (corretas/total)</th>
-                        <th>Criado por</th>
+                        <th>Autor(a)</th>
                         <th>Criado em</th>
                         <th></th>
                       </tr>

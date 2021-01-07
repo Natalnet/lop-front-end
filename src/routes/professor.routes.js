@@ -44,6 +44,8 @@ import ClassLessons from '../screens/sistema/professor/classLessons.screen'
 import ClassLesson from '../screens/sistema/professor/classLesson.screen'
 import CreateObjectiveQuestion from '../screens/sistema/professor/createObjectiveQuestion.screen'
 import UpdateObjectiveQuestion from '../screens/sistema/professor/updateObjectiveQuestion.screen'
+import CreatediscursiveQuestion from '../screens/sistema/professor/createDiscursiveQuestion.screen'
+import UpdateDiscursiveQuestion from '../screens/sistema/professor/updateDiscursiveQuestion.screen'
 const routes = [
   {
     path: "/professor/novasturmas",
@@ -316,6 +318,18 @@ const routes = [
   {
     path: "/professor/editarExercicioObjetvo/:idObjectiveQuestion",
     component: UpdateObjectiveQuestion,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/criarExercicioDiscursivo",
+    component: CreatediscursiveQuestion,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/editarExercicioDiscursivo/:idDiscursiveQuestion",
+    component: UpdateDiscursiveQuestion,
     private: true,
     perfil: "PROFESSOR",
   },

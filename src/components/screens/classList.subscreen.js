@@ -12,32 +12,30 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import ProgressBar from "../ui/ProgressBar/progressBar.component";
-import { BiCodeAlt } from 'react-icons/bi';
-import { GoChecklist } from 'react-icons/go';
-import { CgUserList } from 'react-icons/cg';
 import { FaCheck } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import useClass from '../../hooks/useClass';
 import useList from '../../hooks/useList';
+import useQuestion from '../../hooks/useQuestion';
 import useUser from '../../hooks/useUser';
 import moment from "moment";
 
-const ClassListSubscreen = ({ participant, ...props }) => {
-    //const list = useMemo(() => props.lista, [props]);
-    // const participant = useMemo(() => props.participant, [props]);
+const ClassListSubscreen = props => {
+
     const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
+
+    const { getIconTypeQuestion } = useQuestion();
 
     const { classRoon, isLoadingClass, getClass } = useClass();
     const { list, isLoadingList, getList, addSubmissionDeadline } = useList();
     const { user, isLoadingUser, getUser } = useUser();
     const editorRef = useRef([]);
-
     const [showDateModal, setShowDateModal] = useState(false);
     const [dateInput, setDateInput] = useState('');
     const [timeInput, setTimeInput] = useState('');
 
     useEffect(() => {
-        if(classRoon && list){
+        if (classRoon && list) {
             document.title = `${classRoon.name} - ${list.title}`;
         }
     }, [classRoon, list]);
@@ -49,7 +47,7 @@ const ClassListSubscreen = ({ participant, ...props }) => {
         const queryParams = {
             idClass
         }
-        if(idUser){
+        if (idUser) {
             queryParams.idUser = idUser;
             getUser(idUser);
         }
@@ -61,7 +59,7 @@ const ClassListSubscreen = ({ participant, ...props }) => {
             setDateInput(moment(list.classHasListQuestion.submissionDeadline).format("YYYY-MM-DD"));
             setTimeInput(moment(list.classHasListQuestion.submissionDeadline).format("HH:mm"));
         }
-        else{
+        else {
             setDateInput('');
             setTimeInput('');
         }
@@ -79,16 +77,14 @@ const ClassListSubscreen = ({ participant, ...props }) => {
         return profile === 'professor'
     }, [profile])
 
+    const isStudent = useCallback(() => {
+        return profile === 'aluno'
+    }, [profile])
+
     if (isLoadingClass || !classRoon || isLoadingList || !list) {
-        console.log({
-            isLoadingClass,
-            classRoon,
-            isLoadingList,
-            list
-        })
         return <Load />
     }
-    if(props.match.params.idUser && (isLoadingUser || !user)){
+    if (props.match.params.idUser && (isLoadingUser || !user)) {
         return <Load />
     }
 
@@ -102,13 +98,25 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                         {classRoon.name} - {classRoon.year}.{classRoon.semester}
                         <i className="fa fa-angle-left ml-2 mr-2" />
                         {
+                            !props.match.params.idUser && (
+                                <>
+                                    <Link
+                                        to={`/${profile}/turma/${props.match.params.idClass}/listas`}
+                                    >
+                                        Listas
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                </>
+                            )
+                        }
+                        {
                             props.match.params.idUser && (
                                 <>
                                     <Link
                                         to={`/professor/turma/${props.match.params.idClass}/participantes`}
                                     >
                                         Participantes
-                                </Link>
+                                    </Link>
                                     <i className="fa fa-angle-left ml-2 mr-2" />
                                     <Link
                                         to={`/professor/turma/${props.match.params.idClass}/participantes/${props.match.params.idUser}/listas`}
@@ -117,22 +125,10 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                     </Link>
                                     <i className="fa fa-angle-left ml-2 mr-2" />
                                 </>
-
                             )
                         }
+                        {list.title}
 
-                        {list ? (
-                            `${list.title}`
-                        ) : (
-                                <div
-                                    style={{
-                                        width: "140px",
-                                        backgroundColor: "#e5e5e5",
-                                        height: "12px",
-                                        display: "inline-block",
-                                    }}
-                                />
-                            )}
                     </h5>
 
                 </Col>
@@ -159,22 +155,21 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                         <CardHead style={{ margin: "0px" }}>
                             <Col className='col-4 pl-0'>
                                 <h4 className='m-0'>
-                                    <b>{list && list.title}</b>
+                                    <b>{list.title}</b>
                                 </h4>
                             </Col>
                             <ProgressBar
-                                numQuestions={list && list.questionsCount}
-                                numQuestionsCompleted={list && list.questionsCompletedSumissionsCount}
-                                dateBegin={list && list.classHasListQuestion.createdAt}
-                                dateEnd={list && list.classHasListQuestion.submissionDeadline}
+                                numQuestions={list.questionsCount}
+                                numQuestionsCompleted={list.questionsCompletedSumissionsCount}
+                                dateBegin={list.classHasListQuestion.createdAt}
+                                dateEnd={list.classHasListQuestion.submissionDeadline}
                                 width={100}
                             />
                         </CardHead>
                         <CardBody>
                             <Row>
-                                {list &&
-                                    list.questions.map((question, j) => (
-                                        <Col className='col-12 col-md-6' key={j}>
+                                {list.questions.map((question, i) => (
+                                        <Col className='col-12 col-md-6' key={i}>
                                             <Card>
                                                 <CardHead>
                                                     <CardTitle>
@@ -192,26 +187,7 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                                 </span>
                                                             )}
                                                             {
-                                                                question.type === 'PROGRAMAÇÃO' ?
-                                                                    <span
-                                                                        title='Exercicício de programação'
-                                                                    >
-                                                                        <BiCodeAlt size={25} color='#467fcf' className='mr-2' />
-                                                                    </span>
-                                                                    :
-                                                                    question.type === 'OBJETIVA' ?
-                                                                        <span
-                                                                            title='Exercicício de multipla escolha'
-                                                                        >
-                                                                            <GoChecklist size={25} color='#467fcf' className='mr-2' />
-                                                                        </span>
-                                                                        :
-                                                                        <span
-
-                                                                        >
-                                                                            <CgUserList size={25} color='#467fcf' className='mr-2' />
-                                                                        </span>
-
+                                                                getIconTypeQuestion(question.type)
                                                             }
 
                                                             {question.title}
@@ -228,7 +204,7 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                             className={`fe fe-chevron-down`}
                                                             data-toggle="collapse"
                                                             data-target={
-                                                                "#collapse2" + j + (list && list.id)
+                                                                "#collapse2" + i + (list && list.id)
                                                             }
                                                             aria-expanded={false}
                                                         />
@@ -236,10 +212,10 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                 </CardHead>
                                                 <div
                                                     className="collapse"
-                                                    id={"collapse2" + j + (list && list.id)}
+                                                    id={"collapse2" + i + (list && list.id)}
                                                 >
                                                     <CardBody>
-                                                        <div className='w-100' ref={(el) => editorRef.current[0] = el}>
+                                                        <div className='w-100' ref={(el) => editorRef.current[i] = el}>
                                                             <SunEditor
                                                                 lang="pt_br"
                                                                 height="auto"
@@ -249,7 +225,7 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                                 setContents={question.description}
                                                                 setDefaultStyle="font-size: 15px; text-align: justify"
                                                                 onLoad={() => {
-                                                                    editorRef.current[0].classList.add('sun-editor-wrap')
+                                                                    editorRef.current[i].classList.add('sun-editor-wrap')
                                                                 }}
                                                                 setOptions={{
                                                                     toolbarContainer: '#toolbar_container',
@@ -265,7 +241,7 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                     <div className='h-100 w-100 d-flex align-items-center justify-content-between'>
                                                         <div className='h-100 d-flex align-items-center' >
 
-                                                            {(profile === "professor" && participant) ?
+                                                            {isTeacher() && props.match.params.idUser ?
                                                                 <span>Submissões do aluno: {question.submissionsCount}</span>
                                                                 :
                                                                 <span>Suas submissões: {question.submissionsCount}</span>
@@ -273,8 +249,8 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                         </div>
 
                                                         <div className='h-100 d-flex align-items-center' >
-                                                            {(profile === "aluno") ? (
-                                                                <Link to={`/aluno/turma/${props.match.params.id}/lista/${list.id}/exercicio/${question.id}`}>
+                                                            {isStudent() ? (
+                                                                <Link to={`/aluno/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}`}>
                                                                     <button
                                                                         className="btn btn-success mr-2"
                                                                         style={{ float: "right" }}
@@ -284,8 +260,8 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                                 </Link>
                                                             )
                                                                 :
-                                                                (profile === "professor" && participant) ? (
-                                                                    <Link to={`/professor/turma/${props.match.params.id}/participantes/${props.match.params.idUser}/listas/${list && list.id}/exercicio/${question.id}`}>
+                                                                (isTeacher() && props.match.params.idUser) ? (
+                                                                    <Link to={`/professor/turma/${props.match.params.idClass}/participantes/${props.match.params.idUser}/listas/${list && list.id}/exercicio/${question.id}`}>
                                                                         <button
                                                                             className="btn btn-success mr-2"
                                                                             style={{ float: "right" }}
@@ -296,9 +272,9 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                                     </Link>
                                                                 )
                                                                     :
-                                                                    (profile === "professor") ? (
+                                                                    isTeacher() ? (
                                                                         <>
-                                                                            <Link to={`/professor/turma/${props.match.params.id}/lista/${list.id}/exercicio/${question.id}`}>
+                                                                            <Link to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}`}>
                                                                                 <button
                                                                                     className="btn btn-success mr-2"
                                                                                     style={{ float: "right" }}
@@ -311,10 +287,10 @@ const ClassListSubscreen = ({ participant, ...props }) => {
                                                                                 <BsThreeDotsVertical size={25} />
                                                                             </span>
                                                                             <div className="dropdown-menu dropdown-menu-demo">
-                                                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/lista/${list.id}/exercicio/${question.id}/submissoes`}>
+                                                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}/submissoes`}>
                                                                                     Ver última submissão dos alunos
                                                                                 </Link>
-                                                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/lista/${list.id}/exercicio/${question.id}/submissoes/plagio`}>
+                                                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}/submissoes/plagio`}>
                                                                                     Verificar Plágios
                                                                                 </Link>
                                                                             </div>
