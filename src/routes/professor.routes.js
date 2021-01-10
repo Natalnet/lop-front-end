@@ -138,7 +138,7 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/lista/:idLista/exercicio/:idExercicio",
+    path: "/professor/turma/:idClass/lista/:idList/exercicio/:idQuestion",
     component: TurmaExercicio,
     private: true,
     perfil: "PROFESSOR",
@@ -250,7 +250,7 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/prova/:idTest/questao/:idExercicio",
+    path: "/professor/turma/:idClass/prova/:idTest/questao/:idQuestion",
     component: RealizarQuestao,
     private: true,
     perfil: "PROFESSOR",

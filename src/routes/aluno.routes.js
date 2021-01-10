@@ -51,7 +51,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/turma/:id/lista/:idLista/exercicio/:idExercicio",
+    path: "/aluno/turma/:idClass/lista/:idList/exercicio/:idQuestion",
     component: TurmaExercicio,
     private: true,
     perfil: "ALUNO"
@@ -94,7 +94,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/turma/:id/prova/:idTest/questao/:idExercicio",
+    path: "/aluno/turma/:idClass/prova/:idTest/questao/:idQuestion",
     component: RealizarQuestao,
     private: true,
     perfil: "ALUNO"

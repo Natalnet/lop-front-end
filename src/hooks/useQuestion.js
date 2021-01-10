@@ -6,7 +6,8 @@ import { CgUserList } from 'react-icons/cg';
 
 const UseQuestion = () => {
     const [paginedQuestions, setPaginedQuestions] = useState(null);
-    //const [questions, setQuestions] = useState([]);
+    const [question, setQuestion] = useState(null);
+    const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
     const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
     const [errorQuestion, setErrorQuestion] = useState(null);
 
@@ -24,6 +25,29 @@ const UseQuestion = () => {
             setErrorQuestion(err);
         }
         setIsLoadingQuestions(false);
+    }, []);
+
+    const getQuestion = useCallback(async (idQuestion, {idClass, idList, idTest }) => {
+        setIsLoadingQuestion(true);
+        setErrorQuestion(null);
+        try {
+            const response = await api.get(`/question/${idQuestion}`, {
+                params: {
+                    idClass,
+                    idList,
+                    idTest,
+                    difficulty: 'yes',
+                    draft: 'yes',
+                    exclude: 'id code status createdAt updatedAt author_id solution'
+                }
+            });
+            setQuestion(response.data);
+            //console.log('question: ',response.data)
+        }
+        catch (err) {
+            setErrorQuestion(err);
+        }
+        setIsLoadingQuestion(false);
     }, []);
 
     const getIconTypeQuestion = useCallback(type => {
@@ -59,7 +83,16 @@ const UseQuestion = () => {
 
     }, []);
 
-    return { paginedQuestions, isLoadingQuestions, errorQuestion, getPaginedQuestions, getIconTypeQuestion };
+    return { 
+        paginedQuestions, 
+        isLoadingQuestions, 
+        errorQuestion,
+        question,
+        isLoadingQuestion,
+        getQuestion,
+        getPaginedQuestions, 
+        getIconTypeQuestion 
+    };
 }
 
 
