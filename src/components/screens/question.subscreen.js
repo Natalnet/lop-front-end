@@ -39,7 +39,7 @@ const QuestionSubcscreen = props => {
     const { saveAccess } = useAccess();
     const { getClass, isLoadingClass, classRoon } = useClass();
     const { getIconTypeQuestion, getQuestion, isLoadingQuestion, question } = useQuestion();
-    const { saveSubmissionByObjectiveQuestion, isSavingSubmission } = useSubmission();
+    const { saveSubmissionByObjectiveQuestion, saveSubmissionByDiscursiveQuestion, isSavingSubmission } = useSubmission();
     const { saveDifficulty, isSavingDifficulty } = useDifficulty();
     const { getList, list, isLoadingList } = useList();
     const { getTest, test, isLoadingTest } = useTest();
@@ -64,14 +64,11 @@ const QuestionSubcscreen = props => {
     const simpleWorkspace = useRef(null);
     const editorEnunciateRef = useRef(null);
     const editorRef = useRef([]);
-
-
+    
     const latestSolution = useRef(solution);
     const latestChar_change_number = useRef(char_change_number);
     const latestLanguage = useRef(language);
     const typeQuestion = useRef('');
-
-    const [alternativeCode, setAlternativeCode] = useState('');
 
     const isTeacher = useCallback(() => {
         return profile === 'professor'
@@ -282,8 +279,35 @@ const QuestionSubcscreen = props => {
     }, [idQuestion, idClass, idList, idTest, statusTest, startTime, oldTimeConsuming, saveSubmissionByObjectiveQuestion, getQuestion]);
 
     const handleSubmitDiscursiveQuestion = useCallback(async () => {
-
-    }, []);
+        if (statusTest === "FECHADA") {
+            Swal.fire({
+                type: "error",
+                title: "O professor recolheu a prova! :'(",
+            });
+            return null;
+        }
+        saveDraft(false);
+        const timeConsuming = (new Date() - startTime) + oldTimeConsuming;
+        const ip = await findLocalIp(false);
+        const isSaved = await saveSubmissionByDiscursiveQuestion({
+            answer: latestSolution.current,
+            timeConsuming,
+            ip: ip[0],
+            char_change_number,
+            environment: "desktop",
+            idQuestion,
+            idList,
+            idTest,
+            idClass
+        });
+        if (isSaved) {
+            getQuestion(idQuestion, {
+                idClass,
+                idList,
+                idTest,
+            })
+        }
+    }, [idQuestion, idClass, idList, idTest, statusTest, startTime, char_change_number, oldTimeConsuming, saveSubmissionByDiscursiveQuestion, getQuestion]);
 
 
     const handleDifficulty = useCallback(async (e) => {
@@ -762,7 +786,7 @@ const QuestionSubcscreen = props => {
                                                         </div>
                                                     </Col>
 
-                                                    <Col className='col-11 mt-2' key={alternative.description}>
+                                                    <Col className='col-11 mt-2'>
                                                         <div className='w-100 d-flex'>
                                                             <span className='mr-4 '>
                                                                 {`${String.fromCharCode(65 + i)})`}
@@ -806,7 +830,7 @@ const QuestionSubcscreen = props => {
                                         {
                                             question.lastSubmission.hitPercentage === 100 ?
                                                 <div className="alert alert-success d-flex align-items-center" role="alert">
-                                                    <i className="fa fa-smile-o mr-2"/> <p className='m-0'>Opção correta</p>
+                                                    <i className="fa fa-smile-o mr-2" /> <p className='m-0'>Opção correta</p>
                                                 </div>
                                                 :
                                                 <div className="alert alert-danger  d-flex align-items-center" role="alert">
@@ -861,25 +885,63 @@ const QuestionSubcscreen = props => {
                                     <Col className='col-12'>
                                         <label>Sua resposta: </label>
                                         <textarea
-                                            onChange={(e) => null}
+                                            onChange={(e) => {
+                                                setSolution(e.target.value);
+                                                setCharChangeNumber(oldCharChangeNumber => oldCharChangeNumber + 1);
+                                            }}
+                                            readOnly={!!question.lastSubmission}
                                             className='form-control'
                                             placeholder="Sua resposta..."
-                                            value={''}
+                                            value={solution}
                                         />
                                     </Col>
-
                                 </Row>
                             </CardBody>
                         </Card>
+                        {
+                            question.lastSubmission && (
+                                <Row>
+                                    <Col className='col-12'>
+                                        {
+                                            question.lastSubmission.hitPercentage === null ?
+                                                <div className="alert alert-info d-flex align-items-center" role="alert">
+                                                    <p className='m-0'>Aguarde a avaliação do professor!</p>
+                                                </div>
+                                                :
+                                                <div className="alert alert-info  d-flex align-items-center" role="alert">
+                                                    <p className='m-0'>Nota do professor: <b>{question.lastSubmission.hitPercentage}%</b></p>
+                                                </div>
+                                        }
+                                    </Col>
+                                </Row>
+                            )
+                        }
                         <Row>
-                            <Col className='col-12 col-md-3'>
-                                <label htmlFor="selectDifficul">&nbsp;</label>
-                                <button
-                                    className={`w-100 btn btn-primary ${loadingReponse && 'btn-loading'}`}
-                                    onClick={handleSubmitDiscursiveQuestion}>
-                                    <i className="fa fa-play" /> <i className="fa fa-gears mr-2" />Submeter
-                                </button>
-                            </Col>
+                            {
+                                !question.lastSubmission && (
+                                    <>
+                                        <Col className='col-12 col-md-3'>
+                                            <label htmlFor="selectDifficul">&nbsp;</label>
+                                            <button
+                                                className={`w-100 btn btn-primary ${loadingReponse && 'btn-loading'}`}
+                                                onClick={handleSubmitDiscursiveQuestion}>
+                                                <i className="fa fa-play" /> <i className="fa fa-gears mr-2" />Submeter
+                                        </button>
+                                        </Col>
+                                        <Col className='col-5 col-md-3'>
+                                            <label htmlFor="rascunho">&nbsp;</label>
+                                            <button
+                                                style={{ width: "100%" }}
+                                                className={`btn btn-azure ${isSavingDraft &&
+                                                    "btn-loading"}`}
+                                                onClick={saveDraft}
+                                            >
+                                                <i className="fa fa-floppy-o" />
+                                                &nbsp;&nbsp; Salvar rascunho
+                                            </button>
+                                        </Col>
+                                    </>
+                                )}
                             <Col className='col-5 col-md-2'>
                                 <label htmlFor="selectDifficulty">Dificuldade: </label>
                                 <select

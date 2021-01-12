@@ -4,6 +4,10 @@ import TemplateSistema from "../../../components/templates/sistema.template";
 import InputGroup from "../../../components/ui/inputGroup/inputGroupo.component";
 import profileImg from "../../../assets/perfil.png";
 import Swal from "sweetalert2";
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Radio from '@material-ui/core/Radio';
 import { Pagination } from "../../../components/ui/navs";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
@@ -19,6 +23,8 @@ import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
 import * as B from "../../../components/ui/blockly";
 import { isXml } from '../../../util/auxiliaryFunctions.util';
+import { FaCheck } from 'react-icons/fa';
+
 const lista = {
   backgroundColor: "white",
 };
@@ -41,7 +47,10 @@ export default class HomesubmissoesScreen extends Component {
       totalPages: 0,
       docsPerPage: 15,
       submissao: "",
-      csvData: []
+      csvData: [],
+      showModalInfo: false,
+      isUpdateSubmission: false,
+      teacherNote: ''
     };
   }
   async componentDidMount() {
@@ -107,6 +116,32 @@ export default class HomesubmissoesScreen extends Component {
       });
     } catch (err) {
       this.setState({ loadingSubmissoes: false });
+      console.log(err);
+    }
+  }
+
+  async updateSubmissionByDiscursiveQuestion(submission) {
+    console.log('this.teacherNote: ', this.state.teacherNote)
+    const request = {
+      idClass: submission.class_id,
+      idList: submission.listQuestions_id,
+      idQuestion: submission.question_id,
+      idUser: submission.user_id,
+      hitPercentage: this.state.teacherNote
+    }
+    this.setState({ isUpdateSubmission: true })
+    try {
+      await api.put('/submission/discursiveQuestion', request)
+      this.setState({
+        isUpdateSubmission: false,
+        teacherNote: ''
+      })
+      this.handleCloseshowModalInfo()
+      this.getSubmissoes();
+
+    }
+    catch (err) {
+      this.setState({ isUpdateSubmission: false })
       console.log(err);
     }
   }
@@ -190,6 +225,7 @@ export default class HomesubmissoesScreen extends Component {
     //console.log(question);
     this.setState({
       submissao: submissao,
+      teacherNote: submissao.hitPercentage ? submissao.hitPercentage : '',
       showModalInfo: true,
     });
   }
@@ -246,7 +282,9 @@ export default class HomesubmissoesScreen extends Component {
       loadingInfoTurma,
       turma,
       showModalCSV,
-      csvData
+      csvData,
+      teacherNote,
+      isUpdateSubmission
     } = this.state;
     return (
       <TemplateSistema
@@ -283,10 +321,10 @@ export default class HomesubmissoesScreen extends Component {
           <Col xs={12} mb={3}>
             <InputGroup
               placeholder={`Perquise pelo ${fieldFilter === "name"
-                  ? "nome do aluno"
-                  : fieldFilter === "title"
-                    ? "nome da questão"
-                    : "..."
+                ? "nome do aluno"
+                : fieldFilter === "title"
+                  ? "nome da questão"
+                  : "..."
                 }`}
               value={contentInputSeach}
               handleContentInputSeach={this.handleContentInputSeach.bind(this)}
@@ -312,7 +350,7 @@ export default class HomesubmissoesScreen extends Component {
                   <th>Percentual de acerto</th>
                   <th>Tempo gasto</th>
                   <th>ip</th>
-                  <th>Ambiente</th>
+                  {/* <th>Ambiente</th> */}
                   <th>Submetido em</th>
                   <th></th>
                 </tr>
@@ -335,9 +373,9 @@ export default class HomesubmissoesScreen extends Component {
                     <td>
                       <div className="loader" />
                     </td>
-                    <td>
+                    {/* <td>
                       <div className="loader" />
-                    </td>
+                    </td> */}
                     <td>
                       <div className="loader" />
                     </td>
@@ -361,19 +399,19 @@ export default class HomesubmissoesScreen extends Component {
                         <td
                           style={{
                             color: `${parseFloat(submission.hitPercentage) === 100
-                                ? "#5eba00"
-                                : "#f00"
+                              ? "#5eba00"
+                              : "#f00"
                               }`,
                           }}
                         >
-                          <b>{parseFloat(submission.hitPercentage)}%</b>
+                          <b>{submission.hitPercentage === null ? 'Não atribuida' : `${parseFloat(submission.hitPercentage)}%`}</b>
                         </td>
                         <td>
                           {parseInt(submission.timeConsuming / 1000 / 60)}min
                         {parseInt((submission.timeConsuming / 1000) % 60)}seg
                       </td>
                         <td>{submission.ip}</td>
-                        <td>{submission.environment}</td>
+                        {/* <td>{submission.environment}</td> */}
                         <td>{moment(submission.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                         <td>
                           <button
@@ -402,100 +440,212 @@ export default class HomesubmissoesScreen extends Component {
             />
           </Col>
         </Row>
-
-        <SwalModal
-          show={showModalInfo}
-          handleModal={this.handleCloseshowModalInfo.bind(this)}
-          width={"80%"}
+        <Dialog
+          open={showModalInfo}
+          maxWidth={'lg'}
+          onClose={() => this.handleCloseshowModalInfo()}
+          aria-labelledby="contained-modal-title-vcenter"
         >
-          <>
+          <DialogTitle id="contained-modal-title-vcenter">
             <Row mb={15}>
               <Col xs={12}>
-                <SunEditor
-                  lang="pt_br"
-                  height="auto"
-                  disable={true}
-                  showToolbar={false}
-                  // onChange={this.handleDescriptionChange.bind(this)}
-                  setContents={submissao && submissao.question.description}
-                  setDefaultStyle="font-size: 15px; text-align: justify"
-                  setOptions={{
-                    toolbarContainer: '#toolbar_container',
-                    resizingBar: false,
-                    katex: katex,
+                <div
+                  className='h-100'
+                  style={{
+                    width: '1000px',
+                    maxWidth: '100%'
                   }}
-                />
+                >
+                  <SunEditor
+                    lang="pt_br"
+                    height="auto"
+                    minWidth="1200px"
+                    disable={true}
+                    showToolbar={false}
+                    // onChange={this.handleDescriptionChange.bind(this)}
+                    setContents={submissao && submissao.question.description}
+                    setDefaultStyle="font-size: 15px; text-align: justify"
+                    setOptions={{
+                      toolbarContainer: '#toolbar_container',
+                      resizingBar: false,
+                      katex: katex,
+                    }}
+                  />
+                </div>
               </Col>
             </Row>
-            <Row>
-              <div className="col-12 offset-md-2 col-md-8 text-center">
-                {
-                  submissao && submissao.language === 'blockly' ?
-                    <B.BlocklyComponent
-                      ref={this.simpleWorkspace}
-                      readOnly={true}
-                      trashcan={true}
-                      media={'media/'}
-                      move={{
-                        scrollbars: true,
-                        drag: true,
-                        wheel: true
-                      }}
-                      initialXml={isXml(submissao && submissao.answer) ? submissao && submissao.answer : ''}>
-                      <B.Category name="Texto" colour="20">
-                        <B.Block type="text" />
-                        <B.Block type="text_print" />
-                        <B.Block type="text_prompt" />
-                      </B.Category>
-                      <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
-                      <B.Category name="Lógica" colour="210">
-                        <B.Block type="controls_if" />
-                        <B.Block type="controls_ifelse" />
-                        <B.Block type="logic_compare" />
-                        <B.Block type="logic_operation" />
-                        <B.Block type="logic_boolean" />
-                        <B.Block type="logic_null" />
-                        <B.Block type="logic_ternary" />
-                      </B.Category>
-                      <B.Category name="Laços" colour="120">
-                        <B.Block type="controls_for" />
-                        <B.Block type="controls_whileUntil" />
-                        <B.Block type="controls_repeat_ext">
-                          <B.Value name="TIMES">
-                            <B.Shadow type="math_number">
-                              <B.Field name="NUM">10</B.Field>
-                            </B.Shadow>
-                          </B.Value>
-                        </B.Block>
-                      </B.Category>
-                      <B.Category name="Matemática" colour="230">
-                        <B.Block type="math_number" />
-                        <B.Block type="math_arithmetic" />
-                        <B.Block type="math_single" />
-                        <B.Block type="math_round" />
-                      </B.Category>
-                      <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
-                    </B.BlocklyComponent>
-                    :
-                    <AceEditorWrapper
-                      mode={submissao && submissao.language}
-                      theme="monokai"
-                      focus={false}
-                      value={submissao ? submissao.answer : ""}
-                      fontSize={14}
-                      width="100%"
-                      showPrintMargin={false}
-                      name="ACE_EDITOR"
-                      showGutter={true}
-                      highlightActiveLine={true}
-                      readOnly={true}
-                    />
-                }
-              </div>
-            </Row>
-          </>
-        </SwalModal>
+          </DialogTitle>
+          <DialogContent>
+            {submissao && submissao.question.type === 'PROGRAMAÇÃO' &&
+              <Row>
+                <div className="col-12 offset-md-2 col-md-8 text-center">
+                  {
+                    submissao && submissao.language === 'blockly' ?
+                      <B.BlocklyComponent
+                        ref={this.simpleWorkspace}
+                        readOnly={true}
+                        trashcan={true}
+                        media={'media/'}
+                        move={{
+                          scrollbars: true,
+                          drag: true,
+                          wheel: true
+                        }}
+                        initialXml={isXml(submissao && submissao.answer) ? submissao && submissao.answer : ''}>
+                        <B.Category name="Texto" colour="20">
+                          <B.Block type="text" />
+                          <B.Block type="text_print" />
+                          <B.Block type="text_prompt" />
+                        </B.Category>
+                        <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
+                        <B.Category name="Lógica" colour="210">
+                          <B.Block type="controls_if" />
+                          <B.Block type="controls_ifelse" />
+                          <B.Block type="logic_compare" />
+                          <B.Block type="logic_operation" />
+                          <B.Block type="logic_boolean" />
+                          <B.Block type="logic_null" />
+                          <B.Block type="logic_ternary" />
+                        </B.Category>
+                        <B.Category name="Laços" colour="120">
+                          <B.Block type="controls_for" />
+                          <B.Block type="controls_whileUntil" />
+                          <B.Block type="controls_repeat_ext">
+                            <B.Value name="TIMES">
+                              <B.Shadow type="math_number">
+                                <B.Field name="NUM">10</B.Field>
+                              </B.Shadow>
+                            </B.Value>
+                          </B.Block>
+                        </B.Category>
+                        <B.Category name="Matemática" colour="230">
+                          <B.Block type="math_number" />
+                          <B.Block type="math_arithmetic" />
+                          <B.Block type="math_single" />
+                          <B.Block type="math_round" />
+                        </B.Category>
+                        <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
+                      </B.BlocklyComponent>
+                      :
+                      <AceEditorWrapper
+                        mode={submissao && submissao.language}
+                        theme="monokai"
+                        focus={false}
+                        value={submissao ? submissao.answer : ""}
+                        fontSize={14}
+                        width="100%"
+                        showPrintMargin={false}
+                        name="ACE_EDITOR"
+                        showGutter={true}
+                        highlightActiveLine={true}
+                        readOnly={true}
+                      />
+                  }
+                </div>
+              </Row>
+            }
+            {submissao && submissao.question.type === 'DISCURSIVA' && (
+              <Row>
+                <Col xs={12}>
+                  <textarea
+                    className='form-control'
+                    readOnly
+                    value={submissao ? submissao.answer : ""}
+                  />
+                </Col>
+                <div className='mb-4'>&nbsp;</div>
+                <Col xs={12}>
+                  <label htmlFor="selectDifficulty">
+                    Nota do professor: (0 a 100)
+                          </label>
+                  <input
+                    style={{ textAlign: "center" }}
+                    className='form-control'
+                    onChange={(e) => this.setState({ teacherNote: e.target.value })}
+                    type='number'
+                    min='0'
+                    max='100'
+                    disabled={isUpdateSubmission}
+                    value={teacherNote}
+                  ></input>
+                </Col>
+                <div className='mb-2'>&nbsp;</div>
 
+                <Col xs={12}>
+
+                  <button
+                    className={`w-100 btn btn-primary ${isUpdateSubmission && 'btn-loading'}`}
+                    onClick={() => this.updateSubmissionByDiscursiveQuestion(submissao)}
+                    disabled={teacherNote === '' || Number(teacherNote) < 0 || Number(teacherNote) > 100}
+                  >
+                    Atribuir
+                  </button>
+                </Col>
+              </Row>
+            )}
+
+            {submissao && submissao.question.type === 'OBJETIVA' && (
+              <Row>
+                <>
+                  {
+                    submissao && submissao.question.alternatives.map((alternative, i) => (
+                      <React.Fragment key={alternative.code}>
+                        <div className="col-1">
+                          <div
+                            className='w-100 d-flex justify-content-center'
+                          >
+                            <span class='mr-2 d-flex align-items-center'>
+                              <FaCheck
+                                size={15}
+                                color={`rgb(94, 186, 0, ${alternative.isCorrect ? '100' : '0'})`}
+                              />
+                            </span>
+                            <Radio
+                              value={alternative.code}
+                              checked={alternative.code === submissao.answer}
+                              inputProps={{ 'aria-label': i }}
+                              disabled
+                              color="primary"
+                            />
+                          </div>
+                        </div>
+
+                        <div className='col-11 mt-2'>
+                          <div className='w-100 d-flex'>
+                            <span className='mr-4 '>
+                              {`${String.fromCharCode(65 + i)})`}
+                            </span>
+                            <div 
+                            className='w-100 ' 
+                            // ref={(el) => editorRef.current[i] = el}
+                            >
+                              <SunEditor
+                                lang="pt_br"
+                                height="auto"
+                                disable={true}
+                                showToolbar={false}
+                                setContents={alternative.description}
+                                setDefaultStyle="font-size: 15px; text-align: justify"
+                                // onLoad={() => {
+                                //   editorRef.current[i].classList.add('sun-editor-wrap')
+                                // }}
+                                setOptions={{
+                                  toolbarContainer: '#toolbar_container',
+                                  resizingBar: false,
+                                  katex: katex,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </React.Fragment>
+                    ))
+                  }
+                </>
+              </Row>
+            )}
+          </DialogContent>
+        </Dialog>
         <SwalModal
           show={showModalCSV}
           handleModal={() => this.setState({ showModalCSV: false })}

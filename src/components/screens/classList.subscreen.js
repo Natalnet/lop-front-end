@@ -169,143 +169,147 @@ const ClassListSubscreen = props => {
                         <CardBody>
                             <Row>
                                 {list.questions.map((question, i) => (
-                                        <Col className='col-12 col-md-6' key={i}>
-                                            <Card>
-                                                <CardHead>
-                                                    <CardTitle>
-                                                        <p
-                                                            className='d-flex m-0'
-                                                            style={{
-                                                                whiteSpace: 'nowrap',
-                                                                overflow: 'hidden',
-                                                                textOverflow: 'ellipsis',
-                                                            }}
-                                                        >
-                                                            {question.isCorrect && (
-                                                                <span>
-                                                                    <FaCheck size={15} color='#5eba00' className='mr-2' />
-                                                                </span>
-                                                            )}
-                                                            {
-                                                                getIconTypeQuestion(question.type)
-                                                            }
+                                    <Col className='col-12 col-md-6' key={i}>
+                                        <Card>
+                                            <CardHead>
+                                                <CardTitle>
+                                                    <p
+                                                        className='d-flex m-0'
+                                                        style={{
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                        }}
+                                                    >
+                                                        {question.isCorrect && (
+                                                            <span>
+                                                                <FaCheck size={15} color='#5eba00' className='mr-2' />
+                                                            </span>
+                                                        )}
+                                                        {
+                                                            getIconTypeQuestion(question.type)
+                                                        }
 
-                                                            {question.title}
-                                                        </p>
-                                                    </CardTitle>
-                                                    <CardOptions>
-                                                        <i
-                                                            title="Ver descrição"
-                                                            style={{
-                                                                color: "blue",
-                                                                cursor: "pointer",
-                                                                fontSize: "25px"
+                                                        {question.title}
+                                                    </p>
+                                                </CardTitle>
+                                                <CardOptions>
+                                                    <i
+                                                        title="Ver descrição"
+                                                        style={{
+                                                            color: "blue",
+                                                            cursor: "pointer",
+                                                            fontSize: "25px"
+                                                        }}
+                                                        className={`fe fe-chevron-down`}
+                                                        data-toggle="collapse"
+                                                        data-target={
+                                                            "#collapse2" + i + (list && list.id)
+                                                        }
+                                                        aria-expanded={false}
+                                                    />
+                                                </CardOptions>
+                                            </CardHead>
+                                            <div
+                                                className="collapse"
+                                                id={"collapse2" + i + (list && list.id)}
+                                            >
+                                                <CardBody>
+                                                    <div className='w-100' ref={(el) => editorRef.current[i] = el}>
+                                                        <SunEditor
+                                                            lang="pt_br"
+                                                            height="auto"
+                                                            disable={true}
+                                                            showToolbar={false}
+                                                            // onChange={handleDescriptionChange.bind(this)}
+                                                            setContents={question.description}
+                                                            setDefaultStyle="font-size: 15px; text-align: justify"
+                                                            onLoad={() => {
+                                                                editorRef.current[i].classList.add('sun-editor-wrap')
                                                             }}
-                                                            className={`fe fe-chevron-down`}
-                                                            data-toggle="collapse"
-                                                            data-target={
-                                                                "#collapse2" + i + (list && list.id)
-                                                            }
-                                                            aria-expanded={false}
+                                                            setOptions={{
+                                                                toolbarContainer: '#toolbar_container',
+                                                                resizingBar: false,
+                                                                katex: katex,
+                                                            }}
                                                         />
-                                                    </CardOptions>
-                                                </CardHead>
-                                                <div
-                                                    className="collapse"
-                                                    id={"collapse2" + i + (list && list.id)}
-                                                >
-                                                    <CardBody>
-                                                        <div className='w-100' ref={(el) => editorRef.current[i] = el}>
-                                                            <SunEditor
-                                                                lang="pt_br"
-                                                                height="auto"
-                                                                disable={true}
-                                                                showToolbar={false}
-                                                                // onChange={handleDescriptionChange.bind(this)}
-                                                                setContents={question.description}
-                                                                setDefaultStyle="font-size: 15px; text-align: justify"
-                                                                onLoad={() => {
-                                                                    editorRef.current[i].classList.add('sun-editor-wrap')
-                                                                }}
-                                                                setOptions={{
-                                                                    toolbarContainer: '#toolbar_container',
-                                                                    resizingBar: false,
-                                                                    katex: katex,
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </CardBody>
+                                                    </div>
+                                                </CardBody>
 
-                                                </div>
-                                                <CardFooter>
-                                                    <div className='h-100 w-100 d-flex align-items-center justify-content-between'>
-                                                        <div className='h-100 d-flex align-items-center' >
+                                            </div>
+                                            <CardFooter>
+                                                <div className='h-100 w-100 d-flex align-items-center justify-content-between'>
+                                                    <div className='h-100 d-flex align-items-center' >
 
-                                                            {isTeacher() && props.match.params.idUser ?
-                                                                <span>Submissões do aluno: {question.submissionsCount}</span>
-                                                                :
-                                                                <span>Suas submissões: {question.submissionsCount}</span>
-                                                            }
-                                                        </div>
+                                                        {isTeacher() && props.match.params.idUser ?
+                                                            <span>Submissões do aluno: {question.submissionsCount}</span>
+                                                            :
+                                                            <span>Suas submissões: {question.submissionsCount}</span>
+                                                        }
+                                                    </div>
 
-                                                        <div className='h-100 d-flex align-items-center' >
-                                                            {isStudent() ? (
-                                                                <Link to={`/aluno/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}`}>
+                                                    <div className='h-100 d-flex align-items-center' >
+                                                        {isStudent() ? (
+                                                            <Link to={`/aluno/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}`}>
+                                                                <button
+                                                                    className="btn btn-success mr-2"
+                                                                    style={{ float: "right" }}
+                                                                >
+                                                                    Acessar <i className="fa fa-wpexplorer" />
+                                                                </button>
+                                                            </Link>
+                                                        )
+                                                            :
+                                                            (isTeacher() && props.match.params.idUser) ? (
+                                                                <Link to={`/professor/turma/${props.match.params.idClass}/participantes/${props.match.params.idUser}/listas/${list && list.id}/exercicio/${question.id}`}>
                                                                     <button
                                                                         className="btn btn-success mr-2"
                                                                         style={{ float: "right" }}
                                                                     >
-                                                                        Acessar <i className="fa fa-wpexplorer" />
+                                                                        Ver submissões{" "}
+                                                                        <i className="fa fa-wpexplorer" />
                                                                     </button>
                                                                 </Link>
                                                             )
                                                                 :
-                                                                (isTeacher() && props.match.params.idUser) ? (
-                                                                    <Link to={`/professor/turma/${props.match.params.idClass}/participantes/${props.match.params.idUser}/listas/${list && list.id}/exercicio/${question.id}`}>
-                                                                        <button
-                                                                            className="btn btn-success mr-2"
-                                                                            style={{ float: "right" }}
-                                                                        >
-                                                                            Ver submissões{" "}
-                                                                            <i className="fa fa-wpexplorer" />
-                                                                        </button>
-                                                                    </Link>
+                                                                isTeacher() ? (
+                                                                    <>
+                                                                        <Link to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}`}>
+                                                                            <button
+                                                                                className="btn btn-success mr-2"
+                                                                                style={{ float: "right" }}
+                                                                            >
+                                                                                Acessar <i className="fa fa-wpexplorer" />
+                                                                            </button>
+                                                                        </Link>
+                                                                        {question.type === 'PROGRAMAÇÃO' &&
+                                                                            <>
+                                                                                <span style={{ cursor: 'pointer' }} className="card-dropdown h-100" data-toggle="dropdown" aria-expanded="false">
+                                                                                    <BsThreeDotsVertical size={25} />
+                                                                                </span>
+
+                                                                                <div className="dropdown-menu dropdown-menu-demo">
+                                                                                    <Link className="dropdown-item" to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}/submissoes`}>
+                                                                                        Ver última submissão dos alunos
+                                                                                    </Link>
+                                                                                    <Link className="dropdown-item" to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}/submissoes/plagio`}>
+                                                                                        Verificar Plágios
+                                                                                    </Link>
+                                                                                </div>
+                                                                            </>
+                                                                        }
+                                                                    </>
+
                                                                 )
                                                                     :
-                                                                    isTeacher() ? (
-                                                                        <>
-                                                                            <Link to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}`}>
-                                                                                <button
-                                                                                    className="btn btn-success mr-2"
-                                                                                    style={{ float: "right" }}
-                                                                                >
-                                                                                    Acessar <i className="fa fa-wpexplorer" />
-                                                                                </button>
-                                                                            </Link>
-
-                                                                            <span style={{ cursor: 'pointer' }} className="card-dropdown h-100" data-toggle="dropdown" aria-expanded="false">
-                                                                                <BsThreeDotsVertical size={25} />
-                                                                            </span>
-                                                                            <div className="dropdown-menu dropdown-menu-demo">
-                                                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}/submissoes`}>
-                                                                                    Ver última submissão dos alunos
-                                                                                </Link>
-                                                                                <Link className="dropdown-item" to={`/professor/turma/${props.match.params.idClass}/lista/${list.id}/exercicio/${question.id}/submissoes/plagio`}>
-                                                                                    Verificar Plágios
-                                                                                </Link>
-                                                                            </div>
-                                                                        </>
-
-                                                                    )
-                                                                        :
-                                                                        null
-                                                            }
-                                                        </div>
+                                                                    null
+                                                        }
                                                     </div>
-                                                </CardFooter>
-                                            </Card>
-                                        </Col>
-                                    ))}
+                                                </div>
+                                            </CardFooter>
+                                        </Card>
+                                    </Col>
+                                ))}
                             </Row>
                         </CardBody>
                     </Card>

@@ -53,7 +53,43 @@ const useSubmission = () => {
             setIsSavingSubmission(false);
             return false;
         }
-    })
+    });
+
+    const saveSubmissionByDiscursiveQuestion = useCallback(async ({
+        answer,
+        timeConsuming,
+        ip,
+        char_change_number,
+        environment,
+        idQuestion,
+        idList,
+        idTest,
+        idClass
+    }) => {
+        setIsSavingSubmission(true);
+        setErrorSubmission(null);
+        const request = {
+            answer,
+            timeConsuming,
+            ip,
+            char_change_number,
+            environment,
+            idQuestion,
+            idList,
+            idTest,
+            idClass
+        }
+        try {
+            await api.post(`/submission/discursiveQuestion`, request);
+            setIsSavingSubmission(false);
+            return true;
+        }
+        catch (err) {
+            setErrorSubmission(err);
+            setIsSavingSubmission(false);
+            return false;
+        }
+    });
 
     return {
         Submissions,
@@ -61,6 +97,7 @@ const useSubmission = () => {
         isErrorSubmission,
         isSavingSubmission,
         saveSubmissionByObjectiveQuestion,
+        saveSubmissionByDiscursiveQuestion,
         getSubmissions
     }
 }
