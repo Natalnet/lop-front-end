@@ -8,8 +8,8 @@ import Exercicio from "../screens/sistema/professor/exercicio.screen";
 import AtualizarexercicioScreen from "../screens/sistema/professor/exercicios.editar.screen";
 import CreateListScreen from "../screens/sistema/professor/createList.screen";
 import UpdateListScreen from "../screens/sistema/professor/updateList.screen";
-import EditTestScreen from "../screens/sistema/professor/editTest.screen";
-import CriarProvaScreen from "../screens/sistema/professor/criarProva.screen";
+import UpdateTest from "../screens/sistema/professor/updateTest.screen";
+import CreateTest from "../screens/sistema/professor/createTest.screen";
 import CriarExercicioScreen from "../screens/sistema/professor/criarExercicios.screen";
 import Erro401 from "../screens/erros/error401.screen";
 import TelaTurmaParticipantes from "../screens/sistema/professor/telaTurmaParticipantes.screen";
@@ -103,14 +103,14 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/provas/:id/editar",
-    component: EditTestScreen,
+    path: "/professor/provas/:idTest/editar",
+    component: UpdateTest,
     private: true,
     perfil: "PROFESSOR",
   },
   {
     path: "/professor/criarProva",
-    component: CriarProvaScreen,
+    component: CreateTest,
     private: true,
     perfil: "PROFESSOR",
   },
@@ -256,7 +256,7 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/prova/:idTest",
+    path: "/professor/turma/:idClass/prova/:idTest",
     component: QuestoesProva,
     private: true,
     perfil: "PROFESSOR",

@@ -24,11 +24,13 @@ const useLesson = () => {
         setIsLoadingLesson(false);
     }, [])
 
-    const createLesson = useCallback(async ({ title, description, course_id }) => {
+    const createLesson = useCallback(async ({ title, description, course_id, selectedQuestions }) => {
         const request = {
             title,
             description,
-            course_id
+            course_id,
+            questions: selectedQuestions.map((q) => q.id),
+
         }
         Swal.fire({
             title: "criando aula",
@@ -70,10 +72,11 @@ const useLesson = () => {
         setIsLoadingLessons(false);
     }, []);
 
-    const updateLesson = useCallback(async (id, { title, description }) => {
+    const updateLesson = useCallback(async (id, { title, description, selectedQuestions }) => {
         const request = {
             title,
-            description
+            description,
+            questions: selectedQuestions.map((q) => q.id),
         }
         Swal.fire({
             title: "Editando curso",

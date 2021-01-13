@@ -13,9 +13,12 @@ import CardFooter from "../ui/card/cardFooter.component";
 import Row from "../ui/grid/row.component";
 import Col from "../ui/grid/col.component";
 import ProgressBar from "../ui/ProgressBar/progressBar.component";
-import useQuestion from '../../hooks/useQuestion';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FaCheck } from 'react-icons/fa';
+// import useClass from '../../hooks/useClass';
+// import useTest from '../../hooks/useTest';
+import useQuestion from '../../hooks/useQuestion';
+// import useUser from '../../hooks/useUser';
 
 export default props => {
     const { prova, participant, user } = props;

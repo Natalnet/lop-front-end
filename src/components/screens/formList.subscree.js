@@ -29,15 +29,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Card, CardBody } from '../ui/card';
 import { FaCheck } from 'react-icons/fa';
-const FormListSubscreen = props => {
 
+const FormListSubscreen = props => {
     const arrDifficulty = useMemo(() =>
         [null, "Muito fácil", "Fácil", "Médio", "Difícil", "Muito Difícil"]
         , []);
 
-    const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
-    const { createList, updateList } = useList();
     const { tags, isLoadingTags, getTags } = useTag();
+    const { createList, updateList } = useList();
+    const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
     const {
         isLoadingObjectiveQuestions,
         isLoadingInfoObjectiveQuestion,
@@ -88,7 +88,7 @@ const FormListSubscreen = props => {
         setTotalDocs: setTotalDocsDiscursiveQuestion
     } = usePagination(1, 15);
 
-    const [tabIndex, setTabIndex] = useState(1);
+    const [tabIndex, setTabIndex] = useState(0);
 
     const [title, setTitle] = useState('');
     const [selectedQuestions, setSelectedQuestions] = useState([]);
@@ -159,7 +159,7 @@ const FormListSubscreen = props => {
         e.preventDefault();
         setPage(numPage);
         getPaginedQuestions(numPage, getQuerys());
-    }, [getQuerys]);
+    }, [setPage, getPaginedQuestions, getQuerys]);
 
     const handlePageObjectiveQuestions = useCallback((e, numPage) => {
         e.preventDefault();
@@ -167,12 +167,11 @@ const FormListSubscreen = props => {
         getPaginedObjectiveQuestions(numPage, '');
     }, [getPaginedObjectiveQuestions, setPageObjectiveQuestion]);
 
-
     const handlePageDiscursiveQuestions = useCallback((e, numPage) => {
         e.preventDefault();
-        setPageObjectiveQuestion(numPage);
+        setPageDiscursiveQuestion(numPage);
         getPaginedDiscursiveQuestions(numPage, '');
-    }, [getPaginedDiscursiveQuestions, setPageDiscursiveQuestion]);
+    }, [setPageDiscursiveQuestion, getPaginedDiscursiveQuestions]);
 
     const handleShowObjectiveQuestionModal = useCallback((question => {
         getInfoObjectiveQuestion(question.id);
@@ -234,7 +233,7 @@ const FormListSubscreen = props => {
         if (isCreated) {
             history.push("/professor/listas");
         }
-    }, [title, selectedQuestions]);
+    }, [title, selectedQuestions, history, createList]);
 
     const handleUpdateList = useCallback(async (e) => {
         e.preventDefault();
@@ -243,11 +242,11 @@ const FormListSubscreen = props => {
         if (isUpdated) {
             history.push("/professor/listas");
         }
-    }, [title, selectedQuestions]);
+    }, [props, title, selectedQuestions, history, updateList]);
 
     const saveQuerys = useCallback(() => {
 
-    }, [titleOrCodeInput, sortBySelect, sortRadio, tagSelect, docsPerPage]);
+    }, [/*titleOrCodeInput, sortBySelect, sortRadio, tagSelect, docsPerPage*/]);
 
     const addQuestion = useCallback(selectedQuestion => {
         setSelectedQuestions(oldSelectedQuestions => [...oldSelectedQuestions, selectedQuestion])
@@ -257,7 +256,7 @@ const FormListSubscreen = props => {
         setSelectedQuestions(oldSelectedQuestions => oldSelectedQuestions.filter(q =>
             q.id !== removedQuestion.id
         ))
-    }, [selectedQuestions])
+    }, [])
 
     const handleShowModalInfo = useCallback(question => {
         setModalQuestion(question);
@@ -272,7 +271,7 @@ const FormListSubscreen = props => {
 
     const handlleFilter = useCallback(() => {
         getPaginedQuestions(page, getQuerys());
-    }, [page, saveQuerys, getQuerys]);
+    }, [page, getQuerys, getPaginedQuestions]);
 
     const handleTabeIndex = useCallback((e, newValue) => {
         setTabIndex(newValue);
@@ -289,7 +288,7 @@ const FormListSubscreen = props => {
             default:
                 break;
         }
-    }, [page, pageObjectiveQuestion, getPaginedQuestions, getPaginedObjectiveQuestions, getPaginedDiscursiveQuestions, getQuerys]);
+    }, [page, pageObjectiveQuestion, pageDiscursiveQuestion, getPaginedQuestions, getPaginedObjectiveQuestions, getPaginedDiscursiveQuestions, getQuerys]);
 
     if (isLoadingTags || isLoadingQuestionsByList) {
         return <Load />
@@ -369,6 +368,11 @@ const FormListSubscreen = props => {
                                 />
                             </Tabs>
                         </Paper>
+                        <Row className='mb-4'>
+                            <Col className="col-12">
+                                <h4>Exercícios da aula: </h4>
+                            </Col>
+                        </Row>
                         <TabPanel
                             className='mt-4'
                             value={tabIndex}
@@ -544,7 +548,6 @@ const FormListSubscreen = props => {
                                 </Col>
                             </Row>
                         </TabPanel>
-
                         <TabPanel
                             className='mt-4'
                             value={tabIndex}
@@ -606,11 +609,23 @@ const FormListSubscreen = props => {
                                     </table>
                                 </Col>
                             </Row>
+                            <Row>
+                                <Col className='col-12 text-center'>
+                                    <Pagination
+                                        count={totalPagesDiscursiveQuestion}
+                                        page={Number(pageDiscursiveQuestion)}
+                                        onChange={handlePageDiscursiveQuestions}
+                                        color="primary"
+                                        size="large"
+                                        disabled={isLoadingDiscursiveQuestions}
+                                    />
+                                </Col>
+                            </Row>
                         </TabPanel>
                         <hr />
                         <Row>
                             <div className="col-12 text-center">
-                                <label>Selecionadas</label>
+                                <label>Exercícios selecionados</label>
                                 <table className="table table-hover">
                                     <thead>
                                         <tr>
@@ -666,7 +681,6 @@ const FormListSubscreen = props => {
                     </form>
 
                 </CardBody>
-
             </Card>
             <Dialog
                 open={showModalInfo}
@@ -829,8 +843,6 @@ const FormListSubscreen = props => {
                     </>
                 }
             </Dialog>
-
-
             <Dialog
                 open={openDiscursiveQuestionModal}
                 maxWidth={'md'}

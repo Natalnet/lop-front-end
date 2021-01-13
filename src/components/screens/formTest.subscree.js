@@ -1,46 +1,43 @@
-import React, { useCallback, useState, useEffect, useMemo, useRef } from 'react';
-import api from "../../services/api";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
-import { Col, Row } from '../ui/grid';
-import { Load } from '../ui/load'
 import 'katex/dist/katex.min.css'
 import { Link, useHistory, useLocation } from "react-router-dom";
 import moment from "moment";
+import api from "../../services/api";
+import { Load } from '../ui/load';
 import Tabs from '@material-ui/core/Tabs';
 import { Tab } from '../ui/tabs/Tab';
 import TabPanel from '../ui/tabs/TabPanel';
 import Paper from '@material-ui/core/Paper';
-import Swal from "sweetalert2";
+import useQuestion from '../../hooks/useQuestion';
+import usePagination from '../../hooks/usePagination';
+import useTest from '../../hooks/useTest';
+import useTag from '../../hooks/useTag';
+import useObjectveQuestion from '../../hooks/useObjectveQuestion';
+import useDiscursiveQuestion from '../../hooks/useDiscursiveQuestion';
 import { Pagination } from "../ui/navs";
+import FormFilterQuestion from '../ui/forms/formFilterQuestions';
+import "katex/dist/katex.min.css";
+import { BlockMath } from "react-katex";
+import TableIO from "../ui/tables/tableIO.component";
+import { Row, Col } from '../ui/grid';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { BlockMath } from "react-katex";
-import TableIO from "../ui/tables/tableIO.component";
-import FormFilterQuestion from '../ui/forms/formFilterQuestions';
-import useQuestion from '../../hooks/useQuestion';
-import usePagination from '../../hooks/usePagination';
-import useCourse from '../../hooks/useCourse'
-import useLesson from '../../hooks/useLesson'
-import useTag from '../../hooks/useTag';
-import useObjectveQuestion from '../../hooks/useObjectveQuestion';
-import useDiscursiveQuestion from '../../hooks/useDiscursiveQuestion';
+import { Card, CardBody } from '../ui/card';
 import { FaCheck } from 'react-icons/fa';
-
-
-const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
+const FormTestSubscreen = props => {
 
     const arrDifficulty = useMemo(() =>
         [null, "Muito fácil", "Fácil", "Médio", "Difícil", "Muito Difícil"]
         , []);
 
-    const { course, isLoadingCourse, getCourse } = useCourse();
-    const { lesson, isLoadingLesson, createLesson, updateLesson, getLesson } = useLesson();
-    const { tags, isLoadingTags, getTags } = useTag();
     const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
+    const { createTest, updateTest } = useTest();
+    const { tags, isLoadingTags, getTags } = useTag();
     const {
         isLoadingObjectiveQuestions,
         isLoadingInfoObjectiveQuestion,
@@ -60,7 +57,6 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
         getPaginedDiscursiveQuestions,
         setInfoDiscursiveQuestion
     } = useDiscursiveQuestion();
-
 
     const {
         page,
@@ -92,14 +88,14 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
         setTotalDocs: setTotalDocsDiscursiveQuestion
     } = usePagination(1, 15);
 
-    const [tabIndex, setTabIndex] = useState(1);
+    const [tabIndex, setTabIndex] = useState(0);
 
-    const [titleLesson, setTitleLesson] = useState('')
-    const [descriptionLesson, setDescriptionLesson] = useState('')
+    const [title, setTitle] = useState('');
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [showModalInfo, setShowModalInfo] = useState(false);
     const [modalQuestion, setModalQuestion] = useState(null);
-    const [isLoadingQuestionsByList, setIsLoadingQuestionsByLesson] = useState(false)
+    const [isLoadingQuestionsByTest, setIsLoadingQuestionsByTest] = useState(false)
+
     const [titleOrCodeInput, setTitleOrCodeInput] = useState('');
     const [sortBySelect, setSortBySelect] = useState('createdAt');
     const [sortRadio, setSortRadio] = useState('DESC');
@@ -110,6 +106,7 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
     const [openDiscursiveQuestionModal, setOpenDiscursiveQuestionModal] = useState(false);
 
     const tagsSelect = useMemo(() => [{ id: '', name: 'Todas' }, ...tags], [tags])
+
     const history = useHistory();
     const location = useLocation();
     const editorRef = useRef([]);
@@ -127,11 +124,6 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
     }, [titleOrCodeInput, sortBySelect, sortRadio, tagSelect, docsPerPage]);
 
     useEffect(() => {
-        const { IdCourse, idLesson } = props.match.params;
-        getCourse(IdCourse)
-        if (isEditLesson) {
-            getLesson(idLesson)
-        }
         getTags();
         switch (tabIndex) {
             case 0:
@@ -147,60 +139,27 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
             default:
                 break;
         }
+        const { idTest } = props.match.params;
         const { search } = location;
-        if (idLesson) {
-            document.title = 'Editar aula';
-            getQuestionsByLeson(idLesson);
+        if (idTest) {
+            document.title = 'Editar prova - professor';
+            getQuestionsByTest(idTest);
         }
-        else if (search.includes('?idLesson=')) {
-            document.title = 'Clonar aula';
-            const id = search.replace('?idLesson=', '')
-            getQuestionsByLeson(id);
-
+        else if (search.includes('?idTest=')) {
+            document.title = 'Clonar prova - professor';
+            const id = search.replace('?idTest=', '')
+            getQuestionsByTest(id);
         }
         else {
-            document.title = 'Criar aula';
+            document.title = 'Criar prova - professor';
         }
-    }, [])
-
-    useEffect(() => {
-        if (lesson) {
-            setTitleLesson(lesson.title);
-            setDescriptionLesson(lesson.description);
-        }
-    }, [lesson])
-
-    const handleCreateLesson = useCallback(async () => {
-        const { IdCourse } = props.match.params;
-        const isCreated = await createLesson({
-            title: titleLesson,
-            description: descriptionLesson,
-            course_id: IdCourse,
-            selectedQuestions
-        })
-        if (isCreated) {
-            history.push(`/professor/curso/${IdCourse}/aulas`)
-        }
-    }, [props, history, titleLesson, descriptionLesson, selectedQuestions, createLesson])
-
-    const handleEditLesson = useCallback(async () => {
-        const { IdCourse, idLesson } = props.match.params;
-        const isEdited = await updateLesson(idLesson, {
-            title: titleLesson,
-            description: descriptionLesson,
-            selectedQuestions
-        })
-        if (isEdited) {
-            history.push(`/professor/curso/${IdCourse}/aulas`)
-        }
-    }, [props, history, titleLesson, descriptionLesson, selectedQuestions, updateLesson])
-
+    }, []);
 
     const handlePage = useCallback((e, numPage) => {
         e.preventDefault();
         setPage(numPage);
         getPaginedQuestions(numPage, getQuerys());
-    }, [setPage, getQuerys, getPaginedQuestions]);
+    }, [setPage, getPaginedQuestions, getQuerys]);
 
     const handlePageObjectiveQuestions = useCallback((e, numPage) => {
         e.preventDefault();
@@ -256,20 +215,39 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
         }
     }, [paginedDiscursiveQuestions, setPageDiscursiveQuestion, setTotalDocsDiscursiveQuestion, setDocsPerPageDiscursiveQuestion, setTotalPageDiscursiveQuestion]);
 
-
-    const getQuestionsByLeson = useCallback(async (id) => {
-        let query = `idLesson=${id}`;
-        setIsLoadingQuestionsByLesson(true);
+    const getQuestionsByTest = useCallback(async (id) => {
+        let query = `idTest=${id}`;
+        setIsLoadingQuestionsByTest(true);
         try {
             const response = await api.get(`/question?${query}`);
-            //setTitle(response.data.lesson.title);
+            setTitle(response.data.test.title);
             setSelectedQuestions(response.data.questions)
         } catch (err) {
             console.log(err);
         }
-        setIsLoadingQuestionsByLesson(false);
+        setIsLoadingQuestionsByTest(false);
     }, [])
 
+    const handleCreateTest = useCallback(async e => {
+        e.preventDefault();
+        const isCreated = await createTest({ title, selectedQuestions })
+        if (isCreated) {
+            history.push("/professor/provas");
+        }
+    }, [title, selectedQuestions, history, createTest]);
+
+    const handleUpdateTest = useCallback(async (e) => {
+        e.preventDefault();
+        const { idTest } = props.match.params;
+        const isUpdated = await updateTest(idTest, { title, selectedQuestions });
+        if (isUpdated) {
+            history.push("/professor/provas");
+        }
+    }, [props, title, selectedQuestions, history, updateTest]);
+
+    const saveQuerys = useCallback(() => {
+
+    }, [/*titleOrCodeInput, sortBySelect, sortRadio, tagSelect, docsPerPage*/]);
 
     const addQuestion = useCallback(selectedQuestion => {
         setSelectedQuestions(oldSelectedQuestions => [...oldSelectedQuestions, selectedQuestion])
@@ -294,7 +272,7 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
 
     const handlleFilter = useCallback(() => {
         getPaginedQuestions(page, getQuerys());
-    }, [page, getQuerys, getPaginedQuestions]);
+    }, [page, saveQuerys, getQuerys, getPaginedQuestions]);
 
     const handleTabeIndex = useCallback((e, newValue) => {
         setTabIndex(newValue);
@@ -311,157 +289,341 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
             default:
                 break;
         }
-    }, [page, pageObjectiveQuestion, pageDiscursiveQuestion, getPaginedQuestions, getPaginedObjectiveQuestions, getPaginedDiscursiveQuestions, getQuerys]);
+    }, [page, pageObjectiveQuestion, pageDiscursiveQuestion,  getPaginedQuestions, getPaginedObjectiveQuestions, getPaginedDiscursiveQuestions, getQuerys]);
 
-    const handleImageUploadBefore = useCallback(() => {
-        Swal.fire({
-            type: "error",
-            title: "Não é permitido o upload de imagens, carregue-as a partir de um link 😃",
-        });
-        return false;
-    }, [])
-
-    const handleVideoUploadBefore = useCallback(() => {
-        Swal.fire({
-            type: "error",
-            title: "Não é permitido o upload de vídeos, carregue-os a partir de um link 😃",
-        });
-        return false;
-    }, [])
-
-    if (isLoadingCourse || !course || isLoadingLesson) {
+    if (isLoadingTags || isLoadingQuestionsByTest) {
         return <Load />
     }
-
-    if (isLoadingTags || isLoadingQuestionsByList) {
-        return <Load />
-    }
-
     return (
         <>
             <Row className='mb-4'>
                 <Col className='col-12'>
-                    <h5 className='m-0'>
-                        <Link to="/professor/cursos">Cursos</Link>
+                    <h5 style={{ margin: "0px" }}>
+                        <Link to="/professor/provas">Provas</Link>
                         <i className="fa fa-angle-left ml-2 mr-2" />
-                        <Link to={`/professor/curso/${props.match.params.IdCourse}/aulas`}>{course.title}</Link>
-                        <i className="fa fa-angle-left ml-2 mr-2" />
-                            Criar Aula
-                        </h5>
+                        {
+                            props.match.params.idTest && title ?
+                                <>
+                                    {title}
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                    Editar prova
+                                </>
+                                :
+                                'Criar prova'
+                        }
+
+                    </h5>
                 </Col>
             </Row>
-            <Row className='mb-4'>
-                <Col className='col-12'>
-                    <span className="alert-danger">{''}</span>
-                </Col>
-            </Row>
-            <Row className='mb-4'>
-                <Col className="col-12">
-                    <label>Título da aula: </label>
-                    <input
-                        type="text"
-                        onChange={e => setTitleLesson(e.target.value)}
-                        className={`form-control`}
-                        placeholder="Título da aula"
-                        value={titleLesson}
-                        required
-                    />
-                </Col>
-            </Row>
-            <Row className='mb-4'>
-                <Col className="col-12">
-                    <label>Conteúdo: </label>
-                    <SunEditor
-                        lang="pt_br"
-                        height='auto'
-                        minHeight="800px"
-                        onChange={content => setDescriptionLesson(content)}
-                        setContents={descriptionLesson}
-                        onImageUploadBefore={handleImageUploadBefore}
-                        onVideoUploadBefore={handleVideoUploadBefore}
-                        setDefaultStyle="font-size: 15px; text-align: justify"
-                        setOptions={{
-                            toolbarContainer: '#toolbar_container',
-                            // resizingBar : false,
-                            //charCounter : true,
-                            //maxCharCount : 720,
-                            katex: katex,
-                            buttonList: [
-                                ['undo', 'redo', 'font', 'fontSize', 'formatBlock'],
-                                ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript', 'removeFormat', 'textStyle', 'paragraphStyle'],
-                                ['fontColor', 'hiliteColor', 'outdent', 'indent', 'align', 'horizontalRule', 'list', 'table', 'codeView', 'math'],
-                                ['link', 'image', 'video', 'audio', 'fullScreen', 'showBlocks', 'codeView', 'preview', 'print', 'save']
-                            ],
+
+
+            <Card>
+                <CardBody>
+                    <form
+                        onSubmit={(e) => {
+                            props.match.params.idTest ?
+                                handleUpdateTest(e)
+                                :
+                                handleCreateTest(e)
                         }}
-                    />
-                </Col>
-            </Row>
-            <Row className='mb-4'>
-                <Col className="col-12">
-                    <h4>Selecione os exercícios da aula: </h4>
-                </Col>
-            </Row>
-            <Row>
-                <Col className='col-12'>
-                    <Paper>
-                        <Tabs
-                            value={tabIndex}
-                            onChange={handleTabeIndex}
-                            indicatorColor="primary"
-                            textColor="primary"
-                            centered
-                        >
-                            <Tab
-                                label='Programação'
-                                // icon={<BiCodeAlt />}
-                                id='scrollable-force-tab-0'
-                                aria-controls='scrollable-force-tabpanel-0'
-                            />
-                            <Tab
-                                label='Objetivas'
-                                // icon={<BiCodeAlt />}
-                                id='scrollable-force-tab-1'
-                                aria-controls='scrollable-force-tabpanel-1'
-                            />
-                            <Tab
-                                label='Discursivas'
-                                // icon={<BiCodeAlt />}
-                                id='scrollable-force-tab-2'
-                                aria-controls='scrollable-force-tabpanel-2'
-                            />
-                        </Tabs>
-                    </Paper>
-
-                    <TabPanel
-                        className='mt-4'
-                        value={tabIndex}
-                        index={0}
-                    >
-
-                        <FormFilterQuestion
-                            titleOrCodeInput={titleOrCodeInput}
-                            ascRadio={ascRadio}
-                            descRadio={descRadio}
-                            docsPerPage={docsPerPage}
-                            tagSelect={tagSelect}
-                            tagsSelect={tagsSelect}
-                            sortBySelect={sortBySelect}
-                            loading={isLoadingQuestions || isLoadingTags}
-                            handlleFilter={handlleFilter}
-                            handleSortBySelect={(e) => setSortBySelect(e.target.value)}
-                            handleTitleOrCodeInput={(e) => setTitleOrCodeInput(e.target.value)}
-                            handleDocsPerPage={(e) => setDocsPerPage(e.target.value)}
-                            handleTagSelect={(e) => setTagSelect(e.target.value)}
-                            handleSortRadio={handleSortRadio}
-                        />
-
+                        onKeyDown={e => { if (e.key === 'Enter') e.preventDefault(); }}>
                         <Row className='mb-4'>
                             <Col className="col-12">
-                                <Load className={`${!(isLoadingQuestions) ? 'd-none' : ''}`} />
+                                <label htmlFor="inputTitulo">Título da prova</label>
+                                <input
+                                    id="inputTitulo"
+                                    type="text"
+                                    required
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    className="form-control"
+                                    placeholder="Título da prova"
+                                />
+                            </Col>
+                        </Row>
+                        <Paper>
+                            <Tabs
+                                value={tabIndex}
+                                onChange={handleTabeIndex}
+                                indicatorColor="primary"
+                                textColor="primary"
+                                centered
+                            >
+                                <Tab
+                                    label='Programação'
+                                    // icon={<BiCodeAlt />}
+                                    id='scrollable-force-tab-0'
+                                    aria-controls='scrollable-force-tabpanel-0'
+                                />
+                                <Tab
+                                    label='Objetivas'
+                                    // icon={<BiCodeAlt />}
+                                    id='scrollable-force-tab-1'
+                                    aria-controls='scrollable-force-tabpanel-1'
+                                />
+                                <Tab
+                                    label='Discursivas'
+                                    // icon={<BiCodeAlt />}
+                                    id='scrollable-force-tab-2'
+                                    aria-controls='scrollable-force-tabpanel-2'
+                                />
+                            </Tabs>
+                        </Paper>
+                        <TabPanel
+                            className='mt-4'
+                            value={tabIndex}
+                            index={0}
+                        >
 
-                                <table
-                                    className={`table table-hover table-responsive mb-0 ${isLoadingQuestions ? 'd-none' : ''}`}
-                                >
+                            <FormFilterQuestion
+                                titleOrCodeInput={titleOrCodeInput}
+                                ascRadio={ascRadio}
+                                descRadio={descRadio}
+                                docsPerPage={docsPerPage}
+                                tagSelect={tagSelect}
+                                tagsSelect={tagsSelect}
+                                sortBySelect={sortBySelect}
+                                loading={isLoadingQuestions || isLoadingTags}
+                                handlleFilter={handlleFilter}
+                                handleSortBySelect={(e) => setSortBySelect(e.target.value)}
+                                handleTitleOrCodeInput={(e) => setTitleOrCodeInput(e.target.value)}
+                                handleDocsPerPage={(e) => setDocsPerPage(e.target.value)}
+                                handleTagSelect={(e) => setTagSelect(e.target.value)}
+                                handleSortRadio={handleSortRadio}
+                            />
+
+                            <Row className='mb-4'>
+                                <Col className="col-12">
+                                    <Load className={`${!(isLoadingQuestions) ? 'd-none' : ''}`} />
+
+                                    <table
+                                        className={`table table-hover table-responsive mb-0 ${isLoadingQuestions ? 'd-none' : ''}`}
+                                    >
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Código</th>
+                                                <th>Submissões gerais (corretas/total)</th>
+                                                <th>Autor(a)</th>
+                                                <th>Criado em</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {!paginedQuestions ? [] : paginedQuestions.docs.map((question) => {
+                                                return (
+                                                    <tr key={question.id}>
+                                                        <td>{question.title}</td>
+                                                        <td>{question.code}</td>
+                                                        <td>{`(${question.submissionsCorrectsCount}/${question.submissionsCount})`}</td>
+                                                        <td>{question.author.email}</td>
+                                                        <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                                                        <td className="d-inline-flex">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-primary mr-2"
+                                                                onClick={() =>
+                                                                    handleShowModalInfo(question)
+                                                                }
+                                                            >
+                                                                <i className="fa fa-info" />
+                                                            </button>
+                                                            {selectedQuestions
+                                                                .map((s) => s.id)
+                                                                .includes(question.id) ? (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="float-right btn btn-indigo disabled"
+                                                                    >
+                                                                        Selecionada
+                                                                    </button>
+                                                                ) : (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="float-right btn btn-primary"
+                                                                        onClick={(e) => addQuestion(question)}
+                                                                    >
+                                                                        Adicionar <i className="fe fe-file-plus" />
+                                                                    </button>
+                                                                )
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
+                                            }
+                                        </tbody>
+                                    </table>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className='col-12 text-center'>
+                                    <Pagination
+                                        count={totalPages}
+                                        page={Number(page)}
+                                        onChange={handlePage}
+                                        color="primary"
+                                        size="large"
+                                        disabled={isLoadingQuestions || isLoadingTags}
+                                    />
+                                </Col>
+                            </Row>
+                        </TabPanel>
+                        <TabPanel
+                            className='mt-4'
+                            value={tabIndex}
+                            index={1}
+                        >
+                            <Row className='mb-4'>
+                                <Col className='col-12'>
+                                    <Load className={`${!(isLoadingObjectiveQuestions) ? 'd-none' : ''}`} />
+                                    <table className={`table table-hover ${isLoadingObjectiveQuestions ? 'd-none' : ''}`}>
+                                        <thead>
+                                            <tr>
+                                                <th>Título</th>
+                                                <th>Código</th>
+                                                <th>Dificuldade</th>
+                                                <th>Autor(a)</th>
+                                                <th>Criado em</th>
+                                                <th></th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {!paginedObjectiveQuestions ? [] : paginedObjectiveQuestions.docs.map((question) => (
+                                                <tr key={question.id}>
+                                                    <td>{question.title}</td>
+                                                    <td>{question.code}</td>
+                                                    <td>{arrDifficulty[parseInt(question.difficulty)]}</td>
+                                                    <td>{question.author.email}</td>
+                                                    <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-primary mr-2"
+                                                            title="Ver informações"
+                                                            onClick={() => handleShowObjectiveQuestionModal(question)}>
+                                                            <i className="fa fa-info" />
+                                                        </button>
+                                                        {selectedQuestions
+                                                            .map((s) => s.id)
+                                                            .includes(question.id) ? (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-indigo disabled"
+                                                                >
+                                                                    Selecionada
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-primary"
+                                                                    onClick={(e) => addQuestion(question)}
+                                                                >
+                                                                    Adicionar <i className="fe fe-file-plus" />
+                                                                </button>
+                                                            )
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className='col-12 text-center'>
+                                    <Pagination
+                                        count={totalPagesObjectiveQuestion}
+                                        page={Number(pageObjectiveQuestion)}
+                                        onChange={handlePageObjectiveQuestions}
+                                        color="primary"
+                                        size="large"
+                                        disabled={isLoadingObjectiveQuestions}
+                                    />
+                                </Col>
+                            </Row>
+                        </TabPanel>
+
+                        <TabPanel
+                            className='mt-4'
+                            value={tabIndex}
+                            index={2}
+                        >
+                            <Row className='mb-4'>
+                                <Col className='col-12'>
+                                    <Load className={`${!(isLoadingDiscursiveQuestions) ? 'd-none' : ''}`} />
+                                    <table className={`table table-hover ${isLoadingDiscursiveQuestions ? 'd-none' : ''}`}>
+                                        <thead>
+                                            <tr>
+                                                <th>Título</th>
+                                                <th>Código</th>
+                                                <th>Dificuldade</th>
+                                                <th>Autor(a)</th>
+                                                <th>Criado em</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {!paginedDiscursiveQuestions ? [] : paginedDiscursiveQuestions.docs.map((question) => (
+                                                <tr key={question.id}>
+                                                    <td>{question.title}</td>
+                                                    <td>{question.code}</td>
+                                                    <td>{arrDifficulty[parseInt(question.difficulty)]}</td>
+                                                    <td>{question.author.email}</td>
+                                                    <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-primary mr-2"
+                                                            title="Ver informações"
+                                                            onClick={() => handleShowDiscursiveQuestionModal(question)}>
+                                                            <i className="fa fa-info" />
+                                                        </button>
+                                                        {selectedQuestions
+                                                            .map((s) => s.id)
+                                                            .includes(question.id) ? (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-indigo disabled"
+                                                                >
+                                                                    Selecionada
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-primary"
+                                                                    onClick={(e) => addQuestion(question)}
+                                                                >
+                                                                    Adicionar <i className="fe fe-file-plus" />
+                                                                </button>
+                                                            )
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className='col-12 text-center'>
+                                    <Pagination
+                                        count={totalPagesDiscursiveQuestion}
+                                        page={Number(pageDiscursiveQuestion)}
+                                        onChange={handlePageDiscursiveQuestions}
+                                        color="primary"
+                                        size="large"
+                                        disabled={isLoadingDiscursiveQuestions}
+                                    />
+                                </Col>
+                            </Row>
+                        </TabPanel>
+                        <hr />
+                        <Row>
+                            <div className="col-12 text-center">
+                                <label>Exercícios selecionados</label>
+                                <table className="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
@@ -473,274 +635,51 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {!paginedQuestions ? [] : paginedQuestions.docs.map((question) => {
-                                            return (
-                                                <tr key={question.id}>
-                                                    <td>{question.title}</td>
-                                                    <td>{question.code}</td>
-                                                    <td>{`(${question.submissionsCorrectsCount}/${question.submissionsCount})`}</td>
-                                                    <td>{question.author.email}</td>
-                                                    <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                                                    <td className="d-inline-flex">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-primary mr-2"
-                                                            onClick={() =>
-                                                                handleShowModalInfo(question)
-                                                            }
-                                                        >
-                                                            <i className="fa fa-info" />
-                                                        </button>
-                                                        {selectedQuestions
-                                                            .map((s) => s.id)
-                                                            .includes(question.id) ? (
-                                                                <button
-                                                                    type="button"
-                                                                    className="float-right btn btn-indigo disabled"
-                                                                >
-                                                                    Selecionada
-                                                                </button>
-                                                            ) : (
-                                                                <button
-                                                                    type="button"
-                                                                    className="float-right btn btn-primary"
-                                                                    onClick={(e) => addQuestion(question)}
-                                                                >
-                                                                    Adicionar <i className="fe fe-file-plus" />
-                                                                </button>
-                                                            )
-                                                        }
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                        }
-                                    </tbody>
-                                </table>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className='col-12 text-center'>
-                                <Pagination
-                                    count={totalPages}
-                                    page={Number(page)}
-                                    onChange={handlePage}
-                                    color="primary"
-                                    size="large"
-                                    disabled={isLoadingQuestions || isLoadingTags}
-                                />
-                            </Col>
-                        </Row>
-                    </TabPanel>
-                    <TabPanel
-                        className='mt-4'
-                        value={tabIndex}
-                        index={1}
-                    >
-                        <Row className='mb-4'>
-                            <Col className='col-12'>
-                                <Load className={`${!(isLoadingObjectiveQuestions) ? 'd-none' : ''}`} />
-                                <table className={`table table-hover ${isLoadingObjectiveQuestions ? 'd-none' : ''}`}>
-                                    <thead>
-                                        <tr>
-                                            <th>Título</th>
-                                            <th>Código</th>
-                                            <th>Dificuldade</th>
-                                            <th>Autor(a)</th>
-                                            <th>Criado em</th>
-                                            <th></th>
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {!paginedObjectiveQuestions ? [] : paginedObjectiveQuestions.docs.map((question) => (
-                                            <tr key={question.id}>
+                                        {selectedQuestions.map((question, index) => (
+                                            <tr key={index}>
                                                 <td>{question.title}</td>
                                                 <td>{question.code}</td>
-                                                <td>{arrDifficulty[parseInt(question.difficulty)]}</td>
+                                                <td>{`(${question.submissionsCorrectsCount}/${question.submissionsCount})`}</td>
                                                 <td>{question.author.email}</td>
                                                 <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                                                 <td>
                                                     <button
                                                         type="button"
-                                                        className="btn btn-primary mr-2"
-                                                        title="Ver informações"
-                                                        onClick={() => handleShowObjectiveQuestionModal(question)}>
-                                                        <i className="fa fa-info" />
+                                                        className="btn btn-primary"
+                                                        style={{
+                                                            float: "right",
+                                                            backgroundColor: "red",
+                                                            borderColor: "red",
+                                                            color: "white",
+                                                        }}
+                                                        onClick={() => removeQuestion(question)}
+                                                    >
+                                                        <i className="fe fe-file-minus" />
                                                     </button>
-                                                    {selectedQuestions
-                                                        .map((s) => s.id)
-                                                        .includes(question.id) ? (
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-indigo disabled"
-                                                            >
-                                                                Selecionada
-                                                            </button>
-                                                        ) : (
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-primary"
-                                                                onClick={(e) => addQuestion(question)}
-                                                            >
-                                                                Adicionar <i className="fe fe-file-plus" />
-                                                            </button>
-                                                        )
-                                                    }
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
-                            </Col>
+                            </div>
                         </Row>
                         <Row>
                             <Col className='col-12 text-center'>
-                                <Pagination
-                                    count={totalPagesObjectiveQuestion}
-                                    page={Number(pageObjectiveQuestion)}
-                                    onChange={handlePageObjectiveQuestions}
-                                    color="primary"
-                                    size="large"
-                                    disabled={isLoadingObjectiveQuestions}
-                                />
+                                <button
+                                    type="submit"
+                                    className={`btn btn-primary float-right col-3 ${isLoadingQuestions || isLoadingTags ? "btn-loading" : ""
+                                        }`}
+                                    style={{ width: "100%" }}
+                                >
+                                    Salvar Prova
+                                </button>
                             </Col>
                         </Row>
-                    </TabPanel>
-                    <TabPanel
-                        className='mt-4'
-                        value={tabIndex}
-                        index={2}
-                    >
-                        <Row className='mb-4'>
-                            <Col className='col-12'>
-                                <Load className={`${!(isLoadingDiscursiveQuestions) ? 'd-none' : ''}`} />
-                                <table className={`table table-hover ${isLoadingDiscursiveQuestions ? 'd-none' : ''}`}>
-                                    <thead>
-                                        <tr>
-                                            <th>Título</th>
-                                            <th>Código</th>
-                                            <th>Dificuldade</th>
-                                            <th>Autor(a)</th>
-                                            <th>Criado em</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {!paginedDiscursiveQuestions ? [] : paginedDiscursiveQuestions.docs.map((question) => (
-                                            <tr key={question.id}>
-                                                <td>{question.title}</td>
-                                                <td>{question.code}</td>
-                                                <td>{arrDifficulty[parseInt(question.difficulty)]}</td>
-                                                <td>{question.author.email}</td>
-                                                <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                                                <td>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-primary mr-2"
-                                                        title="Ver informações"
-                                                        onClick={() => handleShowDiscursiveQuestionModal(question)}>
-                                                        <i className="fa fa-info" />
-                                                    </button>
-                                                    {selectedQuestions
-                                                        .map((s) => s.id)
-                                                        .includes(question.id) ? (
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-indigo disabled"
-                                                            >
-                                                                Selecionada
-                                                            </button>
-                                                        ) : (
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-primary"
-                                                                onClick={(e) => addQuestion(question)}
-                                                            >
-                                                                Adicionar <i className="fe fe-file-plus" />
-                                                            </button>
-                                                        )
-                                                    }
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col className='col-12 text-center'>
-                                <Pagination
-                                    count={totalPagesDiscursiveQuestion}
-                                    page={Number(pageDiscursiveQuestion)}
-                                    onChange={handlePageDiscursiveQuestions}
-                                    color="primary"
-                                    size="large"
-                                    disabled={isLoadingDiscursiveQuestions}
-                                />
-                            </Col>
-                        </Row>
-                    </TabPanel>
-                    <hr />
-                    <Row>
-                        <div className="col-12 text-center">
-                            <label>Exercícios selecionados</label>
-                            <table className="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Código</th>
-                                        <th>Submissões gerais (corretas/total)</th>
-                                        <th>Autor(a)</th>
-                                        <th>Criado em</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {selectedQuestions.map((question, index) => (
-                                        <tr key={index}>
-                                            <td>{question.title}</td>
-                                            <td>{question.code}</td>
-                                            <td>{`(${question.submissionsCorrectsCount}/${question.submissionsCount})`}</td>
-                                            <td>{question.author.email}</td>
-                                            <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
-                                            <td>
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-primary"
-                                                    style={{
-                                                        float: "right",
-                                                        backgroundColor: "red",
-                                                        borderColor: "red",
-                                                        color: "white",
-                                                    }}
-                                                    onClick={() => removeQuestion(question)}
-                                                >
-                                                    <i className="fe fe-file-minus" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </Row>
-                </Col>
-            </Row>
+                    </form>
 
-            <Row className='mb-4'>
-                <Col className='col-12'>
-                    <button
-                        type="button"
-                        onClick={isEditLesson ? handleEditLesson : handleCreateLesson}
-                        disabled={!(titleLesson && descriptionLesson)}
-                        className={`btn btn-primary btn-lg btn-block ${'' && "btn-loading"}`}
-                    >
-                        Salvar Aula
-                    </button>
-                </Col>
-            </Row>
+                </CardBody>
 
+            </Card>
             <Dialog
                 open={showModalInfo}
                 maxWidth={'md'}
@@ -769,7 +708,7 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
                                     setContents={modalQuestion.description}
                                     setDefaultStyle="font-size: 15px; text-align: justify"
                                     onLoad={() => {
-                                        editorRef.current[0].classList.add('sun-editor-wrap')
+                                        editorRef.current[0].classTest.add('sun-editor-wrap')
                                     }}
                                     setOptions={{
                                         toolbarContainer: '#toolbar_container',
@@ -840,7 +779,7 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
                                             setContents={infoObjectiveQuestion.description}
                                             setDefaultStyle="font-size: 15px; text-align: justify"
                                             onLoad={() => {
-                                                editorRef.current[0].classList.add('sun-editor-wrap')
+                                                editorRef.current[0].classTest.add('sun-editor-wrap')
                                             }}
                                             setOptions={{
                                                 toolbarContainer: '#toolbar_container',
@@ -873,7 +812,7 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
                                                         setContents={alternative.description}
                                                         setDefaultStyle="font-size: 15px; text-align: justify; border: 0;"
                                                         onLoad={() => {
-                                                            editorRef.current[i + 1].classList.add('sun-editor-wrap')
+                                                            editorRef.current[i + 1].classTest.add('sun-editor-wrap')
                                                         }}
                                                         setOptions={{
                                                             toolbarContainer: '#toolbar_container',
@@ -902,6 +841,8 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
                     </>
                 }
             </Dialog>
+
+
             <Dialog
                 open={openDiscursiveQuestionModal}
                 maxWidth={'md'}
@@ -931,7 +872,7 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
                                             setContents={infoDiscursiveQuestion.description}
                                             setDefaultStyle="font-size: 15px; text-align: justify"
                                             onLoad={() => {
-                                                editorRef.current[0].classList.add('sun-editor-wrap')
+                                                editorRef.current[0].classTest.add('sun-editor-wrap')
                                             }}
                                             setOptions={{
                                                 toolbarContainer: '#toolbar_container',
@@ -959,7 +900,8 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
                 }
             </Dialog>
         </>
-    )
+    );
+    //}
 }
 
-export default FormCourseSubscreen;
+export default FormTestSubscreen;

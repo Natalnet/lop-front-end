@@ -816,8 +816,6 @@ const QuestionSubcscreen = props => {
                                                 </React.Fragment>
                                             ))
                                         }
-
-
                                     </>
                                 </Row>
 
