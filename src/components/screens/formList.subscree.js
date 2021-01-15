@@ -368,11 +368,7 @@ const FormListSubscreen = props => {
                                 />
                             </Tabs>
                         </Paper>
-                        <Row className='mb-4'>
-                            <Col className="col-12">
-                                <h4>Exercícios da aula: </h4>
-                            </Col>
-                        </Row>
+         
                         <TabPanel
                             className='mt-4'
                             value={tabIndex}

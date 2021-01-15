@@ -29,7 +29,8 @@ const useSubmission = () => {
         idQuestion,
         idList,
         idTest,
-        idClass
+        idClass,
+        idLesson,
     }) => {
         setIsSavingSubmission(true);
         setErrorSubmission(null);
@@ -41,7 +42,8 @@ const useSubmission = () => {
             idQuestion,
             idList,
             idTest,
-            idClass
+            idClass,
+            idLesson,
         }
         try {
             await api.post(`/submission/ObjectiveQuestion`, request);
@@ -64,7 +66,8 @@ const useSubmission = () => {
         idQuestion,
         idList,
         idTest,
-        idClass
+        idClass,
+        idLesson,
     }) => {
         setIsSavingSubmission(true);
         setErrorSubmission(null);
@@ -77,7 +80,8 @@ const useSubmission = () => {
             idQuestion,
             idList,
             idTest,
-            idClass
+            idClass,
+            idLesson,
         }
         try {
             await api.post(`/submission/discursiveQuestion`, request);

@@ -38,7 +38,7 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
         , []);
 
     const { course, isLoadingCourse, getCourse } = useCourse();
-    const { lesson, isLoadingLesson, createLesson, updateLesson, getLesson } = useLesson();
+    const { lesson, isLoadingLesson, createLesson, updateLesson, /*getLesson*/ } = useLesson();
     const { tags, isLoadingTags, getTags } = useTag();
     const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
     const {
@@ -129,9 +129,9 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
     useEffect(() => {
         const { IdCourse, idLesson } = props.match.params;
         getCourse(IdCourse)
-        if (isEditLesson) {
-            getLesson(idLesson)
-        }
+        // if (isEditLesson) {
+        //     getLesson(idLesson)
+        // }
         getTags();
         switch (tabIndex) {
             case 0:
@@ -257,13 +257,18 @@ const FormCourseSubscreen = ({ isEditLesson, ...props }) => {
     }, [paginedDiscursiveQuestions, setPageDiscursiveQuestion, setTotalDocsDiscursiveQuestion, setDocsPerPageDiscursiveQuestion, setTotalPageDiscursiveQuestion]);
 
 
-    const getQuestionsByLeson = useCallback(async (id) => {
-        let query = `idLesson=${id}`;
+    const getQuestionsByLeson = useCallback(async (idLesson) => {
         setIsLoadingQuestionsByLesson(true);
         try {
-            const response = await api.get(`/question?${query}`);
-            //setTitle(response.data.lesson.title);
-            setSelectedQuestions(response.data.questions)
+            const response = await api.get('/question',{
+                params: {
+                    idLesson
+                }
+            });
+            //console.log('questions by lesson', response.data)
+            setSelectedQuestions(response.data.questions);
+            setDescriptionLesson(response.data.lesson.description);
+            setTitleLesson(response.data.lesson.title);
         } catch (err) {
             console.log(err);
         }

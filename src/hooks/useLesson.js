@@ -9,10 +9,12 @@ const useLesson = () => {
     const [lessons, setLessons] = useState([]);
     const [lesson, setLesson] = useState([]);
 
-    const getLesson = useCallback(async (id) => {
+    const getLesson = useCallback(async (id, queryParams = {}) => {
         try {
             setIsLoadingLesson(true);
-            const response = await api.get(`/lesson/${id}`)
+            const response = await api.get(`/lesson/${id}`,{
+                params: queryParams
+            })
             setLesson(response.data)
         }
         catch (err) {

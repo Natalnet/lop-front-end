@@ -27,15 +27,17 @@ const UseQuestion = () => {
         setIsLoadingQuestions(false);
     }, []);
 
-    const getQuestion = useCallback(async (idQuestion, {idClass, idList, idTest }) => {
+    const getQuestion = useCallback(async (idQuestion, {idClass, idList, idTest, idLesson }) => {
         setIsLoadingQuestion(true);
         setErrorQuestion(null);
         try {
             const response = await api.get(`/question/${idQuestion}`, {
                 params: {
+
                     idClass,
                     idList,
                     idTest,
+                    idLesson,
                     difficulty: 'yes',
                     draft: 'yes',
                     exclude: 'id code status createdAt updatedAt author_id solution'

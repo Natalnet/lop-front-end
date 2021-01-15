@@ -127,6 +127,7 @@ export default class HomesubmissoesScreen extends Component {
       idList: submission.listQuestions_id,
       idQuestion: submission.question_id,
       idUser: submission.user_id,
+      idLesson: submission.lesson_id,
       hitPercentage: this.state.teacherNote
     }
     this.setState({ isUpdateSubmission: true })
@@ -594,7 +595,7 @@ export default class HomesubmissoesScreen extends Component {
                           <div
                             className='w-100 d-flex justify-content-center'
                           >
-                            <span class='mr-2 d-flex align-items-center'>
+                            <span className='mr-2 d-flex align-items-center'>
                               <FaCheck
                                 size={15}
                                 color={`rgb(94, 186, 0, ${alternative.isCorrect ? '100' : '0'})`}

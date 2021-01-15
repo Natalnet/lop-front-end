@@ -221,7 +221,6 @@ const ClassListSubscreen = props => {
                                                             height="auto"
                                                             disable={true}
                                                             showToolbar={false}
-                                                            // onChange={handleDescriptionChange.bind(this)}
                                                             setContents={question.description}
                                                             setDefaultStyle="font-size: 15px; text-align: justify"
                                                             onLoad={() => {

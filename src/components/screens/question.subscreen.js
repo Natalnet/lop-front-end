@@ -24,6 +24,7 @@ import useClass from '../../hooks/useClass';
 import useDifficulty from '../../hooks/useDifficulty';
 import useList from '../../hooks/useList';
 import useTest from '../../hooks/useTest';
+import useLesson from '../../hooks/useLesson';
 import { IoMdEye } from 'react-icons/io';
 import { FaCheck } from 'react-icons/fa';
 import { Load } from '../ui/load';
@@ -33,6 +34,7 @@ const QuestionSubcscreen = props => {
     const idClass = useMemo(() => props.match.params.idClass, [props]);
     const idList = useMemo(() => props.match.params.idList, [props]);
     const idTest = useMemo(() => props.match.params.idTest, [props]);
+    const idLesson = useMemo(() => props.match.params.idLesson, [props]);
 
     const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
 
@@ -43,6 +45,7 @@ const QuestionSubcscreen = props => {
     const { saveDifficulty, isSavingDifficulty } = useDifficulty();
     const { getList, list, isLoadingList } = useList();
     const { getTest, test, isLoadingTest } = useTest();
+    const { getLesson, lesson, isLoadingLesson } = useLesson();
 
     //questions propertys
     const [solution, setSolution] = useState('');
@@ -89,11 +92,13 @@ const QuestionSubcscreen = props => {
     }, [solution, char_change_number, language, question]);
 
     useEffect(() => {
+        console.log('idClass: ',idClass)
         saveAccess(idQuestion);
         getQuestion(idQuestion, {
             idClass,
             idList,
             idTest,
+            idLesson
         })
         if (idClass) {
             getClass(idClass);
@@ -108,6 +113,12 @@ const QuestionSubcscreen = props => {
                 idClass
             })
         }
+        if (idLesson) {
+            getLesson(idLesson, {
+                idClass
+            })
+        }
+        
         setStartTime(new Date());
         const idInterval = setInterval(() => {
             saveDraft(false);
@@ -155,6 +166,7 @@ const QuestionSubcscreen = props => {
                 idClass,
                 idList,
                 idTest,
+                idLesson
             };
             try {
                 setIsSavingDraft(true)
@@ -176,7 +188,7 @@ const QuestionSubcscreen = props => {
             }
             setIsSavingDraft(false)
         }
-    }, [idQuestion, idClass, idList, idTest]);
+    }, [idQuestion, idClass, idList, idTest, idLesson]);
 
 
     const saveSubmission = useCallback(async (
@@ -200,6 +212,7 @@ const QuestionSubcscreen = props => {
                 idClass,
                 idList,
                 idTest,
+                idLesson,
             };
             await api.post(`/submission/store`, request);
         } catch (err) {
@@ -207,7 +220,7 @@ const QuestionSubcscreen = props => {
             throw err;
         }
         setStartTime(new Date())
-    }, [language, idQuestion, idClass, idList, idTest]);
+    }, [language, idQuestion, idClass, idList, idTest, idLesson]);
 
     const handleSubmitProgrammingQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
@@ -265,18 +278,20 @@ const QuestionSubcscreen = props => {
             ip: ip[0],
             environment: "desktop",
             idQuestion,
+            idClass,
             idList,
             idTest,
-            idClass
+            idLesson,
         });
         if (isSaved) {
             getQuestion(idQuestion, {
                 idClass,
                 idList,
                 idTest,
+                idLesson
             })
         }
-    }, [idQuestion, idClass, idList, idTest, statusTest, startTime, oldTimeConsuming, saveSubmissionByObjectiveQuestion, getQuestion]);
+    }, [idQuestion, idClass, idList, idTest, idLesson,  statusTest, startTime, oldTimeConsuming, saveSubmissionByObjectiveQuestion, getQuestion]);
 
     const handleSubmitDiscursiveQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
@@ -298,16 +313,18 @@ const QuestionSubcscreen = props => {
             idQuestion,
             idList,
             idTest,
-            idClass
+            idClass,
+            idLesson
         });
         if (isSaved) {
             getQuestion(idQuestion, {
                 idClass,
                 idList,
                 idTest,
+                idLesson
             })
         }
-    }, [idQuestion, idClass, idList, idTest, statusTest, startTime, char_change_number, oldTimeConsuming, saveSubmissionByDiscursiveQuestion, getQuestion]);
+    }, [idQuestion, idClass, idList, idTest, idLesson, statusTest, startTime, char_change_number, oldTimeConsuming, saveSubmissionByDiscursiveQuestion, getQuestion]);
 
 
     const handleDifficulty = useCallback(async (e) => {
@@ -330,6 +347,10 @@ const QuestionSubcscreen = props => {
     }
 
     if (idTest && (isLoadingTest || !test)) {
+        return <Load />;
+    }
+
+    if (idLesson && (isLoadingLesson || !lesson)) {
         return <Load />;
     }
 
@@ -374,6 +395,27 @@ const QuestionSubcscreen = props => {
                                         to={`/${profile}/turma/${idClass}/prova/${idTest}`}
                                     >
                                         {test.title}
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                </>
+                            )
+                        }
+                        {
+                            idLesson && (
+                                <>
+                                    <Link to={`/${profile}/turma/curso/${idClass}/cursos`}>
+                                        Cursos
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                    <Link
+                                        to={
+                                            idClass?
+                                            `/${profile}/turma/${idClass}/curso/${lesson.course_id}/aulas/${lesson.id}`
+                                            :
+                                            `/${profile}/curso/${lesson.course_id}/aulas/${lesson.id}`
+                                        }
+                                    >
+                                        {lesson.title}
                                     </Link>
                                     <i className="fa fa-angle-left ml-2 mr-2" />
                                 </>
@@ -758,7 +800,7 @@ const QuestionSubcscreen = props => {
                                                             {
                                                                 question.lastSubmission ?
                                                                     <>
-                                                                        <span class='mr-2 d-flex align-items-center'>
+                                                                        <span className='mr-2 d-flex align-items-center'>
                                                                             <FaCheck
                                                                                 size={15}
                                                                                 color={`rgb(94, 186, 0, ${alternative.isCorrect ? '100' : '0'})`}
