@@ -16,8 +16,10 @@ import Courses from '../screens/sistema/aluno/courses.screen'
 import Lessons from '../screens/sistema/aluno/lessons.screen'
 import Lesson from '../screens/sistema/aluno/lesson.screen'
 import ClassCourses from '../screens/sistema/aluno/classCourses.screen'
-import ClassLessons from '../screens/sistema/professor/classLessons.screen'
+import ClassLessons from '../screens/sistema/aluno/classLessons.screen'
 import ClassLesson from '../screens/sistema/aluno/classLesson.screen'
+import ClassLessonQuestion from '../screens/sistema/aluno/classLessonQuestion.screen'
+import LessonQuestions from '../screens/sistema/aluno/lessonQuestions.screen';
 
 const routes = [
   {
@@ -51,7 +53,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/turma/:id/lista/:idLista/exercicio/:idExercicio",
+    path: "/aluno/turma/:idClass/lista/:idList/exercicio/:idQuestion",
     component: TurmaExercicio,
     private: true,
     perfil: "ALUNO"
@@ -62,7 +64,7 @@ const routes = [
     private: true,
     perfil: "ALUNO"
   },
-
+  
   {
     path: "/aluno/turma/:id/participantes",
     component: TurmaAluno,
@@ -94,7 +96,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/turma/:id/prova/:idTest/questao/:idExercicio",
+    path: "/aluno/turma/:idClass/prova/:idTest/questao/:idQuestion",
     component: RealizarQuestao,
     private: true,
     perfil: "ALUNO"
@@ -134,6 +136,18 @@ const routes = [
     component: ClassLesson,
     private: true,
     perfil: "ALUNO",
+  },
+  {
+    path: "/aluno/turma/:idClass/aula/:idLesson/exercicio/:idQuestion",
+    component: ClassLessonQuestion,
+    private: true,
+    perfil: "ALUNO"
+  },
+  {
+    path: "/aluno/aula/:idLesson/exercicio/:idQuestion",
+    component: LessonQuestions,
+    private: true,
+    perfil: "ALUNO"
   },
 ];
 

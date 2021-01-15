@@ -1,4 +1,5 @@
 import React, { useRef, useState, useMemo, useEffect, useCallback } from 'react';
+import { Link } from "react-router-dom";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
@@ -17,20 +18,43 @@ import { getBlocklyCode, getBlocklyXML, findLocalIp, isXml } from '../../util/au
 import SupportedLanguages from "../../config/SupportedLanguages";
 import socket from "socket.io-client";
 import useAccess from '../../hooks/useAccess';
-import useQuestion from '../../hooks/useQuestion'
+import useQuestion from '../../hooks/useQuestion';
+import useSubmission from '../../hooks/useSubmission';
+import useClass from '../../hooks/useClass';
+import useDifficulty from '../../hooks/useDifficulty';
+import useList from '../../hooks/useList';
+import useTest from '../../hooks/useTest';
+import useLesson from '../../hooks/useLesson';
 import { IoMdEye } from 'react-icons/io';
-
+import { FaCheck } from 'react-icons/fa';
+import { Load } from '../ui/load';
 const QuestionSubcscreen = props => {
-    const { title, type, alternatives, description, results, char_change_number, oldTimeConsuming, katexDescription, author, submissionsCount, submissionsCorrectsCount, accessCount } = props;
-    const { language, solution, userDifficulty, loadDifficulty, idQuestion, idClass, idList, idTest } = props;
-    const { changeLanguage, handleSolution, handleDifficulty } = props;
 
-    const languages = useMemo(() =>
-        props.languages || SupportedLanguages.list
-        , [props])
+    const idQuestion = useMemo(() => props.match.params.idQuestion, [props]);
+    const idClass = useMemo(() => props.match.params.idClass, [props]);
+    const idList = useMemo(() => props.match.params.idList, [props]);
+    const idTest = useMemo(() => props.match.params.idTest, [props]);
+    const idLesson = useMemo(() => props.match.params.idLesson, [props]);
+
+    const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
 
     const { saveAccess } = useAccess();
-    const { getIconTypeQuestion } = useQuestion();
+    const { getClass, isLoadingClass, classRoon } = useClass();
+    const { getIconTypeQuestion, getQuestion, isLoadingQuestion, question } = useQuestion();
+    const { saveSubmissionByObjectiveQuestion, saveSubmissionByDiscursiveQuestion, isSavingSubmission } = useSubmission();
+    const { saveDifficulty, isSavingDifficulty } = useDifficulty();
+    const { getList, list, isLoadingList } = useList();
+    const { getTest, test, isLoadingTest } = useTest();
+    const { getLesson, lesson, isLoadingLesson } = useLesson();
+
+    //questions propertys
+    const [solution, setSolution] = useState('');
+    const [char_change_number, setCharChangeNumber] = useState(0);
+    const [oldTimeConsuming, setOldTimeConsuming] = useState(0);
+
+    //class propertys
+    const [language, setLanguage] = useState(SupportedLanguages.list[0]);
+    const [languages, setLanguages] = useState(SupportedLanguages.list);
 
     const [loadingReponse, setLoadingReponse] = useState(false);
     const [response, setResponse] = useState([]);
@@ -43,39 +67,71 @@ const QuestionSubcscreen = props => {
     const simpleWorkspace = useRef(null);
     const editorEnunciateRef = useRef(null);
     const editorRef = useRef([]);
-
-    const testCases = useMemo(() =>
-        props.showAllTestCases ? response : response.filter((t, i) => i === 0)
-        , [response])
-
+    
     const latestSolution = useRef(solution);
     const latestChar_change_number = useRef(char_change_number);
     const latestLanguage = useRef(language);
+    const typeQuestion = useRef('');
+
+    const isTeacher = useCallback(() => {
+        return profile === 'professor'
+    }, [profile])
+
+    const testCases = useMemo(() =>
+        isTeacher() || (test && test.classHasTest.showAllTestCases) ?
+            response
+            :
+            response.filter((t, i) => i === 0)
+        , [test, response, isTeacher])
 
     useEffect(() => {
         latestSolution.current = solution;
         latestChar_change_number.current = char_change_number;
         latestLanguage.current = language;
-    }, [solution, char_change_number, language]);
+        typeQuestion.current = question ? question.type : '';
+    }, [solution, char_change_number, language, question]);
 
     useEffect(() => {
+        console.log('idClass: ',idClass)
         saveAccess(idQuestion);
-        setStartTime(new Date());
-        if (type === 'PROGRAMAÇÃO') {
-            const idInterval = setInterval(() => {
-                saveDraft(false);
-            }, 6000);
-            return () => clearInterval(idInterval);
+        getQuestion(idQuestion, {
+            idClass,
+            idList,
+            idTest,
+            idLesson
+        })
+        if (idClass) {
+            getClass(idClass);
         }
+        if (idList) {
+            getList(idList, {
+                idClass
+            })
+        }
+        if (idTest) {
+            getTest(idTest, {
+                idClass
+            })
+        }
+        if (idLesson) {
+            getLesson(idLesson, {
+                idClass
+            })
+        }
+        
+        setStartTime(new Date());
+        const idInterval = setInterval(() => {
+            saveDraft(false);
+        }, 60 * 1000);//60 segundos
+        return () => clearInterval(idInterval);
+    }, []);
 
-    }, [])
 
     useEffect(() => {
         let io;
         if (idTest) {
             io = socket.connect(baseUrlBackend);
-            io.emit("connectRoonClass", props.match.params.id);
-
+            io.emit("connectRoonClass", idClass);
             io.on("changeStatusTest", (reponse) => {
                 console.log('realtime:', reponse)
                 setStatusTest(reponse.status)
@@ -84,53 +140,56 @@ const QuestionSubcscreen = props => {
         return () => io && io.disconnect();
     }, [])
 
-    const handleSubmitProgrammingQuestion = useCallback(async () => {
-        if (statusTest === "FECHADA") {
-            Swal.fire({
-                type: "error",
-                title: "O professor recolheu a prova! :'(",
-            });
-            return null;
+    useEffect(() => {
+        if (question) {
+            setSolution(question.questionDraft ? question.questionDraft.answer : '');
+            setCharChangeNumber(question.questionDraft ? question.questionDraft.char_change_number : 0);
+            setOldTimeConsuming(question.lastSubmission ? question.lastSubmission.timeConsuming : 0)
+
+            document.title = question.title;
         }
-        const timeConsuming = (new Date() - startTime) + oldTimeConsuming;
-        const request = {
-            codigo: language === "blockly" ? getBlocklyCode(simpleWorkspace.current.workspace) : solution,
-            linguagem: language === "blockly" ? 'python' : language,
-            results: results,
-        };
-        setLoadingReponse(true);
-        //this.setState({ loadingReponse: true });
-        try {
-            saveDraft(false);
-            const response = await apiCompiler.post("/apiCompiler", request);
-            await saveSubmission(
-                request,
-                response.data.percentualAcerto,
-                timeConsuming,
-                char_change_number
-            );
-            setLoadingReponse(false)
-            setResponse(response.data.results);
-            setDescriptionErro(response.data.descriptionErro);
-        } catch (err) {
-            setLoadingReponse(false)
-            console.log(Object.getOwnPropertyDescriptors(err));
-            Swal.fire({
-                type: "error",
-                title: "ops... Algum erro aconteceu na operação :(",
-            });
-            console.log(err);
+    }, [question]);
+
+    useEffect(() => {
+        if (classRoon) {
+            setLanguage(classRoon.languages[0]);
+            setLanguages(classRoon.languages);
         }
+    }, [classRoon])
 
-    }, [language, results, char_change_number, startTime, oldTimeConsuming, simpleWorkspace, solution, statusTest])
+    const saveDraft = useCallback(async (showMsg = true) => {
+        if (typeQuestion.current === 'PROGRAMAÇÃO' || typeQuestion.current === 'DISCURSIVA') {
+            const request = {
+                answer: (latestLanguage.current) === "blockly" ? getBlocklyXML(simpleWorkspace.current.workspace) : latestSolution.current,
+                char_change_number: latestChar_change_number.current,
+                idQuestion,
+                idClass,
+                idList,
+                idTest,
+                idLesson
+            };
+            try {
+                setIsSavingDraft(true)
+                await api.post(`/draft/store`, request);
+                if (showMsg) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                    });
+                    Toast.fire({
+                        icon: "success",
+                        title: "Rascunho salvo com sucesso!",
+                    });
+                }
+            } catch (err) {
+                console.log(err);
+            }
+            setIsSavingDraft(false)
+        }
+    }, [idQuestion, idClass, idList, idTest, idLesson]);
 
-    const handleSubmitObjectiveQuestion = useCallback(async () => {
-
-    }, []);
-
-    const handleSubmitDiscursiveQuestion = useCallback(async () => {
-
-    }, []);
 
     const saveSubmission = useCallback(async (
         { codigo, linguagem },
@@ -153,6 +212,7 @@ const QuestionSubcscreen = props => {
                 idClass,
                 idList,
                 idTest,
+                idLesson,
             };
             await api.post(`/submission/store`, request);
         } catch (err) {
@@ -160,41 +220,211 @@ const QuestionSubcscreen = props => {
             throw err;
         }
         setStartTime(new Date())
-    }, [language, idQuestion]);
+    }, [language, idQuestion, idClass, idList, idTest, idLesson]);
 
-    const saveDraft = useCallback(async (showMsg = true) => {
+    const handleSubmitProgrammingQuestion = useCallback(async () => {
+        if (statusTest === "FECHADA") {
+            Swal.fire({
+                type: "error",
+                title: "O professor recolheu a prova! :'(",
+            });
+            return null;
+        }
+        const timeConsuming = (new Date() - startTime) + oldTimeConsuming;
         const request = {
-            answer: (latestLanguage.current) === "blockly" ? getBlocklyXML(simpleWorkspace.current.workspace) : latestSolution.current,
-            char_change_number: latestChar_change_number.current,
+            codigo: language === "blockly" ? getBlocklyCode(simpleWorkspace.current.workspace) : solution,
+            linguagem: language === "blockly" ? 'python' : language,
+            results: question.results,
+        };
+        setLoadingReponse(true);
+
+        try {
+            saveDraft(false);
+            const response = await apiCompiler.post("/apiCompiler", request);
+            await saveSubmission(
+                request,
+                response.data.percentualAcerto,
+                timeConsuming,
+                char_change_number
+            );
+            setLoadingReponse(false)
+            setResponse(response.data.results);
+            setDescriptionErro(response.data.descriptionErro);
+        } catch (err) {
+            setLoadingReponse(false)
+            console.log(Object.getOwnPropertyDescriptors(err));
+            Swal.fire({
+                type: "error",
+                title: "ops... Algum erro aconteceu na operação :(",
+            });
+            console.log(err);
+        }
+
+    }, [language, question, char_change_number, startTime, oldTimeConsuming, simpleWorkspace, solution, statusTest, saveDraft, saveSubmission])
+
+    const handleSubmitObjectiveQuestion = useCallback(async () => {
+        if (statusTest === "FECHADA") {
+            Swal.fire({
+                type: "error",
+                title: "O professor recolheu a prova! :'(",
+            });
+            return null;
+        }
+        const timeConsuming = (new Date() - startTime) + oldTimeConsuming;
+        const ip = await findLocalIp(false);
+        const isSaved = await saveSubmissionByObjectiveQuestion({
+            answer: latestSolution.current,
+            timeConsuming,
+            ip: ip[0],
+            environment: "desktop",
             idQuestion,
             idClass,
             idList,
             idTest,
-        };
-        try {
-            setIsSavingDraft(true)
-            await api.post(`/draft/store`, request);
-            if (showMsg) {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 3000,
-                });
-                Toast.fire({
-                    icon: "success",
-                    title: "Rascunho salvo com sucesso!",
-                });
-            }
-        } catch (err) {
-            console.log(err);
+            idLesson,
+        });
+        if (isSaved) {
+            getQuestion(idQuestion, {
+                idClass,
+                idList,
+                idTest,
+                idLesson
+            })
         }
-        setIsSavingDraft(false)
+    }, [idQuestion, idClass, idList, idTest, idLesson,  statusTest, startTime, oldTimeConsuming, saveSubmissionByObjectiveQuestion, getQuestion]);
 
-    }, []);
+    const handleSubmitDiscursiveQuestion = useCallback(async () => {
+        if (statusTest === "FECHADA") {
+            Swal.fire({
+                type: "error",
+                title: "O professor recolheu a prova! :'(",
+            });
+            return null;
+        }
+        saveDraft(false);
+        const timeConsuming = (new Date() - startTime) + oldTimeConsuming;
+        const ip = await findLocalIp(false);
+        const isSaved = await saveSubmissionByDiscursiveQuestion({
+            answer: latestSolution.current,
+            timeConsuming,
+            ip: ip[0],
+            char_change_number,
+            environment: "desktop",
+            idQuestion,
+            idList,
+            idTest,
+            idClass,
+            idLesson
+        });
+        if (isSaved) {
+            getQuestion(idQuestion, {
+                idClass,
+                idList,
+                idTest,
+                idLesson
+            })
+        }
+    }, [idQuestion, idClass, idList, idTest, idLesson, statusTest, startTime, char_change_number, oldTimeConsuming, saveSubmissionByDiscursiveQuestion, getQuestion]);
+
+
+    const handleDifficulty = useCallback(async (e) => {
+        saveDifficulty({
+            idQuestion,
+            difficulty: e.target ? e.target.value : ''
+        })
+    }, [saveDifficulty, idQuestion])
+
+    if ((isLoadingQuestion || !question)) {
+        return <Load />;
+    }
+
+    if (idClass && (isLoadingClass || !classRoon)) {
+        return <Load />;
+    }
+
+    if (idList && (isLoadingList || !list)) {
+        return <Load />;
+    }
+
+    if (idTest && (isLoadingTest || !test)) {
+        return <Load />;
+    }
+
+    if (idLesson && (isLoadingLesson || !lesson)) {
+        return <Load />;
+    }
 
     return (
         <>
+            <Row className='mb-4'>
+                <Col className='col-12'>
+                    <h5 className='m-0'>
+                        {idClass ?
+                            <>
+                                <i className="fa fa-users mr-2" aria-hidden="true" />
+                                {classRoon.name} - {classRoon.year}.{classRoon.semester}
+                            </>
+                            :
+                            <Link to={`/${profile}/exercicios`}>Exercícios</Link>
+                        }
+                        <i className="fa fa-angle-left ml-2 mr-2" />
+                        {
+                            idList && (
+                                <>
+                                    <Link to={`/${profile}/turma/${idClass}/listas`}>
+                                        Listas
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                    <Link
+                                        to={`/${profile}/turma/${idClass}/lista/${idList}`}
+                                    >
+                                        {list.title}
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                </>
+                            )
+                        }
+                        {
+                            idTest && (
+                                <>
+                                    <Link to={`/${profile}/turma/${idClass}/provas`}>
+                                        Provas
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                    <Link
+                                        to={`/${profile}/turma/${idClass}/prova/${idTest}`}
+                                    >
+                                        {test.title}
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                </>
+                            )
+                        }
+                        {
+                            idLesson && (
+                                <>
+                                    <Link to={`/${profile}/turma/curso/${idClass}/cursos`}>
+                                        Cursos
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                    <Link
+                                        to={
+                                            idClass?
+                                            `/${profile}/turma/${idClass}/curso/${lesson.course_id}/aulas/${lesson.id}`
+                                            :
+                                            `/${profile}/curso/${lesson.course_id}/aulas/${lesson.id}`
+                                        }
+                                    >
+                                        {lesson.title}
+                                    </Link>
+                                    <i className="fa fa-angle-left ml-2 mr-2" />
+                                </>
+                            )
+                        }
+                        {question.title}
+                    </h5>
+                </Col>
+            </Row>
             <Row className='mb-4'>
                 <Col className='col-12'>
                     <Card
@@ -208,15 +438,15 @@ const QuestionSubcscreen = props => {
                                     className='d-flex m-0 font-weight-bold'
                                 >
                                     {
-                                        getIconTypeQuestion(type)
+                                        getIconTypeQuestion(question.type)
                                     }
-                                    {title}
+                                    {question.title}
                                 </p>
                             </CardTitle>
                         </CardHead>
                         <CardBody className="overflow-auto">
                             <Row>
-                                <Col className={`col-12 col-md-${type === 'PROGRAMAÇÃO' ? '7' : '12'}`}>
+                                <Col className={`col-12 col-md-${question.type === 'PROGRAMAÇÃO' ? '7' : '12'}`}>
                                     <div ref={(el) => editorEnunciateRef.current = el} className='w-100'>
                                         <SunEditor
                                             lang="pt_br"
@@ -224,7 +454,7 @@ const QuestionSubcscreen = props => {
                                             disable={true}
                                             showToolbar={false}
                                             // onChange={this.handleDescriptionChange.bind(this)}
-                                            setContents={description}
+                                            setContents={question.description}
                                             setDefaultStyle="font-size: 15px; text-align: justify"
                                             onLoad={() => {
                                                 editorEnunciateRef.current.classList.add('sun-editor-wrap')
@@ -236,13 +466,11 @@ const QuestionSubcscreen = props => {
                                             }}
                                         />
                                     </div>
-                                    {katexDescription ? (
-                                        <BlockMath>{katexDescription}</BlockMath>
-                                    ) : (
-                                            ""
-                                        )}
+                                    {question.katexDescription && (
+                                        <BlockMath>{question.katexDescription}</BlockMath>
+                                    )}
                                 </Col>
-                                {type === 'PROGRAMAÇÃO' && (
+                                {question.type === 'PROGRAMAÇÃO' && (
                                     <Col className='col-12 col-md-5'>
                                         <table
                                             className="table table-exemplo"
@@ -259,7 +487,7 @@ const QuestionSubcscreen = props => {
                                                         <b>Exemplo de saída</b>
                                                     </td>
                                                 </tr>
-                                                {results
+                                                {question.results
                                                     .map((res, i) => (
                                                         <tr key={i}>
                                                             <td>
@@ -286,27 +514,27 @@ const QuestionSubcscreen = props => {
                                             >
                                                 {/* <i className="fa fa-users mr-1" /> */}
                                                 <IoMdEye className="mr-1" />
-                                                {accessCount}
+                                                {question.accessCount}
                                             </li>
                                             <li
                                                 className="d-flex  mr-4 align-items-center"
                                                 title={`N° DE SUBMISSÕES CORRETAS`}
                                             >
                                                 <i className="fa fa-gears mr-1 text-success" />
-                                                {submissionsCorrectsCount}
+                                                {question.submissionsCorrectsCount}
                                             </li>
                                             <li
                                                 className="d-flex  mr-4 align-items-center"
                                                 title={`N° DE SUBMISSÕES`}
                                             >
                                                 <i className="fa fa-gears mr-1" />
-                                                {submissionsCount}
+                                                {question.submissionsCount}
                                             </li>
                                         </ul>
-                                        {author && <p
+                                        {question.author && <p
                                             className="font-italic mb-0"
                                         >
-                                            <b>Autor(a):</b> {author.email}
+                                            <b>Autor(a):</b> {question.author.email}
                                         </p>}
                                     </div>
                                 </Col>
@@ -317,12 +545,12 @@ const QuestionSubcscreen = props => {
                 </Col>
             </Row>
 
-            {type === 'PROGRAMAÇÃO' && (
+            {question.type === 'PROGRAMAÇÃO' && (
                 <>
                     <Row className='mb-4'>
                         <Col className='col-12 col-md-2'>
                             <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
-                            <select className="form-control" onChange={(e) => changeLanguage(e)}>
+                            <select className="form-control" onChange={e => setLanguage(e.target.value)}>
                                 {languages.map(lang => {
                                     const languageIdx = SupportedLanguages.list.indexOf(lang);
                                     return (
@@ -349,7 +577,7 @@ const QuestionSubcscreen = props => {
                             <button
                                 className={`w-100 btn btn-primary ${loadingReponse && 'btn-loading'}`}
                                 onClick={() => {
-                                    if (type === 'PROGRAMAÇÃO') {
+                                    if (question.type === 'PROGRAMAÇÃO') {
                                         handleSubmitProgrammingQuestion();
                                     }
                                     else {
@@ -375,10 +603,10 @@ const QuestionSubcscreen = props => {
                         <Col className='col-5 col-md-2'>
                             <label htmlFor="selectDifficulty">Dificuldade: </label>
                             <select
-                                defaultValue={userDifficulty}
+                                defaultValue={question.userDifficulty || ''}
                                 className="form-control"
                                 id="selectDifficulty"
-                                disabled={loadDifficulty ? "disabled" : ""}
+                                disabled={isSavingDifficulty ? "disabled" : ""}
                                 onChange={e => handleDifficulty(e)}
                             >
                                 <option value={""}></option>
@@ -445,7 +673,10 @@ const QuestionSubcscreen = props => {
                                         mode={language}
                                         theme={themeAceEditor}
                                         focus={false}
-                                        onChange={handleSolution}
+                                        onChange={newValue => {
+                                            setSolution(newValue);
+                                            setCharChangeNumber(oldCharChangeNumber => oldCharChangeNumber + 1);
+                                        }}
                                         value={solution}
                                         fontSize={14}
                                         width="100%"
@@ -553,77 +784,123 @@ const QuestionSubcscreen = props => {
                 </>
             )}
             {
-                type === 'OBJETIVA' && (
+                question.type === 'OBJETIVA' && (
                     <>
                         <Card>
                             <CardBody>
                                 <Row>
-                                    {
-                                        alternatives && alternatives.map((alternative, i) => (
-                                            <>
-                                                <Col className="col-1">
-                                                    <div
-                                                        className='w-100 d-flex justify-content-center'
-                                                    >
-                                                        <Radio
-                                                            value={i}
-                                                            //checked={alternative.isCorrect}
-                                                            onChange={() => undefined}
-                                                            inputProps={{ 'aria-label': i }}
-                                                            color="primary"
-                                                        />
-                                                    </div>
-                                                </Col>
+                                    <>
+                                        {
+                                            question.alternatives.map((alternative, i) => (
+                                                <React.Fragment key={alternative.code}>
+                                                    <Col className="col-1">
+                                                        <div
+                                                            className='w-100 d-flex justify-content-center'
+                                                        >
+                                                            {
+                                                                question.lastSubmission ?
+                                                                    <>
+                                                                        <span className='mr-2 d-flex align-items-center'>
+                                                                            <FaCheck
+                                                                                size={15}
+                                                                                color={`rgb(94, 186, 0, ${alternative.isCorrect ? '100' : '0'})`}
+                                                                            />
+                                                                        </span>
+                                                                        <Radio
+                                                                            value={alternative.code}
+                                                                            checked={alternative.code === question.lastSubmission.answer}
+                                                                            inputProps={{ 'aria-label': i }}
+                                                                            disabled
+                                                                            color="primary"
+                                                                        />
+                                                                    </>
+                                                                    :
+                                                                    <Radio
+                                                                        value={alternative.code}
+                                                                        checked={alternative.code === solution}
+                                                                        onChange={e => setSolution(e.target.value)}
+                                                                        inputProps={{ 'aria-label': i }}
+                                                                        disabled={isSavingSubmission}
+                                                                        color="primary"
+                                                                    />
+                                                            }
 
-                                                <Col className='col-11 mt-2' key={alternative.description}>
-                                                    <div className='w-100 d-flex'>
-                                                        <span className='mr-4 '>
-                                                            {`${String.fromCharCode(65 + i)})`}
-                                                        </span>
-                                                        <div className='w-100 ' ref={(el) => editorRef.current[i] = el}>
-                                                            <SunEditor
-                                                                lang="pt_br"
-                                                                height="auto"
-                                                                disable={true}
-                                                                showToolbar={false}
-                                                                // onChange={this.handleDescriptionChange.bind(this)}
-                                                                setContents={alternative.description}
-                                                                setDefaultStyle="font-size: 15px; text-align: justify"
-                                                                onLoad={() => {
-                                                                    editorRef.current[i].classList.add('sun-editor-wrap')
-                                                                }}
-                                                                setOptions={{
-                                                                    toolbarContainer: '#toolbar_container',
-                                                                    resizingBar: false,
-                                                                    katex: katex,
-                                                                }}
-                                                            />
                                                         </div>
-                                                    </div>
-                                                </Col>
-                                            </>
-                                        ))
-                                    }
+                                                    </Col>
 
+                                                    <Col className='col-11 mt-2'>
+                                                        <div className='w-100 d-flex'>
+                                                            <span className='mr-4 '>
+                                                                {`${String.fromCharCode(65 + i)})`}
+                                                            </span>
+                                                            <div className='w-100 ' ref={(el) => editorRef.current[i] = el}>
+                                                                <SunEditor
+                                                                    lang="pt_br"
+                                                                    height="auto"
+                                                                    disable={true}
+                                                                    showToolbar={false}
+                                                                    setContents={alternative.description}
+                                                                    setDefaultStyle="font-size: 15px; text-align: justify"
+                                                                    onLoad={() => {
+                                                                        editorRef.current[i].classList.add('sun-editor-wrap')
+                                                                    }}
+                                                                    setOptions={{
+                                                                        toolbarContainer: '#toolbar_container',
+                                                                        resizingBar: false,
+                                                                        katex: katex,
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+
+
+                                                </React.Fragment>
+                                            ))
+                                        }
+                                    </>
                                 </Row>
+
                             </CardBody>
                         </Card>
+                        {
+                            question.lastSubmission && (
+                                <Row>
+                                    <Col className='col-12'>
+                                        {
+                                            question.lastSubmission.hitPercentage === 100 ?
+                                                <div className="alert alert-success d-flex align-items-center" role="alert">
+                                                    <i className="fa fa-smile-o mr-2" /> <p className='m-0'>Opção correta</p>
+                                                </div>
+                                                :
+                                                <div className="alert alert-danger  d-flex align-items-center" role="alert">
+                                                    <i className="fa fa-frown-o mr-2" /> <p className='m-0'>Opção errada</p>
+                                                </div>
+                                        }
+                                    </Col>
+                                </Row>
+                            )
+                        }
                         <Row>
-                            <Col className='col-12 col-md-3'>
-                                <label htmlFor="selectDifficul">&nbsp;</label>
-                                <button
-                                    className={`w-100 btn btn-primary ${loadingReponse && 'btn-loading'}`}
-                                    onClick={handleSubmitObjectiveQuestion}>
-                                    <i className="fa fa-play" /> <i className="fa fa-gears mr-2" />Submeter
-                                </button>
-                            </Col>
+                            {!question.lastSubmission && (
+                                <Col className='col-12 col-md-3'>
+                                    <label htmlFor="selectDifficul">&nbsp;</label>
+                                    <button
+                                        className={`w-100 btn btn-primary ${isSavingSubmission && 'btn-loading'}`}
+                                        onClick={handleSubmitObjectiveQuestion}
+                                    >
+                                        <i className="fa fa-play" /> <i className="fa fa-gears mr-2" />Submeter
+                                    </button>
+                                </Col>
+                            )
+                            }
                             <Col className='col-5 col-md-2'>
                                 <label htmlFor="selectDifficulty">Dificuldade: </label>
                                 <select
-                                    defaultValue={userDifficulty}
+                                    defaultValue={question.userDifficulty || ''}
                                     className="form-control"
                                     id="selectDifficulty"
-                                    disabled={loadDifficulty ? "disabled" : ""}
+                                    disabled={isSavingDifficulty ? "disabled" : ""}
                                     onChange={e => handleDifficulty(e)}
                                 >
                                     <option value={""}></option>
@@ -635,13 +912,12 @@ const QuestionSubcscreen = props => {
                                 </select>
                             </Col>
                         </Row>
-
                     </>
 
                 )
             }
             {
-                type === 'DISCURSIVA' && (
+                question.type === 'DISCURSIVA' && (
                     <>
                         <Card>
                             <CardBody>
@@ -649,32 +925,70 @@ const QuestionSubcscreen = props => {
                                     <Col className='col-12'>
                                         <label>Sua resposta: </label>
                                         <textarea
-                                            onChange={(e) => null}
+                                            onChange={(e) => {
+                                                setSolution(e.target.value);
+                                                setCharChangeNumber(oldCharChangeNumber => oldCharChangeNumber + 1);
+                                            }}
+                                            readOnly={!!question.lastSubmission}
                                             className='form-control'
                                             placeholder="Sua resposta..."
-                                            value={''}
+                                            value={solution}
                                         />
                                     </Col>
-
                                 </Row>
                             </CardBody>
                         </Card>
+                        {
+                            question.lastSubmission && (
+                                <Row>
+                                    <Col className='col-12'>
+                                        {
+                                            question.lastSubmission.hitPercentage === null ?
+                                                <div className="alert alert-info d-flex align-items-center" role="alert">
+                                                    <p className='m-0'>Aguarde a avaliação do professor!</p>
+                                                </div>
+                                                :
+                                                <div className="alert alert-info  d-flex align-items-center" role="alert">
+                                                    <p className='m-0'>Nota do professor: <b>{question.lastSubmission.hitPercentage}%</b></p>
+                                                </div>
+                                        }
+                                    </Col>
+                                </Row>
+                            )
+                        }
                         <Row>
-                            <Col className='col-12 col-md-3'>
-                                <label htmlFor="selectDifficul">&nbsp;</label>
-                                <button
-                                    className={`w-100 btn btn-primary ${loadingReponse && 'btn-loading'}`}
-                                    onClick={handleSubmitDiscursiveQuestion}>
-                                    <i className="fa fa-play" /> <i className="fa fa-gears mr-2" />Submeter
-                                </button>
-                            </Col>
+                            {
+                                !question.lastSubmission && (
+                                    <>
+                                        <Col className='col-12 col-md-3'>
+                                            <label htmlFor="selectDifficul">&nbsp;</label>
+                                            <button
+                                                className={`w-100 btn btn-primary ${loadingReponse && 'btn-loading'}`}
+                                                onClick={handleSubmitDiscursiveQuestion}>
+                                                <i className="fa fa-play" /> <i className="fa fa-gears mr-2" />Submeter
+                                        </button>
+                                        </Col>
+                                        <Col className='col-5 col-md-3'>
+                                            <label htmlFor="rascunho">&nbsp;</label>
+                                            <button
+                                                style={{ width: "100%" }}
+                                                className={`btn btn-azure ${isSavingDraft &&
+                                                    "btn-loading"}`}
+                                                onClick={saveDraft}
+                                            >
+                                                <i className="fa fa-floppy-o" />
+                                                &nbsp;&nbsp; Salvar rascunho
+                                            </button>
+                                        </Col>
+                                    </>
+                                )}
                             <Col className='col-5 col-md-2'>
                                 <label htmlFor="selectDifficulty">Dificuldade: </label>
                                 <select
-                                    defaultValue={userDifficulty}
+                                    defaultValue={question.userDifficulty || ''}
                                     className="form-control"
                                     id="selectDifficulty"
-                                    disabled={loadDifficulty ? "disabled" : ""}
+                                    disabled={isSavingDifficulty ? "disabled" : ""}
                                     onChange={e => handleDifficulty(e)}
                                 >
                                     <option value={""}></option>

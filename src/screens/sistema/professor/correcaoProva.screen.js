@@ -9,13 +9,12 @@ import api from "../../../services/api";
 import Swal from "sweetalert2";
 import apiCompiler from "../../../services/apiCompiler";
 import { Link } from "react-router-dom";
-
+import Radio from '@material-ui/core/Radio';
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
-
 import HTMLFormat from "../../../components/ui/htmlFormat";
 import Card from "../../../components/ui/card/card.component";
 import CardHead from "../../../components/ui/card/cardHead.component";
@@ -26,6 +25,7 @@ import SupportedLanguages from "../../../config/SupportedLanguages";
 import AceEditorWrapper from "../../../components/templates/aceEditorWrapper.template";
 import * as B from "../../../components/ui/blockly";
 import { getBlocklyCode, isXml } from '../../../util/auxiliaryFunctions.util';
+import { FaCheck } from 'react-icons/fa';
 
 export default class AlunosProvas extends Component {
   constructor(props) {
@@ -81,6 +81,7 @@ export default class AlunosProvas extends Component {
       answer: "",
       teacherNote: null,
       loadingReponse: false,
+      type: '',
       //SaveData
       comments: "",
       compilation_error: false,
@@ -237,13 +238,15 @@ export default class AlunosProvas extends Component {
     }
     this.setState({
       title: currentQuestion.title,
+      type: currentQuestion.type,
       description: currentQuestion.description,
       katexDescription: currentQuestion.katexDescription,
       solution: currentQuestion.solution,
       difficulty: currentQuestion.difficulty,
       feedBackTest: currentQuestion.feedBackTest,
-      results: [...currentQuestion.results],
-      response: [...currentQuestion.results],
+      results: Array.isArray(currentQuestion.results) ? [...currentQuestion.results] : [],
+      response: Array.isArray(currentQuestion.results) ? [...currentQuestion.results] : [],
+      alternatives: Array.isArray(currentQuestion.alternatives) ? [...currentQuestion.alternatives] : [],
       question_id: currentQuestion.id,
     });
     //verifica se há um asubmissão para a questão
@@ -377,6 +380,7 @@ export default class AlunosProvas extends Component {
       wrong_answer,
       invalid_algorithm,
       teacherNote,
+
     } = this.state;
     let { hitPercentage } = this.state;
     let msg = "";
@@ -580,14 +584,7 @@ export default class AlunosProvas extends Component {
       language,
       theme,
       descriptionErro,
-      // checkBox1,
-      // checkBox2,
-      // checkBox3,
-      // checkBox4,
-      // checkBox5,
-      // commentQuestion,
-      // funcTeacherNote,
-      // alteredCode,
+      type,
       hitPercentage,
       teacherNote,
       char_change_number,
@@ -598,7 +595,8 @@ export default class AlunosProvas extends Component {
       presentation_error,
       wrong_answer,
       invalid_algorithm,
-      languages
+      languages,
+      alternatives
     } = this.state;
 
     return (
@@ -676,23 +674,7 @@ export default class AlunosProvas extends Component {
             </Row>
           </>
         }
-        {/* <CorrecaoQuestao
-          {...this.state}
-          showAllTestCases={true}
-          changeLanguage={this.changeLanguage.bind(this)}
-          changeTheme={this.changeTheme.bind(this)}
-          submeter={this.submeter.bind(this)}
-          questao={this.state.questoes[this.state.numPageAtual]}
-          SaveData={this.SaveData.bind(this)}
-          checkBox1={this.checkBox1.bind(this)}
-          checkBox2={this.checkBox2.bind(this)}
-          checkBox3={this.checkBox3.bind(this)}
-          checkBox4={this.checkBox4.bind(this)}
-          checkBox5={this.checkBox5.bind(this)}
-          commentQuestion={this.commentQuestion.bind(this)}
-          funcTeacherNote={this.funcTeacherNote.bind(this)}
-          alteredCode={this.alteredCode.bind(this)}
-        /> */}
+
         <Row mb={10}>
           <Col xs={12}>
             <Card className="card-status-primary">
@@ -735,6 +717,7 @@ export default class AlunosProvas extends Component {
                   {loadingQuestoes ? (
                     <div className="loader" style={{ margin: "0px auto" }}></div>
                   ) : (
+                      type === 'PROGRAMAÇÃO' &&
                       <Col xs={12} md={5}>
                         <table
                           className="table table-exemplo"
@@ -766,298 +749,377 @@ export default class AlunosProvas extends Component {
                           </tbody>
                         </table>
                       </Col>
+
                     )}
                 </Row>
               </CardBody>
             </Card>
           </Col>
         </Row>
-        <Row mb={10}>
-          <Col xs={4} md={2}>
-            <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
-            <select className="form-control" onChange={(e) => this.changeLanguage(e)}>
-
-
-
-              {languages.map((lang) => {
-                const languageIdx = SupportedLanguages.list.indexOf(lang);
-                return (
-                  <option key={lang} value={lang}>
-                    {SupportedLanguages.niceNames[languageIdx]}
-                  </option>
-                );
-              })}
-            </select>
-          </Col>
-          <Col xs={4} md={2}>
-            <label htmlFor="selectDifficulty">&nbsp; Tema: </label>
-            <select
-              defaultValue="monokai"
-              className="form-control"
-              onChange={(e) => this.changeTheme(e)}
-            >
-              {this.themes.map((thene) => (
-                <option key={thene} value={thene}>
-                  {thene}
-                </option>
-              ))}
-            </select>
-          </Col>
-          <Col xs={4} md={2}>
-            <label htmlFor="selectDifficul">&nbsp;</label>
-            <button
-              style={{ width: "100%" }}
-              className={`btn btn-primary ${loadingReponse && "btn-loading"}`}
-              onClick={(e) => this.submeter(e)}
-            >
-              <i className="fa fa-play" /> <i className="fa fa-gears" />{" "}
+        {type === 'PROGRAMAÇÃO' &&
+          <>
+            <Row mb={10}>
+              <Col xs={4} md={2}>
+                <label htmlFor="selectDifficulty">&nbsp; Linguagem: </label>
+                <select className="form-control" onChange={(e) => this.changeLanguage(e)}>
+                  {languages.map((lang) => {
+                    const languageIdx = SupportedLanguages.list.indexOf(lang);
+                    return (
+                      <option key={lang} value={lang}>
+                        {SupportedLanguages.niceNames[languageIdx]}
+                      </option>
+                    );
+                  })}
+                </select>
+              </Col>
+              <Col xs={4} md={2}>
+                <label htmlFor="selectDifficulty">&nbsp; Tema: </label>
+                <select
+                  defaultValue="monokai"
+                  className="form-control"
+                  onChange={(e) => this.changeTheme(e)}
+                >
+                  {this.themes.map((thene) => (
+                    <option key={thene} value={thene}>
+                      {thene}
+                    </option>
+                  ))}
+                </select>
+              </Col>
+              <Col xs={4} md={2}>
+                <label htmlFor="selectDifficul">&nbsp;</label>
+                <button
+                  style={{ width: "100%" }}
+                  className={`btn btn-primary ${loadingReponse && "btn-loading"}`}
+                  onClick={(e) => this.submeter(e)}
+                >
+                  <i className="fa fa-play" /> <i className="fa fa-gears" />{" "}
             &nbsp;&nbsp; Submeter
           </button>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} md={6}>
-            <Card>
-              {loadingQuestoes ? (
-                <div className="loader" style={{ margin: "0px auto" }}></div>
-              ) : (
-                  language === 'blockly' ?
-                    <B.BlocklyComponent
-                      ref={this.simpleWorkspace}
-                      readOnly={false}
-                      trashcan={true}
-                      media={'media/'}
-                      move={{
-                        scrollbars: true,
-                        drag: true,
-                        wheel: true
-                      }}
-                      initialXml={isXml(answer) ? answer : ''}>
-                      <B.Category name="Texto" colour="20">
-                        <B.Block type="text" />
-                        <B.Block type="text_print" />
-                        <B.Block type="text_prompt" />
-                      </B.Category>
-                      <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
-                      <B.Category name="Lógica" colour="210">
-                        <B.Block type="controls_if" />
-                        <B.Block type="controls_ifelse" />
-                        <B.Block type="logic_compare" />
-                        <B.Block type="logic_operation" />
-                        <B.Block type="logic_boolean" />
-                        <B.Block type="logic_null" />
-                        <B.Block type="logic_ternary" />
-                      </B.Category>
-                      <B.Category name="Laços" colour="120">
-                        <B.Block type="controls_for" />
-                        <B.Block type="controls_whileUntil" />
-                        <B.Block type="controls_repeat_ext">
-                          <B.Value name="TIMES">
-                            <B.Shadow type="math_number">
-                              <B.Field name="NUM">10</B.Field>
-                            </B.Shadow>
-                          </B.Value>
-                        </B.Block>
-                      </B.Category>
-                      <B.Category name="Matemática" colour="230">
-                        <B.Block type="math_number" />
-                        <B.Block type="math_arithmetic" />
-                        <B.Block type="math_single" />
-                        <B.Block type="math_round" />
-                      </B.Category>
-                      <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
-                    </B.BlocklyComponent>
-                    :
-                    <AceEditorWrapper
-                      mode={language}
-                      theme={theme}
-                      focus={false}
-                      onChange={(e) => this.alteredCode(e)}
-                      value={answer || ""}
-                      fontSize={14}
-                      width="100%"
-                      showPrintMargin={false}
-                      name="ACE_EDITOR"
-                      showGutter={true}
-                      highlightActiveLine={true}
-                    />
-                )}
-            </Card>
-          </Col>
-          <Col xs={12} md={6}>
-            <Card>
-              {loadingQuestoes ? (
-                <div className="loader" style={{ margin: "0px auto" }}></div>
-              ) : (
-                  language === 'blockly' ?
-                    <B.BlocklyComponent
-                      ref={this.simpleWorkspace}
-                      readOnly={true}
-                      trashcan={true}
-                      media={'media/'}
-                      move={{
-                        scrollbars: true,
-                        drag: true,
-                        wheel: true
-                      }}
-                      initialXml={isXml(answer) ? answer : ''}>
-                      <B.Category name="Texto" colour="20">
-                        <B.Block type="text" />
-                        <B.Block type="text_print" />
-                        <B.Block type="text_prompt" />
-                      </B.Category>
-                      <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
-                      <B.Category name="Lógica" colour="210">
-                        <B.Block type="controls_if" />
-                        <B.Block type="controls_ifelse" />
-                        <B.Block type="logic_compare" />
-                        <B.Block type="logic_operation" />
-                        <B.Block type="logic_boolean" />
-                        <B.Block type="logic_null" />
-                        <B.Block type="logic_ternary" />
-                      </B.Category>
-                      <B.Category name="Laços" colour="120">
-                        <B.Block type="controls_for" />
-                        <B.Block type="controls_whileUntil" />
-                        <B.Block type="controls_repeat_ext">
-                          <B.Value name="TIMES">
-                            <B.Shadow type="math_number">
-                              <B.Field name="NUM">10</B.Field>
-                            </B.Shadow>
-                          </B.Value>
-                        </B.Block>
-                      </B.Category>
-                      <B.Category name="Matemática" colour="230">
-                        <B.Block type="math_number" />
-                        <B.Block type="math_arithmetic" />
-                        <B.Block type="math_single" />
-                        <B.Block type="math_round" />
-                      </B.Category>
-                      <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
-                    </B.BlocklyComponent>
-                    :
-                    <AceEditorWrapper
-                      mode={language}
-                      theme={theme}
-                      focus={false}
-                      value={solution}
-                      fontSize={14}
-                      width="100%"
-                      showPrintMargin={false}
-                      name="ACE_EDITOR"
-                      showGutter={true}
-                      highlightActiveLine={true}
-                      readOnly={true}
-                    />
-                )}
-            </Card>
-          </Col>
-
-          <Col xs={12} md={6}>
-            <Card className="card-results">
-              <CardHead>
-                {loadingQuestoes ? (
-                  <div className="loader" style={{ margin: "0px auto" }}></div>
-                ) : (
-                    <CardTitle>Resultados</CardTitle>
-                  )}
-              </CardHead>
-              {loadingReponse ? (
-                <div className="loader" style={{ margin: "100px auto" }}></div>
-              ) : descriptionErro ? (
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={12} md={6}>
                 <Card>
                   {loadingQuestoes ? (
                     <div className="loader" style={{ margin: "0px auto" }}></div>
                   ) : (
-                      <CardBody className=" p-0 ">
-                        <div className="alert alert-icon alert-danger" role="alert">
-                          <HTMLFormat>{descriptionErro}</HTMLFormat>
-                        </div>
-                      </CardBody>
+                      language === 'blockly' ?
+                        <B.BlocklyComponent
+                          ref={this.simpleWorkspace}
+                          readOnly={false}
+                          trashcan={true}
+                          media={'media/'}
+                          move={{
+                            scrollbars: true,
+                            drag: true,
+                            wheel: true
+                          }}
+                          initialXml={isXml(answer) ? answer : ''}>
+                          <B.Category name="Texto" colour="20">
+                            <B.Block type="text" />
+                            <B.Block type="text_print" />
+                            <B.Block type="text_prompt" />
+                          </B.Category>
+                          <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
+                          <B.Category name="Lógica" colour="210">
+                            <B.Block type="controls_if" />
+                            <B.Block type="controls_ifelse" />
+                            <B.Block type="logic_compare" />
+                            <B.Block type="logic_operation" />
+                            <B.Block type="logic_boolean" />
+                            <B.Block type="logic_null" />
+                            <B.Block type="logic_ternary" />
+                          </B.Category>
+                          <B.Category name="Laços" colour="120">
+                            <B.Block type="controls_for" />
+                            <B.Block type="controls_whileUntil" />
+                            <B.Block type="controls_repeat_ext">
+                              <B.Value name="TIMES">
+                                <B.Shadow type="math_number">
+                                  <B.Field name="NUM">10</B.Field>
+                                </B.Shadow>
+                              </B.Value>
+                            </B.Block>
+                          </B.Category>
+                          <B.Category name="Matemática" colour="230">
+                            <B.Block type="math_number" />
+                            <B.Block type="math_arithmetic" />
+                            <B.Block type="math_single" />
+                            <B.Block type="math_round" />
+                          </B.Category>
+                          <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
+                        </B.BlocklyComponent>
+                        :
+                        <AceEditorWrapper
+                          mode={language}
+                          theme={theme}
+                          focus={false}
+                          onChange={(e) => this.alteredCode(e)}
+                          value={answer || ""}
+                          fontSize={14}
+                          width="100%"
+                          showPrintMargin={false}
+                          name="ACE_EDITOR"
+                          showGutter={true}
+                          highlightActiveLine={true}
+                        />
                     )}
                 </Card>
-              ) : (
-                    <>
-                      {results && results.map((teste, i) => (
-                        <Card
-                          key={i}
-                          className={`card-status-${teste.isMatch ? "success" : "danger"
-                            }`}
-                        >
-                          <CardHead>
-                            <CardTitle>
-                              {`${i + 1}° Teste `}
-                              {teste.isMatch ? (
-                                <i
-                                  className="fa fa-smile-o"
-                                  style={{ color: "green" }}
-                                />
-                              ) : (
-                                  <i
-                                    className="fa fa-frown-o"
-                                    style={{ color: "red" }}
-                                  />
-                                )}
-                            </CardTitle>
-                            <CardOptions>
-                              <i
-                                title="Ver descrição"
-                                style={{
-                                  color: "blue",
-                                  cursor: "pointer",
-                                  fontSize: "25px",
-                                }}
-                                className={`fe fe-chevron-down`}
-                                data-toggle="collapse"
-                                data-target={"#collapse" + i}
-                                aria-expanded={false}
+              </Col>
+              <Col xs={12} md={6}>
+                <Card>
+                  {loadingQuestoes ? (
+                    <div className="loader" style={{ margin: "0px auto" }}></div>
+                  ) : (
+                      language === 'blockly' ?
+                        <B.BlocklyComponent
+                          ref={this.simpleWorkspace}
+                          readOnly={true}
+                          trashcan={true}
+                          media={'media/'}
+                          move={{
+                            scrollbars: true,
+                            drag: true,
+                            wheel: true
+                          }}
+                          initialXml={isXml(answer) ? answer : ''}>
+                          <B.Category name="Texto" colour="20">
+                            <B.Block type="text" />
+                            <B.Block type="text_print" />
+                            <B.Block type="text_prompt" />
+                          </B.Category>
+                          <B.Category name="Variáveis" colour="330" custom="VARIABLE"></B.Category>
+                          <B.Category name="Lógica" colour="210">
+                            <B.Block type="controls_if" />
+                            <B.Block type="controls_ifelse" />
+                            <B.Block type="logic_compare" />
+                            <B.Block type="logic_operation" />
+                            <B.Block type="logic_boolean" />
+                            <B.Block type="logic_null" />
+                            <B.Block type="logic_ternary" />
+                          </B.Category>
+                          <B.Category name="Laços" colour="120">
+                            <B.Block type="controls_for" />
+                            <B.Block type="controls_whileUntil" />
+                            <B.Block type="controls_repeat_ext">
+                              <B.Value name="TIMES">
+                                <B.Shadow type="math_number">
+                                  <B.Field name="NUM">10</B.Field>
+                                </B.Shadow>
+                              </B.Value>
+                            </B.Block>
+                          </B.Category>
+                          <B.Category name="Matemática" colour="230">
+                            <B.Block type="math_number" />
+                            <B.Block type="math_arithmetic" />
+                            <B.Block type="math_single" />
+                            <B.Block type="math_round" />
+                          </B.Category>
+                          <B.Category name="Funções" colour="290" custom="PROCEDURE"></B.Category>
+                        </B.BlocklyComponent>
+                        :
+                        <AceEditorWrapper
+                          mode={language}
+                          theme={theme}
+                          focus={false}
+                          value={solution}
+                          fontSize={14}
+                          width="100%"
+                          showPrintMargin={false}
+                          name="ACE_EDITOR"
+                          showGutter={true}
+                          highlightActiveLine={true}
+                          readOnly={true}
+                        />
+                    )}
+                </Card>
+              </Col>
+            </Row>
+          </>
+        }
+        {type === 'DISCURSIVA' && (
+          <Row mb={15}>
+            <Col xs={12}>
+              <label>Resposta do(a) aluno(a): </label>
+              <textarea
+                readOnly={true}
+                className='form-control'
+                value={answer || ""}
+              />
+            </Col>
+          </Row>
+        )}
+        {
+          type === 'OBJETIVA' && (
+            <Row mb={15}>
+              
+              {
+                    alternatives && alternatives.map((alternative, i) => (
+                      <React.Fragment key={alternative.code}>
+                        <div className="col-1">
+                          <div
+                            className='w-100 d-flex justify-content-center'
+                          >
+                            <span className='mr-2 d-flex align-items-center'>
+                              <FaCheck
+                                size={15}
+                                color={`rgb(94, 186, 0, ${alternative.isCorrect ? '100' : '0'})`}
                               />
-                            </CardOptions>
-                          </CardHead>
-                          <div className="collapse" id={"collapse" + i}>
-                            <CardBody className="p-0 overflow-auto">
-                              {teste.descriptionErro ? (
-                                <HTMLFormat>{`${teste.descriptionErro}`}</HTMLFormat>
-                              ) : (
-                                  <table
-                                    className="table"
-                                    wrap="off"
-
-                                  >
-                                    <tbody>
-                                      <tr>
-                                        <td>
-                                          <b>Entrada(s) para teste</b>
-                                        </td>
-                                        <td>
-                                          <b>Saída do seu programa</b>
-                                        </td>
-                                        <td>
-                                          <b>Saída esperada</b>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>
-                                          <HTMLFormat>{teste.inputs}</HTMLFormat>
-                                        </td>
-                                        <td>
-                                          <HTMLFormat>{teste.saidaResposta}</HTMLFormat>
-                                        </td>
-                                        <td>
-                                          <HTMLFormat>{teste.output}</HTMLFormat>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                )}
-                            </CardBody>
+                            </span>
+                            <Radio
+                              value={alternative.code}
+                              checked={alternative.code === answer}
+                              inputProps={{ 'aria-label': i }}
+                              disabled
+                              color="primary"
+                            />
                           </div>
-                        </Card>
-                      ))}
-                    </>
-                  )}
-            </Card>
-          </Col>
+                        </div>
+
+                        <div className='col-11 mt-2'>
+                          <div className='w-100 d-flex'>
+                            <span className='mr-4 '>
+                              {`${String.fromCharCode(65 + i)})`}
+                            </span>
+                            <div 
+                            className='w-100 ' 
+                            // ref={(el) => editorRef.current[i] = el}
+                            >
+                              <SunEditor
+                                lang="pt_br"
+                                height="auto"
+                                disable={true}
+                                showToolbar={false}
+                                setContents={alternative.description}
+                                setDefaultStyle="font-size: 15px; text-align: justify"
+                                // onLoad={() => {
+                                //   editorRef.current[i].classList.add('sun-editor-wrap')
+                                // }}
+                                setOptions={{
+                                  toolbarContainer: '#toolbar_container',
+                                  resizingBar: false,
+                                  katex: katex,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </React.Fragment>
+                    ))
+                  }
+              
+            </Row>
+          )
+        }
+        <Row>
+          {type === 'PROGRAMAÇÃO' &&
+            <Col xs={12} md={6}>
+              <Card className="card-results">
+                <CardHead>
+                  {loadingQuestoes ? (
+                    <div className="loader" style={{ margin: "0px auto" }}></div>
+                  ) : (
+                      <CardTitle>Resultados</CardTitle>
+                    )}
+                </CardHead>
+                {loadingReponse ? (
+                  <div className="loader" style={{ margin: "100px auto" }}></div>
+                ) : descriptionErro ? (
+                  <Card>
+                    {loadingQuestoes ? (
+                      <div className="loader" style={{ margin: "0px auto" }}></div>
+                    ) : (
+                        <CardBody className=" p-0 ">
+                          <div className="alert alert-icon alert-danger" role="alert">
+                            <HTMLFormat>{descriptionErro}</HTMLFormat>
+                          </div>
+                        </CardBody>
+                      )}
+                  </Card>
+                ) : (
+                      <>
+                        {results && results.map((teste, i) => (
+                          <Card
+                            key={i}
+                            className={`card-status-${teste.isMatch ? "success" : "danger"
+                              }`}
+                          >
+                            <CardHead>
+                              <CardTitle>
+                                {`${i + 1}° Teste `}
+                                {teste.isMatch ? (
+                                  <i
+                                    className="fa fa-smile-o"
+                                    style={{ color: "green" }}
+                                  />
+                                ) : (
+                                    <i
+                                      className="fa fa-frown-o"
+                                      style={{ color: "red" }}
+                                    />
+                                  )}
+                              </CardTitle>
+                              <CardOptions>
+                                <i
+                                  title="Ver descrição"
+                                  style={{
+                                    color: "blue",
+                                    cursor: "pointer",
+                                    fontSize: "25px",
+                                  }}
+                                  className={`fe fe-chevron-down`}
+                                  data-toggle="collapse"
+                                  data-target={"#collapse" + i}
+                                  aria-expanded={false}
+                                />
+                              </CardOptions>
+                            </CardHead>
+                            <div className="collapse" id={"collapse" + i}>
+                              <CardBody className="p-0 overflow-auto">
+                                {teste.descriptionErro ? (
+                                  <HTMLFormat>{`${teste.descriptionErro}`}</HTMLFormat>
+                                ) : (
+                                    <table
+                                      className="table"
+                                      wrap="off"
+
+                                    >
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <b>Entrada(s) para teste</b>
+                                          </td>
+                                          <td>
+                                            <b>Saída do seu programa</b>
+                                          </td>
+                                          <td>
+                                            <b>Saída esperada</b>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td>
+                                            <HTMLFormat>{teste.inputs}</HTMLFormat>
+                                          </td>
+                                          <td>
+                                            <HTMLFormat>{teste.saidaResposta}</HTMLFormat>
+                                          </td>
+                                          <td>
+                                            <HTMLFormat>{teste.output}</HTMLFormat>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  )}
+                              </CardBody>
+                            </div>
+                          </Card>
+                        ))}
+                      </>
+                    )}
+              </Card>
+            </Col>
+          }
           <Col xs={12} md={6}>
             <Card className="card-results">
               <CardHead>
@@ -1121,7 +1183,7 @@ export default class AlunosProvas extends Component {
                         <Col xs={10} md={4}>
                           <label htmlFor="selectDifficulty">
                             Nota do professor:
-                      </label>
+                          </label>
                           <input
                             style={{ textAlign: "center" }}
                             className={`form-control ${parseFloat(teacherNote) > 10 ||

@@ -13,7 +13,7 @@ import TabPanel from '../ui/tabs/TabPanel';
 import Paper from '@material-ui/core/Paper';
 import useQuestion from '../../hooks/useQuestion';
 import usePagination from '../../hooks/usePagination';
-import useList from '../../hooks/useList';
+import useTest from '../../hooks/useTest';
 import useTag from '../../hooks/useTag';
 import useObjectveQuestion from '../../hooks/useObjectveQuestion';
 import useDiscursiveQuestion from '../../hooks/useDiscursiveQuestion';
@@ -29,15 +29,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Card, CardBody } from '../ui/card';
 import { FaCheck } from 'react-icons/fa';
+const FormTestSubscreen = props => {
 
-const FormListSubscreen = props => {
     const arrDifficulty = useMemo(() =>
         [null, "Muito fácil", "Fácil", "Médio", "Difícil", "Muito Difícil"]
         , []);
 
-    const { tags, isLoadingTags, getTags } = useTag();
-    const { createList, updateList } = useList();
     const { paginedQuestions, isLoadingQuestions, getPaginedQuestions } = useQuestion();
+    const { createTest, updateTest } = useTest();
+    const { tags, isLoadingTags, getTags } = useTag();
     const {
         isLoadingObjectiveQuestions,
         isLoadingInfoObjectiveQuestion,
@@ -94,7 +94,7 @@ const FormListSubscreen = props => {
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [showModalInfo, setShowModalInfo] = useState(false);
     const [modalQuestion, setModalQuestion] = useState(null);
-    const [isLoadingQuestionsByList, setIsLoadingQuestionsByList] = useState(false)
+    const [isLoadingQuestionsByTest, setIsLoadingQuestionsByTest] = useState(false)
 
     const [titleOrCodeInput, setTitleOrCodeInput] = useState('');
     const [sortBySelect, setSortBySelect] = useState('createdAt');
@@ -139,19 +139,19 @@ const FormListSubscreen = props => {
             default:
                 break;
         }
-        const { idList } = props.match.params;
+        const { idTest } = props.match.params;
         const { search } = location;
-        if (idList) {
-            document.title = 'Editar lista - professor';
-            getQuestionsByList(idList);
+        if (idTest) {
+            document.title = 'Editar prova - professor';
+            getQuestionsByTest(idTest);
         }
-        else if (search.includes('?idList=')) {
-            document.title = 'Clonar lista - professor';
-            const id = search.replace('?idList=', '')
-            getQuestionsByList(id);
+        else if (search.includes('?idTest=')) {
+            document.title = 'Clonar prova - professor';
+            const id = search.replace('?idTest=', '')
+            getQuestionsByTest(id);
         }
         else {
-            document.title = 'Criar lista - professor';
+            document.title = 'Criar prova - professor';
         }
     }, []);
 
@@ -166,6 +166,7 @@ const FormListSubscreen = props => {
         setPageObjectiveQuestion(numPage);
         getPaginedObjectiveQuestions(numPage, '');
     }, [getPaginedObjectiveQuestions, setPageObjectiveQuestion]);
+
 
     const handlePageDiscursiveQuestions = useCallback((e, numPage) => {
         e.preventDefault();
@@ -214,35 +215,35 @@ const FormListSubscreen = props => {
         }
     }, [paginedDiscursiveQuestions, setPageDiscursiveQuestion, setTotalDocsDiscursiveQuestion, setDocsPerPageDiscursiveQuestion, setTotalPageDiscursiveQuestion]);
 
-    const getQuestionsByList = useCallback(async (id) => {
-        let query = `idList=${id}`;
-        setIsLoadingQuestionsByList(true);
+    const getQuestionsByTest = useCallback(async (id) => {
+        let query = `idTest=${id}`;
+        setIsLoadingQuestionsByTest(true);
         try {
             const response = await api.get(`/question?${query}`);
-            setTitle(response.data.list.title);
+            setTitle(response.data.test.title);
             setSelectedQuestions(response.data.questions)
         } catch (err) {
             console.log(err);
         }
-        setIsLoadingQuestionsByList(false);
+        setIsLoadingQuestionsByTest(false);
     }, [])
 
-    const handleCreateList = useCallback(async e => {
+    const handleCreateTest = useCallback(async e => {
         e.preventDefault();
-        const isCreated = await createList({ title, selectedQuestions })
+        const isCreated = await createTest({ title, selectedQuestions })
         if (isCreated) {
-            history.push("/professor/listas");
+            history.push("/professor/provas");
         }
-    }, [title, selectedQuestions, history, createList]);
+    }, [title, selectedQuestions, history, createTest]);
 
-    const handleUpdateList = useCallback(async (e) => {
+    const handleUpdateTest = useCallback(async (e) => {
         e.preventDefault();
-        const { idList } = props.match.params;
-        const isUpdated = await updateList(idList, { title, selectedQuestions });
+        const { idTest } = props.match.params;
+        const isUpdated = await updateTest(idTest, { title, selectedQuestions });
         if (isUpdated) {
-            history.push("/professor/listas");
+            history.push("/professor/provas");
         }
-    }, [props, title, selectedQuestions, history, updateList]);
+    }, [props, title, selectedQuestions, history, updateTest]);
 
     const saveQuerys = useCallback(() => {
 
@@ -271,7 +272,7 @@ const FormListSubscreen = props => {
 
     const handlleFilter = useCallback(() => {
         getPaginedQuestions(page, getQuerys());
-    }, [page, getQuerys, getPaginedQuestions]);
+    }, [page, saveQuerys, getQuerys, getPaginedQuestions]);
 
     const handleTabeIndex = useCallback((e, newValue) => {
         setTabIndex(newValue);
@@ -288,9 +289,9 @@ const FormListSubscreen = props => {
             default:
                 break;
         }
-    }, [page, pageObjectiveQuestion, pageDiscursiveQuestion, getPaginedQuestions, getPaginedObjectiveQuestions, getPaginedDiscursiveQuestions, getQuerys]);
+    }, [page, pageObjectiveQuestion, pageDiscursiveQuestion,  getPaginedQuestions, getPaginedObjectiveQuestions, getPaginedDiscursiveQuestions, getQuerys]);
 
-    if (isLoadingTags || isLoadingQuestionsByList) {
+    if (isLoadingTags || isLoadingQuestionsByTest) {
         return <Load />
     }
     return (
@@ -298,17 +299,17 @@ const FormListSubscreen = props => {
             <Row className='mb-4'>
                 <Col className='col-12'>
                     <h5 style={{ margin: "0px" }}>
-                        <Link to="/professor/listas">Listas</Link>
+                        <Link to="/professor/provas">Provas</Link>
                         <i className="fa fa-angle-left ml-2 mr-2" />
                         {
-                            props.match.params.idList && title ?
+                            props.match.params.idTest && title ?
                                 <>
                                     {title}
                                     <i className="fa fa-angle-left ml-2 mr-2" />
-                                    Editar lista
+                                    Editar prova
                                 </>
                                 :
-                                'Criar lista'
+                                'Criar prova'
                         }
 
                     </h5>
@@ -320,15 +321,15 @@ const FormListSubscreen = props => {
                 <CardBody>
                     <form
                         onSubmit={(e) => {
-                            props.match.params.idList ?
-                                handleUpdateList(e)
+                            props.match.params.idTest ?
+                                handleUpdateTest(e)
                                 :
-                                handleCreateList(e)
+                                handleCreateTest(e)
                         }}
                         onKeyDown={e => { if (e.key === 'Enter') e.preventDefault(); }}>
                         <Row className='mb-4'>
                             <Col className="col-12">
-                                <label htmlFor="inputTitulo">Título da lista</label>
+                                <label htmlFor="inputTitulo">Título da prova</label>
                                 <input
                                     id="inputTitulo"
                                     type="text"
@@ -336,7 +337,7 @@ const FormListSubscreen = props => {
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     className="form-control"
-                                    placeholder="Título da lista"
+                                    placeholder="Título da prova"
                                 />
                             </Col>
                         </Row>
@@ -368,7 +369,6 @@ const FormListSubscreen = props => {
                                 />
                             </Tabs>
                         </Paper>
-         
                         <TabPanel
                             className='mt-4'
                             value={tabIndex}
@@ -544,6 +544,7 @@ const FormListSubscreen = props => {
                                 </Col>
                             </Row>
                         </TabPanel>
+
                         <TabPanel
                             className='mt-4'
                             value={tabIndex}
@@ -670,13 +671,14 @@ const FormListSubscreen = props => {
                                         }`}
                                     style={{ width: "100%" }}
                                 >
-                                    Salvar Lista
-                                        </button>
+                                    Salvar Prova
+                                </button>
                             </Col>
                         </Row>
                     </form>
 
                 </CardBody>
+
             </Card>
             <Dialog
                 open={showModalInfo}
@@ -706,7 +708,7 @@ const FormListSubscreen = props => {
                                     setContents={modalQuestion.description}
                                     setDefaultStyle="font-size: 15px; text-align: justify"
                                     onLoad={() => {
-                                        editorRef.current[0].classList.add('sun-editor-wrap')
+                                        editorRef.current[0].classTest.add('sun-editor-wrap')
                                     }}
                                     setOptions={{
                                         toolbarContainer: '#toolbar_container',
@@ -777,7 +779,7 @@ const FormListSubscreen = props => {
                                             setContents={infoObjectiveQuestion.description}
                                             setDefaultStyle="font-size: 15px; text-align: justify"
                                             onLoad={() => {
-                                                editorRef.current[0].classList.add('sun-editor-wrap')
+                                                editorRef.current[0].classTest.add('sun-editor-wrap')
                                             }}
                                             setOptions={{
                                                 toolbarContainer: '#toolbar_container',
@@ -810,7 +812,7 @@ const FormListSubscreen = props => {
                                                         setContents={alternative.description}
                                                         setDefaultStyle="font-size: 15px; text-align: justify; border: 0;"
                                                         onLoad={() => {
-                                                            editorRef.current[i + 1].classList.add('sun-editor-wrap')
+                                                            editorRef.current[i + 1].classTest.add('sun-editor-wrap')
                                                         }}
                                                         setOptions={{
                                                             toolbarContainer: '#toolbar_container',
@@ -839,6 +841,8 @@ const FormListSubscreen = props => {
                     </>
                 }
             </Dialog>
+
+
             <Dialog
                 open={openDiscursiveQuestionModal}
                 maxWidth={'md'}
@@ -868,7 +872,7 @@ const FormListSubscreen = props => {
                                             setContents={infoDiscursiveQuestion.description}
                                             setDefaultStyle="font-size: 15px; text-align: justify"
                                             onLoad={() => {
-                                                editorRef.current[0].classList.add('sun-editor-wrap')
+                                                editorRef.current[0].classTest.add('sun-editor-wrap')
                                             }}
                                             setOptions={{
                                                 toolbarContainer: '#toolbar_container',
@@ -900,4 +904,4 @@ const FormListSubscreen = props => {
     //}
 }
 
-export default FormListSubscreen;
+export default FormTestSubscreen;

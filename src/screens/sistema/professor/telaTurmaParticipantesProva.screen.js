@@ -4,7 +4,7 @@ import TemplateSistema from "../../../components/templates/sistema.template";
 import api from "../../../services/api";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
-import TurmaProvaScrren from "../../../components/screens/turmaProva.componente.screen";
+import TurmaProvaScrren from "../../../components/screens/classTest.subscreen";
 
 export default class Exercicios extends Component {
   constructor(props) {
