@@ -717,7 +717,7 @@ export default class AlunosProvas extends Component {
                   {loadingQuestoes ? (
                     <div className="loader" style={{ margin: "0px auto" }}></div>
                   ) : (
-                      type === 'PROGRAMAÇÃO' &&
+                      type === 'PROGRAMMING' &&
                       <Col xs={12} md={5}>
                         <table
                           className="table table-exemplo"
@@ -756,7 +756,7 @@ export default class AlunosProvas extends Component {
             </Card>
           </Col>
         </Row>
-        {type === 'PROGRAMAÇÃO' &&
+        {type === 'PROGRAMMING' &&
           <>
             <Row mb={10}>
               <Col xs={4} md={2}>
@@ -938,7 +938,7 @@ export default class AlunosProvas extends Component {
             </Row>
           </>
         }
-        {type === 'DISCURSIVA' && (
+        {type === 'DISCURSIVE' && (
           <Row mb={15}>
             <Col xs={12}>
               <label>Resposta do(a) aluno(a): </label>
@@ -951,7 +951,7 @@ export default class AlunosProvas extends Component {
           </Row>
         )}
         {
-          type === 'OBJETIVA' && (
+          type === 'OBJECTIVE' && (
             <Row mb={15}>
               
               {
@@ -1013,7 +1013,7 @@ export default class AlunosProvas extends Component {
           )
         }
         <Row>
-          {type === 'PROGRAMAÇÃO' &&
+          {type === 'PROGRAMMING' &&
             <Col xs={12} md={6}>
               <Card className="card-results">
                 <CardHead>

@@ -281,7 +281,7 @@ const ClassListSubscreen = props => {
                                                                                 Acessar <i className="fa fa-wpexplorer" />
                                                                             </button>
                                                                         </Link>
-                                                                        {question.type === 'PROGRAMAÇÃO' &&
+                                                                        {question.type === 'PROGRAMMING' &&
                                                                             <>
                                                                                 <span style={{ cursor: 'pointer' }} className="card-dropdown h-100" data-toggle="dropdown" aria-expanded="false">
                                                                                     <BsThreeDotsVertical size={25} />

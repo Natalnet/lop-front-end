@@ -54,7 +54,7 @@ const UseQuestion = () => {
 
     const getIconTypeQuestion = useCallback(type => {
         switch (type) {
-            case 'PROGRAMAÇÃO':
+            case 'PROGRAMMING':
                 return (
                     <span
                         title='Exercicício de programação'
@@ -62,7 +62,7 @@ const UseQuestion = () => {
                         <BiCodeAlt size={25} color='#467fcf' className='mr-2' />
                     </span>
                 )
-            case 'OBJETIVA':
+            case 'OBJECTIVE':
                 return (
                     <span
                         title='Exercicício de multipla escolha'
@@ -70,7 +70,7 @@ const UseQuestion = () => {
                         <GoChecklist size={25} color='#467fcf' className='mr-2' />
                     </span>
                 )
-            case 'DISCURSIVA':
+            case 'DISCURSIVE':
                 return (
                     <span
                         title='Exercicício discursivo'
