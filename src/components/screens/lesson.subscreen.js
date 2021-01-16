@@ -247,7 +247,7 @@ const LessonSubscreen = (props) => {
                                         Acessar <i className="fa fa-wpexplorer" />
                                       </button>
                                     </Link>
-                                    {/* {question.type === 'PROGRAMAÇÃO' && props.match.params.idClass &&
+                                    {/* {question.type === 'PROGRAMMING' && props.match.params.idClass &&
                                       <>
                                         <span style={{ cursor: 'pointer' }} className="card-dropdown h-100" data-toggle="dropdown" aria-expanded="false">
                                           <BsThreeDotsVertical size={25} />

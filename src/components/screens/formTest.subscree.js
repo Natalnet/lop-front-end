@@ -708,7 +708,7 @@ const FormTestSubscreen = props => {
                                     setContents={modalQuestion.description}
                                     setDefaultStyle="font-size: 15px; text-align: justify"
                                     onLoad={() => {
-                                        editorRef.current[0].classTest.add('sun-editor-wrap')
+                                        editorRef.current[0].classList.add('sun-editor-wrap')
                                     }}
                                     setOptions={{
                                         toolbarContainer: '#toolbar_container',
@@ -779,7 +779,7 @@ const FormTestSubscreen = props => {
                                             setContents={infoObjectiveQuestion.description}
                                             setDefaultStyle="font-size: 15px; text-align: justify"
                                             onLoad={() => {
-                                                editorRef.current[0].classTest.add('sun-editor-wrap')
+                                                editorRef.current[0].classList.add('sun-editor-wrap')
                                             }}
                                             setOptions={{
                                                 toolbarContainer: '#toolbar_container',
@@ -812,7 +812,7 @@ const FormTestSubscreen = props => {
                                                         setContents={alternative.description}
                                                         setDefaultStyle="font-size: 15px; text-align: justify; border: 0;"
                                                         onLoad={() => {
-                                                            editorRef.current[i + 1].classTest.add('sun-editor-wrap')
+                                                            editorRef.current[i + 1].classList.add('sun-editor-wrap')
                                                         }}
                                                         setOptions={{
                                                             toolbarContainer: '#toolbar_container',
@@ -872,7 +872,7 @@ const FormTestSubscreen = props => {
                                             setContents={infoDiscursiveQuestion.description}
                                             setDefaultStyle="font-size: 15px; text-align: justify"
                                             onLoad={() => {
-                                                editorRef.current[0].classTest.add('sun-editor-wrap')
+                                                editorRef.current[0].classList.add('sun-editor-wrap')
                                             }}
                                             setOptions={{
                                                 toolbarContainer: '#toolbar_container',

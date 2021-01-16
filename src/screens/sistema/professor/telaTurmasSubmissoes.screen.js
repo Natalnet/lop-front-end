@@ -477,7 +477,7 @@ export default class HomesubmissoesScreen extends Component {
             </Row>
           </DialogTitle>
           <DialogContent>
-            {submissao && submissao.question.type === 'PROGRAMAÇÃO' &&
+            {submissao && submissao.question.type === 'PROGRAMMING' &&
               <Row>
                 <div className="col-12 offset-md-2 col-md-8 text-center">
                   {
@@ -545,7 +545,7 @@ export default class HomesubmissoesScreen extends Component {
                 </div>
               </Row>
             }
-            {submissao && submissao.question.type === 'DISCURSIVA' && (
+            {submissao && submissao.question.type === 'DISCURSIVE' && (
               <Row>
                 <Col xs={12}>
                   <textarea
@@ -585,7 +585,7 @@ export default class HomesubmissoesScreen extends Component {
               </Row>
             )}
 
-            {submissao && submissao.question.type === 'OBJETIVA' && (
+            {submissao && submissao.question.type === 'OBJECTIVE' && (
               <Row>
                 <>
                   {

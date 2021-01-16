@@ -158,7 +158,7 @@ const QuestionSubcscreen = props => {
     }, [classRoon])
 
     const saveDraft = useCallback(async (showMsg = true) => {
-        if (typeQuestion.current === 'PROGRAMAÇÃO' || typeQuestion.current === 'DISCURSIVA') {
+        if (typeQuestion.current === 'PROGRAMMING' || typeQuestion.current === 'DISCURSIVE') {
             const request = {
                 answer: (latestLanguage.current) === "blockly" ? getBlocklyXML(simpleWorkspace.current.workspace) : latestSolution.current,
                 char_change_number: latestChar_change_number.current,
@@ -446,7 +446,7 @@ const QuestionSubcscreen = props => {
                         </CardHead>
                         <CardBody className="overflow-auto">
                             <Row>
-                                <Col className={`col-12 col-md-${question.type === 'PROGRAMAÇÃO' ? '7' : '12'}`}>
+                                <Col className={`col-12 col-md-${question.type === 'PROGRAMMING' ? '7' : '12'}`}>
                                     <div ref={(el) => editorEnunciateRef.current = el} className='w-100'>
                                         <SunEditor
                                             lang="pt_br"
@@ -470,7 +470,7 @@ const QuestionSubcscreen = props => {
                                         <BlockMath>{question.katexDescription}</BlockMath>
                                     )}
                                 </Col>
-                                {question.type === 'PROGRAMAÇÃO' && (
+                                {question.type === 'PROGRAMMING' && (
                                     <Col className='col-12 col-md-5'>
                                         <table
                                             className="table table-exemplo"
@@ -545,7 +545,7 @@ const QuestionSubcscreen = props => {
                 </Col>
             </Row>
 
-            {question.type === 'PROGRAMAÇÃO' && (
+            {question.type === 'PROGRAMMING' && (
                 <>
                     <Row className='mb-4'>
                         <Col className='col-12 col-md-2'>
@@ -577,7 +577,7 @@ const QuestionSubcscreen = props => {
                             <button
                                 className={`w-100 btn btn-primary ${loadingReponse && 'btn-loading'}`}
                                 onClick={() => {
-                                    if (question.type === 'PROGRAMAÇÃO') {
+                                    if (question.type === 'PROGRAMMING') {
                                         handleSubmitProgrammingQuestion();
                                     }
                                     else {
@@ -784,7 +784,7 @@ const QuestionSubcscreen = props => {
                 </>
             )}
             {
-                question.type === 'OBJETIVA' && (
+                question.type === 'OBJECTIVE' && (
                     <>
                         <Card>
                             <CardBody>
@@ -917,7 +917,7 @@ const QuestionSubcscreen = props => {
                 )
             }
             {
-                question.type === 'DISCURSIVA' && (
+                question.type === 'DISCURSIVE' && (
                     <>
                         <Card>
                             <CardBody>
