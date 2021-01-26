@@ -263,7 +263,7 @@ const CoursesSubScreenComponent = props => {
                             disabled={isLoadingCourses}
                             type="button"
                             id="button-addon2"
-                            onClick={handleGetCourses}
+                            onClick={()=>handleGetCourses()}
                         >
                             <i className="fe fe-search" />
                         </button>

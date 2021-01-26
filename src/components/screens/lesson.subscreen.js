@@ -22,7 +22,6 @@ const LessonSubscreen = (props) => {
   const { getIconTypeQuestion } = useQuestion();
 
   const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
-
   const isTeacher = useCallback(() => {
     return profile === 'professor'
   }, [profile])
@@ -90,25 +89,34 @@ const LessonSubscreen = (props) => {
       </Row>
       <Row className='mb-4'>
         <Col className='col-12'>
-          <SunEditor
-            lang="pt_br"
-            height="auto"
-            disable={true}
-            showToolbar={false}
-            setContents={lesson.description}
-            setDefaultStyle="font-size: 15px; text-align: justify"
-            setOptions={{
-              toolbarContainer: '#toolbar_container',
-              resizingBar: false,
-              katex: katex,
-            }}
-          />
+          <Card>
+            <CardBody>
+            <div className='w-100 ' ref={(el) => editorRef.current[0] = el}>
+              <SunEditor
+                lang="pt_br"
+                height="auto"
+                disable={true}
+                showToolbar={false}
+                setContents={lesson.description}
+                onLoad={() => {
+                  editorRef.current[0].classList.add('sun-editor-wrap')
+                }}
+                setDefaultStyle="font-size: 15px; text-align: justify"
+                setOptions={{
+                  toolbarContainer: '#toolbar_container',
+                  resizingBar: false,
+                  katex: katex,
+                }}
+              />
+              </div>
+            </CardBody>
+          </Card>
         </Col>
       </Row>
       <Row className='mb-4'>
         <Col className='col-12'>
           <Card>
-            <CardHead style={{ margin: "0px" }}>
+            <CardHead className='m-0'>
               <Col className='col-4 pl-0'>
                 <h4 className='m-0'>
                   <b>Exercícios</b>
