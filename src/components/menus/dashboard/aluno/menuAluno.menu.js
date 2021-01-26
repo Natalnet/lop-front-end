@@ -8,7 +8,7 @@
 // Referência para icones: https://preview.tabler.io/icons.html
 
 import React, { Component } from "react";
-
+import { GiTeacher} from 'react-icons/gi'
 import { Link } from "react-router-dom";
 import SubMenuTurmas from './subMenuTurma.menu'
 export default class MenuAluno extends Component {
@@ -38,6 +38,12 @@ export default class MenuAluno extends Component {
                   <Link to="/aluno/exercicios" className={`nav-link ${this.props.active==='exercicios'?'active':''}`}>
                     <i className="fa fa-code" />
                     Exercícios
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/aluno/cursos" className={`nav-link ${this.props.active==='cursos'?'active':''}`}>
+                    <GiTeacher className='mr-1'/>
+                    Cursos
                   </Link>
                 </li>
               </ul>

@@ -5,7 +5,7 @@ import api from "../../../services/api";
 import Swal from "sweetalert2";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
-import TurmaProvaScrren from "../../../components/screens/turmaProva.componente.screen";
+import TurmaProvaScrren from "../../../components/screens/classTest.subscreen";
 
 export default class Exercicios extends Component {
   constructor(props) {
@@ -28,7 +28,7 @@ export default class Exercicios extends Component {
     document.title = `${turma && turma.name} - ${prova && prova.title}`;
   }
   async getInfoTurma() {
-    const id = this.props.match.params.id;
+    const id = this.props.match.params.idClass;
     const { myClasses } = this.state;
     if (myClasses && typeof myClasses === "object") {
       const index = myClasses.map((c) => c.id).indexOf(id);
@@ -53,8 +53,8 @@ export default class Exercicios extends Component {
   }
   async getProva() {
     try {
-      const { id, idTest } = this.props.match.params;
-      let query = `?idClass=${id}`;
+      const { idClass, idTest } = this.props.match.params;
+      let query = `?idClass=${idClass}`;
       this.setState({loandingProva: true});
       const response = await api.get(`/test/${idTest}${query}`);
       //console.log('prova: ',response.data)
@@ -100,9 +100,9 @@ export default class Exercicios extends Component {
       allowEscapeKey: false,
       allowEnterKey: false,
     });
-    console.log({showAllTestCases})
-    const { id, idTest } = this.props.match.params;
-    const query = `?idClass=${id}`;
+    //console.log({showAllTestCases})
+    const { idClass, idTest } = this.props.match.params;
+    const query = `?idClass=${idClass}`;
     const request = {
       idTest: idTest,
       password,
@@ -136,7 +136,7 @@ export default class Exercicios extends Component {
 
   async aplicarProva() {
     const idTest = this.props.match.params.idTest;
-    const query = `?idClass=${this.props.match.params.id}`;
+    const query = `?idClass=${this.props.match.params.idClass}`;
     const request = {
       status: "ABERTA",
     };
@@ -168,7 +168,7 @@ export default class Exercicios extends Component {
   }
   async recolherProva() {
     const idTest = this.props.match.params.idTest;
-    const query = `?idClass=${this.props.match.params.id}`;
+    const query = `?idClass=${this.props.match.params.idClass}`;
     const request = {
       status: "FECHADA",
     };
@@ -215,7 +215,7 @@ export default class Exercicios extends Component {
                   {turma && turma.semester}
                   <i className="fa fa-angle-left ml-2 mr-2" />
                   <Link
-                    to={`/professor/turma/${this.props.match.params.id}/provas`}
+                    to={`/professor/turma/${this.props.match.params.idClass}/provas`}
                   >
                     Provas
                 </Link>

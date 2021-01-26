@@ -31,7 +31,7 @@ export default class TemplateSistema extends Component {
   }
   
   componentDidMount() {
-    document.title = "Plaforma Lop";
+    document.title = "Plataforma Lop";
     this.handleAxiosErros();
   }
 

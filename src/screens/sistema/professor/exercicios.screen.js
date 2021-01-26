@@ -19,13 +19,7 @@ const QuestionsScreen = (props)=>{
           <h5 style={{ margin: "0px" }}>Exercícios</h5>
         </Col>
       </Row>
-      <Row mb={15}>
-        <Col xs={12}>
-          <Link to="/professor/criarExercicio">
-            <button className="btn btn-primary">Criar Exercício</button>
-          </Link>
-        </Col>
-      </Row>
+
       <ExerciciosPaginados
         {...props}
       />
