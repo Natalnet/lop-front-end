@@ -40,12 +40,12 @@ export default class MenuAluno extends Component {
                     Exercícios
                   </Link>
                 </li>
-                <li className="nav-item">
+                {/* <li className="nav-item">
                   <Link to="/aluno/cursos" className={`nav-link ${this.props.active==='cursos'?'active':''}`}>
                     <GiTeacher className='mr-1'/>
                     Cursos
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
