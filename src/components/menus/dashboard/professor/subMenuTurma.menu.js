@@ -49,13 +49,13 @@ export default props => {
                             Submissões
                         </Link>
                             </li>
-                            {/* <li className="nav-item">
+                            <li className="nav-item">
                                 <Link to={`/professor/turma/${id}/cursos`} className={`nav-link ${active === 'cursos' ? 'active' : ''}`}>
                                     <GiTeacher className='mr-1' />
                             Cursos
                         </Link>
                             </li>
-                            <li className="nav-item">
+                            {/* <li className="nav-item">
                                 <Link to={`/professor/turma/${id}/dashboard`} className={`nav-link ${active === 'dashboard' ? 'active' : ''}`}>
                                     <i className="fa fa-pie-chart" />
                             DashBoard
