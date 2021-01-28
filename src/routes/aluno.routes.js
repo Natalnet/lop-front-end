@@ -90,7 +90,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/turma/:id/prova/:idTest",
+    path: "/aluno/turma/:idClass/prova/:idTest",
     component: QuestoesProva,
     private: true,
     perfil: "ALUNO"
