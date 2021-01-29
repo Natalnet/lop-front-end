@@ -116,6 +116,8 @@ export default class Editor extends Component {
 
   }
   appInputFormat(tests) {
+    return tests;
+    /*
     return tests.map((test) => {
       return {
         inputs: test.inputs.split("\n").join("\\n"),
@@ -124,6 +126,7 @@ export default class Editor extends Component {
         msgOutput: "",
       };
     });
+    */
   }
   handleNumTest(action) {
     let { tests } = this.state;
@@ -216,8 +219,9 @@ export default class Editor extends Component {
   }
   isTestEmpty(results) {
     let isTestEmpty = false;
+    /*
     const testsChecked = results.map((test) => {
-      //if (/*!test.inputs || */!test.output) isTestEmpty = true;
+      //if (!test.inputs || !test.output) isTestEmpty = true;
       return {
         inputs: test.inputs.replace(/\s+$/, ""),
         output: test.output.replace(/\s+$/, "").replace(/\n+$/, ""),
@@ -225,7 +229,8 @@ export default class Editor extends Component {
         //msgOutput: !test.output ? "Este campo é obrigatório" : "",
       };
     });
-    this.setState({ tests: testsChecked });
+    */
+    this.setState({ tests: results });
     return isTestEmpty;
   }
 
@@ -261,6 +266,7 @@ export default class Editor extends Component {
   }
 
   rTrimAll(tests) {
+    /*
     const results = tests.map((test) => {
       return {
         inputs: test.inputs
@@ -274,7 +280,8 @@ export default class Editor extends Component {
           .replace(/\n+$/, ""),
       };
     });
-    return results;
+    */
+    return tests;
   }
   async saveQuestion(e) {
     e.preventDefault();
@@ -421,7 +428,6 @@ export default class Editor extends Component {
                     lang="pt_br"
                     height = 'auto'
                     minHeight="250px"
-                    height="auto"
                     setContents={description}
                     onChange={this.handleDescriptionChange.bind(this)}
                     onImageUploadBefore={this.handleImageUploadBefore.bind(this)}
@@ -523,7 +529,26 @@ export default class Editor extends Component {
                             entrada(s) (cada entrada deve vir acompanahada de um
                             \n)
                           </label>
-                          <input
+                          
+
+                          <textarea
+                            onChange={(e) => this.handleInputsChange(e, i)}
+                            style={{
+                              minHeight: "38px",
+                              height: "90px",
+                              width: "100%",
+                            }}
+                            className={`form-control ${!tests[i].inputs && tests[i].msgInputs
+                              ? "is-invalid"
+                              : ""
+                              }`}
+                            wrap="off"
+                            placeholder="Ex: 12\n16.4\nOlá mundo!\n"
+                            value={tests[i].inputs}
+                          //required
+                          ></textarea>
+
+                          {/* <input
                             type="text"
                             onChange={(e) => this.handleInputsChange(e, i)}
                             className={`form-control ${!tests[i].inputs && tests[i].msgInputs
@@ -533,7 +558,8 @@ export default class Editor extends Component {
                             placeholder="Ex: 12\n16.4\nOlá mundo!\n"
                             value={tests[i].inputs}
                           // required
-                          />
+                          /> */}
+                          
                           <div className="invalid-feedback">
                             {!tests[i].inputs && tests[i].msgInputs
                               ? tests[i].msgInputs
