@@ -78,11 +78,11 @@ const QuestionSubcscreen = props => {
     }, [profile])
 
     const testCases = useMemo(() =>
-        isTeacher() || (test && test.classHasTest.showAllTestCases) ?
+        isTeacher() || idList || (test && test.classHasTest.showAllTestCases) || !idClass?
             response
             :
             response.filter((t, i) => i === 0)
-        , [test, response, isTeacher])
+        , [test, idList, response, idClass, isTeacher])
 
     useEffect(() => {
         latestSolution.current = solution;
