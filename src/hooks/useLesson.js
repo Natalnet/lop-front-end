@@ -9,10 +9,12 @@ const useLesson = () => {
     const [lessons, setLessons] = useState([]);
     const [lesson, setLesson] = useState([]);
 
-    const getLesson = useCallback(async (id) => {
+    const getLesson = useCallback(async (id, queryParams = {}) => {
         try {
             setIsLoadingLesson(true);
-            const response = await api.get(`/lesson/${id}`)
+            const response = await api.get(`/lesson/${id}`,{
+                params: queryParams
+            })
             setLesson(response.data)
         }
         catch (err) {
@@ -24,11 +26,13 @@ const useLesson = () => {
         setIsLoadingLesson(false);
     }, [])
 
-    const createLesson = useCallback(async ({ title, description, course_id }) => {
+    const createLesson = useCallback(async ({ title, description, course_id, selectedQuestions }) => {
         const request = {
             title,
             description,
-            course_id
+            course_id,
+            questions: selectedQuestions.map((q) => q.id),
+
         }
         Swal.fire({
             title: "criando aula",
@@ -70,10 +74,11 @@ const useLesson = () => {
         setIsLoadingLessons(false);
     }, []);
 
-    const updateLesson = useCallback(async (id, { title, description }) => {
+    const updateLesson = useCallback(async (id, { title, description, selectedQuestions }) => {
         const request = {
             title,
-            description
+            description,
+            questions: selectedQuestions.map((q) => q.id),
         }
         Swal.fire({
             title: "Editando curso",

@@ -6,10 +6,10 @@ import ProvaScreen from "../screens/sistema/professor/provas.screen";
 import ExerciciosScreen from "../screens/sistema/professor/exercicios.screen";
 import Exercicio from "../screens/sistema/professor/exercicio.screen";
 import AtualizarexercicioScreen from "../screens/sistema/professor/exercicios.editar.screen";
-import CriarListaScreen from "../screens/sistema/professor/criarLista.screen";
-import EditarListaScreen from "../screens/sistema/professor/editarList.screen";
-import EditTestScreen from "../screens/sistema/professor/editTest.screen";
-import CriarProvaScreen from "../screens/sistema/professor/criarProva.screen";
+import CreateListScreen from "../screens/sistema/professor/createList.screen";
+import UpdateListScreen from "../screens/sistema/professor/updateList.screen";
+import UpdateTest from "../screens/sistema/professor/updateTest.screen";
+import CreateTest from "../screens/sistema/professor/createTest.screen";
 import CriarExercicioScreen from "../screens/sistema/professor/criarExercicios.screen";
 import Erro401 from "../screens/erros/error401.screen";
 import TelaTurmaParticipantes from "../screens/sistema/professor/telaTurmaParticipantes.screen";
@@ -41,7 +41,14 @@ import Lessons from '../screens/sistema/professor/lessons.screen'
 import Lesson from '../screens/sistema/professor/lesson.screen'
 import ClassCourses from '../screens/sistema/professor/classCourses.screen'
 import ClassLessons from '../screens/sistema/professor/classLessons.screen'
-import ClassLesson from '../screens/sistema/aluno/classLesson.screen'
+import ClassLesson from '../screens/sistema/professor/classLesson.screen'
+import CreateObjectiveQuestion from '../screens/sistema/professor/createObjectiveQuestion.screen'
+import UpdateObjectiveQuestion from '../screens/sistema/professor/updateObjectiveQuestion.screen'
+import CreatediscursiveQuestion from '../screens/sistema/professor/createDiscursiveQuestion.screen'
+import UpdateDiscursiveQuestion from '../screens/sistema/professor/updateDiscursiveQuestion.screen'
+import ClassLessonQuestion from '../screens/sistema/professor/classLessonQuestion.screen'
+import LessonQuestions from '../screens/sistema/professor/lessonQuestions.screen';
+
 const routes = [
   {
     path: "/professor/novasturmas",
@@ -88,25 +95,25 @@ const routes = [
 
   {
     path: "/professor/criarLista",
-    component: CriarListaScreen,
+    component: CreateListScreen,
     private: true,
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/listas/:id/editar",
-    component: EditarListaScreen,
+    path: "/professor/listas/:idList/editar",
+    component: UpdateListScreen,
     private: true,
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/provas/:id/editar",
-    component: EditTestScreen,
+    path: "/professor/provas/:idTest/editar",
+    component: UpdateTest,
     private: true,
     perfil: "PROFESSOR",
   },
   {
     path: "/professor/criarProva",
-    component: CriarProvaScreen,
+    component: CreateTest,
     private: true,
     perfil: "PROFESSOR",
   },
@@ -128,13 +135,13 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/lista/:idLista",
+    path: "/professor/turma/:idClass/lista/:idList",
     component: TurmaExercicios,
     private: true,
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/lista/:idLista/exercicio/:idExercicio",
+    path: "/professor/turma/:idClass/lista/:idList/exercicio/:idQuestion",
     component: TurmaExercicio,
     private: true,
     perfil: "PROFESSOR",
@@ -177,7 +184,7 @@ const routes = [
   },
   {
     path:
-      "/professor/turma/:id/participantes/:idUser/listas/:idLista/exercicios",
+      "/professor/turma/:idClass/participantes/:idUser/listas/:idList/exercicios",
     component: TelaTurmaParticipantesLista,
     private: true,
     perfil: "PROFESSOR",
@@ -246,13 +253,13 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/prova/:idTest/questao/:idExercicio",
+    path: "/professor/turma/:idClass/prova/:idTest/questao/:idQuestion",
     component: RealizarQuestao,
     private: true,
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/prova/:idTest",
+    path: "/professor/turma/:idClass/prova/:idTest",
     component: QuestoesProva,
     private: true,
     perfil: "PROFESSOR",
@@ -304,6 +311,42 @@ const routes = [
     component: Lesson,
     private: true,
     perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/criarExercicioObjetvo",
+    component: CreateObjectiveQuestion,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/editarExercicioObjetvo/:idObjectiveQuestion",
+    component: UpdateObjectiveQuestion,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/criarExercicioDiscursivo",
+    component: CreatediscursiveQuestion,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/editarExercicioDiscursivo/:idDiscursiveQuestion",
+    component: UpdateDiscursiveQuestion,
+    private: true,
+    perfil: "PROFESSOR",
+  },
+  {
+    path: "/professor/turma/:idClass/aula/:idLesson/exercicio/:idQuestion",
+    component: ClassLessonQuestion,
+    private: true,
+    perfil: "PROFESSOR"
+  },
+  {
+    path: "/professor/aula/:idLesson/exercicio/:idQuestion",
+    component: LessonQuestions,
+    private: true,
+    perfil: "PROFESSOR"
   },
 ];
 

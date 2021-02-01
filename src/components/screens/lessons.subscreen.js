@@ -125,10 +125,13 @@ const LessonsSubScreenComponent = (props) => {
                                 </p>
                             </CardOptions>
                         </CardHead>
-                        <CardBody className='h-auto'>
+                        <CardBody
+                            className='h-auto overflow-auto'
+                            style={{ height: '110px' }}
+                        >
                             <div className="d-flex flex-column">
                                 <p
-                                    className="m-0  mb-4"
+                                    className="m-0 mb-4"
                                     style={{
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
@@ -180,7 +183,6 @@ const LessonsSubScreenComponent = (props) => {
                                                                         <IconButton
                                                                             aria-label="edit leson"
                                                                             component="span"
-
                                                                         >
                                                                             <MdModeEdit size={25} />
                                                                         </IconButton>

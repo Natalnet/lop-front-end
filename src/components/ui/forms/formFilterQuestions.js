@@ -10,7 +10,6 @@ export default ({
     titleOrCodeInput, tagSelect, sortBySelect, descRadio, tagsSelect, loading, ascRadio, docsPerPage,
     handlleFilter, handleTitleOrCodeInput, handleTagSelect, handleSortRadio, handleDocsPerPage, handleSortBySelect
 }) => {
-
     return (
         <Card>
             <Accordion>

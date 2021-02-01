@@ -5,7 +5,7 @@ import api from "../../../services/api";
 import { generateHash } from "../../../util/auxiliaryFunctions.util";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
-import TurmaProvaScrren from "../../../components/screens/turmaProva.componente.screen";
+import TurmaProvaScrren from "../../../components/screens/classTest.subscreen";
 
 export default class Exercicios extends Component {
   constructor(props) {
@@ -26,7 +26,7 @@ export default class Exercicios extends Component {
     document.title = `${turma && turma.name} - ${prova && prova.title}`;
   }
   async getInfoTurma() {
-    const id = this.props.match.params.id;
+    const id = this.props.match.params.idClass;
     const { myClasses } = this.state;
     if (myClasses && typeof myClasses === "object") {
       const index = myClasses.map((c) => c.id).indexOf(id);
@@ -50,8 +50,7 @@ export default class Exercicios extends Component {
     }
   }
   async getProva() {
-    const { id, idTest } = this.props.match.params;
-    const idClass = id;
+    const { idClass, idTest } = this.props.match.params;
     let query = `?idClass=${idClass}`;
     try {
       this.setState({ loandingProva: true });
@@ -71,7 +70,7 @@ export default class Exercicios extends Component {
         !password ||
         password !== hashCode
       ) {
-        this.props.history.push(`/aluno/turma/${id}/provas`);
+        this.props.history.push(`/aluno/turma/${idClass}/provas`);
       } else {
         this.setState({
           prova,
@@ -97,7 +96,7 @@ export default class Exercicios extends Component {
                 {turma && turma.name} - {turma && turma.year}.
                 {turma && turma.semester}
                 <i className="fa fa-angle-left ml-2 mr-2" />
-                <Link to={`/aluno/turma/${this.props.match.params.id}/provas`}>
+                <Link to={`/aluno/turma/${this.props.match.params.idClass}/provas`}>
                   Provas
                 </Link>
                 <i className="fa fa-angle-left ml-2 mr-2" />

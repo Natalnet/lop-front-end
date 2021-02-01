@@ -513,7 +513,7 @@ export default class Editor extends Component {
                     <Fragment key={i}>
                       <div
                         className="form-group col-12 col-md-6"
-                        style={{ border: "1px solid #00f" }}
+                        style={{ border: "1px solid #467fcf" }}
                       >
                         <div className="form-group col-12">
                           <label>teste {i + 1}</label>

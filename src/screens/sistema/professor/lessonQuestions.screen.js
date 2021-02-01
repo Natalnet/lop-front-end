@@ -4,7 +4,7 @@ import TemplateSistema from "../../../components/templates/sistema.template";
 
 import QuestionSubscreen from "../../../components/screens/question.subscreen";
 
-const QuestionScreen = props => {
+const LessonQuestions = props => {
     return (
       <TemplateSistema {...props} active={"exercicios"}>
           <QuestionSubscreen
@@ -13,4 +13,4 @@ const QuestionScreen = props => {
       </TemplateSistema>
     );
 }
-export default QuestionScreen;
+export default LessonQuestions;

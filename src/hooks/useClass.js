@@ -16,7 +16,7 @@ const useClass = () => {
         catch (err) {
             Swal.fire({
                 type: "error",
-                title: "ops... erro ao carregar aula",
+                title: "ops... erro ao carregar turma",
             });
         }
         setIsLoadingClass(false);

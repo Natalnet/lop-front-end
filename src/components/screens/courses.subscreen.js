@@ -263,7 +263,7 @@ const CoursesSubScreenComponent = props => {
                             disabled={isLoadingCourses}
                             type="button"
                             id="button-addon2"
-                            onClick={handleGetCourses}
+                            onClick={()=>handleGetCourses()}
                         >
                             <i className="fe fe-search" />
                         </button>
@@ -346,7 +346,10 @@ const CoursesSubScreenComponent = props => {
                                         </p>
                                     </CardOptions>
                                 </CardHead>
-                                <CardBody>
+                                <CardBody
+                                    className='overflow-auto'
+                                    style={{ height: '110px' }}
+                                >
                                     <p><strong>Descrição:</strong> {course.description}</p>
                                 </CardBody>
                                 <CardFooter
@@ -385,7 +388,7 @@ const CoursesSubScreenComponent = props => {
                                                 <ul className="d-flex align-items-center m-0 p-0">
                                                     <li
                                                         className="d-flex mr-4 ml-4 align-items-center"
-                                                        title={`${course.lessonsCount} curso(s)`}
+                                                        title={`${course.lessonsCount} aula(s)`}
                                                     >
                                                         {/* <i className="fa fa-users mr-1" /> */}
                                                         <GiSecretBook className="mr-1 " />
@@ -654,7 +657,7 @@ const CoursesSubScreenComponent = props => {
                                                             <ul className="d-flex align-items-center m-0 p-0">
                                                                 <li
                                                                     className="d-flex mr-4 ml-4 align-items-center"
-                                                                    title={`${course.lessonsCount} curso(s)`}
+                                                                    title={`${course.lessonsCount} aula(s)`}
                                                                 >
                                                                     {/* <i className="fa fa-users mr-1" /> */}
                                                                     <GiSecretBook className="mr-1 " />
