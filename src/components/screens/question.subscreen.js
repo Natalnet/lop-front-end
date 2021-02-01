@@ -50,7 +50,6 @@ const QuestionSubcscreen = props => {
     //questions propertys
     const [solution, setSolution] = useState('');
     const [char_change_number, setCharChangeNumber] = useState(0);
-    const [oldTimeConsuming, setOldTimeConsuming] = useState(0);
 
     //class propertys
     const [language, setLanguage] = useState(SupportedLanguages.list[0]);
@@ -144,8 +143,6 @@ const QuestionSubcscreen = props => {
         if (question) {
             setSolution(question.questionDraft ? question.questionDraft.answer : '');
             setCharChangeNumber(question.questionDraft ? question.questionDraft.char_change_number : 0);
-            setOldTimeConsuming(question.lastSubmission ? question.lastSubmission.timeConsuming : 0)
-
             document.title = question.title;
         }
     }, [question]);
@@ -219,7 +216,7 @@ const QuestionSubcscreen = props => {
             console.log(err);
             throw err;
         }
-        setStartTime(new Date())
+        setStartTime(new Date());
     }, [language, idQuestion, idClass, idList, idTest, idLesson]);
 
     const handleSubmitProgrammingQuestion = useCallback(async () => {
@@ -230,7 +227,7 @@ const QuestionSubcscreen = props => {
             });
             return null;
         }
-        const timeConsuming = (new Date() - startTime) + oldTimeConsuming;
+        const timeConsuming = (new Date() - startTime);
         const request = {
             codigo: language === "blockly" ? getBlocklyCode(simpleWorkspace.current.workspace) : solution,
             linguagem: language === "blockly" ? 'python' : language,
@@ -260,7 +257,7 @@ const QuestionSubcscreen = props => {
             console.log(err);
         }
 
-    }, [language, question, char_change_number, startTime, oldTimeConsuming, simpleWorkspace, solution, statusTest, saveDraft, saveSubmission])
+    }, [language, question, char_change_number, startTime, simpleWorkspace, solution, statusTest, saveDraft, saveSubmission])
 
     const handleSubmitObjectiveQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
@@ -270,7 +267,7 @@ const QuestionSubcscreen = props => {
             });
             return null;
         }
-        const timeConsuming = (new Date() - startTime) + oldTimeConsuming;
+        const timeConsuming = (new Date() - startTime);
         const ip = await findLocalIp(false);
         const isSaved = await saveSubmissionByObjectiveQuestion({
             answer: latestSolution.current,
@@ -291,7 +288,7 @@ const QuestionSubcscreen = props => {
                 idLesson
             })
         }
-    }, [idQuestion, idClass, idList, idTest, idLesson,  statusTest, startTime, oldTimeConsuming, saveSubmissionByObjectiveQuestion, getQuestion]);
+    }, [idQuestion, idClass, idList, idTest, idLesson,  statusTest, startTime, saveSubmissionByObjectiveQuestion, getQuestion]);
 
     const handleSubmitDiscursiveQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
@@ -302,7 +299,7 @@ const QuestionSubcscreen = props => {
             return null;
         }
         saveDraft(false);
-        const timeConsuming = (new Date() - startTime) + oldTimeConsuming;
+        const timeConsuming = (new Date() - startTime);
         const ip = await findLocalIp(false);
         const isSaved = await saveSubmissionByDiscursiveQuestion({
             answer: latestSolution.current,
@@ -324,7 +321,7 @@ const QuestionSubcscreen = props => {
                 idLesson
             })
         }
-    }, [idQuestion, idClass, idList, idTest, idLesson, statusTest, startTime, char_change_number, oldTimeConsuming, saveSubmissionByDiscursiveQuestion, getQuestion]);
+    }, [idQuestion, idClass, idList, idTest, idLesson, statusTest, startTime, char_change_number, saveSubmissionByDiscursiveQuestion, getQuestion]);
 
 
     const handleDifficulty = useCallback(async (e) => {
