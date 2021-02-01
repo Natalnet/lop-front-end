@@ -194,8 +194,10 @@ export default class Editor extends Component {
   }
   isTestEmpty(results) {
     let isTestEmpty = false;
+    
+    /*
     const testsChecked = results.map((test) => {
-      //if (/*!test.inputs || */!test.output) isTestEmpty = true;
+      //if (!test.inputs || !test.output) isTestEmpty = true;
       return {
         inputs: test.inputs.replace(/\s+$/, ""),
         output: test.output.replace(/\s+$/, "").replace(/\n+$/, ""),
@@ -203,7 +205,8 @@ export default class Editor extends Component {
         //msgOutput: !test.output ? "Este campo é obrigatório" : "",
       };
     });
-    this.setState({ tests: testsChecked });
+    */
+    this.setState({ tests: results });
     return isTestEmpty;
   }
 
@@ -239,6 +242,8 @@ export default class Editor extends Component {
     }
   }
   appInputFormat(tests) {
+    
+    /*
     return tests.map((test) => {
       return {
         inputs: test.inputs.split("\n").join("\\n"),
@@ -247,10 +252,13 @@ export default class Editor extends Component {
         msgOutput: "",
       };
     });
+    */
+   return tests;
   }
   rTrimAll(tests) {
     /*console.log('antes do Rtrim');
     console.log(tests);*/
+    /*
     const results = tests.map((test) => {
       return {
         inputs: test.inputs
@@ -264,9 +272,12 @@ export default class Editor extends Component {
           .replace(/\n+$/, ""),
       };
     });
+    */
+
+    return tests;
     /*console.log('depois do em RTrim');
     console.log(results);*/
-    return results;
+    //return results;
   }
   async updateQuestion(e) {
     const id = this.props.match.params.id;
@@ -522,6 +533,25 @@ export default class Editor extends Component {
                             entrada(s) (cada entrada deve vir acompanahada de um
                             \n)
                           </label>
+
+                          <textarea
+                            onChange={(e) => this.handleInputsChange(e, i)}
+                            style={{
+                              minHeight: "38px",
+                              height: "90px",
+                              width: "100%",
+                            }}
+                            className={`form-control ${!tests[i].inputs && tests[i].msgInputs
+                              ? "is-invalid"
+                              : ""
+                              }`}
+                            wrap="off"
+                            placeholder="Ex: 12\n16.4\nOlá mundo!\n"
+                            value={tests[i].inputs}
+                          //required
+                          ></textarea>
+
+                          {/*
                           <input
                             type="text"
                             onChange={(e) => this.handleInputsChange(e, i)}
@@ -533,6 +563,7 @@ export default class Editor extends Component {
                             value={tests[i].inputs}
                           //required
                           />
+                          */}
                           <div className="invalid-feedback">
                             {!tests[i].inputs && tests[i].msgInputs
                               ? tests[i].msgInputs
