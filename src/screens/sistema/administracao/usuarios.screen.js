@@ -32,7 +32,7 @@ export default class HomeAdministradorScreen extends Component {
     try {
       this.setState({ loadingUsers: true });
 
-      const response = await api.get(`user/page/${numPageAtual}?${query}`);
+      const response = await api.get(`user/page/${numPageAtual}/all?${query}`);
       this.setState({
         users: [...response.data.docs],
         totalItens: response.data.total,

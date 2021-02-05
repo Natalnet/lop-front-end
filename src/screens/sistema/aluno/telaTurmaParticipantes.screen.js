@@ -58,7 +58,6 @@ export default class Pagina extends Component {
     const { numPageAtual, docsPerPage } = this.state;
     const idClass = this.props.match.params.id;
     let query = `?idClass=${idClass}`;
-    query += `&classes=yes`;
     query += `&docsPerPage=${docsPerPage}`;
     try {
       this.setState({ loadingParticipantes: true });

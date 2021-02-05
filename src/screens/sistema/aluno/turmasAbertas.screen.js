@@ -40,26 +40,7 @@ export default class HomeAlunoScreen extends Component {
   componentWillUnmount() {
     this.io && this.io.close();
   }
-  async getMinhasTurmas() {
-    let myClasses = sessionStorage.getItem("myClasses");
-    if (myClasses && typeof JSON.parse(myClasses) === "object") {
-      myClasses = JSON.parse(myClasses);
-      this.setState({ minhasTurmas: myClasses });
-      return null;
-    }
-    let query = `?myClasses=yes`;
-    try {
-      this.setState({ loandingTurmasAbertas: true });
-      const response = await api.get(`/class${query}`);
-      this.setState({
-        minhasTurmas: [...response.data],
-        loandingTurmasAbertas: false,
-      });
-    } catch (err) {
-      this.setState({ loandingTurmasAbertas: false });
-      console.log(err);
-    }
-  }
+
   async getSolicitacoes(loading = true) {
     let query = `?mySolicitations=yes`;
     try {
@@ -75,14 +56,14 @@ export default class HomeAlunoScreen extends Component {
     }
   }
   async getTurmasAbertas(loading = true) {
-    const { code, minhasTurmas } = this.state;
-    let query = `?code=${code || "null"}`;
-    query += `&state=ATIVA`;
-    query += `&idNotIn=${minhasTurmas.map((t) => t.id).join(" ")}`;
-
+    const { code } = this.state;
     try {
       if (loading) this.setState({ loandingTurmasAbertas: true });
-      const response = await api.get(`/class${query}`);
+      const response = await api.get('/class/open', {
+        params: {
+          code
+        }
+      });
       this.setState({
         turmasAbertas: response.data,
         loandingTurmasAbertas: false,
@@ -112,15 +93,7 @@ export default class HomeAlunoScreen extends Component {
           title: t.title,
         };
       });
-      let myClasses = sessionStorage.getItem("myClasses");
-      if (myClasses && typeof JSON.parse(myClasses) === "object") {
-        myClasses = [...JSON.parse(myClasses), ...myNewClass];
-      } else {
-        myClasses = myNewClass;
-      }
-      sessionStorage.setItem("myClasses", JSON.stringify(myClasses));
       this.setState({
-        minhasTurmas: myClasses,
         turmasAbertas: turmasAbertas.filter((t) => t.id !== response),
       });
     });
@@ -211,7 +184,6 @@ export default class HomeAlunoScreen extends Component {
     });
   }
   async filterSeash(e) {
-    await this.getMinhasTurmas();
     await this.getSolicitacoes();
     this.getTurmasAbertas();
   }
@@ -224,7 +196,6 @@ export default class HomeAlunoScreen extends Component {
     this.setState({
       code: "",
     });
-    await this.getMinhasTurmas();
     await this.getSolicitacoes();
     this.getTurmasAbertas();
   }

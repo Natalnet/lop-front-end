@@ -32,25 +32,13 @@ export default class HomeAlunoScreen extends Component {
     document.title = "Inicio - Aluno";
   }
   async getMinhasTurmas() {
-    let query = `?myClasses=yes`;
-    query+=`&state=ATIVA`
     try {
       this.setState({ loadingTurmas: true });
-      const response = await api.get(`/class${query}`);
+      const response = await api.get('/class');
       this.setState({
         minhasTurmas: [...response.data],
         loadingTurmas: false,
       });
-      const myClasses = response.data.map((t) => {
-        return {
-          id: t.id,
-          year: t.year,
-          name: t.name,
-          semester: t.semester,
-          languages: t.languages,
-        };
-      });
-      sessionStorage.setItem("myClasses", JSON.stringify(myClasses));
     } catch (err) {
       this.setState({ loadingTurmas: false });
       console.log(err);
