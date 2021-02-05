@@ -1,9 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom'
 import api from '../services/api';
 import Swal from "sweetalert2";
 
 const useTest = () => {
-
+  const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
+  const history = useHistory();
   const [test, setTest] = useState(null);
   const [isLoadingTest, setIsLoadingTest] = useState(false);
 
@@ -29,6 +31,27 @@ const useTest = () => {
       const response = await api.get(`/test/${id}`, {
         params: queryParams
       });
+      if(profile === "aluno"){
+        if(response.data.classHasTest.status === "FECHADA"){
+          history.push(`/aluno/turma/${queryParams && queryParams.idClass}/provas`);
+        }
+        try{
+          const password = sessionStorage.getItem(
+            `passwordTest-${response.data.id}`
+          );
+          console.log('chammoouuuu')
+          await api.get('/test/check/password',{
+            params: {
+              idTest: id,
+              password
+            }
+          });
+        }
+        catch(err){
+          history.push(`/aluno/turma/${queryParams && queryParams.idClass}/provas`);
+        }
+      }
+
       if(queryParams.idUser){
         setTest(response.data.test);
       }
@@ -40,7 +63,7 @@ const useTest = () => {
       console.log(err);
     }
     setIsLoadingTest(false);
-  }, []);
+  }, [profile, history]);
 
   const createTest = useCallback(async ({ title, selectedQuestions }) => {
     if (!isValidTest({ title, selectedQuestions })) {

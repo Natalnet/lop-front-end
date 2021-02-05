@@ -13,7 +13,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Radio from '@material-ui/core/Radio';
 import api from "../../../services/api";
 import moment from "moment";
-import SwalModal from "../../../components/ui/modal/swalModal.component";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
 import "katex/dist/katex.min.css";

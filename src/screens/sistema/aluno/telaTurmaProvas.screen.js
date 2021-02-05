@@ -102,12 +102,7 @@ export default class Provas extends Component {
   }
   async acessar(prova) {
     const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}`;
-    const password = sessionStorage.getItem(`passwordTest-${prova.id}`);
-    const hashCode = `${generateHash(prova.classHasTest.password)}-${prova.id}`;
     try {
-      if (password && password === hashCode) {
-        this.props.history.push(url);
-      } else {
         const { value } = await Swal.fire({
           title: "Senha para acessar a prova",
           confirmButtonText: "Acessar",
@@ -115,20 +110,33 @@ export default class Provas extends Component {
           input: "password",
           showCancelButton: true,
           inputValue: "", //valor inicial
-          inputValidator: (value) => {
+          inputValidator: async (value) => {
             if (!value) {
               return "Você precisa escrever algo!";
-            } else if (value !== prova.classHasTest.password) {
-              return "Senha incorreta :(";
+            } 
+            else{
+              try{
+                Swal.showLoading();
+                console.log('chammoouuuu')
+                await api.get('/test/check/password',{
+                  params: {
+                    idTest: prova.id,
+                    password: value
+                  }
+                });
+                console.log('deuuu certooo')
+                Swal.hideLoading();
+                sessionStorage.setItem(`passwordTest-${prova.id}`, `${value}`);
+                this.props.history.push(url);
+              }
+              catch(err){
+                console.log('deuuu erradooooo')
+                Swal.hideLoading();
+                return "Senha incorreta :(";
+              }
             }
           },
         });
-        if (value) {
-          //gera hash da senha
-          sessionStorage.setItem(`passwordTest-${prova.id}`, hashCode);
-          this.props.history.push(url);
-        }
-      }
     } catch (err) {
       console.log(err);
     }
