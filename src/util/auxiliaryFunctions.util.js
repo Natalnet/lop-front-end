@@ -38,8 +38,11 @@ export const findLocalIp = (logInfo = true) => new Promise((resolve, reject) => 
         || window.mozRTCPeerConnection
         || window.webkitRTCPeerConnection;
 
-    if (typeof window.RTCPeerConnection == 'undefined')
-        return reject('WebRTC not supported by browser');
+    if (typeof window.RTCPeerConnection == 'undefined'){
+        console.log('WebRTC not supported by browser');
+        //return reject();
+        return resolve(['undefined'])
+    }
 
     let pc = new RTCPeerConnection();
     let ips = [];
@@ -51,8 +54,10 @@ export const findLocalIp = (logInfo = true) => new Promise((resolve, reject) => 
     pc.onicecandidate = event => {
         if (!event || !event.candidate) {
             // All ICE candidates have been sent.
-            if (ips.length === 0)
-                return reject('WebRTC disabled or restricted by browser');
+            if (ips.length === 0){
+                console.log('WebRTC disabled or restricted by browser');
+                return resolve(['undefined']);
+            }
 
             return resolve(ips);
         }
