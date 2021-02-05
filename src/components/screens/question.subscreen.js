@@ -91,7 +91,6 @@ const QuestionSubcscreen = props => {
     }, [solution, char_change_number, language, question]);
 
     useEffect(() => {
-        console.log('idClass: ',idClass)
         saveAccess(idQuestion);
         getQuestion(idQuestion, {
             idClass,

@@ -59,17 +59,23 @@ export default class Exercicios extends Component {
       const password = sessionStorage.getItem(
         `passwordTest-${prova && prova.id}`
       );
-      const hashCode = `${generateHash(prova && prova.classHasTest.password)}-${
-        prova && prova.id
-      }`;
-      // console.log('password: ',password)
-      // console.log('hashCode: ',hashCode)
+      console.log('password: ',password)
+      ///
+      try{
+        console.log('chammoouuuu')
+        await api.get('/test/check/password',{
+          params: {
+            idTest: prova.id,
+            password
+          }
+        });
+      }
+      catch(err){
+        this.props.history.push(`/aluno/turma/${idClass}/provas`);
+      }
+///
 
-      if (
-        (prova && prova.classHasTest.status === "FECHADA") ||
-        !password ||
-        password !== hashCode
-      ) {
+      if (prova && prova.classHasTest.status === "FECHADA") {
         this.props.history.push(`/aluno/turma/${idClass}/provas`);
       } else {
         this.setState({
