@@ -13,6 +13,7 @@ export default (props) => {
   return (
     <Row mb={15}>
       {provas.map((prova, i) => {
+        console.log(prova.classHasTest.correcao);
         return (
           <Fragment key={prova.id}>
             <Col xs={12}>
@@ -32,13 +33,26 @@ export default (props) => {
                   />
                   <CardOptions>
                     {profile === "aluno" && prova.classHasTest.status === "ABERTA" ? (
-                      <button
-                        className="btn btn-success mr-2"
-                        style={{ float: "right" }}
-                        onClick={() => acessar(prova)}
-                      >
-                        Acessar <i className="fa fa-wpexplorer" />
-                      </button>
+                      <>
+                        {prova.classHasTest.correcao === "DISPONIVEL" ? (
+                          <button className="btn btn-primary ml-2 mr-2">
+                            Correções <i className="fe fe-file-text" />
+                          </button>
+                         ) :
+                          <button className="btn btn-primary ml-2 mr-2" disabled>
+                            Correções <i className="fe fe-file-text" />
+                          </button>
+                        }
+                        <button
+                          className="btn btn-success mr-2"
+                          style={{ float: "right" }}
+                          onClick={() => acessar(prova)}
+                        >
+                          Acessar <i className="fa fa-wpexplorer" />
+                        </button>
+                        
+                        
+                      </>
                     ) : profile === "professor" && participant ? (
                       <Link
                         to={`/professor/turma/${props.match.params.id}/participantes/${user.id}/provas/${prova.id}/exercicios`}
