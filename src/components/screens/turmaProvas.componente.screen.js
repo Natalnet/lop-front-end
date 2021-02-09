@@ -37,7 +37,7 @@ export default (props) => {
                           <Link
 
                           ///aluno/turma/:idClass/prova/:idTest/feedback/
-                            to={`/aluno/turma/${props.match.params.id}/prova/${prova.id}/feedback`}
+                            to={`/aluno/turma/${props.match.params.id}/prova/${prova.id}/feedback/${0}`}
                           >
                             <button className="btn btn-primary ml-2 mr-2">
                               Correções <i className="fe fe-file-text" />

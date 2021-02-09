@@ -103,7 +103,7 @@ const routes = [
     perfil: "ALUNO"
   },
   {
-    path: "/aluno/turma/:idClass/prova/:idTest/feedback/",
+    path: "/aluno/turma/:idClass/prova/:idTest/feedback/:idQuestion",
     component: FeedbackProva,
     private: true,
     perfil: "ALUNO"
