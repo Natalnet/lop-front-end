@@ -357,18 +357,18 @@ export default class Exercicios extends Component {
                     )}
                   {prova && prova.classHasTest.correcao === "INDISPONIVEL" ? (
                     <button
+                      className="btn btn-success mr-3"
+                      onClick={() => this.toogleCorrection(prova.classHasTest.correcao)}
+                    >
+                      Mostrar Correções
+                    </button>
+                  ) : (
+                    <button
                       className="btn btn-danger mr-3"
                       onClick={() => this.toogleCorrection(prova.classHasTest.correcao)}
                     >
-                      Correções indisponíveis!
+                      Ocultar Correções
                     </button>
-                  ) : (
-                      <button
-                        className="btn btn-success mr-3"
-                        //onClick={() => this.recolherProva()}
-                      >
-                        Correções disponíveis!
-                      </button>
 
                     )}
                   <button
