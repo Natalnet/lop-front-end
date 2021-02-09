@@ -89,6 +89,37 @@ const FeedbackProva = props => {
         }
     }, [idClass]);
 
+    
+    /*checa à cada 1 minuto, se a correção foi desabilitada enquanto o usuário estava na tela*/
+    useEffect(() => {
+        let intervalInProgress = false;
+        const timer = setInterval ( async () => {
+            if ( intervalInProgress )
+                return false;
+            
+            intervalInProgress = true;
+            const response = await api.get(`/test/${idTest}?idClass=${idClass}`);
+            const prova = response.data;
+            if (prova && prova.classHasTest.correcao !==  "DISPONIVEL") {
+                const { value: choice } = await Swal.fire({
+                    title: `O Professor encerrou a visualização das correções :(`,
+                    //text: "You won't be able to revert this!",
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Voltar",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                });
+                if(choice){
+                    props.history.push(`/aluno/turma/${idClass}/provas`);
+                }
+            }
+            intervalInProgress = false;
+        }, 10*1000);
+        return () => clearInterval(timer);
+    }, [idClass])
+
 
     useEffect( () => {
         async function fetchQuestions(){
