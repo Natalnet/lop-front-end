@@ -134,6 +134,85 @@ export default class Exercicios extends Component {
 
   }
 
+  async toogleCorrection( correcaoStatus ){
+    const idTest = this.props.match.params.idTest;
+    const query = `?idClass=${this.props.match.params.idClass}`;
+    let request = { correcao : correcaoStatus };
+    if(correcaoStatus === 'INDISPONIVEL'){
+      const { value: choice } = await Swal.fire({
+        title: `Deseja disponibilizar as correções aos alunos?`,
+        //text: "You won't be able to revert this!",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sim!",
+        cancelButtonText: "Não!",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+      });
+      if(choice){
+        request.correcao = 'DISPONIVEL';
+      }
+    }
+    else{
+      const { value: choice } = await Swal.fire({
+        title: `Deseja deixar correções desta prova indisponíveis aos alunos?`,
+        //text: "You won't be able to revert this!",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Sim!",
+        cancelButtonText: "Não!",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+      });
+      if(choice){
+        request.correcao = 'INDISPONIVEL' ;
+      }
+    }
+
+    if(request.correcao !== correcaoStatus){
+      try {
+        Swal.fire({
+          title: "Ajustando disponibilidade das correções",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          allowEnterKey: false,
+        });
+        Swal.showLoading();
+        await api.put(`/classHasTest/${idTest}/update/correcao${query}`, request);
+        const { prova } = this.state;
+        prova.classHasTest.correcao = request.correcao;
+        this.setState({ prova });
+        Swal.hideLoading();
+        if(prova.classHasTest.correcao === 'DISPONIVEL'){
+          Swal.fire({
+            type: "success",
+            title: "Correções Disponíveis!",
+          });
+        }
+        else{
+          Swal.fire({
+            type: "success",
+            title: "Correções não mais Disponíveis!",
+          });
+        }
+      } catch (err) {
+        console.log(err);
+        Swal.hideLoading();
+        Swal.fire({
+          type: "error",
+          title: "Erro: Não foi possivel aplicar prova",
+        });
+      }
+
+    }
+    
+
+  }
+
   async aplicarProva() {
     const idTest = this.props.match.params.idTest;
     const query = `?idClass=${this.props.match.params.idClass}`;
@@ -202,6 +281,8 @@ export default class Exercicios extends Component {
   render() {
     const { loadingInfoTurma, turma, loandingProva, prova } = this.state;
 
+    if(prova)
+      console.log(prova.classHasTest.correcao);
     return (
       <TemplateSistema {...this.props} active={"provas"} submenu={"telaTurmas"}>
         <Row mb={15}>
@@ -257,7 +338,7 @@ export default class Exercicios extends Component {
 
 
                 </Col>
-                <Col xs={4} textRight>
+                <Col xs={4} textRight>               
                   {prova && prova.classHasTest.status === "FECHADA" ? (
                     <button
                       className="btn btn-success mr-3"
@@ -272,6 +353,22 @@ export default class Exercicios extends Component {
                       >
                         Recolher prova
                       </button>
+
+                    )}
+                  {prova && prova.classHasTest.correcao === "INDISPONIVEL" ? (
+                    <button
+                      className="btn btn-success mr-3"
+                      onClick={() => this.toogleCorrection(prova.classHasTest.correcao)}
+                    >
+                      Mostrar Correções
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-danger mr-3"
+                      onClick={() => this.toogleCorrection(prova.classHasTest.correcao)}
+                    >
+                      Ocultar Correções
+                    </button>
 
                     )}
                   <button

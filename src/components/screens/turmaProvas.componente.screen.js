@@ -31,14 +31,38 @@ export default (props) => {
                     dateBegin={prova.classHasTest.createdAt}
                   />
                   <CardOptions>
-                    {profile === "aluno" && prova.classHasTest.status === "ABERTA" ? (
-                      <button
-                        className="btn btn-success mr-2"
-                        style={{ float: "right" }}
-                        onClick={() => acessar(prova)}
-                      >
-                        Acessar <i className="fa fa-wpexplorer" />
-                      </button>
+                    {profile === "aluno" ? (
+                      <>
+                        {prova.classHasTest.correcao === "DISPONIVEL" ? (
+                          <Link
+                            to={`/aluno/turma/${props.match.params.id}/prova/${prova.id}/feedback/${0}`}
+                          >
+                            <button className="btn btn-primary ml-2 mr-2">
+                              Correções <i className="fe fe-file-text" />
+                            </button>
+                          </Link>
+                        ) :
+                          <button className="btn btn-primary ml-2 mr-2" disabled>
+                            Correções <i className="fe fe-file-text" />
+                          </button>
+                        }
+                        {prova.classHasTest.status === "ABERTA" ? (
+                          <button
+                            className="btn btn-success mr-2"
+                            style={{ float: "right" }}
+                            onClick={() => acessar(prova)}
+                          >
+                            Acessar <i className="fa fa-wpexplorer" />
+                          </button>
+                        ) : 
+                          <button
+                            className="btn btn-success mr-2" disabled
+                            style={{ float: "right" }}
+                          >
+                            Acessar <i className="fa fa-wpexplorer" />
+                          </button>
+                        }
+                      </>
                     ) : profile === "professor" && participant ? (
                       <Link
                         to={`/professor/turma/${props.match.params.id}/participantes/${user.id}/provas/${prova.id}/exercicios`}
