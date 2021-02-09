@@ -43,6 +43,7 @@ export default class AceEditorWrapper extends Component {
                 showPrintMargin={this.props.showPrintMargin}
                 name={this.props.name}
                 showGutter={this.props.showGutter}
+                readOnly={this.props.readOnly}
                 highlightActiveLine={this.props.highlightActiveLine}
             />
         );
