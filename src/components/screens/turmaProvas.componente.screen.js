@@ -13,7 +13,6 @@ export default (props) => {
   return (
     <Row mb={15}>
       {provas.map((prova, i) => {
-        console.log(prova.classHasTest.correcao);
         return (
           <Fragment key={prova.id}>
             <Col xs={12}>
@@ -32,26 +31,39 @@ export default (props) => {
                     dateBegin={prova.classHasTest.createdAt}
                   />
                   <CardOptions>
-                    {profile === "aluno" && prova.classHasTest.status === "ABERTA" ? (
+                    {profile === "aluno" ? (
                       <>
                         {prova.classHasTest.correcao === "DISPONIVEL" ? (
-                          <button className="btn btn-primary ml-2 mr-2">
-                            Correções <i className="fe fe-file-text" />
-                          </button>
-                         ) :
+                          <Link
+
+                          ///aluno/turma/:idClass/prova/:idTest/feedback/
+                            to={`/aluno/turma/${props.match.params.id}/prova/${prova.id}/feedback`}
+                          >
+                            <button className="btn btn-primary ml-2 mr-2">
+                              Correções <i className="fe fe-file-text" />
+                            </button>
+                          </Link>
+                        ) :
                           <button className="btn btn-primary ml-2 mr-2" disabled>
                             Correções <i className="fe fe-file-text" />
                           </button>
                         }
-                        <button
-                          className="btn btn-success mr-2"
-                          style={{ float: "right" }}
-                          onClick={() => acessar(prova)}
-                        >
-                          Acessar <i className="fa fa-wpexplorer" />
-                        </button>
-                        
-                        
+                        {prova.classHasTest.status === "ABERTA" ? (
+                          <button
+                            className="btn btn-success mr-2"
+                            style={{ float: "right" }}
+                            onClick={() => acessar(prova)}
+                          >
+                            Acessar <i className="fa fa-wpexplorer" />
+                          </button>
+                        ) : 
+                          <button
+                            className="btn btn-success mr-2" disabled
+                            style={{ float: "right" }}
+                          >
+                            Acessar <i className="fa fa-wpexplorer" />
+                          </button>
+                        }
                       </>
                     ) : profile === "professor" && participant ? (
                       <Link
