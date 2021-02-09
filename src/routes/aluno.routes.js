@@ -10,6 +10,7 @@ import TurmaExercicios from "../screens/sistema/aluno/telaTurmaExercicios.screen
 import DashBoardAluno from "../screens/sistema/aluno/telaTurmaDashBoard.screen";
 import TurmasAbertasAlunoScreen from "../screens/sistema/aluno/turmasAbertas.screen";
 import TelaProvas from "../screens/sistema/aluno/telaTurmaProvas.screen";
+import FeedbackProva from "../screens/sistema/aluno/feedbackProva.screen";
 import QuestoesProva from "../screens/sistema/aluno/telaTurmasAcessarProva.screen";
 import RealizarQuestao from "../screens/sistema/aluno/telaTurmasAcessarQuestaoProva.screen";
 import Courses from '../screens/sistema/aluno/courses.screen'
@@ -98,6 +99,12 @@ const routes = [
   {
     path: "/aluno/turma/:idClass/prova/:idTest/questao/:idQuestion",
     component: RealizarQuestao,
+    private: true,
+    perfil: "ALUNO"
+  },
+  {
+    path: "/aluno/turma/:idClass/prova/:idTest/feedback/",
+    component: FeedbackProva,
     private: true,
     perfil: "ALUNO"
   },
