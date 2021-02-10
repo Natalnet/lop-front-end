@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
@@ -6,7 +6,7 @@ import katex from 'katex'
 import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
 import Swal from "sweetalert2";
-import api, { baseUrlBackend } from "../../../services/api";
+import api from "../../../services/api";
 import apiCompiler from "../../../services/apiCompiler";
 import AceEditorWrapper, { themesAceEditor } from "../../../components/templates/aceEditorWrapper.template"
 import HTMLFormat from "../../../components/ui/htmlFormat";
@@ -14,20 +14,10 @@ import { Card, CardBody, CardHead, CardTitle, CardOptions } from '../../../compo
 import Radio from '@material-ui/core/Radio';
 import { Row, Col } from '../../../components/ui/grid';
 import * as B from "../../../components/ui/blockly";
-import { getBlocklyCode, getBlocklyXML, findLocalIp, isXml } from '../../../util/auxiliaryFunctions.util';
+import { getBlocklyCode, isXml } from '../../../util/auxiliaryFunctions.util';
 import SupportedLanguages from "../../../config/SupportedLanguages";
-import socket from "socket.io-client";
-import useAccess from '../../../hooks/useAccess';
-import useQuestion from '../../../hooks/useQuestion';
-import useSubmission from '../../../hooks/useSubmission';
 import useClass from '../../../hooks/useClass';
-import useDifficulty from '../../../hooks/useDifficulty';
-import useList from '../../../hooks/useList';
-import useTest from '../../../hooks/useTest';
-import useLesson from '../../../hooks/useLesson';
-import { IoMdEye } from 'react-icons/io';
 import { FaCheck } from 'react-icons/fa';
-import { Load } from '../../../components/ui/load';
 
 import TemplateSistema from "../../../components/templates/sistema.template";
 
@@ -38,7 +28,7 @@ const FeedbackProva = props => {
     const idTest = useMemo(() => props.match.params.idTest, [props]);
     const idQuestion = useMemo(() => props.match.params.idQuestion, [props]);
 
-    const { getClass, isLoadingClass, classRoon } = useClass();
+    const { getClass, classRoon } = useClass();
 
 
     const [isCorrecting, setCorrecting] = useState(true);
@@ -87,7 +77,7 @@ const FeedbackProva = props => {
         if (idClass) {
             getClass(idClass);
         }
-    }, [idClass]);
+    }, [idClass, getClass]);
 
     
     /*checa à cada 1 minuto, se a correção foi desabilitada enquanto o usuário estava na tela*/
@@ -134,7 +124,7 @@ const FeedbackProva = props => {
             });
         }, 60*1000);
         return () => clearInterval(timer);
-    }, [idClass])
+    }, [idClass,idTest,props.history])
 
 
     useEffect( () => {
@@ -166,7 +156,7 @@ const FeedbackProva = props => {
     /*atualiza endereço do navegador */
     useEffect ( () => {
         props.history.push(`/aluno/turma/${idClass}/prova/${idTest}/feedback/${currentQuestionIdx}`);
-    },[currentQuestionIdx]);
+    },[currentQuestionIdx, props.history, idClass, idTest]);
 
     useEffect ( () => {
 
@@ -217,19 +207,6 @@ const FeedbackProva = props => {
             question_id: question.id
         });
         
-        /*setState({
-            title: currentQuestion.title,
-            type: currentQuestion.type,
-            description: currentQuestion.description,
-            katexDescription: currentQuestion.katexDescription,
-            solution: currentQuestion.solution,
-            difficulty: currentQuestion.difficulty,
-            feedBackTest: currentQuestion.feedBackTest,
-            results: Array.isArray(currentQuestion.results) ? [...currentQuestion.results] : [],
-            response: Array.isArray(currentQuestion.results) ? [...currentQuestion.results] : [],
-            alternatives: Array.isArray(currentQuestion.alternatives) ? [...currentQuestion.alternatives] : [],
-            question_id: currentQuestion.id,
-        });*/
 
         //verifica se há um asubmissão para a questão
         
@@ -256,75 +233,56 @@ const FeedbackProva = props => {
         
         setLoadingCurrentAnswer(false);
 
-        //verifica se a questão já foi editada pelo professor
-        /*
-        if (question.feedBackTest && question.feedBackTest.isEditedByTeacher) {
-            this.setState({
-                corrected: true,
-            });
-        }
-        else {
-            this.setState({
-                corrected: false,
-            });
-        }
-        this.setState({ loadingQuestion: false });
-        */
-        
-
     },[questions, idQuestion, classRoon, loadingQuestions]);
    
     useEffect( () => {
-        testAnswer(null);
-    },[currentAnswer]);
+
+        async function testAnswer() {
+            const request = {
+                codigo: currentAnswer.language === "blockly" ? getBlocklyCode(simpleWorkspace.current.workspace) : currentAnswer.answer,
+                linguagem: currentAnswer.language === "blockly" ? 'python' : currentAnswer.language,
+                results: currentQuestion.results,
+            };
+    
+            setCorrecting(true);
+            try {
+                if(currentAnswer.answer){
+                    
+                    const response = await apiCompiler.post("/apiCompiler", request);
+                    
+                    setCorrection({
+                        results: response.data.results,
+                        hitPercentage: response.data.percentualAcerto,
+                        descriptionErro: response.data.descriptionErro,
+                    });
+                }
+                else{
+                    setCorrection({
+                        results: Array.isArray(currentQuestion.results) ? [...currentQuestion.results] : [],
+                        hitPercentage: 0,
+                        descriptionErro: '',
+                    });
+                }
+            } catch (err) {
+                console.log(Object.getOwnPropertyDescriptors(err));
+                
+                Swal.fire({
+                    type: "error",
+                    title: "ops... Algum erro ao submeter a questão ao sistema de correções :(",
+                });
+                console.log(err);
+            }
+            setCorrecting(false);
+        }
+
+        if(currentQuestion.type === 'PROGRAMMING')
+            testAnswer();
+    },[currentAnswer, currentQuestion.type, currentQuestion.results]);
 
 
     
     /*apenas testa a resposta sem gravar no banco*/
-    async function testAnswer(e) {
-
-        if(e)
-            e.preventDefault();
-        //const { answer, language, results } = state;
-        
-        
-        
-        const request = {
-            codigo: currentAnswer.language === "blockly" ? getBlocklyCode(simpleWorkspace.current.workspace) : currentAnswer.answer,
-            linguagem: currentAnswer.language === "blockly" ? 'python' : currentAnswer.language,
-            results: currentQuestion.results,
-        };
-
-        setCorrecting(true);
-        try {
-            if(currentAnswer.answer){
-                
-                const response = await apiCompiler.post("/apiCompiler", request);
-                
-                setCorrection({
-                    results: response.data.results,
-                    hitPercentage: response.data.percentualAcerto,
-                    descriptionErro: response.data.descriptionErro,
-                });
-            }
-            else{
-                setCorrection({
-                    results: Array.isArray(currentQuestion.results) ? [...currentQuestion.results] : [],
-                    hitPercentage: 0,
-                    descriptionErro: '',
-                });
-            }
-        } catch (err) {
-            console.log(Object.getOwnPropertyDescriptors(err));
-            
-            Swal.fire({
-                type: "error",
-                title: "ops... Algum erro ao submeter a questão ao sistema de correções :(",
-            });
-            console.log(err);
-        }
-        setCorrecting(false);
-    }
+    
 
 
     return (
@@ -631,7 +589,7 @@ const FeedbackProva = props => {
                                     style={{ marginLeft: "10px", marginTop: "5px" }}
                                 >
                                     Comentário da questão:
-                            </label>
+                                </label>
                                 <textarea
                                     className="form-control"
                                     name="example-textarea-input"
@@ -720,112 +678,313 @@ const FeedbackProva = props => {
                 </Row>
             </>
             }
+            {currentQuestion.type === 'DISCURSIVE' && (
+                <Card>
+                    <CardBody>
+                        <Row>
+                            <Col className='col-12'>
+                                <label>Sua Resposta: </label>
+                                <textarea
+                                    readOnly={true}
+                                    className='form-control'
+                                    value={currentAnswer.answer || ""}
+                                />
+                            </Col>
+                        </Row>
+                    </CardBody>
+                </Card>
+            )}
+            {currentQuestion.type === 'OBJECTIVE' && (
+                <Card>
+                <CardBody>
+                <Row mb={15}>
+                    {currentQuestion.alternatives && currentQuestion.alternatives.map((alternative, i) => (
+                        <React.Fragment key={alternative.code}>
+                            <div className="col-1">
+                                <div
+                                    className='w-100 d-flex justify-content-center'
+                                >
+                                    <span className='mr-2 d-flex align-items-center'>
+                                    <FaCheck
+                                        size={15}
+                                        color={`rgb(94, 186, 0, ${alternative.isCorrect ? '100' : '0'})`}
+                                    />
+                                    </span>
+                                    <Radio
+                                        value={alternative.code}
+                                        checked={alternative.code === currentAnswer.answer}
+                                        inputProps={{ 'aria-label': i }}
+                                        disabled
+                                        color="primary"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className='col-11 mt-2'>
+                                <div className='w-100 d-flex'>
+                                    <span className='mr-4 '>
+                                        {`${String.fromCharCode(65 + i)})`}
+                                    </span>
+                                    <div 
+                                        className='w-100 ' 
+                                    // ref={(el) => editorRef.current[i] = el}
+                                    >
+                                        <SunEditor
+                                            lang="pt_br"
+                                            height="auto"
+                                            disable={true}
+                                            showToolbar={false}
+                                            setContents={alternative.description}
+                                            setDefaultStyle="font-size: 15px; text-align: justify"
+                                            // onLoad={() => {
+                                            //   editorRef.current[i].classList.add('sun-editor-wrap')
+                                            // }}
+                                            setOptions={{
+                                            toolbarContainer: '#toolbar_container',
+                                            resizingBar: false,
+                                            katex: katex,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </React.Fragment>
+                        ))
+                    }
+                </Row>
+                
+                </CardBody>
+                </Card>
+            )}
             <Row>
-                {currentQuestion.type === 'PROGRAMMING' &&
-                    <Col className='col-12'>
+                {(currentQuestion.type === 'OBJECTIVE' || currentQuestion.type === 'DISCURSIVE') &&
                     <Card className="card-results">
                         <CardHead>
-                            {loadingQuestions ? (
-                                <div className="loader" style={{ margin: "0px auto" }}></div>
+                            {loadingCurrentAnswer ? (
+                            <div className="loader" style={{ margin: "0px auto" }}></div>
                             ) : (
-                                <CardTitle>Resultados</CardTitle>
+                                <CardTitle>
+                                Observações
+                                {currentAnswer.reviewed ? (
+                                    
+                                    <label
+                                        style={{
+                                        color: "green",
+                                        fontSize: "16px",
+                                        marginLeft: "15px",
+                                        }}
+                                        htmlFor="selectDifficulty"
+                                    >
+                                        (Corrigido!)
+                                    </label>
+                                ) : (
+                                    <label
+                                        style={{
+                                            color: "#c88d04",
+                                            fontSize: "16px",
+                                            marginLeft: "15px",
+                                        }}
+                                        htmlFor="selectDifficulty"
+                                    >
+                                        (Ainda nâo corrigido)
+                                    </label>
+
+                                    )}
+                                </CardTitle>
                             )}
                         </CardHead>
-                        {isCorrecting ? (
-                            <div className="loader" style={{ margin: "100px auto" }}></div>
-                        ) : correction.descriptionErro ? (
-                            <Card>
+                    <CardBody className="p-0">
+                        {loadingCurrentAnswer ? (
+                            <div className="loader" style={{ margin: "0px auto" }}></div>
+                        ) : (
+                            <form
+                                className="form-group"
+                                style={{ marginRight: "5px", marginLeft: "5px" }}
+                            >
+                                <Row>
+                                    <Col className='col-6' >
+                                        <label htmlFor="selectDifficulty">Nota do Sistema:</label>
+                                        <input
+                                            readOnly
+                                            style={{ textAlign: "center" }}
+                                            className={"form-control"}
+                                            type={"text"}
+                                            maxLength={"5"}
+                                            value={parseFloat(currentAnswer.hitPercentage).toFixed(2)}
+                                        ></input>
+                                    </Col>
+
+                                    <Col className='col-6'>
+                                        <label htmlFor="selectDifficulty">
+                                            Nota do professor:
+                                        </label>
+                                        <input
+                                            style={{ textAlign: "center" }}
+                                            className='form-control'
+                                            type={"text"}
+                                            maxLength={"5"}
+                                            value={currentQuestionFeedback.teacherGrade || ""}
+                                            readOnly
+                                        ></input>
+                                    </Col>
+                                </Row>
+
+                                <Row style={{ marginTop: "10px" }}>
+                                    <Col className='col-6'>
+                                        <label htmlFor="selectDifficulty">
+                                            Tempo gasto na questão:
+                                        </label>
+                                        <input
+                                            readOnly
+                                            style={{ textAlign: "center" }}
+                                            className={"form-control"}
+                                            type={"text"}
+                                            value={` ${parseInt(currentAnswer.timeConsuming / 1000 / 60 )} min 
+                                                    ${parseInt((currentAnswer.timeConsuming / 1000) % 60)} seg`}
+                                        ></input>
+                                    </Col>
+                                    
+                                    <Col className='col-6'>
+                                        <label htmlFor="selectDifficulty">
+                                            Nº de variação de caracteres:
+                                        </label>
+                                        <input
+                                            readOnly
+                                            style={{ textAlign: "center" }}
+                                            className={"form-control"}
+                                            type={"text"}
+                                            value={parseFloat(currentAnswer.char_change_number)}
+                                        ></input>
+                                    </Col>
+                                </Row>
+
+                                <label
+                                    className="form-label"
+                                    style={{ marginLeft: "10px", marginTop: "5px" }}
+                                >
+                                    Comentário da questão:
+                                </label>
+                                <textarea
+                                    className="form-control"
+                                    name="example-textarea-input"
+                                    rows="6"
+                                    placeholder="Nenhum comentário"
+                                    value={currentQuestionFeedback.comments}
+                                    readOnly
+                                ></textarea>
+                            </form>
+                        )}
+                        </CardBody>
+                    </Card>
+                }
+            </Row>
+            
+            <Row>
+                {currentQuestion.type === 'PROGRAMMING'  && 
+                    <Col className='col-12'>
+                        <Card className="card-results">
+                            <CardHead>
                                 {loadingQuestions ? (
                                     <div className="loader" style={{ margin: "0px auto" }}></div>
                                 ) : (
-                                    <CardBody className=" p-0 ">
-                                        <div className="alert alert-icon alert-danger" role="alert">
-                                            <HTMLFormat>{correction.descriptionErro}</HTMLFormat>
-                                        </div>
-                                    </CardBody>
+                                    <CardTitle>Resultados</CardTitle>
                                 )}
-                            </Card>
-                        ) : (
-                            <>
-                                { correction.results && correction.results.map((teste, i) => (
-                                <Card
-                                    key={i}
-                                    className={`card-status-${teste.isMatch ? "success" : "danger"
-                                    }`}
-                                >
-                                    <CardHead>
-                                    <CardTitle>
-                                        {`${i + 1}° Teste `}
-                                        {teste.isMatch ? (
-                                        <i
-                                            className="fa fa-smile-o"
-                                            style={{ color: "green" }}
-                                        />
-                                        ) : (
-                                            <i
-                                            className="fa fa-frown-o"
-                                            style={{ color: "red" }}
-                                            />
-                                        )}
-                                    </CardTitle>
-                                    <CardOptions>
-                                        <i
-                                        title="Ver descrição"
-                                        style={{
-                                            color: "blue",
-                                            cursor: "pointer",
-                                            fontSize: "25px",
-                                        }}
-                                        className={`fe fe-chevron-down`}
-                                        data-toggle="collapse"
-                                        data-target={"#collapse" + i}
-                                        aria-expanded={false}
-                                        />
-                                    </CardOptions>
-                                    </CardHead>
-                                    <div className="collapse" id={"collapse" + i}>
-                                    <CardBody className="p-0 overflow-auto">
-                                        {teste.descriptionErro ? (
-                                        <HTMLFormat>{`${teste.descriptionErro}`}</HTMLFormat>
-                                        ) : (
-                                            <table
-                                            className="table"
-                                            wrap="off"
-
-                                            >
-                                            <tbody>
-                                                <tr>
-                                                <td>
-                                                    <b>Entrada(s) para teste</b>
-                                                </td>
-                                                <td>
-                                                    <b>Saída do seu programa</b>
-                                                </td>
-                                                <td>
-                                                    <b>Saída esperada</b>
-                                                </td>
-                                                </tr>
-                                                <tr>
-                                                <td>
-                                                    <HTMLFormat>{teste.inputs}</HTMLFormat>
-                                                </td>
-                                                <td>
-                                                    <HTMLFormat>{teste.saidaResposta}</HTMLFormat>
-                                                </td>
-                                                <td>
-                                                    <HTMLFormat>{teste.output}</HTMLFormat>
-                                                </td>
-                                                </tr>
-                                            </tbody>
-                                            </table>
-                                        )}
-                                    </CardBody>
-                                    </div>
+                            </CardHead>
+                            {isCorrecting ? (
+                                <div className="loader" style={{ margin: "100px auto" }}></div>
+                            ) : correction.descriptionErro ? (
+                                <Card>
+                                    {loadingQuestions ? (
+                                        <div className="loader" style={{ margin: "0px auto" }}></div>
+                                    ) : (
+                                        <CardBody className=" p-0 ">
+                                            <div className="alert alert-icon alert-danger" role="alert">
+                                                <HTMLFormat>{correction.descriptionErro}</HTMLFormat>
+                                            </div>
+                                        </CardBody>
+                                    )}
                                 </Card>
-                                ))}
-                            </>
-                            )}
-                    </Card>
+                            ) : (
+                                <>
+                                    { correction.results && correction.results.map((teste, i) => (
+                                    <Card
+                                        key={i}
+                                        className={`card-status-${teste.isMatch ? "success" : "danger"
+                                        }`}
+                                    >
+                                        <CardHead>
+                                        <CardTitle>
+                                            {`${i + 1}° Teste `}
+                                            {teste.isMatch ? (
+                                            <i
+                                                className="fa fa-smile-o"
+                                                style={{ color: "green" }}
+                                            />
+                                            ) : (
+                                                <i
+                                                className="fa fa-frown-o"
+                                                style={{ color: "red" }}
+                                                />
+                                            )}
+                                        </CardTitle>
+                                        <CardOptions>
+                                            <i
+                                            title="Ver descrição"
+                                            style={{
+                                                color: "blue",
+                                                cursor: "pointer",
+                                                fontSize: "25px",
+                                            }}
+                                            className={`fe fe-chevron-down`}
+                                            data-toggle="collapse"
+                                            data-target={"#collapse" + i}
+                                            aria-expanded={false}
+                                            />
+                                        </CardOptions>
+                                        </CardHead>
+                                        <div className="collapse" id={"collapse" + i}>
+                                        <CardBody className="p-0 overflow-auto">
+                                            {teste.descriptionErro ? (
+                                            <HTMLFormat>{`${teste.descriptionErro}`}</HTMLFormat>
+                                            ) : (
+                                                <table
+                                                className="table"
+                                                wrap="off"
+
+                                                >
+                                                <tbody>
+                                                    <tr>
+                                                    <td>
+                                                        <b>Entrada(s) para teste</b>
+                                                    </td>
+                                                    <td>
+                                                        <b>Saída do seu programa</b>
+                                                    </td>
+                                                    <td>
+                                                        <b>Saída esperada</b>
+                                                    </td>
+                                                    </tr>
+                                                    <tr>
+                                                    <td>
+                                                        <HTMLFormat>{teste.inputs}</HTMLFormat>
+                                                    </td>
+                                                    <td>
+                                                        <HTMLFormat>{teste.saidaResposta}</HTMLFormat>
+                                                    </td>
+                                                    <td>
+                                                        <HTMLFormat>{teste.output}</HTMLFormat>
+                                                    </td>
+                                                    </tr>
+                                                </tbody>
+                                                </table>
+                                            )}
+                                        </CardBody>
+                                        </div>
+                                    </Card>
+                                    ))}
+                                </>
+                                )}
+                        </Card>
                     </Col>
                 }
             </Row>
