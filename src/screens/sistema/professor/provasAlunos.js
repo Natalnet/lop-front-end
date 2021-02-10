@@ -43,7 +43,6 @@ export default class AlunosProvas extends Component {
         turma: response.data,
         loadingInfoTurma: false,
       });
-      console.log(`turma info ${response.data.languages}`)
     } catch (err) {
       this.setState({ loadingInfoTurma: true });
       console.log(err);

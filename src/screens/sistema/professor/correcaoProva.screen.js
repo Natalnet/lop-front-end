@@ -206,7 +206,8 @@ export default class AlunosProvas extends Component {
   async setCurrentQuestion(index) {
     const { questoes } = this.state;
     //if (loading) this.setState({ loadingquestion: true });
-    //console.log('index:', index)
+    console.log(`index ${index}`);
+    console.log(questoes);
     const currentQuestion = questoes[index - 1]
     //verifica se já existe um feedback para questão
     if (!!currentQuestion.feedBackTest) {
