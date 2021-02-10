@@ -98,9 +98,8 @@ const FeedbackProva = props => {
                 return false;
             
             intervalInProgress = true;
-            const response = api.get(`/test/${idTest}?idClass=${idClass}`);
-            
-            response.then( (res) => {
+            api.get(`/test/${idTest}?idClass=${idClass}`).then( (res) => {
+                
                 const prova = res.data;
                 if (prova && prova.classHasTest.correcao !==  "DISPONIVEL") {
                     Swal.fire({
@@ -112,15 +111,27 @@ const FeedbackProva = props => {
                         allowOutsideClick: false,
                         allowEscapeKey: false,
                         allowEnterKey: false,
-                    }).then( (choice) => {
+                    }).then( () => {
                         props.history.push(`/aluno/turma/${idClass}/provas`);
                         
                     });
                 }
-            }).catch( (res) =>{
-                console.log('Algum erro ao requisitar o status da correção');
+                intervalInProgress = false;
+            }).catch( (err) =>{
+                Swal.fire({
+                    title: 'Algum erro ao requisitar o status da correção',
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Voltar",
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                }).then( () => {
+                    console.log(err);
+                    props.history.push(`/aluno/turma/${idClass}/provas`);
+                });
+                intervalInProgress = false;
             });
-            intervalInProgress = false;
         }, 60*1000);
         return () => clearInterval(timer);
     }, [idClass])
