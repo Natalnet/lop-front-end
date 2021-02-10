@@ -98,25 +98,30 @@ const FeedbackProva = props => {
                 return false;
             
             intervalInProgress = true;
-            const response = await api.get(`/test/${idTest}?idClass=${idClass}`);
-            const prova = response.data;
-            if (prova && prova.classHasTest.correcao !==  "DISPONIVEL") {
-                const { value: choice } = await Swal.fire({
-                    title: `O Professor encerrou a visualização das correções :(`,
-                    //text: "You won't be able to revert this!",
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#3085d6",
-                    confirmButtonText: "Voltar",
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    allowEnterKey: false,
-                });
-                if(choice){
-                    props.history.push(`/aluno/turma/${idClass}/provas`);
+            const response = api.get(`/test/${idTest}?idClass=${idClass}`);
+            
+            response.then( (res) => {
+                const prova = res.data;
+                if (prova && prova.classHasTest.correcao !==  "DISPONIVEL") {
+                    Swal.fire({
+                        title: `O Professor encerrou a visualização das correções :(`,
+                        //text: "You won't be able to revert this!",
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Voltar",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: false,
+                    }).then( (choice) => {
+                        props.history.push(`/aluno/turma/${idClass}/provas`);
+                        
+                    });
                 }
-            }
+            }).catch( (res) =>{
+                console.log('Algum erro ao requisitar o status da correção');
+            });
             intervalInProgress = false;
-        }, 10*1000);
+        }, 60*1000);
         return () => clearInterval(timer);
     }, [idClass])
 
@@ -256,7 +261,7 @@ const FeedbackProva = props => {
         */
         
 
-    },[questions, idQuestion, loadingQuestions]);
+    },[questions, idQuestion, classRoon, loadingQuestions]);
    
     useEffect( () => {
         testAnswer(null);
