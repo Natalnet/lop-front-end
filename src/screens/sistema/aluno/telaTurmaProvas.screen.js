@@ -78,6 +78,18 @@ export default class Provas extends Component {
     this.io = socket(baseUrlBackend);
     this.io.emit("connectRoonClass", this.props.match.params.id);
 
+    this.io.on("changeCorrecaoTest", (response) => {
+      let { provas } = this.state;
+      provas = provas.map((prova) => {
+        const provaCopia = JSON.parse(JSON.stringify(prova));
+        if (response.idTest === prova.id) {
+          provaCopia.classHasTest.correcao = response.correcao;
+        }
+        return provaCopia;
+      });
+      this.setState({ provas });
+    });
+
     this.io.on("changeStatusTest", (reponse) => {
       let { provas } = this.state;
       provas = provas.map((prova) => {

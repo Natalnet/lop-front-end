@@ -22,7 +22,7 @@ import useQuestion from '../../hooks/useQuestion';
 
 export default props => {
     const { prova, participant, user } = props;
-    console.log('params: ',props.match.params)
+    //console.log('params: ',props.match.params)
     const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
 
     const { getIconTypeQuestion } = useQuestion();

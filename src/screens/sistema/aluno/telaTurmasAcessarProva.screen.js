@@ -59,10 +59,8 @@ export default class Exercicios extends Component {
       const password = sessionStorage.getItem(
         `passwordTest-${prova && prova.id}`
       );
-      console.log('password: ',password)
       ///
       try{
-        console.log('chammoouuuu')
         await api.get('/test/check/password',{
           params: {
             idTest: prova.id,
