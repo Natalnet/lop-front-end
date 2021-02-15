@@ -1,8 +1,12 @@
 import { useState, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import api from '../services/api';
+import Swal from "sweetalert2";
 // import { Container } from './styles';
 
 const useSubmission = () => {
+    const history = useHistory();
+
     const [Submissions, setSubmissions] = useState([]);
     const [isLoadingSubmissions, setIsLoadingSubmissions] = useState(false);
     const [isSavingSubmission, setIsSavingSubmission] = useState(false);
@@ -51,11 +55,24 @@ const useSubmission = () => {
             return true;
         }
         catch (err) {
+            if (err.response && err.response.status === 400 && err.response.data && err.response.data.msg === "O professor recolheu a prova! :'(") {
+                Swal.fire({
+                    type: "error",
+                    title: "O professor recolheu a prova! :'(",
+                });
+                history.push(`/aluno/turma/${idClass}/provas`);
+            }
+            else {
+                Swal.fire({
+                    type: "error",
+                    title: "ops... Algum erro aconteceu na operação :(",
+                });
+            }
             setErrorSubmission(err);
             setIsSavingSubmission(false);
             return false;
         }
-    });
+    }, [history]);
 
     const saveSubmissionByDiscursiveQuestion = useCallback(async ({
         answer,
@@ -89,11 +106,25 @@ const useSubmission = () => {
             return true;
         }
         catch (err) {
+            if (err.response && err.response.status === 400 && err.response.data && err.response.data.msg === "O professor recolheu a prova! :'(") {
+                Swal.fire({
+                    type: "error",
+                    title: "O professor recolheu a prova! :'(",
+                });
+                history.push(`/aluno/turma/${idClass}/provas`);
+
+            }
+            else {
+                Swal.fire({
+                    type: "error",
+                    title: "ops... Algum erro aconteceu na operação :(",
+                });
+            }
             setErrorSubmission(err);
             setIsSavingSubmission(false);
             return false;
         }
-    });
+    },[history]);
 
     return {
         Submissions,

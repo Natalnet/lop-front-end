@@ -199,6 +199,7 @@ export default class Pagina extends Component {
     if (dateLimit) {
       const request = {
         submissionDeadline: moment(`${dateLimit} ${timeLimit}:59`).utc(),
+        idClass
       };
       try {
         this.setState({ loadingDateLimit: true });
@@ -378,7 +379,7 @@ export default class Pagina extends Component {
               Adicionar novas listas <i className="fa fa-plus-circle" />
             </button>
             <button
-              className={'btn btn-primary'}
+              className={`btn btn-primary ${loandingListas && "btn-loading"}`}
               onClick={() => this.generateCsv()}
             >
               Gerar CSV 
@@ -547,10 +548,10 @@ export default class Pagina extends Component {
               Adicionar
             </button>
             <button
-              className={`btn btn-danger  ${loadingDateLimit && "btn-loading"}`}
+              className={`btn btn-outline-primary  ${loadingDateLimit && "btn-loading"}`}
               onClick={this.handleCloseShowModalDate.bind(this)}
             >
-              Não adicionar data limite
+              Depois
             </button>
           </Modal.Footer>
         </Modal>
