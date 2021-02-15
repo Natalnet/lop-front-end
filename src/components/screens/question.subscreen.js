@@ -1,8 +1,8 @@
 import React, { useRef, useState, useMemo, useEffect, useCallback } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
-import katex from 'katex'
+import katex from 'katex';
 import 'katex/dist/katex.min.css'
 import { BlockMath } from "react-katex";
 import Swal from "sweetalert2";
@@ -29,6 +29,8 @@ import { IoMdEye } from 'react-icons/io';
 import { FaCheck } from 'react-icons/fa';
 import { Load } from '../ui/load';
 const QuestionSubcscreen = props => {
+
+    const history = useHistory();
 
     const idQuestion = useMemo(() => props.match.params.idQuestion, [props]);
     const idClass = useMemo(() => props.match.params.idClass, [props]);
@@ -66,7 +68,7 @@ const QuestionSubcscreen = props => {
     const simpleWorkspace = useRef(null);
     const editorEnunciateRef = useRef(null);
     const editorRef = useRef([]);
-    
+
     const latestSolution = useRef(solution);
     const latestChar_change_number = useRef(char_change_number);
     const latestLanguage = useRef(language);
@@ -77,7 +79,7 @@ const QuestionSubcscreen = props => {
     }, [profile])
 
     const testCases = useMemo(() =>
-        isTeacher() || idList || (test && test.classHasTest.showAllTestCases) || !idClass?
+        isTeacher() || idList || (test && test.classHasTest.showAllTestCases) || !idClass ?
             response
             :
             response.filter((t, i) => i === 0)
@@ -116,7 +118,7 @@ const QuestionSubcscreen = props => {
                 idClass
             })
         }
-        
+
         setStartTime(new Date());
         const idInterval = setInterval(() => {
             saveDraft(false);
@@ -212,11 +214,24 @@ const QuestionSubcscreen = props => {
             };
             await api.post(`/submission/store`, request);
         } catch (err) {
-            console.log(err);
-            throw err;
+            console.log(Object.getOwnPropertyDescriptors(err))
+            if (err.response && err.response.status === 400 && err.response.data && err.response.data.msg === "O professor recolheu a prova! :'(") {
+                Swal.fire({
+                    type: "error",
+                    title: "O professor recolheu a prova! :'(",
+                });
+                history.push(`/aluno/turma/${idClass}/provas`);
+            }
+            else {
+                Swal.fire({
+                    type: "error",
+                    title: "ops... Algum erro aconteceu na operação :(",
+                });
+            }
+            //throw err;
         }
         setStartTime(new Date());
-    }, [language, idQuestion, idClass, idList, idTest, idLesson]);
+    }, [language, idQuestion, idClass, idList, idTest, idLesson, history]);
 
     const handleSubmitProgrammingQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
@@ -224,6 +239,7 @@ const QuestionSubcscreen = props => {
                 type: "error",
                 title: "O professor recolheu a prova! :'(",
             });
+            history.push(`/aluno/turma/${idClass}/provas`);
             return null;
         }
         const timeConsuming = (new Date() - startTime);
@@ -256,7 +272,7 @@ const QuestionSubcscreen = props => {
             console.log(err);
         }
 
-    }, [language, question, char_change_number, startTime, simpleWorkspace, solution, statusTest, saveDraft, saveSubmission])
+    }, [language, question, char_change_number, startTime, simpleWorkspace, solution, statusTest, history, idClass, saveDraft, saveSubmission])
 
     const handleSubmitObjectiveQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
@@ -264,6 +280,7 @@ const QuestionSubcscreen = props => {
                 type: "error",
                 title: "O professor recolheu a prova! :'(",
             });
+            history.push(`/aluno/turma/${idClass}/provas`);
             return null;
         }
         const timeConsuming = (new Date() - startTime);
@@ -287,7 +304,7 @@ const QuestionSubcscreen = props => {
                 idLesson
             })
         }
-    }, [idQuestion, idClass, idList, idTest, idLesson,  statusTest, startTime, saveSubmissionByObjectiveQuestion, getQuestion]);
+    }, [idQuestion, idClass, idList, idTest, idLesson, statusTest, startTime, history, saveSubmissionByObjectiveQuestion, getQuestion]);
 
     const handleSubmitDiscursiveQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
@@ -295,6 +312,7 @@ const QuestionSubcscreen = props => {
                 type: "error",
                 title: "O professor recolheu a prova! :'(",
             });
+            history.push(`/aluno/turma/${idClass}/provas`);
             return null;
         }
         saveDraft(false);
@@ -320,7 +338,7 @@ const QuestionSubcscreen = props => {
                 idLesson
             })
         }
-    }, [idQuestion, idClass, idList, idTest, idLesson, statusTest, startTime, char_change_number, saveSubmissionByDiscursiveQuestion, getQuestion]);
+    }, [idQuestion, idClass, idList, idTest, idLesson, statusTest, startTime, char_change_number, history, saveSubmissionByDiscursiveQuestion, getQuestion]);
 
 
     const handleDifficulty = useCallback(async (e) => {
@@ -405,10 +423,10 @@ const QuestionSubcscreen = props => {
                                     <i className="fa fa-angle-left ml-2 mr-2" />
                                     <Link
                                         to={
-                                            idClass?
-                                            `/${profile}/turma/${idClass}/curso/${lesson.course_id}/aulas/${lesson.id}`
-                                            :
-                                            `/${profile}/curso/${lesson.course_id}/aulas/${lesson.id}`
+                                            idClass ?
+                                                `/${profile}/turma/${idClass}/curso/${lesson.course_id}/aulas/${lesson.id}`
+                                                :
+                                                `/${profile}/curso/${lesson.course_id}/aulas/${lesson.id}`
                                         }
                                     >
                                         {lesson.title}
