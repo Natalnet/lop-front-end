@@ -114,6 +114,9 @@ export default class Editor extends Component {
   handleNumTest(action) {
     let { tests } = this.state;
     if (action === "+") {
+      if(tests.length === 21){
+        return null;
+      }
       tests = [
         ...tests,
         {
@@ -507,6 +510,7 @@ export default class Editor extends Component {
                     onClick={() => this.handleNumTest("+")}
                     type="button"
                     className="btn btn-primary btn-sm mr-2"
+                    disabled={tests.length >= 21}                  
                   >
                     <i className="fe fe-plus" />
                   </button>
