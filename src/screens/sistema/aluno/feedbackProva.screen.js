@@ -267,7 +267,7 @@ const FeedbackProva = props => {
                 console.log(Object.getOwnPropertyDescriptors(err));
                 
                 Swal.fire({
-                    type: "error",
+                    icon: "error",
                     title: "ops... Algum erro ao submeter a questão ao sistema de correções :(",
                 });
                 console.log(err);

@@ -21,6 +21,7 @@ import ClassLessons from '../screens/sistema/aluno/classLessons.screen'
 import ClassLesson from '../screens/sistema/aluno/classLesson.screen'
 import ClassLessonQuestion from '../screens/sistema/aluno/classLessonQuestion.screen'
 import LessonQuestions from '../screens/sistema/aluno/lessonQuestions.screen';
+import Profile from "../screens/sistema/aluno/profile.screen";
 
 const routes = [
   {
@@ -156,6 +157,12 @@ const routes = [
     private: true,
     perfil: "ALUNO"
   },
+  {
+    path: "/aluno/perfil",
+    component: Profile,
+    private: true,
+    perfil: "ALUNO"
+  }
 ];
 
 export default exportRoutes(routes);

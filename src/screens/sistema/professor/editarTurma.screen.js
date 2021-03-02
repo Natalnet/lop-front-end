@@ -102,7 +102,7 @@ export default class NovasTurmasScreen extends Component {
 
     if (msg) {
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel cadastrar a Turma",
         html: msg,
       });
@@ -131,14 +131,14 @@ export default class NovasTurmasScreen extends Component {
       await api.put(`/class/${idClass}/update`, requestInfo);
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Turma atualizada com sucesso!",
       });
       this.props.history.push("/professor");
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel cadastrar a Turma",
       });
       this.setState({ msg: "Erro: Não foi possivel cadastrar a Turma" });

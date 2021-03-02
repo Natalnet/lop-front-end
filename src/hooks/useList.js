@@ -14,7 +14,7 @@ const useList = () => {
       selectedQuestions.length === 0 ? "Escolha pelo menos um exercício<br/>;" : "";
     if (msg) {
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel salvar lista",
         html: msg,
       });
@@ -62,7 +62,7 @@ const useList = () => {
       await api.post("/listQuestion/store", requestInfo);
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Lista criada com sucesso!",
       });
       return true;
@@ -70,7 +70,7 @@ const useList = () => {
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel criar lista",
       });
       //this.setState({ msg: "Erro: Não foi possivel Criar a lista" });
@@ -89,7 +89,7 @@ const useList = () => {
       await api.put(`/classHasListQuestion/${idList}/update`, request);
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Data limite para submissões adicionada com sucesso!",
       });
       return true;
@@ -97,7 +97,7 @@ const useList = () => {
       console.log(err);
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... data limite não pôde ser adicionada",
       });
       return false;
@@ -124,14 +124,14 @@ const useList = () => {
       await api.put(`/listQuestion/${id}/update`, requestInfo);
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Lista editada com sucesso!",
       });
       return true;
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel salvar lista",
       });
       return false;

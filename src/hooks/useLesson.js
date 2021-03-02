@@ -19,7 +19,7 @@ const useLesson = () => {
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... erro ao carregar aula",
             });
         }
@@ -45,14 +45,14 @@ const useLesson = () => {
             await api.post('/lesson', request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Aula criado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Aula não pôde ser criado",
             });
             return false;
@@ -67,7 +67,7 @@ const useLesson = () => {
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... erro ao carregar aulas",
             });
         }
@@ -91,14 +91,14 @@ const useLesson = () => {
             await api.put(`/lesson/${id}`, request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Aula editado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Aula não pôde ser editado",
             });
             return false;
@@ -120,7 +120,7 @@ const useLesson = () => {
             await api.put(`/lesson/${idLesson}/visibility`, request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: `O curso agora${isVisible?' ':' não '}está visível`,
             });
             const index = lessons.findIndex(l => l.id === idLesson);
@@ -131,7 +131,7 @@ const useLesson = () => {
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Visibilidade do curso não pôde ser editada",
             });
             return false;

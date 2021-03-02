@@ -117,7 +117,7 @@ export default class TurmasScreen extends Component {
         minhasTurmas: minhasTurmasTmp
       })
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Estado da turma atualizado com sucesso!",
       });
       console.log("ok");
@@ -125,7 +125,7 @@ export default class TurmasScreen extends Component {
       console.log(err);
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel atualizar estado da turma",
       });
     }

@@ -1,8 +1,23 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import { GiTeacher } from 'react-icons/gi'
+import useSubmission from '../../../../hooks/useSubmission'
 
-export default props => {
+const SubMenuTurma = props => {
+
+    const { getCountsubmisssions, countSubmissions } = useSubmission();
+
+    useEffect(() => {
+        getCountsubmisssions();
+    }, []);
+
+    useEffect(() => {
+        if (countSubmissions > 0) {
+            sessionStorage.setItem('countSubmissions', countSubmissions);
+        }
+
+    }, [countSubmissions]);
+
     const id = useMemo(() => {
         return props.match.params.id || props.match.params.idClass
     }, [props])
@@ -53,9 +68,17 @@ export default props => {
                             </li>
                         </ul>
                     </div>
+                    <div >
+                        {(countSubmissions > 0 || sessionStorage.getItem('countSubmissions')) && (
+                            <p className='m-0'>
+                                {countSubmissions || sessionStorage.getItem('countSubmissions')} submissões
+                            </p>
+                        )
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     )
-
 }
+export default SubMenuTurma;

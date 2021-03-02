@@ -48,7 +48,7 @@ export default class resetScreen extends Component {
           error:false
         })
         Swal.fire({
-          type: "success",
+          icon: "success",
           title: `Congratulations`,
           text: `Senha alterada com sucesso.`,
           confirmButtonText: "Voltar para tela de Login",
@@ -71,7 +71,7 @@ export default class resetScreen extends Component {
         if(err.response && err.response.status===400){
           this.setState({msg:err.response.data.msg})
           Swal.fire({
-            type: "error",
+            icon: "error",
             title: `Ops...`,
             text: err.response.data.msg,
             confirmButtonText: "Ir para tela de 'recuperar senha'",

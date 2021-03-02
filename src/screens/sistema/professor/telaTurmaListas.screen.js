@@ -99,7 +99,7 @@ export default class Pagina extends Component {
       this.handleCloseshowModalListas();
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Lista adicionada com sucesso!",
       });
 
@@ -109,7 +109,7 @@ export default class Pagina extends Component {
       console.log(err);
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Lista não pôde ser adicionada",
       });
     }
@@ -142,13 +142,13 @@ export default class Pagina extends Component {
       this.setState({ listas: listas.filter((lista) => lista.id !== idList) });
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Lista removida com sucesso!",
       });
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Lista não pôde ser removida",
       });
     }
@@ -211,14 +211,14 @@ export default class Pagina extends Component {
         this.handleCloseShowModalDate();
         this.setState({ loadingDateLimit: false });
         Swal.fire({
-          type: "success",
+          icon: "success",
           title: "Data limite para submissões adicionada com sucesso!",
         });
       } catch (err) {
         console.log(err);
         this.setState({ loadingDateLimit: false });
         Swal.fire({
-          type: "error",
+          icon: "error",
           title: "ops... data limite não pôde ser adicionada",
         });
       }

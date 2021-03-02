@@ -111,14 +111,14 @@ export default props => {
             setLoadUrl(true);
             const response = await api.post('/plagiarism/test', request);
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: response.data.msg,
             });
         }
         catch (err) {
             console.log('err');
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "Ops, erro ao solicitar url! Por favor, tente novamente mais tarde!",
             });
         }

@@ -60,14 +60,14 @@ const useObjectiveQuestion = () => {
             await api.post('/objectiveQuestion', request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Exercício criado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Exercício não pôde ser criado",
             });
             return false;
@@ -112,14 +112,14 @@ const useObjectiveQuestion = () => {
             await api.put(`/objectiveQuestion/${id}`, request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Exercício editado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Exercício não pôde ser editado",
             });
             return false;
@@ -165,7 +165,7 @@ const useObjectiveQuestion = () => {
         }
         if (msg) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "Não foi possivel salvar o exercício",
                 html: msg,
             });
