@@ -121,13 +121,13 @@ export default class Exercicios extends Component {
       this.getProva();
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Prova editada com Sucesso!",
       });
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Prova não pôde ser editada",
       });
     }
@@ -189,13 +189,13 @@ export default class Exercicios extends Component {
         Swal.hideLoading();
         if(prova.classHasTest.correcao === 'DISPONIVEL'){
           Swal.fire({
-            type: "success",
+            icon: "success",
             title: "Correções Disponíveis!",
           });
         }
         else{
           Swal.fire({
-            type: "success",
+            icon: "success",
             title: "Correções não mais Disponíveis!",
           });
         }
@@ -203,7 +203,7 @@ export default class Exercicios extends Component {
         console.log(err);
         Swal.hideLoading();
         Swal.fire({
-          type: "error",
+          icon: "error",
           title: "Erro: Não foi possivel aplicar prova",
         });
       }
@@ -233,14 +233,14 @@ export default class Exercicios extends Component {
       this.setState({ prova });
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Prova aplicada com sucesso!",
       });
     } catch (err) {
       console.log(err);
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel aplicar prova",
       });
     }
@@ -265,14 +265,14 @@ export default class Exercicios extends Component {
       this.setState({ prova });
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Provas recolhidas com sucesso!",
       });
     } catch (err) {
       console.log(err);
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel recolher provas",
       });
     }

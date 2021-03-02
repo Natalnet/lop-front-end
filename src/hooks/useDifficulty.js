@@ -19,7 +19,7 @@ const useDifficulty = () => {
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... erro ao salvar dificuldade",
             });
             setIsSavingDifficulty(false);

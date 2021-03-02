@@ -57,14 +57,14 @@ const useDiscursiveQuestion = () => {
             await api.post('/discursiveQuestion', request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Exercício criado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Exercício não pôde ser criado",
             });
             return false;
@@ -106,14 +106,14 @@ const useDiscursiveQuestion = () => {
             await api.put(`/discursiveQuestion/${id}`, request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Exercício editado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Exercício não pôde ser editado",
             });
             return false;
@@ -148,7 +148,7 @@ const useDiscursiveQuestion = () => {
        
         if (msg) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "Não foi possivel salvar o exercício",
                 html: msg,
             });

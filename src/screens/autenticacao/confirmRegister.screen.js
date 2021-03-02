@@ -28,7 +28,7 @@ export default class ConfirmRegister extends Component {
       sessionStorage.setItem("user.urlImage", response.data.user.urlImage || "");
 
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: `Seja bem vindo(a)`,
         text: `Seu email foi confirmado com sucesso, uso da plataforma já disponivel.`,
       })
@@ -36,7 +36,7 @@ export default class ConfirmRegister extends Component {
     }
     catch(err){
         Swal.fire({
-          type: "error",
+          icon: "error",
           title: `Ops...`,
           text: `Erro: o link usado expirou ou é inválido.`,
           confirmButtonText: "Voltar para tela de login",

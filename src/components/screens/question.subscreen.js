@@ -217,14 +217,14 @@ const QuestionSubcscreen = props => {
             console.log(Object.getOwnPropertyDescriptors(err))
             if (err.response && err.response.status === 400 && err.response.data && err.response.data.msg === "O professor recolheu a prova! :'(") {
                 Swal.fire({
-                    type: "error",
+                    icon: "error",
                     title: "O professor recolheu a prova! :'(",
                 });
                 history.push(`/aluno/turma/${idClass}/provas`);
             }
             else {
                 Swal.fire({
-                    type: "error",
+                    icon: "error",
                     title: "ops... Algum erro aconteceu na operação :(",
                 });
             }
@@ -236,7 +236,7 @@ const QuestionSubcscreen = props => {
     const handleSubmitProgrammingQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "O professor recolheu a prova! :'(",
             });
             history.push(`/aluno/turma/${idClass}/provas`);
@@ -266,7 +266,7 @@ const QuestionSubcscreen = props => {
             setLoadingReponse(false)
             console.log(Object.getOwnPropertyDescriptors(err));
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Algum erro aconteceu na operação :(",
             });
             console.log(err);
@@ -277,7 +277,7 @@ const QuestionSubcscreen = props => {
     const handleSubmitObjectiveQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "O professor recolheu a prova! :'(",
             });
             history.push(`/aluno/turma/${idClass}/provas`);
@@ -309,7 +309,7 @@ const QuestionSubcscreen = props => {
     const handleSubmitDiscursiveQuestion = useCallback(async () => {
         if (statusTest === "FECHADA") {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "O professor recolheu a prova! :'(",
             });
             history.push(`/aluno/turma/${idClass}/provas`);

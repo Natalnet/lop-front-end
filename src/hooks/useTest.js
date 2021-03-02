@@ -16,7 +16,7 @@ const useTest = () => {
       selectedQuestions.length === 0 ? "Escolha pelo menos um exercício<br/>;" : "";
     if (msg) {
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel salvar prova",
         html: msg,
       });
@@ -85,7 +85,7 @@ const useTest = () => {
       await api.post("/test/store", requestInfo);
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Prova criada com sucesso!",
       });
       return true;
@@ -93,7 +93,7 @@ const useTest = () => {
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel criar prova",
       });
       return false;
@@ -120,14 +120,14 @@ const useTest = () => {
       await api.put(`/test/${id}/update`, requestInfo);
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Testa editada com sucesso!",
       });
       return true;
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Não foi possivel salvar prova",
       });
       return false;

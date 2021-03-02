@@ -137,7 +137,7 @@ export default class Pagina extends Component {
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Falha na operação :(",
       });
     }
@@ -167,13 +167,13 @@ export default class Pagina extends Component {
       });
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Usuário adicionado á turma com sucesso!",
       });
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Usuário não pôde ser adicionado",
       });
     }
@@ -203,14 +203,14 @@ export default class Pagina extends Component {
       if (msg) {
         Swal.hideLoading();
         Swal.fire({
-          type: "success",
+          icon: "success",
           title: "Solicitação rejeitada com sucesso!",
         });
       }
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... algo deu errado na operação",
       });
     }

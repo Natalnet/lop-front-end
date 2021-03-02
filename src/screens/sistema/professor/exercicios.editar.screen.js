@@ -153,14 +153,14 @@ export default class Editor extends Component {
   }
   handleImageUploadBefore() {
     Swal.fire({
-      type: "error",
+      icon: "error",
       title: "Não é permitido o upload de imagens, carregue-as a partir de um link 😃",
     });
     return false;
   }
   handleVideoUploadBefore() {
     Swal.fire({
-      type: "error",
+      icon: "error",
       title: "Não é permitido o upload de vídeos, carregue-os a partir de um link 😃",
     });
     return false;
@@ -239,7 +239,7 @@ export default class Editor extends Component {
       Object.getOwnPropertyDescriptors(err);
       this.setState({ loadingReponse: false });
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Algum erro aconteceu na operação :(",
       });
     }
@@ -299,14 +299,14 @@ export default class Editor extends Component {
     if (this.isTestEmpty(tests)) return null;
     if (!tagsSelecionadas.length) {
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Adicione pelo menos uma tag ao exercício!",
       });
       return;
     }
     if (!description) {
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Adicione uma descrição para a questão!",
       });
       return;
@@ -336,7 +336,7 @@ export default class Editor extends Component {
 
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Questão atualizada com sucesso!",
       });
       this.setState({
@@ -361,12 +361,12 @@ export default class Editor extends Component {
       }
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Questão não pôde ser salva",
       });
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Questão não pôde ser atualizada",
       });
       this.setState({ savingQuestion: false });

@@ -8,9 +8,22 @@ const useSubmission = () => {
     const history = useHistory();
 
     const [Submissions, setSubmissions] = useState([]);
+    const [countSubmissions, setCountSubmissions] = useState(0);
     const [isLoadingSubmissions, setIsLoadingSubmissions] = useState(false);
     const [isSavingSubmission, setIsSavingSubmission] = useState(false);
     const [isErrorSubmission, setErrorSubmission] = useState(null);
+
+    const getCountsubmisssions = useCallback(async ()=>{
+        setIsLoadingSubmissions(true);
+        try{    
+            const response = await api.get('/submission/count');
+            setCountSubmissions(response.data.countSubmissions);
+        }
+        catch(err){
+
+        }
+        setIsLoadingSubmissions(false);
+    },[]);
 
     const getSubmissions = useCallback(async () => {
         setIsLoadingSubmissions(true);
@@ -57,14 +70,14 @@ const useSubmission = () => {
         catch (err) {
             if (err.response && err.response.status === 400 && err.response.data && err.response.data.msg === "O professor recolheu a prova! :'(") {
                 Swal.fire({
-                    type: "error",
+                    icon: "error",
                     title: "O professor recolheu a prova! :'(",
                 });
                 history.push(`/aluno/turma/${idClass}/provas`);
             }
             else {
                 Swal.fire({
-                    type: "error",
+                    icon: "error",
                     title: "ops... Algum erro aconteceu na operação :(",
                 });
             }
@@ -108,7 +121,7 @@ const useSubmission = () => {
         catch (err) {
             if (err.response && err.response.status === 400 && err.response.data && err.response.data.msg === "O professor recolheu a prova! :'(") {
                 Swal.fire({
-                    type: "error",
+                    icon: "error",
                     title: "O professor recolheu a prova! :'(",
                 });
                 history.push(`/aluno/turma/${idClass}/provas`);
@@ -116,7 +129,7 @@ const useSubmission = () => {
             }
             else {
                 Swal.fire({
-                    type: "error",
+                    icon: "error",
                     title: "ops... Algum erro aconteceu na operação :(",
                 });
             }
@@ -131,9 +144,11 @@ const useSubmission = () => {
         isLoadingSubmissions,
         isErrorSubmission,
         isSavingSubmission,
+        countSubmissions,
         saveSubmissionByObjectiveQuestion,
         saveSubmissionByDiscursiveQuestion,
-        getSubmissions
+        getSubmissions,
+        getCountsubmisssions
     }
 }
 

@@ -48,6 +48,7 @@ import CreatediscursiveQuestion from '../screens/sistema/professor/createDiscurs
 import UpdateDiscursiveQuestion from '../screens/sistema/professor/updateDiscursiveQuestion.screen'
 import ClassLessonQuestion from '../screens/sistema/professor/classLessonQuestion.screen'
 import LessonQuestions from '../screens/sistema/professor/lessonQuestions.screen';
+import Profile from "../screens/sistema/aluno/profile.screen";
 
 const routes = [
   {
@@ -348,6 +349,12 @@ const routes = [
     private: true,
     perfil: "PROFESSOR"
   },
+  {
+    path: "/professor/perfil",
+    component: Profile,
+    private: true,
+    perfil: "PROFESSOR"
+  }
 ];
 
 export default exportRoutes(routes);

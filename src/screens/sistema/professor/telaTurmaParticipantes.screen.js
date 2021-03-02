@@ -106,13 +106,13 @@ export default class Pagina extends Component {
       });
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Usuário removido com sucesso!",
       });
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Usuário não pôde ser removido",
       });
     }

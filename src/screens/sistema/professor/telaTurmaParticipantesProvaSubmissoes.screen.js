@@ -91,7 +91,7 @@ export default class HomesubmissoesScreen extends Component {
     try {
       if (loading) this.setState({ loadingSubmissoes: true });
       const response = await api.get(
-        `/submissions/page/${numPageAtual}${query}`
+        `/submission/page/${numPageAtual}${query}`
       );
       this.setState({
         submissoes: [...response.data.docs],

@@ -136,14 +136,14 @@ export default class Provas extends Component {
       this.handleCloseshowModalProvas();
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Prova Adicionada com Sucesso!",
       });
       this.getProvas();
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Prova não pôde ser adicionado",
       });
     }
@@ -217,13 +217,13 @@ export default class Provas extends Component {
       this.setState({ provas: provas.filter((prova) => prova.id !== idTest) });
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Prova removido com sucesso!",
       });
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Prova não pôde ser removido",
       });
     }

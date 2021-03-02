@@ -195,7 +195,7 @@ export default class AlunosProvas extends Component {
       console.log(Object.getOwnPropertyDescriptors(err));
       this.setState({ loadingReponse: false });
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Algum erro aconteceu na operação :(",
       });
       console.log(err);
@@ -395,7 +395,7 @@ export default class AlunosProvas extends Component {
 
     if (msg) {
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "Erro: Nota invalida",
         html: msg,
       });
@@ -423,7 +423,7 @@ export default class AlunosProvas extends Component {
         await this.redirecionar(proxPage);
       } else {
         Swal.fire({
-          type: "success",
+          icon: "success",
           title: "Feedback Salvo com sucesso",
         });
         window.location.replace(
@@ -434,7 +434,7 @@ export default class AlunosProvas extends Component {
       console.log(err);
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title:
           "Erro: Não foi possivel cadastrar o feedback, verifique se contem erros!!!!",
       });
@@ -506,7 +506,7 @@ export default class AlunosProvas extends Component {
       console.log(Object.getOwnPropertyDescriptors(err));
       this.setState({ loadingReponse: false });
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Algum erro aconteceu na operação :(",
       });
       console.log(err);
