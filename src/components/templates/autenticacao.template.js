@@ -38,7 +38,7 @@ export default class TemplateAutenticacao extends Component {
           });
 
           Swal.fire({
-            type: "error",
+            icon: "error",
             title: `Erro ${error.response.status}`,
             text: text,
             confirmButtonText: "Voltar para o sistema"

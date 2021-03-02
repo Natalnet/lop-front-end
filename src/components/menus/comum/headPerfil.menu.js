@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import profileImg from "../../../assets/perfil.png"
 export default class HeadPefilMenu extends Component {
   render() {
-    const profile = sessionStorage.getItem("user.profile");
+    const profile = sessionStorage.getItem("user.profile").toLocaleLowerCase();
     const nome = sessionStorage.getItem("user.name");
     const urlImage = sessionStorage.getItem("user.urlImage")
     return (
@@ -43,7 +43,7 @@ export default class HeadPefilMenu extends Component {
               </span>
             </Link>
             <div className="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-              <Link className="dropdown-item" to="#">
+              <Link className="dropdown-item" to={`/${profile && profile.toLocaleLowerCase()}/perfil`}>
                 <i className="dropdown-icon fe fe-user" /> Perfil
               </Link>
               <div className="dropdown-divider" />

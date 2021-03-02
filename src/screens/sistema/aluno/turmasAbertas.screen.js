@@ -133,7 +133,7 @@ export default class HomeAlunoScreen extends Component {
 
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Solicitação feita com sucesso!",
       });
       //this.setState({solicitando:''})
@@ -141,7 +141,7 @@ export default class HomeAlunoScreen extends Component {
       Swal.hideLoading();
 
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Falha ao tentar fazer solicitação",
       });
     }
@@ -163,7 +163,7 @@ export default class HomeAlunoScreen extends Component {
       });
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Solicitação cancelada!",
       });
       //console.log(response);
@@ -172,7 +172,7 @@ export default class HomeAlunoScreen extends Component {
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Erro ao cancelar solicitação",
       });
       //this.setState({solicitando:''})

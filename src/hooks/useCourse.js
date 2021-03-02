@@ -19,7 +19,7 @@ const useCourse = () => {
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... erro ao carregar curso",
             });
         }
@@ -36,7 +36,7 @@ const useCourse = () => {
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... erro ao carregar cursos",
             });
         }
@@ -53,7 +53,7 @@ const useCourse = () => {
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... erro ao carregar cursos",
             });
         }
@@ -70,7 +70,7 @@ const useCourse = () => {
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... erro ao carregar cursos",
             });
         }
@@ -93,14 +93,14 @@ const useCourse = () => {
             await api.post('/course', request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Curso criado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Curso não pôde ser criado",
             });
             return false;
@@ -123,14 +123,14 @@ const useCourse = () => {
             await api.post('/classHasCourse', request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Curso adicionado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Curso não pôde ser adicionado",
             });
             return false;
@@ -150,14 +150,14 @@ const useCourse = () => {
             });
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Curso removido com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Curso não pôde ser removido",
             });
             return false;
@@ -181,14 +181,14 @@ const useCourse = () => {
             await api.put(`/course/${id}`, request);
             Swal.hideLoading();
             Swal.fire({
-                type: "success",
+                icon: "success",
                 title: "Curso editado com sucesso!",
             });
             return true;
         }
         catch (err) {
             Swal.fire({
-                type: "error",
+                icon: "error",
                 title: "ops... Curso não pôde ser editado",
             });
             return false;

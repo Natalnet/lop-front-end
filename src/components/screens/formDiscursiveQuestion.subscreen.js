@@ -57,7 +57,7 @@ const FormDiscursiveQuestionSubscreen = props => {
 
   const handleImageUploadBefore = useCallback(() => {
     Swal.fire({
-      type: "error",
+      icon: "error",
       title: "Não é permitido o upload de imagens, carregue-as a partir de um link 😃",
     });
     return false;
@@ -65,7 +65,7 @@ const FormDiscursiveQuestionSubscreen = props => {
 
   const handleVideoUploadBefore = useCallback(() => {
     Swal.fire({
-      type: "error",
+      icon: "error",
       title: "Não é permitido o upload de vídeos, carregue-os a partir de um link 😃",
     });
     return false;

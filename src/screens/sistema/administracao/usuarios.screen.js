@@ -68,13 +68,13 @@ export default class HomeAdministradorScreen extends Component {
       });
       Swal.hideLoading();
       Swal.fire({
-        type: "success",
+        icon: "success",
         title: "Perfil atualizado com sucesso!",
       });
     } catch (err) {
       Swal.hideLoading();
       Swal.fire({
-        type: "error",
+        icon: "error",
         title: "ops... Perfil não pôde ser atualizado :(",
       });
       console.log(err);
