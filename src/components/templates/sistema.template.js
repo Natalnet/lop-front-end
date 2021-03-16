@@ -44,7 +44,7 @@ export default class TemplateSistema extends Component {
       console.log("interceptores------>>>>>>")
       
       if ((err.response && err.response.status === 404) || err.message==="Network Error") {
-        this.props.history.push('/404')
+        // this.props.history.push('/404')
       } 
       else if(err.response && err.response.status === 401){
         console.log("props:",this.props)

@@ -27,6 +27,7 @@ const exportRoutes = routes => {
     }
     
   });
+  
   return routesMap;
 };
 

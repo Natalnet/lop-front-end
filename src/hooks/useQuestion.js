@@ -6,6 +6,7 @@ import { CgUserList } from 'react-icons/cg';
 
 const UseQuestion = () => {
     const [paginedQuestions, setPaginedQuestions] = useState(null);
+    const [countQuestions, setCountQuestions] = useState(0 || sessionStorage.getItem('countQuestions') || 0);
     const [question, setQuestion] = useState(null);
     const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
     const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
@@ -26,6 +27,21 @@ const UseQuestion = () => {
         }
         setIsLoadingQuestions(false);
     }, []);
+
+    
+    const getCountQuestions = useCallback(async ()=>{
+        setIsLoadingQuestions(true);
+        try{    
+            const response = await api.get('/question/count');
+            setCountQuestions(response.data.countQuestions);
+            sessionStorage.setItem('countQuestions', response.data.countQuestions);
+
+        }
+        catch(err){
+
+        }
+        setIsLoadingQuestions(false);
+    },[]);
 
     const getQuestion = useCallback(async (idQuestion, {idClass, idList, idTest, idLesson }) => {
         setIsLoadingQuestion(true);
@@ -91,9 +107,11 @@ const UseQuestion = () => {
         errorQuestion,
         question,
         isLoadingQuestion,
+        countQuestions,
         getQuestion,
         getPaginedQuestions, 
-        getIconTypeQuestion 
+        getIconTypeQuestion,
+        getCountQuestions
     };
 }
 
