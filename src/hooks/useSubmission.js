@@ -8,7 +8,7 @@ const useSubmission = () => {
     const history = useHistory();
 
     const [Submissions, setSubmissions] = useState([]);
-    const [countSubmissions, setCountSubmissions] = useState(0);
+    const [countSubmissions, setCountSubmissions] = useState(sessionStorage.getItem('countSubmissions') || 0);
     const [isLoadingSubmissions, setIsLoadingSubmissions] = useState(false);
     const [isSavingSubmission, setIsSavingSubmission] = useState(false);
     const [isErrorSubmission, setErrorSubmission] = useState(null);
@@ -18,9 +18,10 @@ const useSubmission = () => {
         try{    
             const response = await api.get('/submission/count');
             setCountSubmissions(response.data.countSubmissions);
+            sessionStorage.setItem('countSubmissions', response.data.countSubmissions);
         }
         catch(err){
-
+            console.error(err)
         }
         setIsLoadingSubmissions(false);
     },[]);

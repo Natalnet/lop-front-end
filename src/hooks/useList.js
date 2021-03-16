@@ -6,6 +6,7 @@ const useList = () => {
 
   const [list, setList] = useState(null);
   const [isLoadingList, setIsLoadingList] = useState(false);
+  const [countLists, setCountLists] = useState(sessionStorage.getItem('countLists') || 0);
 
   const isValidList = useCallback(({ title, selectedQuestions }) => {
     let msg = "";
@@ -41,6 +42,19 @@ const useList = () => {
     }
     setIsLoadingList(false);
   }, []);
+
+  const getCountlists = useCallback(async ()=>{
+    setIsLoadingList(true);
+    try{    
+        const response = await api.get('/listQuestion/count');
+        setCountLists(response.data.countLists);
+        sessionStorage.setItem('countLists', response.data.countLists);
+    }
+    catch(err){
+        console.error(err)
+    }
+    setIsLoadingList(false);
+},[]);
 
   const createList = useCallback(async ({ title, selectedQuestions }) => {
     if (!isValidList({ title, selectedQuestions })) {
@@ -138,7 +152,16 @@ const useList = () => {
     }
   }, [isValidList]);
 
-  return { createList, updateList, getList, addSubmissionDeadline, list, isLoadingList };
+  return { 
+    createList, 
+    updateList, 
+    getList, 
+    addSubmissionDeadline, 
+    getCountlists,
+    list, 
+    isLoadingList,
+    countLists
+};
 }
 
 export default useList;

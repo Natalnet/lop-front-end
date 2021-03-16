@@ -8,6 +8,8 @@ const useTest = () => {
   const history = useHistory();
   const [test, setTest] = useState(null);
   const [isLoadingTest, setIsLoadingTest] = useState(false);
+  const [countTests, setCountTests] = useState(sessionStorage.getItem('countTests') || 0);
+
 
   const isValidTest = useCallback(({ title, selectedQuestions }) => {
     let msg = "";
@@ -64,6 +66,19 @@ const useTest = () => {
     }
     setIsLoadingTest(false);
   }, [profile, history]);
+
+  const getCountTests = useCallback(async ()=>{
+    setIsLoadingTest(true);
+    try{    
+        const response = await api.get('/test/count');
+        setCountTests(response.data.countTests);
+        sessionStorage.setItem('countTests', response.data.countTests);
+    }
+    catch(err){
+        console.error(err)
+    }
+    setIsLoadingTest(false);
+},[]);
 
   const createTest = useCallback(async ({ title, selectedQuestions }) => {
     if (!isValidTest({ title, selectedQuestions })) {
@@ -134,7 +149,15 @@ const useTest = () => {
     }
   }, [isValidTest]);
 
-  return { createTest, updateTest, getTest, test, isLoadingTest };
+  return { 
+    createTest, 
+    updateTest, 
+    getTest, 
+    getCountTests,
+    test, 
+    isLoadingTest,
+    countTests
+  };
 }
 
 export default useTest;

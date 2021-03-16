@@ -1,8 +1,8 @@
 import ReactDOM from 'react-dom';
 import 'sweetalert2/src/sweetalert2.scss';
 import * as serviceWorker from './serviceWorker';
-import routes from './routes';
+import Routes from './routes';
 import "./assets/index.css"
-ReactDOM.render(routes, document.getElementById('root'));
+ReactDOM.render(Routes, document.getElementById('root'));
 
 serviceWorker.unregister();

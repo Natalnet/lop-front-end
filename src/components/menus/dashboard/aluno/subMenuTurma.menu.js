@@ -1,26 +1,20 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useContext } from 'react'
 import { Link } from "react-router-dom";
 import { GiTeacher } from 'react-icons/gi'
-import useSubmission from '../../../../hooks/useSubmission'
+import { InfoCountQuestionAndListAndTestAndSubmissionContext } from 'src/contexts/infoCountQuestionAndListAndTestAndSubmissionContext';
+
 
 const SubMenuTurma = props => {
-
-    const { getCountsubmisssions, countSubmissions } = useSubmission();
-
-    useEffect(() => {
-        getCountsubmisssions();
-    }, []);
-
-    useEffect(() => {
-        if (countSubmissions > 0) {
-            sessionStorage.setItem('countSubmissions', countSubmissions);
-        }
-
-    }, [countSubmissions]);
-
+    const {
+        countQuestions,
+        countSubmissions,
+        countLists,
+        countTests
+    } = useContext(InfoCountQuestionAndListAndTestAndSubmissionContext);
     const id = useMemo(() => {
         return props.match.params.id || props.match.params.idClass
     }, [props])
+
     const active = useMemo(() => props.active, [props])
     return (
         <div className="header collapse d-lg-flex p-0" id="headerMenuCollapse">
@@ -68,13 +62,43 @@ const SubMenuTurma = props => {
                             </li>
                         </ul>
                     </div>
-                    <div >
-                        {(countSubmissions > 0 || sessionStorage.getItem('countSubmissions')) && (
-                            <p className='m-0'>
-                                {countSubmissions || sessionStorage.getItem('countSubmissions')} submissões
-                            </p>
-                        )
-                        }
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gridTemplateRows: '1fr 1fr',
+                        gap: '0px 25px',
+                        gridTemplateAreas: `
+              ". ."
+              ". ."
+              
+            `,
+                    }}>
+
+                        <div >
+                            {countQuestions > 0 && (
+                                <p className='m-0'>{countQuestions} Exercícios</p>
+                            )
+                            }
+                        </div>
+                        <div>
+                            {countLists > 0 && (
+                                <p className='m-0'>{countLists} Listas</p>
+                            )
+                            }
+                        </div>
+
+                        <div >
+                            {countSubmissions > 0 && (
+                                <p className='m-0'>{countSubmissions} Submissões</p>
+                            )
+                            }
+                        </div>
+                        <div>
+                            {countTests > 0 && (
+                                <p className='m-0'>{countTests} Provas</p>
+                            )
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
