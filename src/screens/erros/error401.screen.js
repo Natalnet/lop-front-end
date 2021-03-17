@@ -14,7 +14,7 @@ export default class Error404 extends Component {
     perfil: sessionStorage.getItem("user.profile")
   }
   componentDidMount() {
-    document.title = "Error404 - Plataforma LOP";
+    document.title = "Error401 - Plataforma LOP";
   }
 
   retornar(){

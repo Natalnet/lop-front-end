@@ -2,26 +2,31 @@ import React from "react";
 
 import { BrowserRouter, Switch } from "react-router-dom";
 
-import autenticacao from "../routes/autenticacao.routes";
+import AutenticacaoRoutes from "../routes/autenticacao.routes";
 
-import erros from "../routes/erros.routes.js";
+import ErrosRoutes from "../routes/erros.routes.js";
 
-import aluno from "../routes/aluno.routes";
+import AlunoRoutes from "../routes/aluno.routes";
 
-import professor from "../routes/professor.routes";
+import ProfessorRoutes from "../routes/professor.routes";
 
-import administrador from "../routes/administrador.routes";
+import AdministradorRoutes from "../routes/administrador.routes";
+import { InfoCountQuestionAndListAndTestAndSubmissionContextProvider } from "src/contexts/infoCountQuestionAndListAndTestAndSubmissionContext";
 
-const routes = (
+const Routes = (
   <BrowserRouter>
     <Switch>
-      {autenticacao}
-      {aluno}
-      {professor}
-      {administrador}
-      {erros}
+
+      {AutenticacaoRoutes}
+      <InfoCountQuestionAndListAndTestAndSubmissionContextProvider>
+        {AlunoRoutes}
+        {ProfessorRoutes}
+        {AdministradorRoutes}
+        {ErrosRoutes}
+      </InfoCountQuestionAndListAndTestAndSubmissionContextProvider>
+
     </Switch>
   </BrowserRouter>
 );
 
-export default routes;
+export default Routes;
