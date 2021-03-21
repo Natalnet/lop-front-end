@@ -11,9 +11,9 @@ import { Link } from 'react-router-dom';
 
 export default class Error404 extends Component {
   
-  // componentDidMount() {
-  //   document.title = "Error404 - Plataforma LOP";
-  // }
+  componentDidMount() {
+    document.title = "Error404 - Plataforma LOP";
+  }
 
   render() {
     return (

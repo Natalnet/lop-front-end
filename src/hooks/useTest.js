@@ -4,7 +4,7 @@ import api from '../services/api';
 import Swal from "sweetalert2";
 
 const useTest = () => {
-  const profile = useMemo(() => sessionStorage.getItem("user.profile").toLowerCase(), []);
+  const profile = useMemo(() => sessionStorage.getItem("user.profile") && sessionStorage.getItem("user.profile").toLowerCase(), []);
   const history = useHistory();
   const [test, setTest] = useState(null);
   const [isLoadingTest, setIsLoadingTest] = useState(false);

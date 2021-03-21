@@ -63,12 +63,12 @@ const SubMenuTurma = props => {
                             Cursos
                         </Link>
                             </li>
-                            {/* <li className="nav-item">
+                            <li className="nav-item">
                                 <Link to={`/professor/turma/${id}/dashboard`} className={`nav-link ${active === 'dashboard' ? 'active' : ''}`}>
                                     <i className="fa fa-pie-chart" />
                             DashBoard
                         </Link>
-                            </li> */}
+                            </li>
                         </ul>
                     </div>
                     <div style={{

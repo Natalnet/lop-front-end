@@ -1,4 +1,5 @@
-import React, { createContext, useEffect } from 'react';
+import React, { createContext, useCallback, useContext, useEffect } from 'react';
+import { AuthContext } from './authContext';
 import useList from 'src/hooks/useList';
 import UseQuestion from 'src/hooks/useQuestion';
 import useSubmission from 'src/hooks/useSubmission';
@@ -10,15 +11,25 @@ const InfoCountQuestionAndListAndTestAndSubmissionContext = createContext({
 });
 
 const InfoCountQuestionAndListAndTestAndSubmissionContextProvider = (props) => {
+
+    const { isLoged } = useContext(AuthContext);
     const { getCountsubmisssions, countSubmissions } = useSubmission();
     const { getCountQuestions, countQuestions } = UseQuestion();
     const { getCountlists, countLists } = useList();
     const { getCountTests, countTests } = useTest();
-    useEffect(() => {
-        getCountsubmisssions();
+
+    const getInfoQuestionAndListAndTestAndSubmission = useCallback(() => {
+        if (!isLoged) {
+            return;
+        }
+        // getCountsubmisssions();
         getCountQuestions();
         getCountlists();
         getCountTests();
+    }, [isLoged, getCountsubmisssions, getCountQuestions, getCountlists, getCountTests]);
+
+    useEffect(() => {
+        getInfoQuestionAndListAndTestAndSubmission();
     }, []);
 
     return (
@@ -27,7 +38,8 @@ const InfoCountQuestionAndListAndTestAndSubmissionContextProvider = (props) => {
                 countSubmissions,
                 countQuestions,
                 countLists,
-                countTests
+                countTests,
+                getInfoQuestionAndListAndTestAndSubmission
             }}
         >
             { props.children }

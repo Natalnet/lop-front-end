@@ -3,8 +3,7 @@ import TabMaterial from '@material-ui/core/Tab';
 
 
 export const Tab = styled(TabMaterial)`
-    color:#467fcf;
-    &.Mui-selected {
+    &.Mui-selected, &.MuiTab-textColorPrimary.Mui-selected {
         outline: none;
         color:#467fcf;
     }
