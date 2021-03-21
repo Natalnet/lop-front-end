@@ -12,21 +12,22 @@ import ProfessorRoutes from "../routes/professor.routes";
 
 import AdministradorRoutes from "../routes/administrador.routes";
 import { InfoCountQuestionAndListAndTestAndSubmissionContextProvider } from "src/contexts/infoCountQuestionAndListAndTestAndSubmissionContext";
+import { AuthContextProvider } from "src/contexts/authContext";
 
 const Routes = (
-  <BrowserRouter>
-    <Switch>
-
-      {AutenticacaoRoutes}
-      <InfoCountQuestionAndListAndTestAndSubmissionContextProvider>
-        {AlunoRoutes}
-        {ProfessorRoutes}
-        {AdministradorRoutes}
-        {ErrosRoutes}
-      </InfoCountQuestionAndListAndTestAndSubmissionContextProvider>
-
-    </Switch>
-  </BrowserRouter>
+  <AuthContextProvider>
+    <InfoCountQuestionAndListAndTestAndSubmissionContextProvider>
+      <BrowserRouter>
+        <Switch>
+          {AutenticacaoRoutes}
+          {AlunoRoutes}
+          {ProfessorRoutes}
+          {AdministradorRoutes}
+          {ErrosRoutes}
+        </Switch>
+      </BrowserRouter>
+    </InfoCountQuestionAndListAndTestAndSubmissionContextProvider>
+  </AuthContextProvider>
 );
 
 export default Routes;
