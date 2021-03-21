@@ -242,7 +242,7 @@ const routes = [
     perfil: "PROFESSOR",
   },
   {
-    path: "/professor/turma/:id/dashboard",
+    path: "/professor/turma/:idClass/dashboard",
     component: TelaTurmasDashboard,
     private: true,
     perfil: "PROFESSOR",
