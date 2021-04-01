@@ -22,7 +22,7 @@ const InfoCountQuestionAndListAndTestAndSubmissionContextProvider = (props) => {
         if (!isLoged) {
             return;
         }
-        // getCountsubmisssions();
+        getCountsubmisssions();
         getCountQuestions();
         getCountlists();
         getCountTests();
