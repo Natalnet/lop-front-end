@@ -65,8 +65,8 @@ const DashBoardClass = (props) => {
     csvListStudentsTmp = csvListStudentsTmp.sort((studant1, studant2) => {
       const list1 = studant1.lists[indexList]
       const list2 = studant2.lists[indexList]
-      const percentage1 = getPercentageFormat(list1.questionsCompletedSumissionsCount, list1.questionsCount);
-      const percentage2 = getPercentageFormat(list2.questionsCompletedSumissionsCount, list2.questionsCount);
+      const percentage1 = list1.score;
+      const percentage2 = list2.score;
       return percentage1 > percentage2 ? -1 : 1;
     })
     handleSetcsvListStudents(csvListStudentsTmp);
@@ -150,6 +150,10 @@ const DashBoardClass = (props) => {
                                   >
                                     <p
                                       className='m-0 text-left'
+                                      style={{
+                                        fontSize: 12,
+                                        textTransform: 'lowercase'
+                                      }}
                                     >
                                       {tableHeader.title}
                                     </p>
@@ -167,8 +171,8 @@ const DashBoardClass = (props) => {
                                 {
                                   studant.lists.map((list) => (
                                     <td key={list.id}>
-                                      <p className={`${color(getPercentageFormat(list.questionsCompletedSumissionsCount, list.questionsCount))}`}>
-                                        {getPercentageFormat(list.questionsCompletedSumissionsCount, list.questionsCount)}%
+                                      <p className={`${color(list.score)}`}>
+                                        {list.score}%
                                         </p>
                                     </td>
 
