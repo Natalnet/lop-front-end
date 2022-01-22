@@ -16,7 +16,6 @@ import { Row, Col } from '../ui/grid';
 import * as B from "../ui/blockly";
 import { getBlocklyCode, getBlocklyXML, findLocalIp, isXml } from '../../util/auxiliaryFunctions.util';
 import SupportedLanguages from "../../config/SupportedLanguages";
-import socket from "socket.io-client";
 import useAccess from '../../hooks/useAccess';
 import useQuestion from '../../hooks/useQuestion';
 import useSubmission from '../../hooks/useSubmission';
@@ -125,20 +124,6 @@ const QuestionSubcscreen = props => {
         }, 60 * 1000);//60 segundos
         return () => clearInterval(idInterval);
     }, []);
-
-
-    useEffect(() => {
-        let io;
-        if (idTest) {
-            io = socket.connect(baseUrlBackend);
-            io.emit("connectRoonClass", idClass);
-            io.on("changeStatusTest", (reponse) => {
-                console.log('realtime:', reponse)
-                setStatusTest(reponse.status)
-            });
-        }
-        return () => io && io.disconnect();
-    }, [])
 
     useEffect(() => {
         if (question) {

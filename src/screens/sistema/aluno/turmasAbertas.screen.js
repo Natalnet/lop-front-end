@@ -13,7 +13,6 @@ import CardFooter from "../../../components/ui/card/cardFooter.component";
 import InputGroupo from "../../../components/ui/inputGroup/inputGroupo.component";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
-import socket from "socket.io-client";
 import profileImg from "../../../assets/perfil.png";
 
 import SupportedLanguages from "../../../config/SupportedLanguages"
@@ -34,7 +33,6 @@ export default class HomeAlunoScreen extends Component {
     };
   }
   componentDidMount() {
-    this.getTurmasAbertasRealTime();
     document.title = "Início | LoP";
   }
   componentWillUnmount() {
@@ -73,31 +71,7 @@ export default class HomeAlunoScreen extends Component {
       console.log(err);
     }
   }
-  async getTurmasAbertasRealTime() {
-    this.io = socket(baseUrlBackend);
-    this.io.emit("connectRoonUser", sessionStorage.getItem("user.email"));
-
-    this.io.on("RejectSolicitation", async (response) => {
-      const { solicitacoes } = this.state;
-      this.setState({
-        solicitacoes: solicitacoes.filter((s) => s.class_id !== response),
-      });
-      //io.close();
-    });
-
-    this.io.on("AcceptSolicitation", (response) => {
-      const { turmasAbertas } = this.state;
-      const myNewClass = turmasAbertas.map((t) => {
-        return {
-          id: t.id,
-          title: t.title,
-        };
-      });
-      this.setState({
-        turmasAbertas: turmasAbertas.filter((t) => t.id !== response),
-      });
-    });
-  }
+  
   async solicitarAcesso(idClass) {
     const { value } = await Swal.fire({
       title: "Informe sua matrícula na instituição da qual essa turma pertence",

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import socket from "socket.io-client";
 import TemplateSistema from "../../../components/templates/sistema.template";
 import InputGroup from "../../../components/ui/inputGroup/inputGroupo.component";
 import profileImg from "../../../assets/perfil.png";
@@ -56,7 +55,6 @@ export default class HomesubmissoesScreen extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
     this.getSubmissoes();
-    //this.getSubmissoesRealTime();
 
     const { turma } = this.state;
     document.title = `${turma && turma.name} - Submissões`;
@@ -204,24 +202,6 @@ export default class HomesubmissoesScreen extends Component {
     return table;
   }
 
-  getSubmissoesRealTime() {
-    this.io = socket(baseUrlBackend);
-    const id = this.props.match.params.id;
-    this.io.emit("connectRoonClass", id); //conectando à sala
-    this.io.on("SubmissionClass", (response) => {
-      const { numPageAtual, submissoes, docsPerPage } = this.state;
-      if (numPageAtual === 1) {
-        let sub = [...submissoes];
-        if (submissoes.length === docsPerPage) {
-          sub.pop();
-        }
-        sub = [response, ...sub];
-        this.setState({ submissoes: sub });
-      } else {
-        this.getSubmissoes(false);
-      }
-    });
-  }
   handleShowModalInfo(submissao) {
     //console.log(question);
     this.setState({

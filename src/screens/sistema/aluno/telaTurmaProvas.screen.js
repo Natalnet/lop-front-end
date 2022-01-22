@@ -6,7 +6,6 @@ import { generateHash } from "../../../util/auxiliaryFunctions.util";
 import "katex/dist/katex.min.css";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
-import socket from "socket.io-client";
 import TurmaProvasScreen from "../../../components/screens/turmaProvas.componente.screen";
 
 export default class Provas extends Component {
@@ -25,7 +24,6 @@ export default class Provas extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
     this.getProvas();
-    this.getProvasRealTime();
     document.title = `${this.state.turma.name} - provas`;
   }
 
@@ -74,44 +72,7 @@ export default class Provas extends Component {
       console.log(err);
     }
   }
-  getProvasRealTime() {
-    this.io = socket(baseUrlBackend);
-    this.io.emit("connectRoonClass", this.props.match.params.id);
-
-    this.io.on("changeCorrecaoTest", (response) => {
-      let { provas } = this.state;
-      provas = provas.map((prova) => {
-        const provaCopia = JSON.parse(JSON.stringify(prova));
-        if (response.idTest === prova.id) {
-          provaCopia.classHasTest.correcao = response.correcao;
-        }
-        return provaCopia;
-      });
-      this.setState({ provas });
-    });
-
-    this.io.on("changeStatusTest", (reponse) => {
-      let { provas } = this.state;
-      provas = provas.map((prova) => {
-        const provaCopia = JSON.parse(JSON.stringify(prova));
-        if (reponse.idTest === prova.id) {
-          provaCopia.classHasTest.status = reponse.status;
-        }
-        return provaCopia;
-      });
-      this.setState({ provas });
-    });
-    this.io.on("addTestToClass", (response) => {
-      let { provas } = this.state;
-      this.setState({ provas: [...provas, response] });
-    });
-    this.io.on("removeTestFromClass", (response) => {
-      let { provas } = this.state;
-      this.setState({
-        provas: provas.filter((prova) => prova.id !== response.id),
-      });
-    });
-  }
+  
   async acessar(prova) {
     const url = `/aluno/turma/${this.props.match.params.id}/prova/${prova.id}`;
     try {

@@ -3,7 +3,6 @@ import TemplateSistema from "../../../components/templates/sistema.template";
 import api, { baseUrlBackend } from "../../../services/api";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
-import socket from "socket.io-client";
 import TurmaListasScrren from "../.././../components/screens/turmaListas.componente.screen";
 
 export default class Listas extends Component {
@@ -21,7 +20,6 @@ export default class Listas extends Component {
   async componentDidMount() {
     await this.getInfoTurma();
     this.getListas();
-    this.getListasRealTime();
 
     const { turma } = this.state;
     document.title = `${turma && turma.name} - listas`;
@@ -67,21 +65,7 @@ export default class Listas extends Component {
       console.log(err);
     }
   }
-  getListasRealTime() {
-    this.io = socket(baseUrlBackend);
-    this.io.emit("connectRoonClass", this.props.match.params.id);
 
-    this.io.on("addListToClass", (response) => {
-      let { listas } = this.state;
-      this.setState({ listas: [...listas, response] });
-    });
-    this.io.on("removeListFromClass", (response) => {
-      let { listas } = this.state;
-      this.setState({
-        listas: listas.filter((lista) => lista.id !== response.id),
-      });
-    });
-  }
   render() {
     const { loadingInfoTurma, turma, loandingListas, listas } = this.state;
     return (

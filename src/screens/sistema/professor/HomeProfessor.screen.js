@@ -16,7 +16,6 @@ import { Pagination } from "../../../components/ui/navs";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
 import api, { baseUrlBackend } from "../../../services/api";
-import socket from "socket.io-client";
 // import Switch from "../../../components/ui/switch/switch.component";
 import Switch from '@material-ui/core/Switch';
 import SupportedLanguages from "../../../config/SupportedLanguages"
@@ -51,11 +50,9 @@ export default class TurmasScreen extends Component {
   async componentDidMount() {
     document.title = "Início - professor";
     await this.getMinhasTurmas();
-    this.getMinhasTurmasRealTime();
   }
 
   componentWillUnmount() {
-    this.io && this.io.close();
   }
 
   async getMinhasTurmas(loadingResponse = true) {
@@ -83,15 +80,7 @@ export default class TurmasScreen extends Component {
       console.log(err);
     }
   }
-  getMinhasTurmasRealTime() {
-    this.io = socket(baseUrlBackend);
-    for (let turma of this.state.minhasTurmas) {
-      this.io.emit("connectRoonClass", turma.id); //conectando à todas salas (minhas Turmas)
-    }
-    this.io.on("RequestsClass", async (response) => {
-      this.getMinhasTurmas(false);
-    });
-  }
+
   async handleState(e, classRoom) {
     const idClass = classRoom.id;
     const state = classRoom.state === 'ATIVA' ? 'INATIVA' : 'ATIVA';
