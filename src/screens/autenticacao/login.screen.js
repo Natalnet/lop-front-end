@@ -5,12 +5,10 @@ import api from "../../services/api";
 import NatalNet from "../../assets/images/logo.jpeg"
 import { Link, useHistory } from "react-router-dom";
 import LogoLOP from "../../components/ui/logoLOP.component";
-import { InfoCountQuestionAndListAndTestAndSubmissionContext } from "src/contexts/infoCountQuestionAndListAndTestAndSubmissionContext";
 import { AuthContext } from "src/contexts/authContext";
 
 const LoginScreen = () => {
   const { handleSetUser, isLoged } = useContext(AuthContext)
-  const { getInfoQuestionAndListAndTestAndSubmission } = useContext(InfoCountQuestionAndListAndTestAndSubmissionContext);
   const history = useHistory();
   const [msgEmail, setMsgEmail] = useState('')
   const [msgPass, setMsgPass] = useState('')
@@ -25,10 +23,9 @@ const LoginScreen = () => {
 
   useEffect(()=>{
     if(isLoged){
-      getInfoQuestionAndListAndTestAndSubmission();
       history.push(`/${sessionStorage.getItem("user.profile").toLocaleLowerCase()}`);
     }
-  },[isLoged, history, getInfoQuestionAndListAndTestAndSubmission]);
+  },[isLoged, history]);
 
   const handleLogin = useCallback(async (e) => {
     e.preventDefault();

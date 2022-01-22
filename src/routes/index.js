@@ -11,22 +11,19 @@ import AlunoRoutes from "../routes/aluno.routes";
 import ProfessorRoutes from "../routes/professor.routes";
 
 import AdministradorRoutes from "../routes/administrador.routes";
-import { InfoCountQuestionAndListAndTestAndSubmissionContextProvider } from "src/contexts/infoCountQuestionAndListAndTestAndSubmissionContext";
 import { AuthContextProvider } from "src/contexts/authContext";
 
 const Routes = (
   <AuthContextProvider>
-    <InfoCountQuestionAndListAndTestAndSubmissionContextProvider>
-      <BrowserRouter>
-        <Switch>
-          {AutenticacaoRoutes}
-          {AlunoRoutes}
-          {ProfessorRoutes}
-          {AdministradorRoutes}
-          {ErrosRoutes}
-        </Switch>
-      </BrowserRouter>
-    </InfoCountQuestionAndListAndTestAndSubmissionContextProvider>
+    <BrowserRouter>
+      <Switch>
+        {AutenticacaoRoutes}
+        {AlunoRoutes}
+        {ProfessorRoutes}
+        {AdministradorRoutes}
+        {ErrosRoutes}
+      </Switch>
+    </BrowserRouter>
   </AuthContextProvider>
 );
 
