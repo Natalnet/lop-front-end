@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import TemplateSistema from "../../../components/templates/sistema.template";
 import Swal from "sweetalert2";
-import socket from "socket.io-client";
 import api, { baseUrlBackend } from "../../../services/api";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
@@ -28,7 +27,6 @@ export default class Pagina extends Component {
 
     const { turma } = this.state;
     document.title = `${turma && turma.name} - Solicitações`;
-    this.getUsuariosRealTime();
   }
 
   componentWillUnmount() {
@@ -80,22 +78,7 @@ export default class Pagina extends Component {
       console.log(err);
     }
   }
-  getUsuariosRealTime() {
-    this.io = socket(baseUrlBackend);
-    const id = this.props.match.params.id;
-    this.io.emit("connectRoonClass", id); //conectando à sala
-
-    this.io.on("soliciteClass", (response) => {
-      const { usuarios } = this.state;
-      this.setState({ usuarios: [...usuarios, response] });
-    });
-    this.io.on("cancelSolicitClass", (response) => {
-      const { usuarios } = this.state;
-      this.setState({
-        usuarios: [...usuarios.filter((s) => s.id !== response)],
-      });
-    });
-  }
+  
   async aceitarTodos() {
     const idClass = this.props.match.params.id;
     let query = `?idClass=${idClass}`;
