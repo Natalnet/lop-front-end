@@ -50,6 +50,14 @@ No front end, quando precisar acessar a lista de nomes do backend das linguagens
 <table>
   <tr>
     <td align="center">
+      <a href="http://github.com/igorosberg">
+        <img src="https://avatars.githubusercontent.com/u/2753840?v=4" width="100px;" alt="Igor Rosberg"/>
+        <br />
+        <sub><b>Igor Rosberg</b></sub>
+      </a><br />
+      <a href="https://github.com/Natalnet/lop-front-end/commits?author=igorosberg" title="Code">💻</a>
+    </td>
+    <td align="center">
       <a href="http://github.com/mpsdantas">
         <img src="https://avatars1.githubusercontent.com/u/18246968?s=400&u=7a4633dba51fd94c701fc25219afb33123159471&v=4" width="100px;" alt="Marcus Dantas"/>
         <br />
