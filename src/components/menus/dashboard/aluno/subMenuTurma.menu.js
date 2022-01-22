@@ -1,16 +1,8 @@
 import React, { useMemo, useContext } from 'react'
 import { Link } from "react-router-dom";
 import { GiTeacher } from 'react-icons/gi'
-import { InfoCountQuestionAndListAndTestAndSubmissionContext } from 'src/contexts/infoCountQuestionAndListAndTestAndSubmissionContext';
-
 
 const SubMenuTurma = props => {
-    const {
-        countQuestions,
-        countSubmissions,
-        countLists,
-        countTests
-    } = useContext(InfoCountQuestionAndListAndTestAndSubmissionContext);
     const id = useMemo(() => {
         return props.match.params.id || props.match.params.idClass
     }, [props])
@@ -73,32 +65,6 @@ const SubMenuTurma = props => {
               
             `,
                     }}>
-
-                        <div >
-                            {countQuestions > 0 && (
-                                <p className='m-0'>{countQuestions} Exercícios</p>
-                            )
-                            }
-                        </div>
-                        <div>
-                            {countLists > 0 && (
-                                <p className='m-0'>{countLists} Listas</p>
-                            )
-                            }
-                        </div>
-
-                        <div >
-                            {countSubmissions > 0 && (
-                                <p className='m-0'>{countSubmissions} Submissões</p>
-                            )
-                            }
-                        </div>
-                        <div>
-                            {countTests > 0 && (
-                                <p className='m-0'>{countTests} Provas</p>
-                            )
-                            }
-                        </div>
                     </div>
                 </div>
             </div>
