@@ -712,7 +712,7 @@ const QuestionSubcscreen = props => {
                                                 </CardBody>
                                             </Card>
                                             :
-                                            <>
+                                            testCases && <>
                                                 {testCases.map((teste, i) =>
                                                     <Card key={i} className={`card-status-${teste.isMatch ? 'success' : 'danger'}`}>
                                                         <CardHead>
