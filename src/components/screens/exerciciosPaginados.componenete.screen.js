@@ -385,7 +385,7 @@ const QuestionsSubscreen = props => {
                                 {!paginedQuestions ? [] : paginedQuestions.docs.map((question) => (
                                     <tr key={question.id}>
                                         <td>
-                                            {question.isCorrect ? (
+                                            {/*question.isCorrect ? (
                                                 <i
                                                     className="fa fa-check"
                                                     style={{ color: "#0f0" }}
@@ -395,7 +395,7 @@ const QuestionsSubscreen = props => {
                                                     className="fa fa-remove"
                                                     style={{ color: "#f00" }}
                                                 />
-                                            ) : <>&nbsp;</>}
+                                            ) : <>&nbsp;</>*/}
                                         </td>
                                         <td> {question.title}</td>
                                         <td>{question.code}</td>
