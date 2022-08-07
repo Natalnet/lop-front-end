@@ -515,20 +515,7 @@ const QuestionSubcscreen = props => {
                                                 <IoMdEye className="mr-1" />
                                                 {question.accessCount}
                                             </li>
-                                            <li
-                                                className="d-flex  mr-4 align-items-center"
-                                                title={`N° DE SUBMISSÕES CORRETAS`}
-                                            >
-                                                <i className="fa fa-gears mr-1 text-success" />
-                                                {question.submissionsCorrectsCount}
-                                            </li>
-                                            <li
-                                                className="d-flex  mr-4 align-items-center"
-                                                title={`N° DE SUBMISSÕES`}
-                                            >
-                                                <i className="fa fa-gears mr-1" />
-                                                {question.submissionsCount}
-                                            </li>
+
                                         </ul>
                                         {question.author && <p
                                             className="font-italic mb-0"

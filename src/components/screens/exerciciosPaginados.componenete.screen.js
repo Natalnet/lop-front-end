@@ -368,7 +368,7 @@ const QuestionsSubscreen = props => {
                 <Row className='mb-4'>
                     <Col className='col-12'>
                         <Load className={`${!(isLoadingQuestions) ? 'd-none' : ''}`} />
-                        <table className={`table table-hover table-responsive ${isLoadingQuestions ? 'd-none' : ''}`}>
+                        <table className={`table table-hover table-responsive-md ${isLoadingQuestions ? 'd-none' : ''}`}>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -376,8 +376,6 @@ const QuestionsSubscreen = props => {
                                     <th>Código</th>
                                     <th>N° de acessos</th>
                                     <th>N° de Submissões corretas</th>
-                                    <th>N° de Submissões</th>
-                                    <th>Dificuldade</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -400,8 +398,6 @@ const QuestionsSubscreen = props => {
                                         <td> {question.title}</td>
                                         <td>{question.code}</td>
                                         <td>{question.accessCount}</td>
-                                        <td>{question.submissionsCorrectsCount}</td>
-                                        <td>{question.submissionsCount}</td>
                                         <td>{arrDifficulty[parseInt(question.difficulty)]}</td>
 
                                         <td className="d-inline-flex">
