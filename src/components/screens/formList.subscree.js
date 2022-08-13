@@ -397,13 +397,12 @@ const FormListSubscreen = props => {
                                     <Load className={`${!(isLoadingQuestions) ? 'd-none' : ''}`} />
 
                                     <table
-                                        className={`table table-hover table-responsive mb-0 ${isLoadingQuestions ? 'd-none' : ''}`}
+                                        className={`table table-hover table-responsive-md mb-0 ${isLoadingQuestions ? 'd-none' : ''}`}
                                     >
                                         <thead>
                                             <tr>
                                                 <th>Nome</th>
                                                 <th>Código</th>
-                                                <th>Submissões gerais (corretas/total)</th>
                                                 <th>Autor(a)</th>
                                                 <th>Criado em</th>
                                                 <th></th>
@@ -415,7 +414,6 @@ const FormListSubscreen = props => {
                                                     <tr key={question.id}>
                                                         <td>{question.title}</td>
                                                         <td>{question.code}</td>
-                                                        <td>{`(${question.submissionsCorrectsCount}/${question.submissionsCount})`}</td>
                                                         <td>{question.author.email}</td>
                                                         <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                                                         <td className="d-inline-flex">
@@ -622,12 +620,11 @@ const FormListSubscreen = props => {
                         <Row>
                             <div className="col-12 text-center">
                                 <label>Exercícios selecionados</label>
-                                <table className="table table-hover">
+                                <table className="table table-hover table-responsive-md">
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
                                             <th>Código</th>
-                                            <th>Submissões gerais (corretas/total)</th>
                                             <th>Autor(a)</th>
                                             <th>Criado em</th>
                                             <th></th>
@@ -638,7 +635,6 @@ const FormListSubscreen = props => {
                                             <tr key={index}>
                                                 <td>{question.title}</td>
                                                 <td>{question.code}</td>
-                                                <td>{`(${question.submissionsCorrectsCount}/${question.submissionsCount})`}</td>
                                                 <td>{question.author.email}</td>
                                                 <td>{moment(question.createdAt).local().format('DD/MM/YYYY - HH:mm')}</td>
                                                 <td>
