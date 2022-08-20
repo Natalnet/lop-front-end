@@ -157,7 +157,7 @@ export default props => {
                                                                 </Link>
                                                                 :
                                                                 (profile === "professor") && participant ? (
-                                                                    <Link to={`/professor/turma/${props.match.params.idClass}/participantes/${user.id}/provas/${prova && prova.id}/exercicio/${question.id}`} >
+                                                                    <Link to={`/professor/turma/${props.match.params.id}/participantes/${user.id}/provas/${prova && prova.id}/exercicio/${question.id}`} >
                                                                         <button
                                                                             className="btn btn-success mr-2"
                                                                             style={{ float: "right" }}
@@ -170,7 +170,7 @@ export default props => {
                                                                     :
                                                                     (profile === "professor") ? (
                                                                         <>
-                                                                            <Link to={`/professor/turma/${props.match.params.idClass}/prova/${prova && prova.id}/questao/${question.id}`}>
+                                                                            <Link to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}`}>
                                                                                 <button
                                                                                     className="btn btn-success mr-2"
                                                                                     style={{ marginLeft: "auto" }}
@@ -184,10 +184,10 @@ export default props => {
                                                                                         <BsThreeDotsVertical size={25} />
                                                                                     </span>
                                                                                     <div className="dropdown-menu dropdown-menu-demo">
-                                                                                        <Link className="dropdown-item" to={`/professor/turma/${props.match.params.idClass}/prova/${prova && prova.id}/exercicio/${question.id}/submissoes`}>
+                                                                                        <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/exercicio/${question.id}/submissoes`}>
                                                                                             Ver última submissão dos alunos
                                                                                         </Link>
-                                                                                        <Link className="dropdown-item" to={`/professor/turma/${props.match.params.idClass}/prova/${prova && prova.id}/exercicio/${question.id}/submissoes/plagio`}>
+                                                                                        <Link className="dropdown-item" to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/exercicio/${question.id}/submissoes/plagio`}>
                                                                                             Verificar Plágios
                                                                                         </Link>
                                                                                     </div>
