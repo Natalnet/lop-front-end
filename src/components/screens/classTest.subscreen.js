@@ -170,7 +170,7 @@ export default props => {
                                                                     :
                                                                     (profile === "professor") ? (
                                                                         <>
-                                                                            <Link to={`/professor/turma/${props.match.params.id}/prova/${prova && prova.id}/questao/${question.id}`}>
+                                                                            <Link to={`/professor/turma/${props.match.params.idClass}/prova/${prova && prova.id}/questao/${question.id}`}>
                                                                                 <button
                                                                                     className="btn btn-success mr-2"
                                                                                     style={{ marginLeft: "auto" }}
