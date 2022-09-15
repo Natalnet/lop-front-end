@@ -370,21 +370,7 @@ export default class HomesubmissoesScreen extends Component {
                     maxWidth: '100%'
                   }}
                 >
-                  <SunEditor
-                    lang="pt_br"
-                    height="auto"
-                    minWidth="1200px"
-                    disable={true}
-                    showToolbar={false}
-                    // onChange={this.handleDescriptionChange.bind(this)}
-                    setContents={submissao && submissao.question.description}
-                    setDefaultStyle="font-size: 15px; text-align: justify"
-                    setOptions={{
-                      toolbarContainer: '#toolbar_container',
-                      resizingBar: false,
-                      katex: katex,
-                    }}
-                  />
+                  Código da submissão
                 </div>
               </Col>
             </Row>

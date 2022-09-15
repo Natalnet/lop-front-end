@@ -26,9 +26,9 @@ export default class Listas extends Component {
   }
   async componentDidMount() {
     await this.getInfoTurma();
-    this.getUsersByClasse();
-    this.getUserLists(this.props.match.params.idUser);
-    this.getUserTests(this.props.match.params.idUser);
+    await this.getUsersByClasse();
+    await this.getUserLists(this.props.match.params.idUser);
+    await this.getUserTests(this.props.match.params.idUser);
 
     const { turma } = this.state;
     document.title = `${turma && turma.name} - listas`;
