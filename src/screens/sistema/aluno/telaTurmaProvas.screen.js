@@ -106,7 +106,7 @@ export default class Provas extends Component {
                 });
                 console.log('deuuu certooo')
                 Swal.hideLoading();
-                sessionStorage.setItem(`passwordTest-${prova.id}`, `${hashPassword(value)}`);
+                sessionStorage.setItem(`passwordTest-${prova.id}`, `${this.hashPassword(value)}`);
                 this.props.history.push(url);
               }
               catch(err){
