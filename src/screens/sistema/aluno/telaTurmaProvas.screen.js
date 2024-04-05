@@ -3,6 +3,7 @@ import TemplateSistema from "../../../components/templates/sistema.template";
 import api, { baseUrlBackend } from "../../../services/api";
 import Swal from "sweetalert2";
 import { generateHash } from "../../../util/auxiliaryFunctions.util";
+import crypto from 'crypto';
 import "katex/dist/katex.min.css";
 import Row from "../../../components/ui/grid/row.component";
 import Col from "../../../components/ui/grid/col.component";
@@ -29,6 +30,12 @@ export default class Provas extends Component {
 
   componentWillUnmount() {
     this.io && this.io.close();
+  }
+
+  hashPassword(password) {
+    const hash = crypto.createHash('sha256');
+    hash.update(password);
+    return hash.digest('hex');
   }
 
   async getInfoTurma() {
@@ -99,7 +106,7 @@ export default class Provas extends Component {
                 });
                 console.log('deuuu certooo')
                 Swal.hideLoading();
-                sessionStorage.setItem(`passwordTest-${prova.id}`, `${value}`);
+                sessionStorage.setItem(`passwordTest-${prova.id}`, `${hashPassword(value)}`);
                 this.props.history.push(url);
               }
               catch(err){
