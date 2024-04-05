@@ -101,7 +101,7 @@ export default class Provas extends Component {
                 await api.get('/test/check/password',{
                   params: {
                     idTest: prova.id,
-                    password: value
+                    password: this.hashPassword(value)
                   }
                 });
                 console.log('deuuu certooo')
